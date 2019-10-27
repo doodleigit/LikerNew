@@ -80,6 +80,7 @@ public class HowLikerWorksHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 setHowLikerWork();
+                mContext.sendBroadcast((new Intent().putExtra("type", "0")).setAction(AppConstants.COMMON_CHANGE_BROADCAST));
             }
         });
 
@@ -109,7 +110,7 @@ public class HowLikerWorksHolder extends RecyclerView.ViewHolder {
                                 userInfo.setLearnAboutSite("1");
                                 String jsonInfo = gson.toJson(userInfo);
                                 manager.setUserInfo(jsonInfo);
-                                mContext.sendBroadcast((new Intent().putExtra("type", "0")).setAction(AppConstants.COMMON_CHANGE_BROADCAST));
+                              //  mContext.sendBroadcast((new Intent().putExtra("type", "0")).setAction(AppConstants.COMMON_CHANGE_BROADCAST));
                             }
 
                         } catch (JSONException e) {
@@ -124,7 +125,7 @@ public class HowLikerWorksHolder extends RecyclerView.ViewHolder {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+         Log.d("Error",t.getMessage());
             }
         });
     }

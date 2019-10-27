@@ -82,7 +82,7 @@ import static com.liker.android.Tool.AppConstants.PROFILE_IMAGE;
 
 //import static com.doodle.Tool.AppConstants.PROFILE_IMAGE;
 
-public class Login extends AppCompatActivity implements View.OnClickListener {
+public class Login extends AppCompatActivity implements View.OnClickListener,ResendEmail.BottomSheetListener {
 
     public static final String SOCIAL_ITEM = "social_item";
     private ClearableEditText etEmail;
@@ -318,7 +318,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             case R.id.ivCancel:
                 finish();
                 break;
-
 
         }
 
@@ -686,4 +685,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onButtonClicked(String text) {
+
+    }
 }
