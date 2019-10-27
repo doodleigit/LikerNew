@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="364dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginBottom="2dp"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/media_image_three"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:scaleType="centerCrop"
+                android:src="@drawable/photo" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="center"
+                android:id="@+id/media_video_three"
+                android:background="@color/colorBlack"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:id="@+id/media_video_three_thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/post_image_background" />
+
+                <ImageView
+                    android:id="@+id/media_video_three_play"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="15dp"
+                    android:src="@drawable/video_play"
+                    android:layout_gravity="center"/>
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:scaleType="centerCrop"
+                    android:layout_gravity="end|bottom"
+                    android:id="@+id/media_video_three_volume_control"
+                    android:alpha="0"
+                    android:animateLayoutChanges="true"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="15dp"/>
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/media_video_three_progressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:visibility="gone"
+                    android:layout_gravity="center" />
+
+            </FrameLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="2dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2dp"
+                android:layout_weight=".5">
+
+                <ImageView
+                    android:id="@+id/media_image_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/photo" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="center"
+                    android:id="@+id/media_video_one"
+                    android:background="@color/colorBlack"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:id="@+id/media_video_one_thumbnail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/post_image_background" />
+
+                    <ImageView
+                        android:id="@+id/media_video_one_play"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:padding="15dp"
+                        android:src="@drawable/video_play"
+                        android:layout_gravity="center"/>
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="end|bottom"
+                        android:id="@+id/media_video_one_volume_control"
+                        android:alpha="0"
+                        android:animateLayoutChanges="true"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="15dp"/>
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/media_video_one_progressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:visibility="gone"
+                        android:layout_gravity="center" />
+
+                </FrameLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_weight=".5">
+
+                <ImageView
+                    android:id="@+id/media_image_two"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/photo" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="center"
+                    android:id="@+id/media_video_two"
+                    android:background="@color/colorBlack"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:id="@+id/media_video_two_thumbnail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/post_image_background" />
+
+                    <ImageView
+                        android:id="@+id/media_video_two_play"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:padding="15dp"
+                        android:src="@drawable/video_play"
+                        android:layout_gravity="center"/>
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="end|bottom"
+                        android:id="@+id/media_video_two_volume_control"
+                        android:alpha="0"
+                        android:animateLayoutChanges="true"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="15dp"/>
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/media_video_two_progressBar"
+                        style="?android:attr/progressBarStyle"
+                        android:visibility="gone"
+                        android:layout_gravity="center" />
+
+                </FrameLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/media_image_four"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/media_video_four">
+
+            <ImageView
+                android:id="@+id/media_video_four_thumbnail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/media_video_four_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/media_video_four_volume_control" />
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/media_video_four_progressBar" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/media_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
+
+</FrameLayout>

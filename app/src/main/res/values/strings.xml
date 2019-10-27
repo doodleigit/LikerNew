@@ -1,0 +1,428 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <integer-array name="privacy_list_drawable">
+        <item>@drawable/public_</item>
+        <item>@drawable/only_me</item>
+        <item>@drawable/friends</item>
+    </integer-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <integer-array name="privacy_list_two_drawable">
+        <item>@drawable/public_</item>
+        <item>@drawable/friends</item>
+    </integer-array>
+
+    <string name="app_name">Liker</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="copyright">Copyright \u00A9 %1$d Likeopedia, LLC</string>
+    <string name="otp_string">A verifiction code hase been sent to the email address associated with your account.Please type the code to reset your password</string>
+    <string name="no_internet">No Internet</string>
+    <string name="facebook_app_id">1470061779929464</string>
+    <string name="fb_login_protocol_scheme">fb1470061779929464</string>
+    <string name="retry">RETRY</string>
+    <string name="ui_fist_name">First Name Empty</string>
+    <string name="btn_resend">RESEND</string>
+    <string name="com.twitter.sdk.android.CONSUMER_KEY" tools:ignore="ExtraTranslation">ko3F8utVGev4bn7v5YS554zIU</string>
+
+    //menu_home
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET" tools:ignore="ExtraTranslation">PJUCYZZEZadnljLo8OQ22ApwG24QZx0wsbXqSnUUFBlAjHmkBY</string>
+    <string name="otp_string_signup">A verifiction code hase been sent to the email address associated with your account.Please type the code to Sign up your Account</string>
+    <string name="action_how_to_use_liker">How to use Liker</string>
+    <string name="action_account_setting">Account Settings</string>
+    <string name="action_find_friends">Find Followers Only</string>
+    <string name="action_privacy_security">Privacy &amp; Security</string>
+    <string name="action_notification_settings">Notification Settings</string>
+
+    //Expandale list
+    <string name="action_contributor_settings">Contributor Settings</string>
+    <string name="action_log_out">Log Out</string>
+    <string name="text_alcohol">Alcohol</string>
+    <string name="text_coffee">Coffee</string>
+    <string name="text_pasta">Pasta</string>
+    <string name="text_cold_drinks">Cold Drinks</string>
+    <string name="text_expanded">Expanded</string>
+    <string name="text_collapsed">Collapsed</string>
+
+
+    <string name="tvLikeCount"><u>10</u></string>
+
+    <string name="search_hint">Search</string>
+
+    <string name="grant">permission granted</string>
+
+    <string name="permission_denied">permission denied</string>
+
+    <string name="gallery_granted">Gallery granted</string>
+
+    <string name="request_permission">You must grant permission!</string>
+
+    <string name="insert_url">Insert a text containing an url</string>
+
+    <string name="restart">Restart</string>
+
+    <string name="about">About</string>
+
+    <string name="preview_area">Preview Area</string>
+
+    <string name="post_area">Post Area</string>
+
+    <string name="no_urls">No urls has been found</string>
+
+    <string name="failed_preview">Preview failed.\nClick to dismiss.</string>
+
+    <string name="submit">Submit</string>
+
+    <string name="random">Random</string>
+    <string name="post">Post</string>
+    <string name="previous">←</string>
+    <string name="forward">→</string>
+
+    <string name="choose_thumbnail">Choose a thumbnail</string>
+    <string name="no_thumbnail">No thumbnail</string>
+    <string name="enter_title">Enter a title</string>
+    <string name="enter_description">Enter a description</string>
+    <string name="of">of</string>
+    <string name="title_activity_about">About</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="new_post">New Post</string>
+    <string name="notifications">Notifications</string>
+    <string name="friend_requests">Friend Requests</string>
+    <string name="star_contributors">Star Contributors</string>
+    <string name="loading">Loading…</string>
+    <string name="likes">Likes</string>
+    <string name="stars">Stars</string>
+    <string name="search_messages">Search Messages</string>
+    <string name="search_category_">Search Category…</string>
+    <string name="search_categories_">Search Categories…</string>
+    <string name="to">To</string>
+    <string name="today">Today</string>
+    <string name="few_second_ago">A few seconds</string>
+    <string name="minute_ago">minute ago</string>
+
+    <string name="minutes_ago">minutes ago</string>
+    <string name="hour_ago">hour ago</string>
+    <string name="hours_ago">hours ago</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="choose_category">Choose Category</string>
+    <string name="choose_categories">Choose Categories</string>
+    <string name="done">done</string>
+    <string name="personalize_your_feed">Personalize your feed</string>
+    <string name="select_categories">Select Categories</string>
+    <string name="select_category">Select Category</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="font_fontFamily_medium">sans-serif</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_messages">Messages</string>
+    <string name="title_message">Message</string>
+    <string name="title_messaging">Messaging</string>
+    <string name="title_new_message">New Message</string>
+    <string name="share_as_a_post">Share as a Post</string>
+    <string name="share_on_facebook">Share on Facebook</string>
+    <string name="share_on_twitter">Share on Twitter</string>
+
+    <string name="copy_link">Copy Link</string>
+    <string name="publics">Public</string>
+    <string name="friends">Friends</string>
+
+    <string name="only_me">Only Me</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="report_comment">Report Comment</string>
+    <string name="block_user">Block User</string>
+    <string name="photos">photos</string>
+    <string name="uploading">Uploading…</string>
+    <string name="select_profile_picture">Select Profile Picture</string>
+    <string name="capture_profile_picture">Capture Profile Picture</string>
+    <string name="select_cover_picture">Select Cover Picture</string>
+    <string name="capture_cover_picture">Capture Cover Picture</string>
+    <string name="select_year">Select Year</string>
+    <string name="select_day">Select Day</string>
+    <string name="are_you_sure">Are you sure you want to remove</string>
+    <string name="search_by_name">Search By Name</string>
+    <string name="dont_have_a_liker_account">Don\'t have a Liker account? Sign up</string>
+    <string name="who_can_send_you_friend_requests">Who can send you followers Only requests:</string>
+    <string name="who_can_post_on_your_wall">Who can post on your wall:</string>
+    <string name="who_can_see_your_friends_list">Who can see your followers only list:</string>
+    <string name="who_can_see_your_photos">Who can see your photos:</string>
+    <string name="who_can_send_you_message">Who can send you message:</string>
+    <string name="block_users">Block Users:</string>
+    <string name="block">Block</string>
+    <string name="reset">Reset</string>
+    <string name="deactivate">Deactivate</string>
+    <string name="cancel">Cancel</string>
+    <string name="change">Change</string>
+    <string name="change_all">Change All</string>
+    <string name="there_are_no_more_posts">There are no more posts.</string>
+    <string name="people_liked_this_post">liked this post</string>
+    <string name="people_liked_this_comment">liked this comment</string>
+    <string name="people_liked_this_reply">liked this reply</string>
+    <string name="people">people</string>
+    <string name="person">person</string>
+    <string name="all_categories">All Categories</string>
+    <string name="sites_and_social_links">Sites &amp; Social Links</string>
+    <string name="certifications">Certifications</string>
+    <string name="honors_and_awards">Honors &amp; Awards</string>
+    <string name="experience">Experience</string>
+    <string name="education">Education</string>
+    <string name="email_notifications">Email Notifications</string>
+    <string name="push_notifications">Push Notifications</string>
+    <string name="the_trending_feed_includes_the_hottest_posts">The Trending Feed includes the hottest posts in all of Liker, starting with the ones with the most likes in the past 24 hours.</string>
+    <string name="the_breaking_feed_includes_the_newest_posts">The Breaking Feed includes the newest posts in all of Liker, starting with the most recent.</string>
+    <string name="the_following_feed_includes_the_most_recent_posts">The following feed includes the most recent posts by your friends and those you are following, starting with the most recent.</string>
+
+    <string name="take_control_of_your_feeds">Take control of your feeds by choosing as many of your favorite categories as you want. Give it a go!</string>
+    <string name="use_this_dropdown_to_quick_switch_back">Use this dropdown to quickly switch back and forth between all categories and your custom categories.</string>
+    <string name="please_like_posts_that_you_consider_to_be_of_high_quality">Please “like” posts that you consider to be of high quality. Liker tracks “likes” in order to rank the most popular posts and contributors in each category.</string>
+    <string name="please_like_comments_that_you_think_are_smart">Please “like” comments that you think are smart, thoughtful, relevant, funny, etc. On Liker, commenters with the most likes earn Top Commenter Badges.</string>
+    <string name="since_liker_is_the_smarter_social_network">Since Liker is the SMARTER social network, posts that have a good, insightful post description are more likely to get Likes from other users.</string>
+    <string name="you_must_select_an_audience_for_each_post">You must select an audience for each post. You can choose a main category or click on the dropdown to choose a subcategory.</string>
+    <string name="the_star_contributors_tab_ranks">The Star Contributors tab ranks the most popular expert contributors in all of Liker.</string>
+    <string name="ok_i_got_it">OK, I got it</string>
+
+    <string name="licence">Licence</string>
+    <string name="gpa_">GPA-</string>
+    <string name="not_yet">Not yet</string>
+    <string name="certification">Certification</string>
+    <string name="link">Link</string>
+    <string name="are_you_sure_you_want_to_delete_this_post">Are you sure you want to delete this post? You will permanently lose this post !</string>
+    <string name="your_internet_connection_might_not_be_working_at_the_moment">Your Internet connection might not be working at the moment. Please check and try again.</string>
+    <string name="share_successful">Share successful</string>
+    <string name="share_cancel">Share has canceled</string>
+    <string name="privacy_updated">Privacy Updated</string>
+    <string name="network_error">Network Error</string>
+    <string name="advance_search">Advance Search</string>
+    <string name="search_item">Search…</string>
+    <string name="write_minimum_three_characters">Write at-least 3 characters</string>
+    <string name="we_could_not_find_anything_for">We could not find anything for</string>
+    <string name="please_wait">Please wait.!</string>
+    <string name="forward_">Forward</string>
+    <string name="share_to_other_app">Share to other app</string>
+    <string name="refresh_page">Refresh page</string>
+    <string name="speak_your_mind">Speak your mind…</string>
+
+    <string name="audience">Audience</string>
+    <string name="save">Save</string>
+    <string name="save_all">Save All</string>
+    <string name="find_user">Find User</string>
+    <string name="user_or_email">User or Email</string>
+    <string name="notifications_on_off_list">Notifications On Off List</string>
+    <string name="notification_name">Notification Name</string>
+    <string name="push">Push</string>
+    <string name="email">Email</string>
+    <string name="browser">Browser</string>
+    <string name="selected_categories">Selected Categories</string>
+    <string name="please_select_any_category">Please select any category that you would like to declare yourself a contributor to (we will track your likes and add you to the rankings)</string>
+    <string name="you_can_still_post_on_deactivation">Active and reactive text "You can still post while your account is deactivated, but they won't be seen by others until you reactivate your account."</string>
+    <string name="security_setting">Security Settings</string>
+    <string name="password_setting">Password Settings</string>
+    <string name="email_setting">Email Settings</string>
+    <string name="security_question_">Security Question:</string>
+    <string name="answer_">Answer:</string>
+    <string name="security_answer">Security Answer</string>
+    <string name="add_new_email">Add New Email</string>
+    <string name="old_password_">Old Password:</string>
+    <string name="new_password_">New Password:</string>
+    <string name="retype_new_password_">Retype New Password:</string>
+    <string name="active_deactive_your_account">Activate / Deactivate your account</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="privacy">Privacy</string>
+    <string name="contact">Contact</string>
+    <string name="how_to_use_liker">How to use liker</string>
+    <string name="terms_of_services">Terms of Services</string>
+    <string name="how_liker_works">How liker works</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="how_to_use_liker_link">https://www.liker.com/static-how-liker-works</string>
+    <string name="terms_of_services_link">https://www.liker.com/terms-and-condition</string>
+    <string name="privacy_policy_link">https://www.liker.com/static-privacy</string>
+    <string name="contact_link">https://www.liker.com/static-contact</string>
+    <string name="how_liker_works_link">https://www.liker.com/static-how-liker-works</string>
+    <string name="find_friends">Find Followers Only</string>
+    <string name="find_friends_link">https://www.m.liker.com/settings/find-friends</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="contributor_settings">Contributor Settings</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="privacy_and_security">Privacy and Security</string>
+    <string name="please_input">Please input atleast two character</string>
+    <string name="password_length_is_less_than_8">password length is less than 8</string>
+    <string name="new_password_confirm_password_does_not_match">New password and confirm password does not match !</string>
+    <string name="password_has_been_updated">Password has been updated</string>
+    <string name="security_question_has_been_updated">Security Question has been updated</string>
+    <string name="account_has_been_deactivated">Account has been deactivated</string>
+    <string name="something_went_wrong">Something went wrong. Please try again</string>
+    <string name="profile_photo_has_been_updated">Profile photo has been updated</string>
+    <string name="cover_photo_has_been_updated">Cover photo has been updated</string>
+    <string name="are_you_sure_you_want_to_deactivated_your_account">Are you sure you want to deactivated your account ?</string>
+    <string name="a_verification_email_has_been_resent_to_your_email">A verification email has been resent to your email </string>
+    <string name="if_you_need_help_please_contact_with_liker_support">If you need help please contact with Liker Support .</string>
+    <string name="unverified">Unverified</string>
+    <string name="primary">Primary</string>
+    <string name="normal">Normal</string>
+    <string name="updating">Updating…</string>
+    <string name="your_email_address_is_not_valid">Your email address is not valid</string>
+    <string name="send_facebook_invitation">Send Facebook Invitation</string>
+    <string name="send_twitter_invitation">Send Twitter Invitation</string>
+    <string name="send_linkedin_invitation">Send LinkedIn Invitation</string>
+    <string name="there_is_no_followers">There are no followers.</string>
+    <string name="there_is_no_following">There are no following.</string>
+    <string name="there_is_no_people">There is no people.</string>
+    <string name="there_is_no_facebook_friends">There are no facebook followers.</string>
+    <string name="there_is_no_twitter_friends">There are no twitter followers.</string>
+    <string name="there_is_no_likedin_friends">There are no linkedIn followers.</string>
+    <string name="report_post">Report Post</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="posts">Posts</string>
+    <string name="checking">Checking…</string>
+    <string name="transition_photo">transition photo</string>
+    <string name="login_in_with_facebook">Log in with <b>facebook</b></string>
+    <string name="login_in_with_twitter">Log in with <b>twitter</b></string>
+    <string name="login_in">Log in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="logging_out">Logging out</string>
+    <string name="sign_up_account">Sign up Account</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+    <string name="continuing">Continue</string>
+    <string name="i_did_not_receive_the_email">I did not receive an email</string>
+    <string name="all_field_required">All field required</string>
+    <string name="enter_a_few_word_to_search">Enter a few word to search</string>
+    <string name="nothing_to_show">Nothing to Show</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="reset_password_success">Your password has successfully been changed.</string>
+    <string name="successfully_set_password">successfully set password</string>
+    <string name="reset_password_fail">Reset password failed.</string>
+    <string name="successfully_set_code">successfully set code</string>
+    <string name="failed_to_set_code">Failed to set code</string>
+    <string name="login_success">login success!</string>
+    <string name="username_and_password_miss_match">Username and password miss match</string>
+    <string name="a_verification_email_has_been_sent_to_your_email_address">A verification email has been sent to your email address. Please confirm and complete your registration.</string>
+    <string name="email_is_invalid">Email is invalid</string>
+    <string name="password_request_send_to_your_email">Forgot password request send to your email address successfully. Please, check your email.</string>
+    <string name="invalid_email_address">Invalid email address</string>
+    <string name="oauth_verifier">oauth_verifier</string>
+    <string name="twitter">twitter</string>
+    <string name="facebook">facebook</string>
+    <string name="tv_forgot_enable_color">#1485CC</string>
+    <string name="tv_forgot_disable_color">#89C3E7</string>
+    <string name="app_title">Liker</string>
+    <string name="success">Success</string>
+    <string name="alert">Alert</string>
+    <string name="no_network">No Network</string>
+    <string name="enable">Enable</string>
+    <string name="camera">Take a photo</string>
+    <string name="video">Browse videos</string>
+    <string name="photo">Browse photos</string>
+    <string name="video_record">Take a video </string>
+    <string name="feeling_activity_sticker">Feeling/Activity/Sticker</string>
+    <string name="read_file">This app needs access to your file storage so that it can read video.</string>
+    <string name="report_profile">Report Profile</string>
+
+    <string-array name="string_array_alcohol">
+        <item>Vodka</item>
+        <item>Rum</item>
+        <item>Whiskey</item>
+        <item>Gin</item>
+        <item>Tequila</item>
+    </string-array>
+    <string-array name="string_array_coffee">
+        <item>Espresso</item>
+        <item>Macchiato</item>
+        <item>Cappuccino</item>
+        <item>Cafe Latte</item>
+        <item>Ristretto</item>
+    </string-array>
+    <string-array name="string_array_pasta">
+        <item>Carbonara</item>
+        <item>Capellini</item>
+        <item>Spaghetti</item>
+        <item>Gnocchi</item>
+        <item>Lasagnette</item>
+    </string-array>
+    <string-array name="string_array_cold_drinks">
+        <item>Cola</item>
+        <item>Lemonade</item>
+        <item>Citrus soda</item>
+        <item>Juice</item>
+        <item>Sparkling Water</item>
+    </string-array>
+    <string-array name="gender_list">
+        <item>Select</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string-array name="privacy_list">
+        <item>Public</item>
+        <item>Only Me</item>
+        <item>Friends</item>
+    </string-array>
+
+    <string-array name="privacy_list_two">
+        <item>Everyone</item>
+        <item>Nobody</item>
+    </string-array>
+    <string-array name="institute_list">
+        <item>Select</item>
+        <item>High School</item>
+        <item>Collage</item>
+        <item>University</item>
+    </string-array>
+    <string-array name="phone_type_list">
+        <item>Office</item>
+        <item>Home</item>
+        <item>Work</item>
+    </string-array>
+    <string-array name="month_list">
+        <item>Select</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+    <string-array name="url_type_list">
+        <item>Select Type</item>
+        <item>Website</item>
+        <item>Facebook</item>
+        <item>Twitter</item>
+        <item>Linkedin</item>
+        <item>Instagram</item>
+        <item>Skype</item>
+        <item>Pinterest</item>
+        <item>Google Plus</item>
+        <item>YouTube</item>
+    </string-array>
+    <string-array name="story_type_list" tools:ignore="ExtraTranslation">
+        <item>About You</item>
+        <item>Early life</item>
+        <item>Family</item>
+        <item>Career</item>
+        <item>Background</item>
+        <item>Childhood</item>
+        <item>Personal life</item>
+        <item>intro</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/_5sdp"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:id="@+id/media_video"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:background="@color/colorIconText"
+            android:scaleType="center"
+            android:visibility="visible"/>
+
+        <FrameLayout
+            android:id="@+id/media_controller"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/media_video_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/post_image_background" />
+
+            <ImageView
+                android:id="@+id/media_video_one_play"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:src="@drawable/video_play"
+                android:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/media_video_volume_control"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:animateLayoutChanges="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/volume_on"
+                android:visibility="gone"/>
+
+            <ProgressBar
+                android:id="@+id/media_video_progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/media_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/photo"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</LinearLayout>
