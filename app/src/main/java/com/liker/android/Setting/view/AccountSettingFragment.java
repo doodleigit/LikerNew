@@ -275,7 +275,7 @@ public class AccountSettingFragment extends Fragment {
     }
 
     private void setData() {
-        if (accountSetting.getProfile().getSecurityQuestion().equals("null")) {
+        if (accountSetting.getProfile().getSecurityQuestion() == null || accountSetting.getProfile().getSecurityQuestion().equals("null")) {
             securityQuestionViewLayout.setVisibility(View.GONE);
             tvSecurityQuestion.setText("");
             tvSecurityQuestionAnswer.setText("");

@@ -268,7 +268,7 @@ public class BreakingPost extends Fragment {
         };
 
 //        App.setSharePostfooter(false);
-        adapter = new PostAdapter(getActivity(), postItemList, mCallback, mimListener, videoListener, youtubeListener, linkListener, imageListener, true);
+        adapter = new PostAdapter(getActivity(), postItemList, mCallback, mimListener, videoListener, youtubeListener, linkListener, imageListener, AppConstants.HOME);
         recyclerView.setMediaObjects(postItemList);
         recyclerView.setActivityContext(getActivity());
         recyclerView.setAdapter(adapter);
@@ -465,7 +465,7 @@ public class BreakingPost extends Fragment {
         Gson gson = new Gson();
         String json = manager.getUserInfo();
         UserInfo userInfo = gson.fromJson(json, UserInfo.class);
-        if (userInfo.getLearnAboutSite().equals("0")) {
+        if (userInfo.getLearnAboutSite() != null && userInfo.getLearnAboutSite().equals("0")) {
             PostItem postItem = new PostItem();
             postItem.setPostId("");
             postItem.setHasMeme("0");

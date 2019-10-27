@@ -209,6 +209,7 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
     private String sharedUserProfileLike;
     private String sharedPostText;
     private String sharedCategoryName;
+    private String className;
 
     private LinearLayout containerHeaderShare;
     private CircleImageView imageSharePostUser;
@@ -222,10 +223,11 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
         void deletePost(PostItem postItem, int position);
     }
 
-    public LinkScriptYoutubeHolder(View itemView, Context context, PostItemListener listener) {
+    public LinkScriptYoutubeHolder(View itemView, Context context, PostItemListener listener, String className) {
         super(itemView);
         mContext = context;
         this.listener = listener;
+        this.className = className;
 
         player = MediaPlayer.create(mContext, R.raw.post_like);
         callbackManager = CallbackManager.Factory.create();
@@ -728,8 +730,15 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
         tvPostLikeCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction ft = ((Home) mContext).getSupportFragmentManager().beginTransaction();
-                Fragment prev = ((Home) mContext).getSupportFragmentManager().findFragmentByTag("dialog");
+                FragmentTransaction ft;
+                Fragment prev;
+                if (className.equals(AppConstants.WALL)) {
+                    ft = ((ProfileActivity) mContext).getSupportFragmentManager().beginTransaction();
+                    prev = ((ProfileActivity) mContext).getSupportFragmentManager().findFragmentByTag("dialog");
+                } else {
+                    ft = ((Home) mContext).getSupportFragmentManager().beginTransaction();
+                    prev = ((Home) mContext).getSupportFragmentManager().findFragmentByTag("dialog");
+                }
                 if (prev != null) {
                     ft.remove(prev);
                 }

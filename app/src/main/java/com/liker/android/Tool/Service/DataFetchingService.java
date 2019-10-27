@@ -399,18 +399,22 @@ public class DataFetchingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        socket.off("web_notification");
-        mSocket.off("message");
-        mSocket.off("message_own");
-        unregisterReceiver(mReceiver);
+        try {
+            socket.off("web_notification");
+            mSocket.off("message");
+            mSocket.off("message_own");
+            unregisterReceiver(mReceiver);
+        } catch (IllegalArgumentException ignored) {}
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        socket.off("web_notification");
-        mSocket.off("message");
-        mSocket.off("message_own");
-        unregisterReceiver(mReceiver);
+        try {
+            socket.off("web_notification");
+            mSocket.off("message");
+            mSocket.off("message_own");
+            unregisterReceiver(mReceiver);
+        } catch (IllegalArgumentException ignored) {}
     }
 }

@@ -224,5 +224,7 @@ public class AppConstants {
     public static final String GET_FOLLOWINGS = "get_followings";
     public static final String LOGOUT = "logout";
     public static final String HOW_LIKER_WORK = "howllikerwork";
+    public static final String HOME = "home";
+    public static final String WALL = "wall";
 
 }

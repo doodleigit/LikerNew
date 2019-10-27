@@ -41,6 +41,7 @@ import com.liker.android.Search.model.Post;
 import com.liker.android.Search.model.User;
 import com.liker.android.Search.service.PostClickListener;
 import com.liker.android.Search.service.SearchService;
+import com.liker.android.Setting.view.SettingActivity;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
@@ -185,22 +186,19 @@ public class SearchActivity extends AppCompatActivity {
 
         List<String> extractedUrls = Tools.extractUrls(url);
         if (extractedUrls != null && extractedUrls.size() > 0) {
-            Intent browserIntents = new Intent(Intent.ACTION_VIEW, Uri.parse(extractedUrls.get(0)));
-            browserIntents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            App.getAppContext().startActivity(browserIntents);
-        }
+            webLink(extractedUrls.get(0), extractedUrls.get(0));
 
-//        if (!url.isEmpty() && url.matches(pattern)) {
-//            /// Valid youtube URL
-//            Intent browserIntents = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//            Intent browserIntents = new Intent(Intent.ACTION_VIEW, Uri.parse(extractedUrls.get(0)));
 //            browserIntents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            App.getAppContext().startActivity(browserIntents);
-//        } else {
-//            // Not Valid youtube URL
-//            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//            browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            App.getAppContext().startActivity(browserIntent);
-//        }
+        }
+    }
+
+    private void webLink(String type, String link) {
+        Intent termsIntent = new Intent(this, SettingActivity.class);
+        termsIntent.putExtra("type", type);
+        termsIntent.putExtra("link", link);
+        startActivity(termsIntent);
     }
 
     private void sendAdvanceSearchRequest(Call<AdvanceSearches> call) {

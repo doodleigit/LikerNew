@@ -237,7 +237,7 @@ public class PostShare extends AppCompatActivity implements
 
         App.setSharePostfooter(true);
         postItemList.add(item);
-        adapter = new PostAdapter(this, postItemList, this, this, this, this, this, this, true);
+        adapter = new PostAdapter(this, postItemList, this, this, this, this, this, this, "");
         sharedRecyclerview.setAdapter(adapter);
 
         //HEADER

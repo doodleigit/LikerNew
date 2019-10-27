@@ -194,10 +194,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
     public static final String COMMENT_KEY = "comment_item_key";
     private ProgressBar mProgressBar;
 
-    //  private String postPermissions;
-    private boolean isPopup;
-
-
     //POST LIKE
     public ImageView imgLike;
 
@@ -221,6 +217,7 @@ public class TextHolder extends RecyclerView.ViewHolder {
     private String sharedUserProfileLike;
     private String sharedPostText;
     private String sharedCategoryName;
+    private String className;
 
     private LinearLayout containerHeaderShare;
     private CircleImageView imageSharePostUser;
@@ -239,12 +236,12 @@ public class TextHolder extends RecyclerView.ViewHolder {
         void deletePost(PostItem postItem, int position);
     }
 
-    public TextHolder(View itemView, Context context, PostItemListener postTextListener, boolean isPopup) {
+    public TextHolder(View itemView, Context context, PostItemListener postTextListener, String className) {
         super(itemView);
 
         mContext = context;
         this.postTextListener = postTextListener;
-        this.isPopup = isPopup;
+        this.className = className;
 
         player = MediaPlayer.create(mContext, R.raw.post_like);
         callbackManager = CallbackManager.Factory.create();
@@ -872,8 +869,16 @@ public class TextHolder extends RecyclerView.ViewHolder {
         tvPostLikeCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction ft = ((Home) mContext).getSupportFragmentManager().beginTransaction();
-                Fragment prev = ((Home) mContext).getSupportFragmentManager().findFragmentByTag("dialog");
+                FragmentTransaction ft;
+                Fragment prev;
+                if (className.equals(AppConstants.WALL)) {
+                    ft = ((ProfileActivity) mContext).getSupportFragmentManager().beginTransaction();
+                    prev = ((ProfileActivity) mContext).getSupportFragmentManager().findFragmentByTag("dialog");
+                } else {
+                    ft = ((Home) mContext).getSupportFragmentManager().beginTransaction();
+                    prev = ((Home) mContext).getSupportFragmentManager().findFragmentByTag("dialog");
+                }
+
                 if (prev != null) {
                     ft.remove(prev);
                 }

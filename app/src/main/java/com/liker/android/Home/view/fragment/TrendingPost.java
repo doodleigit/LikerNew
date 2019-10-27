@@ -265,7 +265,7 @@ public class TrendingPost extends Fragment   {
             }
         };
         App.setSharePostfooter(false);
-        adapter = new PostAdapter(getActivity(), postItemList, mCallback, mimListener, videoListener, youtubeListener, linkListener, imageListener, true);
+        adapter = new PostAdapter(getActivity(), postItemList, mCallback, mimListener, videoListener, youtubeListener, linkListener, imageListener, AppConstants.HOME);
         recyclerView.setMediaObjects(postItemList);
         recyclerView.setActivityContext(getActivity());
         recyclerView.setAdapter(adapter);

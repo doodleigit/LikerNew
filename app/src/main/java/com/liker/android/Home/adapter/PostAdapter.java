@@ -52,8 +52,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public LinkScriptYoutubeHolder.PostItemListener YoutubeListener;
     public LinkScriptHolder.PostItemListener LinkListener;
     public ImageHolder.PostItemListener imageListener;
-    private boolean isPopup;
-
+    private String className;
 
     public PostAdapter(Context context, List<PostItem> postItems,
                        TextHolder.PostItemListener listener,
@@ -62,7 +61,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                        LinkScriptYoutubeHolder.PostItemListener YoutubeListener,
                        LinkScriptHolder.PostItemListener LinkListener,
                        ImageHolder.PostItemListener imageListener,
-                       boolean isPopup
+                       String className
     ) {
         this.mContext = context;
         this.postItems = postItems;
@@ -72,7 +71,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.YoutubeListener = YoutubeListener;
         this.LinkListener = LinkListener;
         this.imageListener = imageListener;
-        this.isPopup = isPopup;
+        this.className = className;
     }
 
 
@@ -85,25 +84,25 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         if (viewType == VIEW_TYPE_TEXT) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_text, parent, false);
-            return new TextHolder(view, mContext, listener, isPopup);
+            return new TextHolder(view, mContext, listener, className);
         }
         if (viewType == VIEW_TYPE_TEX_MIM) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_text_mim, parent, false);
-            return new TextMimHolder(view, mContext, mimListener, isPopup);
+            return new TextMimHolder(view, mContext, mimListener, className);
         }
         if (viewType == VIEW_TYPE_TEXT_IMAGE) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_image, parent, false);
-            return new ImageHolder(view, mContext, imageListener, isPopup);
+            return new ImageHolder(view, mContext, imageListener, className);
         }
         if (viewType == VIEW_TYPE_TEXT_LINK_SCRIPT) {
 
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script, parent, false);
-            return new LinkScriptHolder(view, mContext, LinkListener);
+            return new LinkScriptHolder(view, mContext, LinkListener, className);
         }
         if (viewType == VIEW_TYPE_TEXT_LINK_SCRIPT_YOUTUBE) {
 
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script_youtube, parent, false);
-            return new LinkScriptYoutubeHolder(view, mContext, YoutubeListener);
+            return new LinkScriptYoutubeHolder(view, mContext, YoutubeListener, className);
         }
 //        if (viewType == VIEW_TYPE_VIDEO) {
 //            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_video, parent, false);

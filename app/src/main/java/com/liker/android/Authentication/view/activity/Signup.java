@@ -109,6 +109,7 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 import static com.liker.android.Authentication.view.activity.Login.SOCIAL_ITEM;
+import static com.liker.android.Tool.AppConstants.PROFILE_IMAGE;
 
 //import static com.doodle.Authentication.view.activity.Login.SOCIAL_ITEM;
 //import static com.doodle.Comment.holder.CommentTextHolder.COMMENT_ITEM_KEY;
@@ -163,12 +164,12 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
     public String mEmail;
     public String mPassword;
     public String mRetypePassword;
-    public String mGender;
-    public String mDay;
-    public String mMonth;
-    public String mYear;
-    public String mCountry;
-    public String mCity;
+    public String mGender = "";
+    public String mDay = "";
+    public String mMonth = "";
+    public String mYear = "";
+    public String mCountry = "";
+    public String mCity = "";
     public String mProvider;
     public String mOauthId;
     public String mToken = "";
@@ -883,6 +884,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
                     if (isContain(object, "status")) {
                         otpStatus = object.getBoolean("status");
+                        mToken = object.getString("token");
                     }
                     if (isContain(object, "bounce_data")) {
                         otpBounceData = object.getInt("bounce_data");
@@ -899,20 +901,6 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
                         JSONObject jsonObject = object.getJSONObject("user_info");
                         UserInfo userInfo = new UserInfo();
-                        /* "user_id":42533,
-   "user_name":"abcd4077",
-   "first_name":"abcd",
-   "last_name":"xyz",
-   "total_likes":0,
-   "gold_stars":0,
-   "sliver_stars":0,
-   "photo":"",
-   "email":"strainab@007948.com",
-   "deactivated":0,
-   "founding_user":0,
-   "is_master":0,
-   "learn_about_site":0,
-   "is_top_commenter":0*/
                         userInfo.userId=jsonObject.getString("user_id");
                         userInfo.firstName=jsonObject.getString("first_name");
                         userInfo.userName=jsonObject.getString("user_name");
@@ -929,7 +917,12 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                         userInfo.isTopCommenter=jsonObject.getString("is_top_commenter");
                         Gson gson = new Gson();
                         String json = gson.toJson(userInfo);
+                        manager.setToken(mToken);
                         manager.setUserInfo(json);
+                        manager.setProfileName(userInfo.getFirstName() + " " + userInfo.getLastName());
+                        manager.setProfileImage(PROFILE_IMAGE + userInfo.getPhoto());
+                        manager.setProfileId(userInfo.getUserId());
+                        manager.setUserName(userInfo.getUserName());
                         // startActivity(new Intent(Signup.this, Liker.class));
                         Intent intent = new Intent(Signup.this, Home.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
