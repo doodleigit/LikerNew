@@ -3,6 +3,7 @@ package com.liker.android.Message.view;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.liker.android.Message.model.FriendInfo;
 import com.liker.android.R;
 
 
@@ -16,13 +17,24 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
         IN_CHAT_MODE = true;
 
-        initialFragment();
+        boolean isMessageFromProfile = getIntent().getBooleanExtra("messageFromProfile", false);
+        initialFragment(isMessageFromProfile);
     }
 
-    private void initialFragment() {
-        MessageListFragment messageListFragment = new MessageListFragment();
-        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, messageListFragment).commit();
+    private void initialFragment(boolean isMessageFromProfile) {
+        if (isMessageFromProfile) {
+            FriendInfo friendInfo = (FriendInfo) getIntent().getSerializableExtra("friendInfo");
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("friend_info", friendInfo);
+            MessagingFragment messagingFragment = new MessagingFragment();
+            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            messagingFragment.setArguments(bundle);
+            transaction.replace(R.id.container, messagingFragment).commit();
+        } else {
+            MessageListFragment messageListFragment = new MessageListFragment();
+            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, messageListFragment).commit();
+        }
     }
 
     @Override
@@ -30,4 +42,5 @@ public class MessageActivity extends AppCompatActivity {
         super.onDestroy();
         IN_CHAT_MODE = false;
     }
+
 }
