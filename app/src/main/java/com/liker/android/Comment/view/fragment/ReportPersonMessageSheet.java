@@ -193,7 +193,6 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
                         Tools.toast(getActivity(), "Message Required!", R.drawable.icon_checked);
                     }
 
-
                     // delayLoadComment(mProgressBar);
                 } else {
                     Tools.showNetworkDialog(getActivity().getSupportFragmentManager());
