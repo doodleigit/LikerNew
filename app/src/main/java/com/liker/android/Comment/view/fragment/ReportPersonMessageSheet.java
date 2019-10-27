@@ -184,7 +184,6 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
                         reportType = "2";
                         postId = item.getPostId();
                     }
-
                     message = etReportPerson.getText().toString();
 
                     if (!isNullOrWhiteSpace(message)) {

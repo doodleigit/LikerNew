@@ -29,7 +29,6 @@ public class BlockUserDialog extends DialogFragment  {
     // TODO: Implement an interface for hosts to get callbacks
     public interface BlockListener {
         public void onBlockResult(DialogFragment dlg);
-
         public void onCancelResult(DialogFragment dlg);
     }
 
@@ -60,7 +59,6 @@ public class BlockUserDialog extends DialogFragment  {
             public void onClick(DialogInterface dialog, int which) {
                 Log.d(TAG, "Positive Button click!");
                 mHost.onBlockResult(BlockUserDialog.this);
-
             }
         });
 
@@ -94,7 +92,6 @@ public class BlockUserDialog extends DialogFragment  {
 
 
     // TODO: Override onAttach to get Activity instance
-
 
     @Override
     public void onAttach(Context context) {

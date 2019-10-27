@@ -1888,7 +1888,8 @@ public class Home extends AppCompatActivity implements
     BroadcastReceiver newPostBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (active) {
+            boolean refreshForProfileBlock = intent.getBooleanExtra("block", false);
+            if (active || refreshForProfileBlock) {
                 startActivity(new Intent(getApplicationContext(), Home.class));
                 finish();
             }

@@ -67,7 +67,9 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
+import com.liker.android.Comment.model.Reason;
 import com.liker.android.Comment.model.Reply;
+import com.liker.android.Comment.model.ReportReason;
 import com.liker.android.Comment.service.CommentService;
 import com.liker.android.Comment.view.fragment.BlockUserDialog;
 import com.liker.android.Comment.view.fragment.FollowSheet;
@@ -84,6 +86,7 @@ import com.liker.android.Profile.service.ProfileService;
 import com.liker.android.R;
 import com.liker.android.Search.LikerSearch;
 import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Tools;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -143,6 +146,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     private String deviceId, userId, token, profileUserName, fullName, userImage, coverImage, allCountInfo;
     private boolean isOwnProfile, isFollow;
     private android.support.v7.widget.PopupMenu popup;
+    private boolean networkOk;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -159,7 +163,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         deviceId = manager.getDeviceId();
         userId = manager.getProfileId();
         token = manager.getToken();
-
+        networkOk = NetworkHelper.hasNetworkAccess(this);
         toolbar = findViewById(R.id.toolbar);
         scrollView = findViewById(R.id.scrollView);
         searchLayout = findViewById(R.id.search_layout);
@@ -243,45 +247,36 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 
                         if (id == R.id.blockUser) {
 
-//                            String postId = postItem.getSharedPostId();
-//                            //Call<PostShareItem> call = webService.getPostDetails(deviceId, profileId, token, userIds, postId);
-//                            Call<PostItem> call = webService.getPostDetail(deviceId, profileId, token, userIds, postId);
-//                            sendShareItemRequest(call);
-                            makeText(ProfileActivity.this, "block user", LENGTH_SHORT).show();
+                         //   fullName = userAllInfo.getFirstName() + " " + userAllInfo.getLastName();
+                          //  profileUserId = getIntent().getStringExtra("user_id");
+                            PostItem item = new PostItem();
+                            item.setUserFirstName(userAllInfo.getFirstName());
+                            item.setUserLastName(userAllInfo.getLastName());
+                            item.setPostUserid(profileUserId);
+                            App.setItem(item);
+                            BlockUserDialog blockUserDialog = new BlockUserDialog();
+                            // TODO: Use setCancelable() to make the dialog non-cancelable
+                            blockUserDialog.setCancelable(false);
+                            blockUserDialog.show(getSupportFragmentManager(), "BlockUserDialog");
+
+
                         }
 
                         if (id == R.id.reportProfile) {
-                            makeText(ProfileActivity.this, "report user", LENGTH_SHORT).show();
+                            //makeText(ProfileActivity.this, "report user", LENGTH_SHORT).show();
 
-//                            shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
-//                                @Override
-//                                public void onSuccess(Sharer.Result result) {
-//
-//                                    Toast.makeText(mContext, "Share successFull", Toast.LENGTH_SHORT).show();
-//                                }
-//
-//                                @Override
-//                                public void onCancel() {
-//                                    Toast.makeText(mContext, "Share cancel", Toast.LENGTH_SHORT).show();
-//                                }
-//
-//                                @Override
-//                                public void onError(FacebookException error) {
-//                                    Toast.makeText(mContext, error.getMessage(), Toast.LENGTH_SHORT).show();
-//                                }
-//                            });
-//
-//
-//                            if (!isNullOrEmpty(contentUrl)) {
-//                                ShareLinkContent linkContent = new ShareLinkContent.Builder()
-//                                        .setContentUrl(Uri.parse(contentUrl))
-//                                        .setQuote("")
-//                                        .build();
-//                                if (ShareDialog.canShow(ShareLinkContent.class)) {
-//
-//                                    shareDialog.show(linkContent);
-//                                }
-//                            }
+                            PostItem item = new PostItem();
+                            item.setUserFirstName(userAllInfo.getFirstName());
+                            item.setUserLastName(userAllInfo.getLastName());
+                            item.setPostUserid(profileUserId);
+                            App.setItem(item);
+
+                            if (networkOk) {
+                                Call<ReportReason> call = commentService.getReportReason(deviceId, userId, token, profileUserId, "1", userId);
+                                sendReportReason(call);
+                            } else {
+                                Tools.showNetworkDialog(getSupportFragmentManager());
+                            }
 
 
                         }
@@ -323,20 +318,47 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         });
     }
 
+    private void sendReportReason(Call<ReportReason> call) {
+        call.enqueue(new Callback<ReportReason>() {
+
+            @Override
+            public void onResponse(Call<ReportReason> mCall, Response<ReportReason> response) {
+
+
+                if (response.body() != null) {
+                    ReportReason reportReason = response.body();
+                    boolean isFollowed = reportReason.isFollowed();
+                    App.setIsFollow(isFollowed);
+                    List<Reason> reasonList = reportReason.getReason();
+                    ReportReasonSheet reportReasonSheet = ReportReasonSheet.newInstance(reasonList);
+                    reportReasonSheet.show(getSupportFragmentManager(), "ReportReasonSheet");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ReportReason> call, Throwable t) {
+                Log.d("MESSAGE: ", t.getMessage());
+
+            }
+        });
+    }
+
     private void ownProfileCheck() {
         if (userId.equals(profileUserId)) {
             isOwnProfile = true;
             ivChangeProfileImage.setVisibility(View.VISIBLE);
             ivChangeCoverImage.setVisibility(View.VISIBLE);
             followLayout.setVisibility(View.INVISIBLE);
-            moreLayout.setVisibility(View.GONE);
+            moreLayout.setVisibility(View.INVISIBLE);
+//            moreLayout.setVisibility(View.GONE);
         } else {
             isOwnProfile = false;
             ivChangeProfileImage.setVisibility(View.INVISIBLE);
             ivChangeCoverImage.setVisibility(View.INVISIBLE);
             followLayout.setVisibility(View.VISIBLE);
-          //  moreLayout.setVisibility(View.VISIBLE);
-            moreLayout.setVisibility(View.GONE);
+            moreLayout.setVisibility(View.VISIBLE);
+          //  moreLayout.setVisibility(View.GONE);
         }
     }
 
@@ -775,7 +797,8 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                             JSONObject object = new JSONObject(response.body());
                             boolean status = object.getBoolean("status");
                             if (status) {
-                                initialFragment(new PostFragment());
+                                sendBroadcast(new Intent().setAction(AppConstants.NEW_POST_ADD_BROADCAST).putExtra("block", true));
+                                finish();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -417,4 +417,5 @@ public class DataFetchingService extends Service {
             unregisterReceiver(mReceiver);
         } catch (IllegalArgumentException ignored) {}
     }
+
 }
