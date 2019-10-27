@@ -752,7 +752,7 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
                 DialogFragment dialogFragment = new LikerUserListFragment();
 
                 Bundle bundle = new Bundle();
-                bundle.putString("type_id", item.getPostId());
+                bundle.putString("type_id", item.getIsShared().equals("0") ? item.getPostId() : item.getSharedPostId());
                 bundle.putString("total_likes", item.getPostFooter().getPostTotalLike());
                 bundle.putString("liker_type", "post");
                 dialogFragment.setArguments(bundle);
