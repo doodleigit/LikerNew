@@ -203,6 +203,13 @@ public class DataFetchingService extends Service {
 
                     newMessage.setSenderData(senderData);
                     sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("type", 0)).setAction(AppConstants.NEW_MESSAGE_BROADCAST_FROM_HOME));
+                    sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("is_own", 0)).setAction(AppConstants.NEW_MESSAGE_BROADCAST));
+
+//                    Intent intent = new Intent();
+//                    intent.setAction(AppConstants.NEW_MESSAGE_BROADCAST);
+//                    intent.putExtra("new_message", (Parcelable) newMessage);
+//                    intent.putExtra("is_own", type);
+//                    getActivity().sendBroadcast(intent);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (NullPointerException ignored) {}
@@ -246,6 +253,7 @@ public class DataFetchingService extends Service {
 
                     newMessage.setSenderData(senderData);
                     sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("type", 1)).setAction(AppConstants.NEW_MESSAGE_BROADCAST_FROM_HOME));
+                    sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("is_own", 1)).setAction(AppConstants.NEW_MESSAGE_BROADCAST));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (NullPointerException ignored) {}
