@@ -1,3 +1,23 @@
+
+apply plugin: 'com.android.application'
+apply plugin: 'devicefarm'
+devicefarm {
+
+    // Required. The Project must already exist. You can create a project in the AWS console.
+    projectName "Liker-Android"
+
+    // Required. You must specify either accessKey and secretKey OR roleArn. roleArn takes precedence.
+    authentication {
+        accessKey "AKIAY23MY4J6NVQCF7EP"
+        secretKey "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"
+
+        // OR
+
+       //; roleArn "My role arn"
+    }
+}
+
+
 buildscript {
     repositories {
         maven { url 'https://plugins.gradle.org/m2/' }
@@ -13,7 +33,6 @@ repositories {
 }
 
 
-apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
