@@ -79,6 +79,8 @@ import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
+import com.liker.android.Message.model.FriendInfo;
+import com.liker.android.Message.view.MessageActivity;
 import com.liker.android.Profile.adapter.ViewPagerAdapter;
 import com.liker.android.Profile.model.UserAllInfo;
 import com.liker.android.Profile.service.ProfileDataFetchCompleteListener;
@@ -258,10 +260,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                             // TODO: Use setCancelable() to make the dialog non-cancelable
                             blockUserDialog.setCancelable(false);
                             blockUserDialog.show(getSupportFragmentManager(), "BlockUserDialog");
-
-
                         }
-
                         if (id == R.id.reportProfile) {
                             //makeText(ProfileActivity.this, "report user", LENGTH_SHORT).show();
 
@@ -281,14 +280,20 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 
                         }
                         if (id == R.id.message) {
-                            makeText(ProfileActivity.this, "message user", LENGTH_SHORT).show();
-//                            String url = "http://www.twitter.com/intent/tweet?url=" + contentUrl + "&text=" + text;
-//                            Intent i = new Intent(Intent.ACTION_VIEW);
-//                            i.setData(Uri.parse(url));
-//                            mContext.startActivity(i);
+                            String fullName = userAllInfo.getFirstName() + " " + userAllInfo.getLastName();
+                            String stars;
+                            try {
+                                stars = String.valueOf(Integer.parseInt(userAllInfo.getGoldStars()) + Integer.parseInt(userAllInfo.getSliverStars()));
+                            } catch (NumberFormatException e) {
+                                stars = "0";
+                            }
+                            FriendInfo friendInfo = new FriendInfo(userAllInfo.getUserName(), userAllInfo.getUserId(), fullName, userAllInfo.getTotalLikes(), stars);
+
+                            Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
+                            intent.putExtra("messageFromProfile", true);
+                            intent.putExtra("friendInfo", friendInfo);
+                            startActivity(intent);
                         }
-
-
                         return true;
                     }
                 });
