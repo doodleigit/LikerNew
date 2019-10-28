@@ -59,6 +59,7 @@ import com.liker.android.Tool.Tools;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 import io.socket.client.Ack;
 import io.socket.client.Socket;
@@ -107,7 +108,7 @@ public class MessagingFragment extends Fragment {
     private void initialComponent() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(AppConstants.NEW_MESSAGE_BROADCAST);
-        getActivity().registerReceiver(broadcastReceiver, filter);
+        Objects.requireNonNull(getActivity()).registerReceiver(broadcastReceiver, filter);
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getString(R.string.loading));
 
@@ -348,6 +349,6 @@ public class MessagingFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getActivity().unregisterReceiver(broadcastReceiver);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(broadcastReceiver);
     }
 }
