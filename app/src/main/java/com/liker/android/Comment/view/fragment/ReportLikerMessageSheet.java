@@ -39,6 +39,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.liker.android.Tool.Tools.isEmpty;
+import static com.liker.android.Tool.Tools.isNullOrEmpty;
 import static com.liker.android.Tool.Tools.isNullOrWhiteSpace;
 
 //import static com.doodle.Tool.Tools.isEmpty;
@@ -133,8 +134,14 @@ public class ReportLikerMessageSheet extends BottomSheetDialogFragment implement
                         PostItem item=new PostItem();
                         item=App.getItem();
                         commentId="";
-                        reportType="2";
                         postId=item.getPostId();
+                        if(!isNullOrEmpty(postId)){
+                            reportType="2";
+
+                        }else {
+                            reportType="1";
+
+                        }
                     }
                     message = etReportMessage.getText().toString();
                     if(!isNullOrWhiteSpace(message)){

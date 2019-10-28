@@ -70,11 +70,12 @@ public class FollowSheet extends BottomSheetDialogFragment implements View.OnCli
     }
 
 
-    private String message,personTitle,personSubTitle,personName;
+    private String message, personTitle, personSubTitle, personName;
     private String deviceId, profileId, token, userIds;
     private String reasonId;
     boolean networkOk;
     private CommentService commentService;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,22 +96,22 @@ public class FollowSheet extends BottomSheetDialogFragment implements View.OnCli
         if (argument != null) {
             message = argument.getString(MESSAGE_key);
             commentItem = argument.getParcelable(COMMENT_key);
-            if(!isEmpty(commentItem)){
+            if (!isEmpty(commentItem)) {
 
-                personName=commentItem.getUserFirstName()+" "+commentItem.getUserLastName();
-            }else {
-                PostItem item=new PostItem();
-                item=App.getItem();
-                personName=item.getUserFirstName()+" "+item.getUserLastName();
+                personName = commentItem.getUserFirstName() + " " + commentItem.getUserLastName();
+            } else {
+                PostItem item = new PostItem();
+                item = App.getItem();
+                personName = item.getUserFirstName() + " " + item.getUserLastName();
             }
-            personTitle="Unfollow "+personName;
-            personSubTitle="Are you sure that you want to unfollow "+ personName+" ?";
+            personTitle = "Unfollow " + personName;
+            personSubTitle = "Are you sure that you want to unfollow " + personName + " ?";
         }
     }
 
 
+    TextView tvSubTitle, tvTitle;
 
-   TextView tvSubTitle,tvTitle;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -118,13 +119,12 @@ public class FollowSheet extends BottomSheetDialogFragment implements View.OnCli
 
         root.findViewById(R.id.tvCancel).setOnClickListener(this);
         root.findViewById(R.id.tvUnfollow).setOnClickListener(this);
-        tvSubTitle=root.findViewById(R.id.tvSubTitle);
-        tvTitle=root.findViewById(R.id.tvTitle);
+        tvSubTitle = root.findViewById(R.id.tvSubTitle);
+        tvTitle = root.findViewById(R.id.tvTitle);
         tvTitle.setText(personTitle);
         tvSubTitle.setText(personSubTitle);
         return root;
     }
-
 
 
     @Override
@@ -134,34 +134,31 @@ public class FollowSheet extends BottomSheetDialogFragment implements View.OnCli
         switch (id) {
             case R.id.tvUnfollow:
 
-                if(!isEmpty(commentItem)){
+                if (!isEmpty(commentItem)) {
 //                    commentId = commentItem.getId();
-                    toId=commentItem.getUserId();
+                    toId = commentItem.getUserId();
                     //postId = commentItem.getPostId();
                     //reportType="3";
-                }else {
-                    PostItem item=new PostItem();
-                    item=App.getItem();
+                } else {
+                    PostItem item = new PostItem();
+                    item = App.getItem();
                     //commentId="";
-                    toId=item.getPostUserid();
-                  //  reportType="2";
+                    toId = item.getPostUserid();
+                    //  reportType="2";
                     //postId=item.getPostId();
                 }
 
                 Call<String> call = commentService.unfollow(deviceId, profileId, token, toId, userIds);
                 sendUnfollowRequest(call);
-
                 break;
             case R.id.tvCancel:
                 dismiss();
                 break;
         }
 
-
     }
 
     private void sendUnfollowRequest(Call<String> call) {
-
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -170,14 +167,11 @@ public class FollowSheet extends BottomSheetDialogFragment implements View.OnCli
                         try {
                             JSONObject object = new JSONObject(response.body());
                             boolean status = object.getBoolean("status");
-
                             if (status) {
                                 // adapter.notifyDataSetChanged();
-                                Tools.toast(getActivity(),"your message was successfully sent",R.drawable.icon_checked);
+                                Tools.toast(getActivity(), "your message was successfully sent", R.drawable.icon_checked);
                                 dismiss();
-
                             }
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -191,7 +185,7 @@ public class FollowSheet extends BottomSheetDialogFragment implements View.OnCli
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("message",t.getMessage());
+                Log.d("message", t.getMessage());
             }
         });
     }

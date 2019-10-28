@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/blockUser"
-        android:icon="@drawable/ic_facebook"
+        android:icon="@drawable/ic_ban_solid"
         android:title="@string/block_user" />
     <item
         android:id="@+id/reportProfile"
