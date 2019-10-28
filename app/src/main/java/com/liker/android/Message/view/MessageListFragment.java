@@ -309,11 +309,11 @@ public class MessageListFragment extends Fragment {
 
         getActivity().sendBroadcast((new Intent()).setAction(AppConstants.LIST_MESSAGE_BROADCAST));
 
-        Intent intent = new Intent();
-        intent.setAction(AppConstants.NEW_MESSAGE_BROADCAST);
-        intent.putExtra("new_message", (Parcelable) newMessage);
-        intent.putExtra("is_own", type);
-        getActivity().sendBroadcast(intent);
+//        Intent intent = new Intent();
+//        intent.setAction(AppConstants.NEW_MESSAGE_BROADCAST);
+//        intent.putExtra("new_message", (Parcelable) newMessage);
+//        intent.putExtra("is_own", type);
+//        getActivity().sendBroadcast(intent);
     }
 
     private void sendMessageListRequest() {
