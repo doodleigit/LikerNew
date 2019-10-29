@@ -920,7 +920,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
     }
 
-    int otpBounceData=-1;
+    int otpBounceData = -1;
     String otpExpire;
     boolean otpStatus;
 
@@ -979,10 +979,10 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     } else {
-                        if(otpBounceData==-1){
+                        if (otpBounceData == -1) {
                             String message = "OTP Miss Match";
                             showStatus(message);
-                        }else {
+                        } else {
                             if (otpBounceData == 1) {
                                 showStatus("Email Invalid");
                             } else if (otpBounceData == 0) {
