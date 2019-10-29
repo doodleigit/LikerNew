@@ -4,15 +4,15 @@
 
     <item
         android:id="@+id/blockUser"
-        android:icon="@drawable/ic_facebook"
+        android:icon="@drawable/ic_not_interested_black_24dp"
         android:title="@string/block_user" />
     <item
         android:id="@+id/reportProfile"
-        android:icon="@drawable/ic_twitter"
+        android:icon="@drawable/ic_description_black_24dp"
         android:title="@string/report_profile" />
 
     <item
         android:id="@+id/message"
-        android:icon="@drawable/ic_content_copy_black_24dp"
+        android:icon="@drawable/ic_email_black_24dp"
         android:title="@string/title_message" />
 </menu>
