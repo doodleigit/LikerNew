@@ -115,12 +115,12 @@ public class PrivacyAndSecurityFragment extends Fragment {
         blockUsers = new ArrayList<>();
         friends = new ArrayList<>();
 
-        privacyTwoTypes.add(new PrivacyType("Public", R.drawable.public_));
-        privacyTwoTypes.add(new PrivacyType("Nobody", R.drawable.friends));
+        privacyTwoTypes.add(new PrivacyType("Public", R.drawable.ic_public_black_24dp));
+        privacyTwoTypes.add(new PrivacyType("Nobody", R.drawable.ic_friends_12dp));
 
-        privacyThreeTypes.add(new PrivacyType("Public", R.drawable.public_));
-        privacyThreeTypes.add(new PrivacyType("Only Me", R.drawable.only_me));
-        privacyThreeTypes.add(new PrivacyType("Followers Only", R.drawable.friends));
+        privacyThreeTypes.add(new PrivacyType("Public", R.drawable.ic_public_black_24dp));
+        privacyThreeTypes.add(new PrivacyType("Only Me", R.drawable.ic_only_me_12dp));
+        privacyThreeTypes.add(new PrivacyType("Followers Only", R.drawable.ic_friends_12dp));
 
         toolbar = view.findViewById(R.id.toolbar);
 
@@ -368,19 +368,19 @@ public class PrivacyAndSecurityFragment extends Fragment {
 
     private int getTwoTypePrivacyDrawable(String type) {
         if (type.equals("1")) {
-            return R.drawable.friends;
+            return R.drawable.ic_friends_12dp;
         } else {
-            return R.drawable.public_;
+            return R.drawable.ic_public_black_24dp;
         }
     }
 
     private int getThreeTypePrivacyDrawable(String type) {
         if (type.equals("1")) {
-            return R.drawable.only_me;
+            return R.drawable.ic_only_me_12dp;
         } else if (type.equals("2")) {
-            return R.drawable.friends;
+            return R.drawable.ic_friends_12dp;
         } else {
-            return R.drawable.public_;
+            return R.drawable.ic_public_black_24dp;
         }
     }
 

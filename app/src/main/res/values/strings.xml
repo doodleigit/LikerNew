@@ -14,7 +14,7 @@
     <string name="app_name">Liker</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="copyright">Copyright \u00A9 %1$d Likeopedia, LLC</string>
-    <string name="otp_string">A verifiction code hase been sent to the email address associated with your account.Please type the code to reset your password</string>
+    <string name="otp_string">A verification code has been sent to the email address associated with your account.Please type the code to reset your password</string>
     <string name="no_internet">No Internet</string>
     <string name="facebook_app_id">1470061779929464</string>
     <string name="fb_login_protocol_scheme">fb1470061779929464</string>
@@ -25,7 +25,7 @@
 
     //menu_home
     <string name="com.twitter.sdk.android.CONSUMER_SECRET" tools:ignore="ExtraTranslation">PJUCYZZEZadnljLo8OQ22ApwG24QZx0wsbXqSnUUFBlAjHmkBY</string>
-    <string name="otp_string_signup">A verifiction code hase been sent to the email address associated with your account.Please type the code to Sign up your Account</string>
+    <string name="otp_string_signup">A verification code has been sent to the email address associated with your account.Please type the code to Sign up your Account</string>
     <string name="action_how_to_use_liker">How to use Liker</string>
     <string name="action_account_setting">Account Settings</string>
     <string name="action_find_friends">Find Followers Only</string>

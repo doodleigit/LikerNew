@@ -977,7 +977,7 @@ public class AboutFragment extends Fragment {
                         storyType = String.valueOf(i + 1);
                     }
                 }
-                tvStoryTitle.setText(storyTypes.get(position + 1));
+                tvStoryTitle.setText(types.get(position));
                 addStoryLayout.setVisibility(View.VISIBLE);
             }
 

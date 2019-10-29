@@ -149,7 +149,8 @@
         android:textColor="#333"
         android:textSize="14sp"
         android:textIsSelectable="true"
-        tools:text="@tools:sample/lorem" />
+        tools:text="@tools:sample/lorem"
+        android:visibility="gone"/>
 
     <View
         android:layout_width="match_parent"

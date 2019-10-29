@@ -90,6 +90,7 @@ public class LoginAgain extends AppCompatActivity implements View.OnClickListene
                 manager.setUserName(loginInfo.getUserName());
                 manager.setDeviceId(loginInfo.getDeviceId());
                 startActivity(new Intent(this, Home.class));
+                finish();
                 break;
         }
 

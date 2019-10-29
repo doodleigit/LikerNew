@@ -766,6 +766,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                         String message;
                         if (uploadContentType == 0) {
                             userImage = AppConstants.USER_UPLOADED_IMAGES + image;
+                            manager.setProfileImage(AppConstants.PROFILE_IMAGE + image);
                             loadProfileImage();
                             message = getString(R.string.profile_photo_has_been_updated);
                         } else {

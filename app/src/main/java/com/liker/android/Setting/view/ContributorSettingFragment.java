@@ -110,9 +110,8 @@ public class ContributorSettingFragment extends Fragment {
         // Set flex direction.
         flexboxLayoutManager.setFlexDirection(FlexDirection.ROW);
         // Set JustifyContent.
-        flexboxLayoutManager.setJustifyContent(JustifyContent.SPACE_AROUND);
+        flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START);
         selectedRecyclerView.setLayoutManager(flexboxLayoutManager);
-
 
 //        selectedRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
         selectedRecyclerView.setNestedScrollingEnabled(false);
