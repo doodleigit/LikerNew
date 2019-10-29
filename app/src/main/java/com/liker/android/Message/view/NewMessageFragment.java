@@ -98,9 +98,9 @@ public class NewMessageFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getContext());
         toolbar = view.findViewById(R.id.toolbar);
         svToUser = view.findViewById(R.id.to_user);
-        svToUser.setIconifiedByDefault(true);
+        svToUser.setIconifiedByDefault(false);
         svToUser.setFocusable(true);
-        svToUser.setIconified(false);
+//        svToUser.setIconified(false);
         progressBar = view.findViewById(R.id.progress_bar);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(layoutManager);

@@ -182,7 +182,7 @@ public class TwitterLogin extends AppCompatActivity {
                     ///load image using Picasso
                     Picasso.with(TwitterLogin.this)
                             .load(imageProfileUrl)
-                            .placeholder(R.mipmap.ic_launcher_round)
+                            .placeholder(R.mipmap.ic_launcher_round_two)
                             .into(userProfileImageView);
                 }
 

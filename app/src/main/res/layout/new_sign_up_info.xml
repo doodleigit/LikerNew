@@ -205,27 +205,40 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnFinish"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginRight="50dp"
-        android:background="@drawable/btn_round_outline"
-        android:text="@string/finish"
-        android:textAllCaps="false"
-        android:textColor="@android:color/white" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="50dp">
 
-    <TextView
-        android:id="@+id/tvAcceptFinish"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="bottom|center"
-        android:text="By signing up you confirm that you\n
-accept all Terms of Service" />
+            <Button
+                android:id="@+id/btnFinish"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_round_outline"
+                android:text="@string/finish"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvAcceptFinish"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="bottom|center"
+            android:text="By signing up you confirm that you\n
+    accept all Terms of Service" />
 
     </LinearLayout>
 

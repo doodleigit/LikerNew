@@ -260,7 +260,7 @@ public class ReplyYoutubeHolder extends RecyclerView.ViewHolder {
         this.reply = reply;
         //  userPostId = item.getPostId();
 
-//        commentText = commentItem.getCommentText();
+        commentText = replyItem.getCommentText();
         commentUserName = replyItem.getFirstName() + " " + replyItem.getLastName();
         commentUserImage = replyItem.getUserPhoto();
         commentImage = replyItem.getCommentImage();

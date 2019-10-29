@@ -34,6 +34,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TabWidget;
@@ -86,6 +87,7 @@ import com.liker.android.Authentication.view.fragment.ResendEmail;
 import com.liker.android.Authentication.viewmodel.SignupViewModel;
 import com.liker.android.Home.view.activity.Home;
 import com.liker.android.R;
+import com.liker.android.Setting.view.SettingActivity;
 import com.liker.android.Tool.ClearableEditText;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
@@ -136,6 +138,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
     private String firstName, lastName, email, password, confirmPassword;
     private Button btnSignUp, btnFinish, btnOTPContinue;
     private Spinner spinnerDay, spinnerMonth, spinnerYear, spinnerCountry, spinnerState;
+    private ProgressBar progressBar;
 
     private String[] dayArr = {"Select", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
     private String[] monthArr = {"Month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
@@ -144,9 +147,6 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
     private TextView tvAcceptTerms, tvAcceptFinish, tvHeader, tvOr;
     private String originalText, originalTextFinish;
-    private ImageView imgAboutSignUp;
-    private boolean networkok;
-    private String url = "https://www.liker.com/terms";
     private boolean networkOk;
 
     TextInputLayout firstNameLayout;
@@ -285,6 +285,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
         spinnerYear = findViewById(R.id.spinnerYear);
         spinnerCountry = findViewById(R.id.spinnerCountry);
         spinnerState = findViewById(R.id.spinnerState);
+        progressBar = findViewById(R.id.progress_bar);
         findViewById(R.id.imgAboutSignUp).setOnClickListener(this);
         findViewById(R.id.ivCancelSignup).setOnClickListener(this);
         findViewById(R.id.ivPreviousSignup).setOnClickListener(this);
@@ -432,6 +433,22 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
                 // TODO Auto-generated method stub
+
+            }
+        });
+
+        spinnerState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
+                CitySpinner city = (CitySpinner) parent.getSelectedItem();
+                String cityId = city.getId();
+                if (!cityId.equals("0")) {
+                    mCity = cityId;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
         });
@@ -784,6 +801,16 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
         }
     }
 
+    private void signUpDisable(boolean disable) {
+        if (disable) {
+            btnFinish.setBackgroundResource(R.drawable.btn_round_outline_disable);
+            btnFinish.setEnabled(false);
+        } else {
+            btnFinish.setBackgroundResource(R.drawable.btn_round_outline);
+            btnFinish.setEnabled(true);
+        }
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -806,10 +833,14 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             case R.id.btnFinish:
                 if (viewModel.validatePasswordField(etPassword) && viewModel.validateConfirmPasswordField(etConFirmPassword) && !mGender.isEmpty() && !mCountry.isEmpty() && !mDay.isEmpty() && !mMonth.isEmpty() &&
                         !mYear.isEmpty() && !mCity.isEmpty()) {
+                    progressBar.setVisibility(View.VISIBLE);
                     if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
+                        signUpDisable(true);
                         requestData(mFirstName, mlastName, mEmail, mPassword, mRetypePassword, mGender, mCountry, mDay, mMonth, mYear, mCity, mProvider, mOauthId, mToken, mSecret, mSocialName, isApps, mImgUrl);
                     } else {
                         showSnackbar(getString(R.string.no_internet));
+                        progressBar.setVisibility(View.GONE);
+                        signUpDisable(false);
                     }
                 } else {
                     showSnackbar(getString(R.string.all_field_required));
@@ -847,10 +878,10 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                 finish();
                 break;
             case R.id.tvAcceptTerms:
-                goBrowser(url);
+                goBrowser();
                 break;
             case R.id.tvAcceptFinish:
-                goBrowser(url);
+                goBrowser();
                 break;
             case R.id.btnOTPContinue:
                 requestForOTPLogin();
@@ -982,26 +1013,12 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
     }
 
-    public void goBrowser(String url) {
-        if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
-            if (!url.startsWith("http://") && !url.startsWith("https://"))
-                url = "http://" + url;
-            try {
-                Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(myIntent);
-            } catch (ActivityNotFoundException e) {
-                Toast.makeText(this, "No application can handle this request."
-                        + " Please install a webBrowser", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
-
-        } else {
-            Toast.makeText(this, R.string.no_internet, Toast.LENGTH_SHORT).show();
-        }
-
-        // finish();
+    public void goBrowser() {
+        Intent termsIntent = new Intent(this, SettingActivity.class);
+        termsIntent.putExtra("type", getString(R.string.terms_of_services));
+        termsIntent.putExtra("link", getString(R.string.terms_of_services_link));
+        startActivity(termsIntent);
     }
-
 
     private void showSnackbar(String message) {
         Snackbar snackbar = Snackbar
@@ -1123,13 +1140,15 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                     e.printStackTrace();
                 }
                 Log.d("Message", message);
-
-
+                progressBar.setVisibility(View.GONE);
+                signUpDisable(false);
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.d("message", t.getMessage());
+                progressBar.setVisibility(View.GONE);
+                signUpDisable(false);
             }
         });
     }
@@ -1161,7 +1180,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                     for (Data item : dataList
                     ) {
                         String id = item.getId();
-                        mCity = id;
+//                        mCity = id;
                         String name = item.getName();
                         citySpinnerList.add(new CitySpinner(id, name));
                     }

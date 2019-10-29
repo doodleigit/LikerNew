@@ -97,7 +97,7 @@
                             android:id="@+id/friend_request_privacy_icon"
                             android:layout_width="15dp"
                             android:layout_height="15dp"
-                            android:src="@drawable/public_" />
+                            android:src="@drawable/ic_public_black_24dp" />
 
                         <ImageView
                             android:layout_width="15dp"
@@ -153,7 +153,7 @@
                             android:id="@+id/post_on_wall_privacy_icon"
                             android:layout_width="15dp"
                             android:layout_height="15dp"
-                            android:src="@drawable/public_" />
+                            android:src="@drawable/ic_public_black_24dp" />
 
                         <ImageView
                             android:layout_width="15dp"
@@ -209,7 +209,7 @@
                             android:id="@+id/friend_list_privacy_icon"
                             android:layout_width="15dp"
                             android:layout_height="15dp"
-                            android:src="@drawable/public_" />
+                            android:src="@drawable/ic_public_black_24dp" />
 
                         <ImageView
                             android:layout_width="15dp"
@@ -265,7 +265,7 @@
                             android:id="@+id/photos_privacy_icon"
                             android:layout_width="15dp"
                             android:layout_height="15dp"
-                            android:src="@drawable/public_" />
+                            android:src="@drawable/ic_public_black_24dp" />
 
                         <ImageView
                             android:layout_width="15dp"
@@ -321,7 +321,7 @@
                             android:id="@+id/message_privacy_icon"
                             android:layout_width="15dp"
                             android:layout_height="15dp"
-                            android:src="@drawable/public_" />
+                            android:src="@drawable/ic_public_black_24dp" />
 
                         <ImageView
                             android:layout_width="15dp"

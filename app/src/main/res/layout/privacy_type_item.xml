@@ -15,7 +15,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:padding="5dp"
-            android:src="@drawable/public_" />
+            android:src="@drawable/ic_public_black_24dp" />
 
         <TextView
             android:id="@+id/privacy_type"

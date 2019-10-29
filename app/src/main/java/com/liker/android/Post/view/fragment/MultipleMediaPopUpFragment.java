@@ -141,6 +141,7 @@ import static com.liker.android.Tool.Tools.dismissDialog;
 import static com.liker.android.Tool.Tools.getDomainName;
 import static com.liker.android.Tool.Tools.getSpannableStringBuilder;
 import static com.liker.android.Tool.Tools.isNullOrEmpty;
+import static com.liker.android.Tool.Tools.readMoreText;
 import static com.liker.android.Tool.Tools.sendNotificationRequest;
 import static com.liker.android.Tool.Tools.showBlockUser;
 import static java.lang.Integer.parseInt;
@@ -154,7 +155,7 @@ public class MultipleMediaPopUpFragment extends Fragment {
     private EmojiTextView tvCommentMessage;
     private TextView tvHeaderInfo, tvPostTime, tvPostUserName, tvPostLinkTitle, tvPostLinkDescription, tvPostLinkHost, tvImgShareCount, tvPostLikeCount, tvCommentCount, tvCommentUserName, tvCommentTime, tvCommentLike, tvCommentReply, tvCountCommentLike;
     private CircleImageView imagePostUser, imageCommentUser;
-    private ReadMoreTextView tvPostContent;
+    private TextView tvPostContent;
     private EmojiTextView tvPostEmojiContent;
     private ImageView imgLinkScript, imagePostPermission, imagePostShare, imagePermission, imgLike, imageCommentLikeThumb, imagePostComment, star1, star2, star3, star4, star5, star6, star7, star8,
             star9, star10, star11, star12, star13, star14, star15, star16;
@@ -347,10 +348,9 @@ public class MultipleMediaPopUpFragment extends Fragment {
         } else {
             tvPostEmojiContent.setVisibility(View.GONE);
             tvPostContent.setVisibility(View.VISIBLE);
-            tvPostContent.setText(item.getPostText());
+
+            readMoreText(getContext(), tvPostContent, text);
             Linkify.addLinks(tvPostContent, Linkify.ALL);
-            //set user name in blue color and remove underline from the textview
-            Tools.stripUnderlines(tvPostContent);
 
         }
 
