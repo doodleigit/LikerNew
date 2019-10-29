@@ -38,7 +38,7 @@ public class AppConstants {
     public static final String SOCKET_WEB = "https://node.liker.com:7800";
     public static final String SOCKET_MESSAGE = "https://node.liker.com:7801";
     public static final String SOCKET_VIDEO = "https://node.liker.com:7806";
-    public static final String FACEBOOK_SHARE = "https://www.api.liker.com/public/posts/";
+    public static final String FACEBOOK_SHARE = "https://www.liker.com/public/posts/";
     public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
     public static final String FACEBOOK_INVITATION = "https://www.liker.com/settings/fbinvite/";
     public static final String BASE_URL_LOCATION = "https://www.api.liker.com/";

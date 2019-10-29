@@ -270,7 +270,7 @@ public class PostNew extends AppCompatActivity implements
     private int countBigImages = 0;
     private boolean noThumb;
     private TextCrawler textCrawler;
-//    TextCrawler textCrawler = new TextCrawler();
+    //    TextCrawler textCrawler = new TextCrawler();
     boolean isLinkScript;
     List<String> extractedUrls = new ArrayList<>();
     private LinearLayout linkScriptContainer;
@@ -686,7 +686,7 @@ public class PostNew extends AppCompatActivity implements
                   /*  releasePreviewArea();
                     rvLinkScriptShow = false;
                     linkScriptToggle();*/
-                    myUrl="";
+                    myUrl = "";
                     if (!isNullOrEmpty(contentTitle)) {
                         //  makeText(PostNew.this, "Button Enable-1!", LENGTH_SHORT).show();
                     }
@@ -709,14 +709,14 @@ public class PostNew extends AppCompatActivity implements
 
 
                 }
-                if (!isLinkScript && extractedUrls.size() == 1){
+                if (!isLinkScript && extractedUrls.size() == 1) {
                     for (String url : extractedUrls) {
 
-                           newUrl=url;
+                        newUrl = url;
                         if (NetworkHelper.hasNetworkAccess(PostNew.this)) {
                             progressDialog.show();
                             Call<String> call = webService.isDuplicateLink(deviceId, profileId, token, userIds, "3", url);
-                            sendIsDuplicateUrl(call,url);
+                            sendIsDuplicateUrl(call, url);
                         } else {
                             Tools.showNetworkDialog(getSupportFragmentManager());
                             progressDialog.dismiss();
@@ -784,38 +784,37 @@ public class PostNew extends AppCompatActivity implements
 
     private void sendIsDuplicateUrl(Call<String> call, String url) {
 
-            call.enqueue(new Callback<String>() {
+        call.enqueue(new Callback<String>() {
 
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
 
-                    if (response.isSuccessful()) {
-                        if (response.body() != null) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
 
-                            try {
-                                JSONObject object = new JSONObject(response.body());
-                                boolean status = object.getBoolean("status");
-                                if (status) {
-                                    toast(PostNew.this,"Sorry! You have already shared this link. Please try a different link.",R.drawable.ic_warning_black_24dp);
-                                } else {
-                                    Call<LinkScrapItem> callLink = webService.linkScrapUrl(deviceId, profileId, token,url);
-                                    sendLinkScrapRequest(callLink);
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        try {
+                            JSONObject object = new JSONObject(response.body());
+                            boolean status = object.getBoolean("status");
+                            if (status) {
+                                toast(PostNew.this, "Sorry! You have already shared this link. Please try a different link.", R.drawable.ic_warning_black_24dp);
+                            } else {
+                                Call<LinkScrapItem> callLink = webService.linkScrapUrl(deviceId, profileId, token, url);
+                                sendLinkScrapRequest(callLink);
                             }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
+            }
 
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Log.d(TAG, t.getMessage());
-                    progressDialog.dismiss();
-                }
-            });
-
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+                progressDialog.dismiss();
+            }
+        });
 
 
     }
@@ -828,12 +827,12 @@ public class PostNew extends AppCompatActivity implements
             @Override
             public void onResponse(Call<LinkScrapItem> call, Response<LinkScrapItem> response) {
 
-                LinkScrapItem linkScrapItem=response.body();
-                contentType=linkScrapItem.getContentType();
-                if (contentType==3){
-                    status=3;
-                }else if (contentType==4){
-                    status=4;
+                LinkScrapItem linkScrapItem = response.body();
+                contentType = linkScrapItem.getContentType();
+                if (contentType == 3) {
+                    status = 3;
+                } else if (contentType == 4) {
+                    status = 4;
                 }
                 urlscrapting(linkScrapItem);
                 progressDialog.dismiss();
@@ -1231,7 +1230,7 @@ public class PostNew extends AppCompatActivity implements
                         getSystemService(Context.INPUT_METHOD_SERVICE);
                 keyboard.showSoftInput(editPostMessage, 0);
             }
-        },200);
+        }, 200);
     }
 
 
@@ -1298,7 +1297,7 @@ public class PostNew extends AppCompatActivity implements
                 }
                 break;
             case R.id.tvSubmitPost:
-                if(contentType==0){
+                if (contentType == 0) {
                     checkContentType();
                 }
                 if (contentTitle.isEmpty()) {
@@ -1416,7 +1415,7 @@ public class PostNew extends AppCompatActivity implements
             } else if (contentTitle.length() > 0 && isYoutubeURL) {
                 contentType = 4;
                 status = 4;
-            } */else if (contentTitle.length() > 0 && postVideos.size() > 0) {
+            } */ else if (contentTitle.length() > 0 && postVideos.size() > 0) {
                 contentType = 2;
                 status = 2;
             } else {
@@ -1433,7 +1432,6 @@ public class PostNew extends AppCompatActivity implements
                         mentionMessage += lastPlainText;
                         contentTitle = mentionMessage;
                     }
-
 
                 }
             }
@@ -1482,7 +1480,7 @@ public class PostNew extends AppCompatActivity implements
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.i("Response", response.body().toString());
                 //Toast.makeText()
-                          if (response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     if (response.body() != null) {
 
                         try {
@@ -1799,6 +1797,8 @@ public class PostNew extends AppCompatActivity implements
             uri = data.getData();
             if (EasyPermissions.hasPermissions(PostNew.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 // imageUri = getVideoUri();
+                if (uri == null)
+                    return;
                 pathToStoredVideo = getRealPathFromURIPath(uri, PostNew.this);
                 //imageUri = getImageUri();
 
@@ -1877,11 +1877,15 @@ public class PostNew extends AppCompatActivity implements
     private String getRealPathFromURIPath(Uri contentURI, Activity activity) {
         Cursor cursor = activity.getContentResolver().query(contentURI, null, null, null, null);
         if (cursor == null) {
-            return contentURI.getPath();
+            SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            String m_curentDateandTime = m_sdf.format(new Date());
+            return contentURI.getPath()+m_curentDateandTime;
         } else {
             cursor.moveToFirst();
             int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            return cursor.getString(idx);
+            String result = cursor.getString(idx);
+            cursor.close();
+            return result;
         }
     }
 
@@ -2164,10 +2168,8 @@ public class PostNew extends AppCompatActivity implements
 
                                 // String message = "You have already posted it .";
                                 //Tools.showCustomToast(PostNew.this, mView, message, Gravity.CENTER);
-
                                 progressDialog.show();
                                 progressDialog.dismiss();
-
                                 // String videoPath = "file://" + filePath;
                                 PostVideo postVideo = new PostVideo();
                                 postVideo.setVideoPath(videoPath);
@@ -2180,7 +2182,6 @@ public class PostNew extends AppCompatActivity implements
                                 mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                                 mediaRecyclerView.setAdapter(mediaAdapter);
 
-
                             } else {
 
                                 if (!isNullOrEmpty(filePath)) {
@@ -2192,7 +2193,6 @@ public class PostNew extends AppCompatActivity implements
                                     sendUploadVideoRequest(mediaCall);
 
                                     progressDialog.show();
-
                                     // String videoPath = "file://" + filePath;
                                     PostVideo postVideo = new PostVideo();
                                     postVideo.setVideoPath(videoPath);
@@ -2205,9 +2205,7 @@ public class PostNew extends AppCompatActivity implements
                                     mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                                     mediaRecyclerView.setAdapter(mediaAdapter);
 
-
                                 }
-
 
                                 //     String message = "Add gallery successfully!";
                                 //     Tools.showCustomToast(PostNew.this, mView, message, Gravity.CENTER);
@@ -2355,7 +2353,6 @@ public class PostNew extends AppCompatActivity implements
     private void sendIsDuplicateImageRequest(Call<String> call, String imagePath, String fileEncoded, String imageFilePath) {
         call.enqueue(new Callback<String>() {
 
-
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.i("Response", response.body().toString());
@@ -2368,7 +2365,6 @@ public class PostNew extends AppCompatActivity implements
                             boolean status = object.getBoolean("status");
                             if (status) {
 
-
                                 // String message = "You have already posted it .";
                                 //Tools.showCustomToast(PostNew.this, mView, message, Gravity.CENTER);
 
@@ -2380,7 +2376,6 @@ public class PostNew extends AppCompatActivity implements
                                 progressView.setVisibility(View.GONE);
                                 progressView.stopAnimation();
 
-
                             } else {
 
                                 if (!isNullOrEmpty(imageFilePath)) {
@@ -2390,14 +2385,10 @@ public class PostNew extends AppCompatActivity implements
                                     MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
                                     Call<String> mediaCall = webService.addPhoto(deviceId, profileId, token, fileToUpload);
                                     addPhotoRequest(mediaCall, fileEncoded);
-
                                     progressDialog.show();
                                     //  progressDialog.setCancelable(false);
-
                                     postImages.add(new PostImage(imagePath, "", fileEncoded, false));
-
                                     if (postImages.size() > 0)
-
                                         rvMediaShow = true;
                                     mediaRecyclerViewToggle();
                                     mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
@@ -2406,7 +2397,6 @@ public class PostNew extends AppCompatActivity implements
                                     progressView.stopAnimation();
 
                                 }
-
 
 //                                String message = "Add gallery successfully!";
 //                                Tools.showCustomToast(PostNew.this, mView, message, Gravity.CENTER);
@@ -2620,7 +2610,6 @@ public class PostNew extends AppCompatActivity implements
 //        private LinearLayout linearLayout;
 //        private View loading;
 //        private ImageView imageView;
-
         @Override
         public void onPre() {
             hideSoftKeyboard();
@@ -2903,7 +2892,6 @@ public class PostNew extends AppCompatActivity implements
         }
 
 
-
     };
 
     private void urlscrapting(LinkScrapItem sourceContent) {
@@ -2936,9 +2924,6 @@ public class PostNew extends AppCompatActivity implements
 
         dropPreview.addView(mainView);
         linearLayout.removeAllViews();
-
-
-
 
 
         //  postButton.setVisibility(View.VISIBLE);
@@ -3066,6 +3051,9 @@ public class PostNew extends AppCompatActivity implements
             @Override
             public void onClick(View arg0) {
                 releasePreviewArea();
+                contentType = 1;
+                status = 1;
+
             }
         });
 
@@ -3147,8 +3135,8 @@ public class PostNew extends AppCompatActivity implements
         currentCannonicalUrl = sourceContent.getHost();
         contentHost = currentCannonicalUrl;
 
-        for (ImageItem temp:sourceContent.getImages()) {
-            contentLinkImage =temp.getImg();
+        for (ImageItem temp : sourceContent.getImages()) {
+            contentLinkImage = temp.getImg();
         }
 
         LinkScriptItem scriptItem = new LinkScriptItem(currentImage, currentTitle, currentDescription, currentUrl);
@@ -3156,6 +3144,7 @@ public class PostNew extends AppCompatActivity implements
         LinkScriptAdapter linkScriptAdapter = new LinkScriptAdapter(PostNew.this, scriptItemList);
         rvLinkScript.setAdapter(linkScriptAdapter);
     }
+
     /**
      * Hide keyboard
      */
@@ -3231,11 +3220,11 @@ public class PostNew extends AppCompatActivity implements
      * Change the current image in image set
      */
     private void changeUrlImage(Button previousButton, Button forwardButton,
-                             final int index, LinkScrapItem sourceContent,
-                             TextView countTextView, ImageView imageSet, ImageItem imageItem,
-                             final int current) {
+                                final int index, LinkScrapItem sourceContent,
+                                TextView countTextView, ImageView imageSet, ImageItem imageItem,
+                                final int current) {
 
-        String url=imageItem.getImg();
+        String url = imageItem.getImg();
         if (currentImageSet[index] != null) {
             currentImage = currentImageSet[index];
             imageSet.setImageBitmap(currentImage);

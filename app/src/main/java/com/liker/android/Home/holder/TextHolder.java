@@ -518,7 +518,9 @@ public class TextHolder extends RecyclerView.ViewHolder {
 
         }
 
-        if (mentionUrl.size() > 0 && extractMentionText(item).trim().length() > 0) {
+
+
+        if (mentionUrl.size() > 0 && nameBuilder.toString().length() > 0) {
 
             full_text = extractMentionText(item).trim();
 
@@ -576,6 +578,8 @@ public class TextHolder extends RecyclerView.ViewHolder {
             } else {
                 tvPostEmojiContent.setVisibility(View.GONE);
                 tvPostContent.setVisibility(View.VISIBLE);
+
+
                 String nameStr = nameBuilder.toString();
                 String[] mentionArr = nameStr.split(" ");
 
@@ -625,6 +629,7 @@ public class TextHolder extends RecyclerView.ViewHolder {
                 }
                 text = str.toString();
                 tvPostContent.setText(str);
+
             }
         }
 

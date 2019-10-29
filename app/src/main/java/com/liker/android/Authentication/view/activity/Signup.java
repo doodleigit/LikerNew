@@ -89,6 +89,7 @@ import com.liker.android.R;
 import com.liker.android.Tool.ClearableEditText;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
+import com.onesignal.OneSignal;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -240,6 +241,20 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
         socialInfo = new SocialInfo();
         networkOk = NetworkHelper.hasNetworkAccess(this);
         manager = new PrefManager(this);
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String deviceId, String registrationId) {
+                Log.d("debug", "User:" + deviceId);
+                manager.setDeviceId(deviceId);
+                if (registrationId != null)
+                    Log.d("debug", "registrationId:" + registrationId);
+            }
+        });
         mDeviceId = manager.getDeviceId();
         etFirstName = (ClearableEditText) findViewById(R.id.etFirstName);
 
@@ -274,6 +289,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
         findViewById(R.id.ivCancelSignup).setOnClickListener(this);
         findViewById(R.id.ivPreviousSignup).setOnClickListener(this);
         findViewById(R.id.ivOTPCancel).setOnClickListener(this);
+        findViewById(R.id.tvResendOTP).setOnClickListener(this);
         btnOTPContinue = findViewById(R.id.btnOTPContinue);
         btnOTPContinue.setOnClickListener(this);
         firstNameLayout = (TextInputLayout) findViewById(R.id.firstNameLayout);
@@ -839,6 +855,11 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             case R.id.btnOTPContinue:
                 requestForOTPLogin();
                 break;
+            case R.id.tvResendOTP:
+                String msg = "Resend OTP Code.";
+                ResendEmail resendEmail = ResendEmail.newInstance(msg);
+                resendEmail.show(getSupportFragmentManager(), "ResendEmail");
+                break;
             case R.id.fbSignUp:
                 facebookLogin();
                 break;
@@ -868,7 +889,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
     }
 
-    int otpBounceData;
+    int otpBounceData=-1;
     String otpExpire;
     boolean otpStatus;
 
@@ -881,10 +902,9 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
                 try {
                     JSONObject object = new JSONObject(data);
-
                     if (isContain(object, "status")) {
                         otpStatus = object.getBoolean("status");
-                        mToken = object.getString("token");
+
                     }
                     if (isContain(object, "bounce_data")) {
                         otpBounceData = object.getInt("bounce_data");
@@ -898,23 +918,23 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                     }
 
                     if (otpStatus) {
-
+                        mToken = object.getString("token");
                         JSONObject jsonObject = object.getJSONObject("user_info");
                         UserInfo userInfo = new UserInfo();
-                        userInfo.userId=jsonObject.getString("user_id");
-                        userInfo.firstName=jsonObject.getString("first_name");
-                        userInfo.userName=jsonObject.getString("user_name");
-                        userInfo.lastName=jsonObject.getString("last_name");
-                        userInfo.totalLikes=jsonObject.getString("total_likes");
-                        userInfo.goldStars=jsonObject.getString("gold_stars");
-                        userInfo.sliverStars=jsonObject.getString("sliver_stars");
-                        userInfo.photo=jsonObject.getString("photo");
-                        userInfo.email=jsonObject.getString("email");
-                        userInfo.deactivated=jsonObject.getString("deactivated");
-                        userInfo.foundingUser=jsonObject.getString("founding_user");
-                        userInfo.isMaster=jsonObject.getString("is_master");
-                        userInfo.learnAboutSite=jsonObject.getString("learn_about_site");
-                        userInfo.isTopCommenter=jsonObject.getString("is_top_commenter");
+                        userInfo.userId = jsonObject.getString("user_id");
+                        userInfo.firstName = jsonObject.getString("first_name");
+                        userInfo.userName = jsonObject.getString("user_name");
+                        userInfo.lastName = jsonObject.getString("last_name");
+                        userInfo.totalLikes = jsonObject.getString("total_likes");
+                        userInfo.goldStars = jsonObject.getString("gold_stars");
+                        userInfo.sliverStars = jsonObject.getString("sliver_stars");
+                        userInfo.photo = jsonObject.getString("photo");
+                        userInfo.email = jsonObject.getString("email");
+                        userInfo.deactivated = jsonObject.getString("deactivated");
+                        userInfo.foundingUser = jsonObject.getString("founding_user");
+                        userInfo.isMaster = jsonObject.getString("is_master");
+                        userInfo.learnAboutSite = jsonObject.getString("learn_about_site");
+                        userInfo.isTopCommenter = jsonObject.getString("is_top_commenter");
                         Gson gson = new Gson();
                         String json = gson.toJson(userInfo);
                         manager.setToken(mToken);
@@ -928,24 +948,26 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     } else {
-
-                        if (otpBounceData == 1) {
-                            showStatus("Email Invalid");
-                        } else if (otpBounceData == 0) {
-                            Toast.makeText(Signup.this, "Your OTP Expire", Toast.LENGTH_SHORT).show();
-                            showStatus("Your OTP Expire");
-                            String msg = "Resend OTP Code.";
-                            ResendEmail resendEmail = ResendEmail.newInstance(msg);
-                            resendEmail.show(getSupportFragmentManager(), "ResendEmail");
-
-                        } else {
+                        if(otpBounceData==-1){
                             String message = "OTP Miss Match";
                             showStatus(message);
+                        }else {
+                            if (otpBounceData == 1) {
+                                showStatus("Email Invalid");
+                            } else if (otpBounceData == 0) {
+                                Toast.makeText(Signup.this, "Your OTP Expire", Toast.LENGTH_SHORT).show();
+                                showStatus("Your OTP Expire");
+                                String msg = "Resend OTP Code.";
+                                ResendEmail resendEmail = ResendEmail.newInstance(msg);
+                                resendEmail.show(getSupportFragmentManager(), "ResendEmail");
+
+                            } else {
+                                String message = "OTP Miss Match";
+                                showStatus(message);
+                            }
                         }
 
                     }
-
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

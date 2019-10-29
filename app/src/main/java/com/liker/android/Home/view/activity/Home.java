@@ -961,6 +961,7 @@ public class Home extends AppCompatActivity implements
         progressDialog.show();
     }
 
+
     private void hideProgressBar() {
         progressDialog.dismiss();
     }
@@ -1375,6 +1376,9 @@ public class Home extends AppCompatActivity implements
         super.onPause();
         JZVideoPlayer.releaseAllVideos();
 //        unregisterReceiver(newPostBroadcastReceiver);
+        if (  progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override
@@ -1384,6 +1388,9 @@ public class Home extends AppCompatActivity implements
         unregisterReceiver(filterBroadcast);
         unregisterReceiver(newPostBroadcastReceiver);
         Tools.dismissDialog();
+        if (  progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override

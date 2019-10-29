@@ -1232,6 +1232,8 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
             @Override
             public void onClick(View arg0) {
                 releasePreviewArea();
+                contentType = 1;
+                status = 1;
             }
         });
 
@@ -1851,13 +1853,13 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
             if (contentTitle.length() > 0 && postImages.size() > 0) {
                 contentType = 2;
                 status = 2;
-            } else if (contentTitle.length() > 0 && extractedUrls.size() > 0) {
+            }/* else if (contentTitle.length() > 0 && extractedUrls.size() > 0) {
                 contentType = 3;
                 status = 3;
             } else if (contentTitle.length() > 0 && isYoutubeURL) {
                 contentType = 4;
                 status = 4;
-            } else if (contentTitle.length() > 0 && postVideos.size() > 0) {
+            }*/ else if (contentTitle.length() > 0 && postVideos.size() > 0) {
                 contentType = 2;
                 status = 2;
             } else {
@@ -2274,13 +2276,14 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
             }
         }
 
-
     }
 
     private String getRealPathFromURIPath(Uri contentURI, Activity activity) {
         Cursor cursor = activity.getContentResolver().query(contentURI, null, null, null, null);
         if (cursor == null) {
-            return contentURI.getPath();
+            SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            String m_curentDateandTime = m_sdf.format(new Date());
+            return contentURI.getPath()+m_curentDateandTime;
         } else {
             cursor.moveToFirst();
             int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
