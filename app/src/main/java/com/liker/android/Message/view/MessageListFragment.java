@@ -81,7 +81,7 @@ public class MessageListFragment extends Fragment {
     private MessageListAdapter messageListAdapter;
     private ArrayList<ChatUser> chatUsers;
     private String deviceId, profileId, token, userIds;
-    int limit = 10;
+    int limit = 20;
     int offset = 0;
     String searchKey = "";
     private boolean isScrolling;
@@ -327,7 +327,7 @@ public class MessageListFragment extends Fragment {
                 Message message = response.body();
                 if (message != null) {
                     chatUsers.addAll(message.getChatUsers());
-                    offset += 10;
+                    offset += 20;
                 }
                 messageListAdapter.notifyDataSetChanged();
                 progressDialog.hide();
@@ -353,7 +353,7 @@ public class MessageListFragment extends Fragment {
                 if (message != null) {
                     chatUsers.addAll(message.getChatUsers());
                     messageListAdapter.notifyDataSetChanged();
-                    offset += 10;
+                    offset += 20;
                 }
                 progressBar.setVisibility(View.GONE);
             }

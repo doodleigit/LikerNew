@@ -25,6 +25,7 @@ import android.text.util.Linkify;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -111,6 +112,7 @@ public class ReplyYoutubeHolder extends RecyclerView.ViewHolder {
     public ImageView star1, star2, star3, star4, star5, star6, star7, star8,
             star9, star10, star11, star12, star13, star14, star15, star16;
     public LinearLayout postBodyLayer, youtubeHold;
+    private FrameLayout layout;
     private Drawable mDrawable;
 
 
@@ -208,6 +210,7 @@ public class ReplyYoutubeHolder extends RecyclerView.ViewHolder {
         tvLinkHost = itemView.findViewById(R.id.tvLinkHost);
         tvDescription = itemView.findViewById(R.id.tvDescription);
         youtubeHold = itemView.findViewById(R.id.youtubeHold);
+        layout = itemView.findViewById(R.id.layout);
 
         imagePostCommenting = itemView.findViewById(R.id.image_post);
 
@@ -279,44 +282,50 @@ public class ReplyYoutubeHolder extends RecyclerView.ViewHolder {
 
         LinkData linkItem = replyItem.getLinkData();
         if (!isEmpty(linkItem)) {
-            String imageName = linkItem.getImageName();
-            String linkFullUrl = linkItem.getLinkFullUrl();
-            String linkTitle = linkItem.getLinkTitle();
-            tvCommentMessage.setText(linkFullUrl);
-            Linkify.addLinks(tvCommentMessage, Linkify.ALL);
-            //set user name in blue color and remove underline from the textview
-            Tools.stripUnderlines(tvCommentMessage);
-            try {
-                if (!isNullOrEmpty(linkFullUrl)) {
-                    String domainName = getDomainName(linkFullUrl);
-                    tvLinkHost.setText(domainName);
-                }
+            if (linkItem.getLinkFullUrl() == null || linkItem.getImageName() == null) {
+                layout.setVisibility(View.GONE);
+            } else {
+                layout.setVisibility(View.VISIBLE);
+                String imageName = linkItem.getImageName();
+                String linkFullUrl = linkItem.getLinkFullUrl();
+                String linkTitle = linkItem.getLinkTitle();
+                tvCommentMessage.setText(linkFullUrl);
+                try {
+                    if (!isNullOrEmpty(linkFullUrl)) {
+                        String domainName = getDomainName(linkFullUrl);
+                        tvLinkHost.setText(domainName);
+                    }
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+                tvDescription.setText(linkTitle);
+                //   String linkImage = AppConstants.YOUTUBE_IMAGE_PATH + imageName;
+                String linkImage = LINK_IMAGES + imageName;
+                Glide.with(App.getAppContext())
+                        .load(linkImage)
+                        .centerCrop()
+                        .dontAnimate()
+                        .into(imagePostCommenting);
+
+
+                youtubeHold.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent browserIntents = new Intent(Intent.ACTION_VIEW, Uri.parse(linkFullUrl));
+                        browserIntents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        App.getAppContext().startActivity(browserIntents);
+                    }
+                });
             }
-            tvDescription.setText(linkTitle);
-            //   String linkImage = AppConstants.YOUTUBE_IMAGE_PATH + imageName;
-            String linkImage = LINK_IMAGES + imageName;
-            Glide.with(App.getAppContext())
-                    .load(linkImage)
-                    .centerCrop()
-                    .dontAnimate()
-                    .into(imagePostCommenting);
-
-
-            youtubeHold.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Intent browserIntents = new Intent(Intent.ACTION_VIEW, Uri.parse(linkFullUrl));
-                    browserIntents.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    App.getAppContext().startActivity(browserIntents);
-                }
-            });
+        } else {
+            layout.setVisibility(View.GONE);
         }
 
-
+        Linkify.addLinks(tvCommentMessage, Linkify.ALL);
+        //set user name in blue color and remove underline from the textview
+        Tools.stripUnderlines(tvCommentMessage);
         commentLike = replyItem.getTotalLike();
       /*  if (!isNullOrEmpty(replyItem.getId())) {
         } else {
