@@ -270,7 +270,7 @@ public class MessagingFragment extends Fragment {
                 if (chats != null) {
                     Collections.reverse(chats.getMessages());
                     messages.addAll(chats.getMessages());
-                    users = chats.getUsers();
+                    users.addAll(chats.getUsers());
                     messagingAdapter.notifyDataSetChanged();
                     offset += limit;
                 }

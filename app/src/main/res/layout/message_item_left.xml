@@ -25,6 +25,7 @@
             android:paddingTop="7dp"
             android:paddingBottom="7dp"
             android:background="@drawable/rectangle_corner_round_two"
+            android:textIsSelectable="true"
             android:text="Hellodddd"
             android:textColor="@color/colorBlack"
             android:textSize="14sp"/>
