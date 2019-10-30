@@ -120,6 +120,9 @@ import retrofit2.Response;
 //import static com.doodle.Tool.Operation.getProfilePictureBitmap;
 import static com.twitter.sdk.android.core.Twitter.TAG;
 
+/**
+ *
+ */
 public class Tools {
 
 

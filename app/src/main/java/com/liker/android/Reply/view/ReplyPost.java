@@ -299,8 +299,9 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
     private View mView;
     private int commentItemPosition;
     private int totalReply;
- private ReplyPersistData persistData;
- private String mentionId;
+    private ReplyPersistData persistData;
+    private String mentionId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -318,7 +319,7 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
         mView = new View(this);
 
         manager = new PrefManager(this);
-        persistData=new ReplyPersistData();
+        persistData = new ReplyPersistData();
         networkOk = NetworkHelper.hasNetworkAccess(this);
         progressView = findViewById(R.id.progress_bar);
         deviceId = manager.getDeviceId();
@@ -347,7 +348,6 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.loading));
         textCrawler = new TextCrawler();
-        findViewById(R.id.imageSendComment).setOnClickListener(this);
         findViewById(R.id.imageGallery).setOnClickListener(this);
         imageEmoji = findViewById(R.id.imageEmoji);
         imageEmoji.setOnClickListener(this);
@@ -412,17 +412,17 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
         tvLikes.setText(userInfo.getTotalLikes() + " Likes");
         setUpEmojiPopup();
 
-        ReplyPersistData persistData=App.getReplyPersistData();
-        if(!isEmpty(persistData)){
-            String replyHistory=persistData.getReplyData();
-            if(!isNullOrEmpty(replyHistory)){
-                if(persistData.getCommentId().equalsIgnoreCase(commentId)){
+        ReplyPersistData persistData = App.getReplyPersistData();
+        if (!isEmpty(persistData)) {
+            String replyHistory = persistData.getReplyData();
+            if (!isNullOrEmpty(replyHistory)) {
+                if (persistData.getCommentId().equalsIgnoreCase(commentId)) {
                     etComment.append(replyHistory);
-                 //   imageSendComment.setVisibility(View.VISIBLE);
+                    //   imageSendComment.setVisibility(View.VISIBLE);
                 }
             }
 
-            if(!isEmpty(persistData.mentionNameList)){
+            if (!isEmpty(persistData.mentionNameList)) {
                 //nameList.add(name);
                 //  persistData.mentionNameList=nameList;
                 nameList = persistData.mentionNameList;
@@ -768,9 +768,9 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
                     String id = mentionUsers.get(position).getId();
 
                     nameList.add(name);
-                    persistData.mentionNameList=nameList;
+                    persistData.mentionNameList = nameList;
                     idList.add(id);
-                    persistData.mentionIdList=idList;
+                    persistData.mentionIdList = idList;
                     StringBuilder nameBuilder = new StringBuilder();
                     nameBuilder.append(name);
 
@@ -955,10 +955,10 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
     public void onBackPressed() {
         super.onBackPressed();
 
-        String replyHistory=etComment.getText().toString();
-        persistData.replyData=replyHistory;
-        persistData.commentId=commentItem.getId();
-      //  ReplyPersistData replyPersistData=new ReplyPersistData(replyHistory,commentItem.getId());
+        String replyHistory = etComment.getText().toString();
+        persistData.replyData = replyHistory;
+        persistData.commentId = commentItem.getId();
+        //  ReplyPersistData replyPersistData=new ReplyPersistData(replyHistory,commentItem.getId());
         App.setReplyPersistData(persistData);
         App.setRvCommentHeader(false);
         Intent returnIntent = new Intent();
@@ -1425,20 +1425,20 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
 
                         }
 
-                        imageSendComment.setEnabled(true);
+
 
                     } else {
 
                     }
                 }
-
+                imageSendComment.setEnabled(true);
 
             }
 
             @Override
             public void onFailure(Call<Reply> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
-
+                imageSendComment.setEnabled(true);
             }
         });
     }
@@ -1518,11 +1518,11 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
         String id = reply.getUserId();
 
         nameList.add(name);
-        persistData.mentionNameList=nameList;
+        persistData.mentionNameList = nameList;
         commentText = name;
         userQuery = "@" + friends;
         idList.add(id);
-        persistData.mentionIdList=idList;
+        persistData.mentionIdList = idList;
         StringBuilder nameBuilder = new StringBuilder();
         nameBuilder.append(name);
 
@@ -1778,22 +1778,17 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
             @Override
             public void onResponse(Call<List<Reply>> mCall, Response<List<Reply>> response) {
 
-
                 if (response.body() != null) {
                     List<Reply> replyItem = response.body();
                     replyItems.clear();
                     replyItems.addAll(replyItem);
                     adapter.notifyDataSetChanged();
-
                 }
-
-
             }
 
             @Override
             public void onFailure(Call<List<Reply>> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
-
             }
         });
     }

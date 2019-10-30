@@ -2272,7 +2272,6 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                     e.printStackTrace();
                 }
 
-
             }
         }
 
