@@ -10,11 +10,14 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.liker.android.Home.view.activity.Home;
 import com.liker.android.Tool.PrefManager;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import io.fabric.sdk.android.Fabric;
 
 //import com.doodle.Home.view.activity.Home;
 //import com.doodle.Tool.PrefManager;
@@ -28,6 +31,7 @@ public class Splash extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         manager = new PrefManager(this);
         printHashKey(this);
 //        requestWindowFeature(Window.FEATURE_NO_TITLE);

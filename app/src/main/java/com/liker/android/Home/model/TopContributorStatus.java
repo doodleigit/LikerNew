@@ -19,6 +19,15 @@ public class TopContributorStatus implements Serializable, Parcelable
     @SerializedName("category_id")
     @Expose
     private String categoryId;
+
+    @SerializedName("permission")
+    @Expose
+    private String permission;
+
+    @SerializedName("max_post_id")
+    @Expose
+    private String maxPostId;
+
     public final static Creator<TopContributorStatus> CREATOR = new Creator<TopContributorStatus>() {
 
 
@@ -40,6 +49,8 @@ public class TopContributorStatus implements Serializable, Parcelable
     protected TopContributorStatus(Parcel in) {
         this.headers = ((Headers) in.readValue((Headers.class.getClassLoader())));
         this.userId = ((String) in.readValue((String.class.getClassLoader())));
+        this.permission = ((String) in.readValue((String.class.getClassLoader())));
+        this.maxPostId = ((String) in.readValue((String.class.getClassLoader())));
         this.categoryId = ((String) in.readValue((String.class.getClassLoader())));
     }
 
@@ -70,11 +81,27 @@ public class TopContributorStatus implements Serializable, Parcelable
         this.categoryId = categoryId;
     }
 
+    public String getMaxPostId() {
+        return maxPostId;
+    }
 
+    public void setMaxPostId(String maxPostId) {
+        this.maxPostId = maxPostId;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(headers);
         dest.writeValue(userId);
+        dest.writeValue(permission);
+        dest.writeValue(maxPostId);
         dest.writeValue(categoryId);
     }
 

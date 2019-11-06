@@ -94,6 +94,7 @@ import android.widget.VideoView;
 //import com.doodle.Tool.PageTransformer;
 //import com.doodle.Tool.PrefManager;
 //import com.doodle.Tool.Tools;
+import com.crashlytics.android.Crashlytics;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.google.gson.Gson;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewCallback;
@@ -104,7 +105,10 @@ import com.leocardz.link.preview.library.TextCrawler;
 import com.liker.android.App;
 import com.liker.android.Home.holder.mediaHolder.ImageViewHolder;
 import com.liker.android.Home.holder.mediaHolder.VideoViewHolder;
+import com.liker.android.Home.model.Headers;
 import com.liker.android.Home.model.PostItem;
+import com.liker.android.Home.model.TopContributorStatus;
+import com.liker.android.Home.service.SocketIOManager;
 import com.liker.android.Post.adapter.CategoryListAdapter;
 import com.liker.android.Post.adapter.ChatAdapter;
 import com.liker.android.Post.adapter.ImageAdapter;
@@ -162,6 +166,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.fabric.sdk.android.Fabric;
+import io.socket.client.Ack;
+import io.socket.client.Socket;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -357,9 +364,14 @@ public class PostNew extends AppCompatActivity implements
     private String newUrl;
 
 
+    private Socket socket;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.new_post);
         mContext = this;
 
@@ -374,6 +386,7 @@ public class PostNew extends AppCompatActivity implements
         scriptItemList = new ArrayList<>();
         mediaFile = new MultipleMediaFile();
         mediaFiles = new ArrayList<>();
+        socket = SocketIOManager.nSocket;
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.checking));
         multipleMediaFiles = new ArrayList<>();
@@ -1514,6 +1527,28 @@ public class PostNew extends AppCompatActivity implements
                                     finish();
                                     sendBroadcast((new Intent()).setAction(AppConstants.NEW_POST_ADD_BROADCAST));
                                 }
+                                 TopContributorStatus contributorStatus=new TopContributorStatus();
+                                Headers headers=new Headers();
+                                 //   String categoryId = App.getCategoryId();
+                                    headers.setDeviceId(deviceId);
+                                    headers.setIsApps(true);
+                                    headers.setSecurityToken(token);
+                                    headers.setUserId(userIds);
+                                    contributorStatus.setCategoryId(categoryId);
+                                    contributorStatus.setUserId(userIds);
+                                    contributorStatus.setMaxPostId("423487");
+                                    contributorStatus.setPermission(String.valueOf(postPermission));
+                                    contributorStatus.setHeaders(headers);
+                                    Gson gson = new Gson();
+                                    String json = gson.toJson(contributorStatus);
+
+                                    socket.emit("new_post", json, new Ack() {
+                                        @Override
+                                        public void call(Object... args) {
+
+                                        }
+                                    });
+
 
                             }
 

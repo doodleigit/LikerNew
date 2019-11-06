@@ -16,7 +16,6 @@
             android:id="@+id/collapse_toolbar"
             android:layout_width="match_parent"
             android:layout_height="170dp"
-
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
@@ -248,6 +247,7 @@
                     </LinearLayout>
 
                 </LinearLayout>
+                <include layout="@layout/new_post_counter"/>
 
             </RelativeLayout>
 

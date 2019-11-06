@@ -39,6 +39,12 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/darker_gray"
             android:textSize="12sp" />
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tvAddFollowBack"
+            android:textColor="#60b2fc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

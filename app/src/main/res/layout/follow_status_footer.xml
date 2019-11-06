@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/contentFollow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_10sdp"
+    android:background="@drawable/rectangle_corner_round_follow"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100sdp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageFollowUser"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:src="@drawable/personthree" />
+
+            <TextView
+                android:id="@+id/tvContributorStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_weight="2"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                tools:text="@tools:sample/lorem" />
+
+            <ImageView
+                android:id="@+id/unFollowImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/ic_cancel_black_24dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:id="@+id/layoutFollowUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:background="@drawable/rectangle_corner_round_seven"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/_7sdp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_rss_feed_black_24dp"
+                android:tint="@color/colorWhite" />
+
+            <TextView
+                android:id="@+id/tvFollowUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!--Would you like to declare yourself a contributor to Arts - Illustration?
+    We will keep track of your likes and add you to the rankings
+    (You can always change your mind in the Contributors Settings).-->
+    </LinearLayout>
+</LinearLayout>

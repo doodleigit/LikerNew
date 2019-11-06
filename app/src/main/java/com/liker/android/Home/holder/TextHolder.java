@@ -2,11 +2,14 @@ package com.liker.android.Home.holder;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,9 +25,11 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -65,6 +70,8 @@ import com.liker.android.Home.view.activity.Home;
 import com.liker.android.Home.view.activity.PostShare;
 import com.liker.android.Home.view.fragment.LikerUserListFragment;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
+import com.liker.android.Post.view.fragment.ContributorStatus;
+import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
@@ -93,6 +100,7 @@ import static com.liker.android.Tool.Tools.containsIllegalCharacters;
 import static com.liker.android.Tool.Tools.delayLoadComment;
 import static com.liker.android.Tool.Tools.extractMentionText;
 import static com.liker.android.Tool.Tools.extractUrls;
+import static com.liker.android.Tool.Tools.getFollowSpannableStringBuilder;
 import static com.liker.android.Tool.Tools.getSpannableStringBuilder;
 import static com.liker.android.Tool.Tools.getSpannableStringShareHeader;
 import static com.liker.android.Tool.Tools.getWallSpannableStringBuilder;
@@ -228,8 +236,15 @@ public class TextHolder extends RecyclerView.ViewHolder {
     private ClickableSpan clickableSpan;
     private TextView tvShared, tvPostShareUserName;
     private MediaPlayer player;
-
     private TextView tvWallPost, tvWallPostInfo;
+
+    //footerFollow Status
+    private ViewGroup contentFollow,layoutFollowUser;
+    private CircleImageView imageFollowUser;
+    private TextView tvContributorStatus,tvFollowUserName;
+    private ImageView unFollowImage;
+    private String userFollowProfileImage;
+    private ProgressDialog progressDialog;
 
 
     public interface PostItemListener {
@@ -242,7 +257,7 @@ public class TextHolder extends RecyclerView.ViewHolder {
         mContext = context;
         this.postTextListener = postTextListener;
         this.className = className;
-
+        progressDialog = new ProgressDialog(mContext);
         player = MediaPlayer.create(mContext, R.raw.post_like);
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog((Activity) context);
@@ -335,6 +350,14 @@ public class TextHolder extends RecyclerView.ViewHolder {
         tvWallPostInfo = itemView.findViewById(R.id.tvWallPostInfo);
 
 
+        contentFollow = itemView.findViewById(R.id.contentFollow);
+        layoutFollowUser = itemView.findViewById(R.id.layoutFollowUser);
+        tvContributorStatus = itemView.findViewById(R.id.tvContributorStatus);
+        tvFollowUserName = itemView.findViewById(R.id.tvFollowUserName);
+        imageFollowUser = itemView.findViewById(R.id.imageFollowUser);
+        unFollowImage = itemView.findViewById(R.id.unFollowImage);
+
+
     }
 
 
@@ -410,7 +433,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
                 tvSharePostContent.setVisibility(View.GONE);
             } else {
                 tvSharePostContent.setVisibility(View.VISIBLE);
-
             }
 
             switch (sharedPostPermission) {
@@ -445,7 +467,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
 
-                //  final MediaPlayer mp = MediaPlayer.create(this, R.raw);
 
                 if (userIds.equalsIgnoreCase(item.getPostUserid())) {
                     Tools.toast(mContext, "On Liker, you can't like your own posts. That would be cheating ", R.drawable.ic_like_status);
@@ -457,6 +478,25 @@ public class TextHolder extends RecyclerView.ViewHolder {
                     } else {
                         Call<String> call = webService.postLike(deviceId, userIds, token, userIds, item.getPostUserid(), item.getPostId());
                         sendPostLikeRequest(call);
+
+                    }
+
+                    if (!postFooters.isFollowed()) {
+                        contentFollow.setVisibility(View.VISIBLE);
+                        //followStatusChange(v, item, position);
+                        userFollowProfileImage = item.getUesrProfileImg();
+                        tvFollowUserName.setText("Follow "+item.getUserFirstName());
+                        tvContributorStatus.setText(getFollowSpannableStringBuilder(mContext, item));
+                        tvContributorStatus.setMovementMethod(LinkMovementMethod.getInstance());
+                        String userImageUrl = AppConstants.PROFILE_IMAGE + userFollowProfileImage;
+                        Glide.with(App.getAppContext())
+                                .load(userImageUrl)
+                                .centerCrop()
+                                .dontAnimate()
+                                .into(imageFollowUser);
+
+                    }else {
+                        contentFollow.setVisibility(View.GONE);
                     }
 
                 }
@@ -517,7 +557,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             readMoreText(mContext, tvPostContent, text);
 
         }
-
 
 
         if (mentionUrl.size() > 0 && nameBuilder.toString().length() > 0) {
@@ -855,6 +894,7 @@ public class TextHolder extends RecyclerView.ViewHolder {
 //                .placeholder(R.drawable.loading_spinner)
                 //  .crossFade()
                 .into(imagePostUser);
+
 
         String shareUserImageUrl = AppConstants.PROFILE_IMAGE + sharedUserProfileImage;
         Glide.with(App.getAppContext())
@@ -1222,6 +1262,82 @@ public class TextHolder extends RecyclerView.ViewHolder {
             }
         });
 
+        layoutFollowUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String followUserId=item.getPostUserid();
+                setFollow(followUserId, position);
+            }
+        });
+        unFollowImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PostFooter postFooter=postItem.getPostFooter();
+                postFooter.setFollowed(true);
+                App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) postItem).putExtra("position", position).putExtra("type", "follow"));
+                contentFollow.setVisibility(View.GONE);
+            }
+        });
+
+    }
+
+
+    private void setFollow(String followUserId, int position) {
+//        progressBarLoading.setVisibility(View.VISIBLE);
+      //  showProgressBar(mContext.getString(R.string.loading));
+        Call<String> call = webService.setFollow(deviceId, token, profileId, userIds, followUserId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+//                        likeUsers.get(position).setIsFollowed(true);
+//                        likeUserAdapter.notifyItemChanged(position);
+                        contentFollow.setVisibility(View.GONE);
+                        PostFooter postFooter=postItem.getPostFooter();
+                        postFooter.setFollowed(true);
+                        App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) postItem).putExtra("position", position).putExtra("type", "follow"));
+                        sendBrowserNotification(followUserId);
+                    } else {
+                        Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+//                progressBarLoading.setVisibility(View.GONE);
+                hideProgressBar();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+//                progressBarLoading.setVisibility(View.GONE);
+                hideProgressBar();
+            }
+        });
+    }
+
+    private void sendBrowserNotification(String followUserId) {
+        Call<String> call = webService.sendBrowserNotification(deviceId, userIds, token, followUserId, userIds, "0", "follow");
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
+        });
+    }
+
+
+    private void followStatusChange(View v, PostItem item, int position) {
+        AppCompatActivity activity = (AppCompatActivity) v.getContext();
+        FollowStatus followStatus = FollowStatus.newInstance(item,position);
+        followStatus.show(activity.getSupportFragmentManager(), "FollowStatus");
     }
 
     private void sendPostUnLikeRequest(Call<String> call) {
@@ -1575,4 +1691,14 @@ public class TextHolder extends RecyclerView.ViewHolder {
     }*/
 
 
+
+    private void showProgressBar(String title) {
+        progressDialog.setMessage(title);
+        progressDialog.show();
+    }
+
+
+    private void hideProgressBar() {
+        progressDialog.dismiss();
+    }
 }

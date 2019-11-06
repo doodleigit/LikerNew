@@ -72,7 +72,7 @@ import static com.liker.android.Tool.AppConstants.IN_CHAT_MODE;
 public class DataFetchingService extends Service {
 
     NotificationManager notificationManager = null;
-    private Socket socket, mSocket;
+    private Socket socket, mSocket,nSocket;
     private BroadcastReceiver mReceiver;
     String KEY_NOTIFICATION_GROUP = "LIKER_PUSH_NOTIFICATION";
 
@@ -99,6 +99,14 @@ public class DataFetchingService extends Service {
         } else {
             socket = new SocketIOManager().getWSocketInstance();
         }
+        if (nSocket != null) {
+            if (!nSocket.connected()) {
+                nSocket = new SocketIOManager().getNewPostSocketInstance();
+//                Toast.makeText(context, "Web Socket Reconnected", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            nSocket = new SocketIOManager().getNewPostSocketInstance();
+        }
         if (mSocket != null) {
             if (!mSocket.connected()) {
                 mSocket = new SocketIOManager().getMSocketInstance();
@@ -116,6 +124,10 @@ public class DataFetchingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!socket.connected()) {
             socket = new SocketIOManager().getWSocketInstance();
+//                Toast.makeText(context, "Web Socket Reconnected", Toast.LENGTH_LONG).show();
+        }
+        if (!nSocket.connected()) {
+            nSocket = new SocketIOManager().getNewPostSocketInstance();
 //                Toast.makeText(context, "Web Socket Reconnected", Toast.LENGTH_LONG).show();
         }
         if (!mSocket.connected()) {
@@ -210,6 +222,7 @@ public class DataFetchingService extends Service {
 //                    intent.putExtra("new_message", (Parcelable) newMessage);
 //                    intent.putExtra("is_own", type);
 //                    getActivity().sendBroadcast(intent);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (NullPointerException ignored) {}

@@ -225,6 +225,9 @@
             android:name=".Tool.Service.DataFetchingService"
             android:enabled="true"
             android:exported="true" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="b1889dbc25a0c7d0e77a7bccb1b8c144442541e7" />
     </application>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />

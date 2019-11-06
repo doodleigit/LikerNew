@@ -9,7 +9,11 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -92,6 +96,7 @@ import android.widget.Toast;
 //import com.doodle.Tool.PrefManager;
 //import com.doodle.Tool.Service.DataFetchingService;
 //import com.doodle.Tool.Tools;
+import com.crashlytics.android.Crashlytics;
 import com.github.florent37.viewtooltip.ViewTooltip;
 import com.google.gson.Gson;
 import com.liker.android.App;
@@ -117,6 +122,7 @@ import com.liker.android.Home.model.PostFilterCategory;
 import com.liker.android.Home.model.PostFilterItem;
 import com.liker.android.Home.model.PostFilterSubCategory;
 import com.liker.android.Home.model.PostFilters;
+import com.liker.android.Home.model.PostFooter;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.model.SetUser;
 import com.liker.android.Home.model.SinglePostFilters;
@@ -132,9 +138,12 @@ import com.liker.android.Home.view.fragment.BreakingPost;
 import com.liker.android.Home.view.fragment.FollowingPost;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
 import com.liker.android.Home.view.fragment.TrendingPost;
+import com.liker.android.Message.model.NewMessage;
+import com.liker.android.Message.model.SenderData;
 import com.liker.android.Message.view.MessageActivity;
 import com.liker.android.Notification.view.NotificationActivity;
 import com.liker.android.Post.view.activity.PostNew;
+import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Search.LikerSearch;
@@ -156,8 +165,10 @@ import java.util.Objects;
 
 import cn.jzvd.JZVideoPlayer;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.fabric.sdk.android.Fabric;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -165,6 +176,7 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 import static android.support.v4.view.PagerAdapter.POSITION_NONE;
+import static com.liker.android.Tool.AppConstants.IN_CHAT_MODE;
 import static com.liker.android.Tool.Tools.isEmpty;
 //import static com.doodle.Tool.Tools.isEmpty;
 
@@ -178,6 +190,7 @@ public class Home extends AppCompatActivity implements
         FollowSheet.BottomSheetListener,
         BlockUserDialog.BlockListener,
         PostPermissionSheet.BottomSheetListener,
+        FollowStatus.FollowStatusListener,
         NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
@@ -194,7 +207,7 @@ public class Home extends AppCompatActivity implements
     private String image_url;
     private String token, deviceId, userId, userName, profileName, selectedCategory = "";
     int categoryPosition = 0;
-    private Socket socket, mSocket;
+    private Socket socket, mSocket, nSocket;
     private HomeService webService;
     private static final String TAG = Home.class.getSimpleName();
     private SetUser setUser;
@@ -223,6 +236,9 @@ public class Home extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Fabric.with(this, new Crashlytics());
+        // TODO: Move this to where you establish a user session
+        //  logUser();
         setContentView(R.layout.activity_home);
         startService(new Intent(Home.this, DataFetchingService.class));
 
@@ -249,8 +265,16 @@ public class Home extends AppCompatActivity implements
 
         setData();
         sendCategoryListRequest();
+        getNewPostResult();
+        // forceCrash();
 
     }
+
+
+    public void forceCrash() {
+        throw new RuntimeException("This is a crash");
+    }
+
 
     private void initialComponent() {
         progressDialog = new ProgressDialog(this);
@@ -346,6 +370,8 @@ public class Home extends AppCompatActivity implements
 
         socket = SocketIOManager.wSocket;
         mSocket = SocketIOManager.mSocket;
+        nSocket = new SocketIOManager().getNewPostSocketInstance();
+
 
         filterItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -419,6 +445,7 @@ public class Home extends AppCompatActivity implements
 //                sendLogoutRequest(call);
             }
         });
+
 
     }
 
@@ -1350,13 +1377,27 @@ public class Home extends AppCompatActivity implements
                 manager.setNotificationCount();
                 int newCount = manager.getNotificationCount();
                 setNotificationCount(newCount);
+                notificationSoundWhenUserActive();
             } else {
                 manager.setMessageNotificationCount();
                 int newCount = manager.getMessageNotificationCount();
                 setMessageNotificationCount(newCount);
+
+                notificationSoundWhenUserActive();
+
             }
         }
     };
+
+    private void notificationSoundWhenUserActive() {
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -1376,7 +1417,7 @@ public class Home extends AppCompatActivity implements
         super.onPause();
         JZVideoPlayer.releaseAllVideos();
 //        unregisterReceiver(newPostBroadcastReceiver);
-        if (  progressDialog != null) {
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
     }
@@ -1388,7 +1429,7 @@ public class Home extends AppCompatActivity implements
         unregisterReceiver(filterBroadcast);
         unregisterReceiver(newPostBroadcastReceiver);
         Tools.dismissDialog();
-        if (  progressDialog != null) {
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
     }
@@ -1397,7 +1438,7 @@ public class Home extends AppCompatActivity implements
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
 
-        if(view!=null){
+        if (view != null) {
             ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
             categoryPosition = position;
             switch (position) {
@@ -1405,20 +1446,25 @@ public class Home extends AppCompatActivity implements
                     filterItem.setText(getString(R.string.select_categories));
                     categoryRecyclerView.setVisibility(View.GONE);
                     getPostFilters("1", true);
+                    ((TextView) parent.getChildAt(0)).setTextColor(Color.parseColor("#60b2fc"));//60b2fc
+                    categorySpinner.setBackgroundColor(Color.parseColor("#ffffff"));
                     sendBroadcast((new Intent().putExtra("category_ids", "").putExtra("filter", 1)).setAction(AppConstants.CATEGORY_CHANGE_BROADCAST));
                     break;
                 case 1:
                     filterItem.setText(getString(R.string.select_categories));
                     getPostFilters("1", false);
+                    categorySpinner.setBackgroundColor(Color.parseColor("#1388d1"));
                     break;
                 case 2:
                     filterItem.setText(selectedCategory.isEmpty() ? getString(R.string.select_category) : selectedCategory);
                     categoryRecyclerView.setVisibility(View.GONE);
                     getSinglePostFilters("4", false);
+                    categorySpinner.setBackgroundColor(Color.parseColor("#788a98"));
                     break;
                 case 3:
                     filterItem.setText(getString(R.string.select_categories));
                     getPostFilters("8", false);
+                    categorySpinner.setBackgroundColor(Color.parseColor("#1e1c1a"));
                     break;
             }
         }
@@ -1902,5 +1948,128 @@ public class Home extends AppCompatActivity implements
             }
         }
     };
+
+    PostItem mPostItem;
+
+    @Override
+    public void onFollowResult(DialogFragment dlg, PostItem postItem, int position) {
+        mPostItem = postItem;
+        String followUserId = mPostItem.getPostUserid();
+        setFollow(followUserId, position);
+    }
+
+    @Override
+    public void onUnFollowResult(DialogFragment dlg, PostItem postItem, int position) {
+        mPostItem = postItem;
+        PostFooter postFooter = mPostItem.getPostFooter();
+        postFooter.setFollowed(true);
+        App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) mPostItem).putExtra("position", position).putExtra("type", "follow"));
+
+    }
+
+    @Override
+    public void onNeutralResult(DialogFragment dlg) {
+
+    }
+
+    private void setFollow(String followUserId, int position) {
+//        progressBarLoading.setVisibility(View.VISIBLE);
+        showProgressBar(getString(R.string.loading));
+        Call<String> call = webService.setFollow(deviceId, token, userId, userId, followUserId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+//                        likeUsers.get(position).setIsFollowed(true);
+//                        likeUserAdapter.notifyItemChanged(position);
+                        PostFooter postFooter = mPostItem.getPostFooter();
+                        postFooter.setFollowed(true);
+                        App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) mPostItem).putExtra("position", position).putExtra("type", "follow"));
+                        sendBrowserNotification(followUserId);
+                    } else {
+                        Toast.makeText(Home.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+//                progressBarLoading.setVisibility(View.GONE);
+                hideProgressBar();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+//                progressBarLoading.setVisibility(View.GONE);
+                hideProgressBar();
+            }
+        });
+    }
+
+    private void sendBrowserNotification(String followUserId) {
+        Call<String> call = webService.sendBrowserNotification(deviceId, userId, token, followUserId, userId, "0", "follow");
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
+        });
+    }
+
+
+    private void getNewPostResult() {
+        nSocket.on("new_post_result", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status=newPostResultJson.getBoolean("status");
+                    String message=newPostResultJson.getString("message");
+                    JSONObject dataJson=newPostResultJson.getJSONObject("data");
+                    int total=dataJson.getInt("total");
+                    JSONArray followers=dataJson.getJSONArray("followers");
+                    int permission=dataJson.getInt("permission");
+
+                    NewMessage newMessage = new NewMessage();
+
+//                    newMessage.setUserId(messageJson.getString("user_id"));
+//                    newMessage.setToUserId(messageJson.getString("to_user_id"));
+//                    newMessage.setMessage(messageJson.getString("message"));
+//                    newMessage.setReturnResult(messageJson.getBoolean("return_result"));
+//                    newMessage.setTimePosted(messageJson.getString("time_posted"));
+//                    newMessage.setInsertId(messageJson.getString("insert_id"));
+//                    newMessage.setUnreadTotal(messageJson.getString("unread_total"));
+//
+//                    SenderData senderData = new SenderData();
+//                    senderData.setId(messageJson.getJSONObject("user_data").getString("id"));
+//                    senderData.setUserId(messageJson.getJSONObject("user_data").getString("user_id"));
+//
+//                    newMessage.setSenderData(senderData);
+//                    sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("type", 0)).setAction(AppConstants.NEW_MESSAGE_BROADCAST_FROM_HOME));
+//                    sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("is_own", 0)).setAction(AppConstants.NEW_MESSAGE_BROADCAST));
+
+//                    Intent intent = new Intent();
+//                    intent.setAction(AppConstants.NEW_MESSAGE_BROADCAST);
+//                    intent.putExtra("new_message", (Parcelable) newMessage);
+//                    intent.putExtra("is_own", type);
+//                    getActivity().sendBroadcast(intent);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+//                if (!IN_CHAT_MODE)
+//                    sendBroadcast((new Intent().putExtra("type", "1")).setAction(AppConstants.NEW_NOTIFICATION_BROADCAST));
+            }
+        });
+
+
+    }
 
 }

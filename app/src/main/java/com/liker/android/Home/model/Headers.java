@@ -2,6 +2,7 @@
 package com.liker.android.Home.model;
 
 import java.io.Serializable;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,8 +10,11 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class Headers implements Serializable, Parcelable
-{
+public class Headers implements Serializable, Parcelable {
+
+    @SerializedName("user_id")
+    @Expose
+    private String userId;
 
     @SerializedName("device_id")
     @Expose
@@ -25,7 +29,7 @@ public class Headers implements Serializable, Parcelable
 
 
         @SuppressWarnings({
-            "unchecked"
+                "unchecked"
         })
         public Headers createFromParcel(Parcel in) {
             return new Headers(in);
@@ -35,11 +39,11 @@ public class Headers implements Serializable, Parcelable
             return (new Headers[size]);
         }
 
-    }
-    ;
+    };
     private final static long serialVersionUID = 1684275393776627478L;
 
     protected Headers(Parcel in) {
+        this.userId = ((String) in.readValue((String.class.getClassLoader())));
         this.deviceId = ((String) in.readValue((String.class.getClassLoader())));
         this.securityToken = ((String) in.readValue((String.class.getClassLoader())));
         this.isApps = ((boolean) in.readValue((boolean.class.getClassLoader())));
@@ -68,20 +72,28 @@ public class Headers implements Serializable, Parcelable
         return isApps;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public void setIsApps(boolean isApps) {
         this.isApps = isApps;
     }
 
 
-
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(userId);
         dest.writeValue(deviceId);
         dest.writeValue(securityToken);
         dest.writeValue(isApps);
     }
 
     public int describeContents() {
-        return  0;
+        return 0;
     }
 
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/_200sdp"
+    android:visibility="gone"
+    android:layout_height="@dimen/_60sdp">
+
+    <com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout
+        android:id="@+id/floating_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabMenuGravity="top"
+        app:fabMenuStyle="popUp"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton
+            android:id="@+id/fab1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            app:fabColor="@color/colorAccent"
+            app:fabIcon="@drawable/ic_white_arrow_up_inside_a_circle"
+            app:fabIconColor="@color/colorWhite"
+            app:fabText="2 New Posts"
+            app:fabTextColor="@color/colorWhite" />
+
+
+    </com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout>
+
+</RelativeLayout>

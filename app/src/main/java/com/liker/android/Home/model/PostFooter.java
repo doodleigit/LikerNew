@@ -20,6 +20,11 @@ public class PostFooter implements Serializable, Parcelable
     @SerializedName("like_user_status")
     @Expose
     private boolean likeUserStatus;
+
+    @SerializedName("is_followed")
+    @Expose
+    private boolean isFollowed;
+
     @SerializedName("post_total_share")
     @Expose
     private int postTotalShare;
@@ -47,6 +52,7 @@ public class PostFooter implements Serializable, Parcelable
     protected PostFooter(Parcel in) {
         this.postTotalLike = ((String) in.readValue((String.class.getClassLoader())));
         this.likeUserStatus = ((boolean) in.readValue((boolean.class.getClassLoader())));
+        this.isFollowed = ((boolean) in.readValue((boolean.class.getClassLoader())));
         this.postTotalShare = ((int) in.readValue((int.class.getClassLoader())));
         in.readList(this.likeUser, (Object.class.getClassLoader()));
     }
@@ -86,11 +92,18 @@ public class PostFooter implements Serializable, Parcelable
         this.likeUser = likeUser;
     }
 
+    public boolean isFollowed() {
+        return isFollowed;
+    }
 
+    public void setFollowed(boolean followed) {
+        isFollowed = followed;
+    }
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(postTotalLike);
         dest.writeValue(likeUserStatus);
+        dest.writeValue(isFollowed);
         dest.writeValue(postTotalShare);
         dest.writeList(likeUser);
     }

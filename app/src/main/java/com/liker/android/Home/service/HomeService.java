@@ -173,7 +173,7 @@ public interface HomeService {
 
     @POST(AppConstants.ADDED_FILTER)
     @FormUrlEncoded
-    Call<String > addedFilter(
+    Call<String> addedFilter(
             @Header("Device-Id") String deviceId,
             @Header("User-Id") String userId,
             @Header("Security-Token") String token,
@@ -335,5 +335,8 @@ public interface HomeService {
             @Header("User-Id") String userId,
             @Field("user_id") String userIds
     );
+    //https://www.api.liker.com/follow
+
+
 
 }
