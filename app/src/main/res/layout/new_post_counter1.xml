@@ -40,30 +40,5 @@
 
     </LinearLayout>
 
-    <com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout
-        android:id="@+id/floating_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_13sdp"
-        android:visibility="gone"
-        app:fabMenuGravity="top"
-        app:fabMenuStyle="popUp"
-        android:layout_centerHorizontal="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton
-            android:id="@+id/fab1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
-            app:fabColor="@android:color/white"
-            app:fabIcon="@drawable/ic_white_arrow_up_inside_a_circle"
-            app:fabIconColor="@color/colorPrimaryDark"
-            app:fabText="2 New Posts"
-            app:fabTextColor="@color/colorPrimaryDark" />
-
-
-    </com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout>
 
 </RelativeLayout>

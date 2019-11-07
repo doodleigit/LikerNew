@@ -418,12 +418,12 @@
 
                         <ImageView
                             android:id="@+id/spinner_drop_down"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_alignEnd="@+id/spinnerCategoryType"
                             android:layout_centerInParent="true"
                             android:padding="5dp"
-                            android:src="@drawable/arrow_down_white" />
+                            android:src="@drawable/ic_arrow_drop_down_white_24dp" />
 
                     </RelativeLayout>
 
@@ -469,34 +469,35 @@
             android:layout_below="@+id/viewCategory" />
 
     </RelativeLayout>
+<LinearLayout
+    android:id="@+id/newPostContainer"
+    android:layout_gravity="top|center"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:orientation="horizontal"
+    android:background="@drawable/rectangle_corner_round_twitter"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/_25sdp">
 
-    <com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout
-        android:id="@+id/floating_layout"
+
+    <ImageView
+        android:id="@+id/imageNewPostPublish"
+        android:padding="@dimen/_5sdp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_white_arrow_up_inside_a_circle"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"/>
+    <TextView
+        android:id="@+id/tvPublishPostCount"
+        android:textAlignment="center"
+       android:padding="@dimen/_5sdp"
+        android:textColor="@color/colorWhite"
+        android:text="2 new Posts"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/_60sdp"
-        android:layout_marginTop="?attr/actionBarSize"
-        app:fabMenuGravity="top"
-        app:fabMenuStyle="popUp"
-        android:visibility="invisible"
-        android:layout_gravity="top|center"
-        android:layout_centerHorizontal="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_height="wrap_content"/>
 
-        <com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton
-            android:id="@+id/fabFollowing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorWhite"
-            app:fabColor="@color/colorAccent"
-            app:fabIcon="@drawable/ic_white_arrow_up_inside_a_circle"
-            app:fabIconColor="@color/colorWhite"
-            app:fabText=""
-            app:fabTextColor="@color/colorWhite" />
-
-
-    </com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout>
-
+</LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
 
 

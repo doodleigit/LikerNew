@@ -13,7 +13,6 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -41,6 +40,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -99,8 +99,8 @@ import android.widget.Toast;
 //import com.doodle.Tool.PrefManager;
 //import com.doodle.Tool.Service.DataFetchingService;
 //import com.doodle.Tool.Tools;
-import com.crashlytics.android.Crashlytics;
 import com.github.florent37.viewtooltip.ViewTooltip;
+import com.google.android.gms.common.util.ArrayUtils;
 import com.google.gson.Gson;
 import com.liker.android.App;
 import com.liker.android.Authentication.model.LoginInfo;
@@ -125,7 +125,6 @@ import com.liker.android.Home.model.PostFilterCategory;
 import com.liker.android.Home.model.PostFilterItem;
 import com.liker.android.Home.model.PostFilterSubCategory;
 import com.liker.android.Home.model.PostFilters;
-import com.liker.android.Home.model.PostFooter;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.model.SetUser;
 import com.liker.android.Home.model.SinglePostFilters;
@@ -142,11 +141,9 @@ import com.liker.android.Home.view.fragment.FollowingPost;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
 import com.liker.android.Home.view.fragment.TrendingPost;
 import com.liker.android.Message.model.NewMessage;
-import com.liker.android.Message.model.SenderData;
 import com.liker.android.Message.view.MessageActivity;
 import com.liker.android.Notification.view.NotificationActivity;
 import com.liker.android.Post.view.activity.PostNew;
-import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Search.LikerSearch;
@@ -156,7 +153,6 @@ import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Service.DataFetchingService;
 import com.liker.android.Tool.Tools;
-import com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -165,11 +161,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import cn.jzvd.JZVideoPlayer;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.fabric.sdk.android.Fabric;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -179,8 +173,6 @@ import retrofit2.Response;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
-import static android.support.v4.view.PagerAdapter.POSITION_NONE;
-import static com.liker.android.Tool.AppConstants.IN_CHAT_MODE;
 import static com.liker.android.Tool.Tools.isEmpty;
 //import static com.doodle.Tool.Tools.isEmpty;
 
@@ -235,9 +227,12 @@ public class Home extends AppCompatActivity implements
     private String profileId;
     private String blockUserId;
     boolean active;
-    private FloatingLayout floatingLayout;
-    private com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton fabFollowing;
-    private boolean isNewPostToggle;
+    //  private  FloatingLayout floatingLayout;
+    //private com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton fabFollowing;
+    private ViewGroup newPostContainer;
+    private TextView tvPublishPostCount;
+    private ImageView imageNewPostPublish;
+    private boolean isNewPostToggle = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -271,7 +266,7 @@ public class Home extends AppCompatActivity implements
 
         setData();
         sendCategoryListRequest();
-       // getNewPostResult();
+        // getNewPostResult();
         // forceCrash();
 
     }
@@ -308,6 +303,10 @@ public class Home extends AppCompatActivity implements
         IntentFilter filter = new IntentFilter();
         filter.addAction(AppConstants.NEW_NOTIFICATION_BROADCAST);
         registerReceiver(broadcastReceiver, filter);
+
+        IntentFilter filterNewPost = new IntentFilter();
+        filterNewPost.addAction(AppConstants.NEW_POST_BROADCAST_FROM_HOME);
+        registerReceiver(broadcastNewPost, filterNewPost);
 
         IntentFilter catFilter = new IntentFilter();
         catFilter.addAction(AppConstants.POST_FILTER_CAT_BROADCAST);
@@ -348,8 +347,21 @@ public class Home extends AppCompatActivity implements
         categoryRecyclerView = findViewById(R.id.categoryRecyclerView);
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        floatingLayout = findViewById(R.id.floating_layout);
-        fabFollowing = (com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton) findViewById(R.id.fabFollowing);
+        newPostContainer = findViewById(R.id.newPostContainer);
+        tvPublishPostCount = findViewById(R.id.tvPublishPostCount);
+        imageNewPostPublish = findViewById(R.id.imageNewPostPublish);
+        newPostContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                manager.setPostCountClear();
+                setPostCount(0);
+                viewPager.setCurrentItem(1);
+                breakingTabClickListener.onTabClick();
+
+            }
+        });
+
 
         setupViewPager();
 
@@ -464,6 +476,8 @@ public class Home extends AppCompatActivity implements
         setNotificationCount(newNotificationCount);
         int newMessageCount = manager.getMessageNotificationCount();
         setMessageNotificationCount(newMessageCount);
+        int newPostCount = manager.getPostCount();
+        setPostCount(newPostCount);
         categories.add(new PostFilterCategory("1", "All Categories", new ArrayList<>()));
         categories.add(new PostFilterCategory("2", "My Favorites", new ArrayList<>()));
         categories.add(new PostFilterCategory("3", "Single Category", new ArrayList<>()));
@@ -1033,6 +1047,8 @@ public class Home extends AppCompatActivity implements
         }
         int newNotificationCount = manager.getNotificationCount();
         setNotificationCount(newNotificationCount);
+        int newPostCount = manager.getPostCount();
+        setPostCount(newPostCount);
         // code to update the UI in the fragment
     }
 
@@ -1244,6 +1260,8 @@ public class Home extends AppCompatActivity implements
 
                     tabThreeInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
                     tabThreeText.setTextColor(Color.parseColor("#AAAAAA"));
+                    manager.setPostCountClear();
+                    setPostCount(0);
                 } else if (tab.getPosition() == 1) {
                     tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
                     tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
@@ -1253,6 +1271,8 @@ public class Home extends AppCompatActivity implements
 
                     tabThreeInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
                     tabThreeText.setTextColor(Color.parseColor("#AAAAAA"));
+                    manager.setPostCountClear();
+                    setPostCount(0);
                 } else {
                     tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
                     tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
@@ -1262,6 +1282,8 @@ public class Home extends AppCompatActivity implements
 
                     tabThreeInfo.setImageResource(R.drawable.ic_info_outline_blue_24dp);
                     tabThreeText.setTextColor(Color.parseColor("#1483C9"));
+                    manager.setPostCountClear();
+                    setPostCount(0);
                 }
 
             }
@@ -1280,10 +1302,16 @@ public class Home extends AppCompatActivity implements
                 // appBarLayout.setExpanded(true);
                 if (tab.getPosition() == 0) {
                     trendingTabClickListener.onTabClick();
+                    manager.setPostCountClear();
+                    setPostCount(0);
                 } else if (tab.getPosition() == 1) {
                     breakingTabClickListener.onTabClick();
+                    manager.setPostCountClear();
+                    setPostCount(0);
                 } else if (tab.getPosition() == 2) {
                     followingTabClickListener.onTabClick();
+                    manager.setPostCountClear();
+                    setPostCount(0);
                 }
                 appBarLayout.setExpanded(true);
             }
@@ -1319,14 +1347,14 @@ public class Home extends AppCompatActivity implements
 
             Transition transition = new Fade();
             transition.setDuration(600);
-            transition.addTarget(floatingLayout);
+            transition.addTarget(newPostContainer);
             isNewPostToggle = true;
             TransitionManager.beginDelayedTransition(drawer, transition);
-            floatingLayout.setVisibility(isNewPostToggle ? View.VISIBLE : View.GONE);
-            fabFollowing.setFabText(String.valueOf(count)+" New Posts");
-
+            newPostContainer.setVisibility(isNewPostToggle ? View.VISIBLE : View.GONE);
+            tvPublishPostCount.setText(String.valueOf(count) + " New Posts");
         } else {
-            floatingLayout.setVisibility(View.INVISIBLE);
+            newPostContainer.setVisibility(View.GONE);
+            tvPublishPostCount.setText("");
 
         }
     }
@@ -1367,10 +1395,14 @@ public class Home extends AppCompatActivity implements
         switch (id) {
             case R.id.tvSearchInput:
                 startActivity(new Intent(this, LikerSearch.class));
+                manager.setPostCountClear();
+                setPostCount(0);
                 break;
             case R.id.imageNewPost:
                 active = true;
                 startActivity(new Intent(this, PostNew.class));
+                manager.setPostCountClear();
+                setPostCount(0);
 
 // imageNewPost.setCircleBackgroundColor(getResources().getColor(R.color.colorWhite));
 //                imageNewPost.setImageResource(R.drawable.ic_mode_edit_blue_24dp);
@@ -1379,9 +1411,20 @@ public class Home extends AppCompatActivity implements
                 manager.setNotificationCountClear();
                 setNotificationCount(0);
                 startActivity(new Intent(this, NotificationActivity.class));
+                manager.setPostCountClear();
+                setPostCount(0);
 // imageNotification.setCircleBackgroundColor(getResources().getColor(R.color.colorWhite));
 // imageNotification.setImageResource(R.drawable.ic_notifications_none_blue_24dp);
                 break;
+
+ /*           case R.id.newPostContainer:
+              //  manager.setPostCountClear();
+            //    setPostCount(0);
+                Toast.makeText(this, "new post", Toast.LENGTH_SHORT).show();
+              //  startActivity(new Intent(this, NotificationActivity.class));
+// imageNotification.setCircleBackgroundColor(getResources().getColor(R.color.colorWhite));
+// imageNotification.setImageResource(R.drawable.ic_notifications_none_blue_24dp);
+                break;*/
 
             case R.id.imageFriendRequest:
                 manager.setMessageNotificationCountClear();
@@ -1389,10 +1432,15 @@ public class Home extends AppCompatActivity implements
                 startActivity(new Intent(this, MessageActivity.class));
 // imageFriendRequest.setCircleBackgroundColor(getResources().getColor(R.color.colorWhite));
 // imageFriendRequest.setImageResource(R.drawable.ic_people_outline_blue_24dp);
+                manager.setPostCountClear();
+                setPostCount(0);
+
                 break;
 
             case R.id.imageStarContributor:
                 startActivity(new Intent(this, StarContributorActivity.class).putExtra("category_id", "").putExtra("category_name", ""));
+                manager.setPostCountClear();
+                setPostCount(0);
                 break;
         }
     }
@@ -1410,10 +1458,59 @@ public class Home extends AppCompatActivity implements
                 manager.setMessageNotificationCount();
                 int newCount = manager.getMessageNotificationCount();
                 setMessageNotificationCount(newCount);
-
                 notificationSoundWhenUserActive();
 
             }
+        }
+    };
+
+    BroadcastReceiver broadcastNewPost = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            boolean status = intent.getBooleanExtra("status", false);
+            String message = intent.getStringExtra("message");
+            int total = intent.getIntExtra("total", 0);
+            int permission = intent.getIntExtra("permission", 0);
+            String jsonArray = intent.getStringExtra("followerArray");
+
+
+            if(2==permission){
+                try {
+                    JSONArray array = new JSONArray(jsonArray);
+                    if(array.length()>0){
+                        for (int i = 0; i <array.length() ; i++) {
+                            String id= String.valueOf(array.get(i));
+                            if(userId.equalsIgnoreCase(id)){
+                                if (total > 0) {
+                                    manager.setPostCount();
+                                    int newCount = manager.getPostCount();
+                                    setPostCount(newCount);
+                                 //   notificationSoundWhenUserActive();
+                                }
+
+                                break;
+                            }
+
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }else if(0==permission){
+                if (total > 0) {
+                    manager.setPostCount();
+                    int newCount = manager.getPostCount();
+                    setPostCount(newCount);
+                 //   notificationSoundWhenUserActive();
+                }
+
+            }else if(1==permission){
+                manager.setPostCountClear();
+                setPostCount(0);
+            }
+
+
         }
     };
 
@@ -1454,6 +1551,7 @@ public class Home extends AppCompatActivity implements
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
+        unregisterReceiver(broadcastNewPost);
         unregisterReceiver(filterBroadcast);
         unregisterReceiver(newPostBroadcastReceiver);
         Tools.dismissDialog();
@@ -1476,23 +1574,27 @@ public class Home extends AppCompatActivity implements
                     getPostFilters("1", true);
                     ((TextView) parent.getChildAt(0)).setTextColor(Color.parseColor("#60b2fc"));//60b2fc
                     categorySpinner.setBackgroundColor(Color.parseColor("#ffffff"));
+                    spinnerDropDown.setImageResource(R.drawable.ic_arrow_drop_down_blue_24dp);
                     sendBroadcast((new Intent().putExtra("category_ids", "").putExtra("filter", 1)).setAction(AppConstants.CATEGORY_CHANGE_BROADCAST));
                     break;
                 case 1:
                     filterItem.setText(getString(R.string.select_categories));
                     getPostFilters("1", false);
                     categorySpinner.setBackgroundColor(Color.parseColor("#1388d1"));
+                    spinnerDropDown.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
                     break;
                 case 2:
                     filterItem.setText(selectedCategory.isEmpty() ? getString(R.string.select_category) : selectedCategory);
                     categoryRecyclerView.setVisibility(View.GONE);
                     getSinglePostFilters("4", false);
                     categorySpinner.setBackgroundColor(Color.parseColor("#788a98"));
+                    spinnerDropDown.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
                     break;
                 case 3:
                     filterItem.setText(getString(R.string.select_categories));
                     getPostFilters("8", false);
                     categorySpinner.setBackgroundColor(Color.parseColor("#1e1c1a"));
+                    spinnerDropDown.setImageResource(R.drawable.ic_arrow_drop_down_white_24dp);
                     break;
             }
         }
