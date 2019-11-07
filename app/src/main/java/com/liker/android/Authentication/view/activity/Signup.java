@@ -531,7 +531,8 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    viewModel.validateEmailField(etEmail);
+                  //  viewModel.validateEmailField(etEmail);
+                    viewModel.isValidEmail(mEmail,etEmail);
                 }
             }
         });
@@ -737,7 +738,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                     break;
                 case EditorInfo.IME_ACTION_SEND:
                     if (flipperId == 0) {
-                        if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName) && viewModel.validateEmailField(etEmail)) {
+                        if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName) && viewModel.isValidEmail(mEmail,etEmail) /*viewModel.validateEmailField(etEmail)*/) {
                             flipperId++;
                             mViewFlipper.setInAnimation(slideLeftIn);
                             mViewFlipper.setOutAnimation(slideLeftOut);
@@ -821,7 +822,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                 Log.d(TAG, "onClick: " + flipperId);
                 if (flipperId == 0) {
                     if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName)) {
-                        if (viewModel.validateEmailField(etEmail)) {
+                        if (/*viewModel.validateEmailField(etEmail)*/viewModel.isValidEmail(mEmail,etEmail)) {
                             Call<String> call = webService.checkEmailExists(true, etEmail.getText().toString());
                             sendCheckEmailRequest(call);
                         }

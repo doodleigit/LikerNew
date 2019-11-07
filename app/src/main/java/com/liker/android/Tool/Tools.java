@@ -42,6 +42,9 @@ import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -49,8 +52,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -1308,5 +1315,31 @@ public class Tools {
     }
 
 
+    public static void fadeInFadeOutFollow(ViewGroup viewGroup) {
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+        fadeIn.setDuration(1000);
+
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+        fadeOut.setStartOffset(1000);
+        fadeOut.setDuration(1000);
+
+        AnimationSet animation = new AnimationSet(false); //change to false
+        animation.addAnimation(fadeIn);
+        animation.addAnimation(fadeOut);
+        viewGroup.setAnimation(animation);
+    }
+
+
+
+    public static void followToggle(ViewGroup parentView,ViewGroup targetView,boolean isFollowToggle) {
+        Transition transition = new Fade();
+        transition.setDuration(600);
+        transition.addTarget(targetView);
+
+        TransitionManager.beginDelayedTransition(parentView, transition);
+        targetView.setVisibility(isFollowToggle ? View.VISIBLE : View.GONE);
+    }
 
 }

@@ -127,7 +127,6 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         ReportLikerMessageSheet.BottomSheetListener,
         FollowSheet.BottomSheetListener,
         BlockUserDialog.BlockListener,
-        FollowStatus.FollowStatusListener,
         PostPermissionSheet.BottomSheetListener {
 
     private TabLayout tabLayout;
@@ -910,63 +909,6 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         reportPersonMessageSheet.show(getSupportFragmentManager(), "ReportPersonMessageSheet");
     }
 
-    PostItem mPostItem;
-    @Override
-    public void onFollowResult(DialogFragment dlg, PostItem postItem, int position) {
-        mPostItem=postItem;
-        String followUserId=mPostItem.getPostUserid();
-        setFollow(followUserId, position);
-    }
-
-    @Override
-    public void onUnFollowResult(DialogFragment dlg, PostItem postItem, int position) {
-        mPostItem=postItem;
-        PostFooter postFooter=mPostItem.getPostFooter();
-        postFooter.setFollowed(true);
-        App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) mPostItem).putExtra("position", position).putExtra("type", "follow"));
-
-    }
-
-    @Override
-    public void onNeutralResult(DialogFragment dlg) {
-
-    }
-
-    private void setFollow(String followUserId, int position) {
-//        progressBarLoading.setVisibility(View.VISIBLE);
-        showProgressBar(getString(R.string.loading));
-        Call<String> call = webService.setFollow(deviceId, token, userId, userId, followUserId);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                String jsonResponse = response.body();
-                try {
-                    JSONObject obj = new JSONObject(jsonResponse);
-                    boolean status = obj.getBoolean("status");
-                    if (status) {
-//                        likeUsers.get(position).setIsFollowed(true);
-//                        likeUserAdapter.notifyItemChanged(position);
-                        PostFooter postFooter=mPostItem.getPostFooter();
-                        postFooter.setFollowed(true);
-                        App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) mPostItem).putExtra("position", position).putExtra("type", "follow"));
-                        sendBrowserNotification(followUserId);
-                    } else {
-                        Toast.makeText(ProfileActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-//                progressBarLoading.setVisibility(View.GONE);
-                hideProgressBar();
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-//                progressBarLoading.setVisibility(View.GONE);
-                hideProgressBar();
-            }
-        });
-    }
 
     private void sendBrowserNotification(String followUserId) {
         Call<String> call = webService.sendBrowserNotification(deviceId, userId, token, followUserId, userId, "0", "follow");

@@ -3,7 +3,9 @@ package com.liker.android.Authentication.viewmodel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -54,7 +56,7 @@ public class SignupViewModel extends AndroidViewModel {
         }
         if (validateTor.isAtleastLength(str, 2)
                 && validateTor.isAtMostLength(str, 24)
-               /* && validateTor.isAlpha(str)*/) {
+            /* && validateTor.isAlpha(str)*/) {
             return true;
         } else {
             edt_text.setError("Be between 2-24 letters" + "\n" + "Letters only");
@@ -82,6 +84,26 @@ public class SignupViewModel extends AndroidViewModel {
 
     }
 
+    public boolean isValidEmail(CharSequence target, EditText edt_email) {
+
+        if ((!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches())) {
+            return true;
+        } else {
+            if (TextUtils.isEmpty(target)) {
+                edt_email.setError("Field is empty!");
+                return false;
+            }
+            if (!Patterns.EMAIL_ADDRESS.matcher(target).matches()) {
+                edt_email.setError("Invalid Email entered!");
+                return false;
+            }
+
+            return false;
+        }
+
+    }
+
+
     public boolean validateLoginEmailField(EditText edt_email) {
         String str = edt_email.getText().toString();
 
@@ -98,6 +120,7 @@ public class SignupViewModel extends AndroidViewModel {
         }
 
     }
+
 
     private void sendCheckEmailRequest(Call<String> call, EditText edt_email) {
         call.enqueue(new Callback<String>() {

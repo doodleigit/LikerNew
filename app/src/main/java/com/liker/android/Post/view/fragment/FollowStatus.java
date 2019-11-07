@@ -4,9 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -23,7 +21,6 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -32,11 +29,8 @@ import com.liker.android.Home.model.PostItem;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
-import com.liker.android.Tool.Tools;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static android.graphics.Typeface.BOLD;
 
 //import com.doodle.R;
 //import com.doodle.Tool.Tools;

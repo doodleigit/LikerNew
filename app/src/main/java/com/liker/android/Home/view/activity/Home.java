@@ -31,6 +31,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -153,6 +156,7 @@ import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Service.DataFetchingService;
 import com.liker.android.Tool.Tools;
+import com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -190,7 +194,6 @@ public class Home extends AppCompatActivity implements
         FollowSheet.BottomSheetListener,
         BlockUserDialog.BlockListener,
         PostPermissionSheet.BottomSheetListener,
-        FollowStatus.FollowStatusListener,
         NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
@@ -232,6 +235,9 @@ public class Home extends AppCompatActivity implements
     private String profileId;
     private String blockUserId;
     boolean active;
+    private FloatingLayout floatingLayout;
+    private com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton fabFollowing;
+    private boolean isNewPostToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,7 +271,7 @@ public class Home extends AppCompatActivity implements
 
         setData();
         sendCategoryListRequest();
-        getNewPostResult();
+       // getNewPostResult();
         // forceCrash();
 
     }
@@ -312,6 +318,7 @@ public class Home extends AppCompatActivity implements
         registerReceiver(newPostBroadcastReceiver, newPostFilter);
 
         findViewById(R.id.tvSearchInput).setOnClickListener(this);
+
         drawer = findViewById(R.id.drawer_layout);
         mainNavigationView = findViewById(R.id.main_nav_view);
         navigationView = findViewById(R.id.nav_view);
@@ -340,6 +347,9 @@ public class Home extends AppCompatActivity implements
         filterItem = findViewById(R.id.filterItem);
         categoryRecyclerView = findViewById(R.id.categoryRecyclerView);
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        floatingLayout = findViewById(R.id.floating_layout);
+        fabFollowing = (com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton) findViewById(R.id.fabFollowing);
 
         setupViewPager();
 
@@ -370,7 +380,7 @@ public class Home extends AppCompatActivity implements
 
         socket = SocketIOManager.wSocket;
         mSocket = SocketIOManager.mSocket;
-        nSocket = new SocketIOManager().getNewPostSocketInstance();
+        //nSocket = SocketIOManager.nSocket;
 
 
         filterItem.setOnClickListener(new View.OnClickListener() {
@@ -1206,6 +1216,7 @@ public class Home extends AppCompatActivity implements
                 tabLayout.setupWithViewPager(viewPager);
                 setupTabIcons();
                 appBarLayout.setExpanded(true);
+
             }
 
             @Override
@@ -1300,6 +1311,23 @@ public class Home extends AppCompatActivity implements
         } else {
             newNotificationCount.setVisibility(View.GONE);
             newNotificationCount.setText("");
+        }
+    }
+
+    private void setPostCount(int count) {
+        if (count > 0) {
+
+            Transition transition = new Fade();
+            transition.setDuration(600);
+            transition.addTarget(floatingLayout);
+            isNewPostToggle = true;
+            TransitionManager.beginDelayedTransition(drawer, transition);
+            floatingLayout.setVisibility(isNewPostToggle ? View.VISIBLE : View.GONE);
+            fabFollowing.setFabText(String.valueOf(count)+" New Posts");
+
+        } else {
+            floatingLayout.setVisibility(View.INVISIBLE);
+
         }
     }
 
@@ -1951,63 +1979,6 @@ public class Home extends AppCompatActivity implements
 
     PostItem mPostItem;
 
-    @Override
-    public void onFollowResult(DialogFragment dlg, PostItem postItem, int position) {
-        mPostItem = postItem;
-        String followUserId = mPostItem.getPostUserid();
-        setFollow(followUserId, position);
-    }
-
-    @Override
-    public void onUnFollowResult(DialogFragment dlg, PostItem postItem, int position) {
-        mPostItem = postItem;
-        PostFooter postFooter = mPostItem.getPostFooter();
-        postFooter.setFollowed(true);
-        App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) mPostItem).putExtra("position", position).putExtra("type", "follow"));
-
-    }
-
-    @Override
-    public void onNeutralResult(DialogFragment dlg) {
-
-    }
-
-    private void setFollow(String followUserId, int position) {
-//        progressBarLoading.setVisibility(View.VISIBLE);
-        showProgressBar(getString(R.string.loading));
-        Call<String> call = webService.setFollow(deviceId, token, userId, userId, followUserId);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                String jsonResponse = response.body();
-                try {
-                    JSONObject obj = new JSONObject(jsonResponse);
-                    boolean status = obj.getBoolean("status");
-                    if (status) {
-//                        likeUsers.get(position).setIsFollowed(true);
-//                        likeUserAdapter.notifyItemChanged(position);
-                        PostFooter postFooter = mPostItem.getPostFooter();
-                        postFooter.setFollowed(true);
-                        App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) mPostItem).putExtra("position", position).putExtra("type", "follow"));
-                        sendBrowserNotification(followUserId);
-                    } else {
-                        Toast.makeText(Home.this, "Something went wrong", Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-//                progressBarLoading.setVisibility(View.GONE);
-                hideProgressBar();
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-//                progressBarLoading.setVisibility(View.GONE);
-                hideProgressBar();
-            }
-        });
-    }
-
     private void sendBrowserNotification(String followUserId) {
         Call<String> call = webService.sendBrowserNotification(deviceId, userId, token, followUserId, userId, "0", "follow");
         call.enqueue(new Callback<String>() {
@@ -2029,14 +2000,19 @@ public class Home extends AppCompatActivity implements
             public void call(Object... args) {
                 try {
                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
-                    boolean status=newPostResultJson.getBoolean("status");
-                    String message=newPostResultJson.getString("message");
-                    JSONObject dataJson=newPostResultJson.getJSONObject("data");
-                    int total=dataJson.getInt("total");
-                    JSONArray followers=dataJson.getJSONArray("followers");
-                    int permission=dataJson.getInt("permission");
-
+                    boolean status = newPostResultJson.getBoolean("status");
+                    String message = newPostResultJson.getString("message");
+                    JSONObject dataJson = newPostResultJson.getJSONObject("data");
+                    int total = dataJson.getInt("total");
+                    JSONArray followers = dataJson.getJSONArray("followers");
+                    int permission = dataJson.getInt("permission");
                     NewMessage newMessage = new NewMessage();
+                    if (total > 0) {
+
+                        manager.setPostCount();
+                        int newCount = manager.getPostCount();
+                        setPostCount(newCount);
+                    }
 
 //                    newMessage.setUserId(messageJson.getString("user_id"));
 //                    newMessage.setToUserId(messageJson.getString("to_user_id"));

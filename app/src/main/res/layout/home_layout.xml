@@ -35,6 +35,18 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="@dimen/_90sdp"
+                    android:background="@drawable/rectangle_corner_round_one"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_30sdp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                </LinearLayout>
+
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_40sdp"
@@ -247,7 +259,8 @@
                     </LinearLayout>
 
                 </LinearLayout>
-                <include layout="@layout/new_post_counter"/>
+
+               <!-- <include layout="@layout/new_post_counter"/>-->
 
             </RelativeLayout>
 
@@ -456,6 +469,33 @@
             android:layout_below="@+id/viewCategory" />
 
     </RelativeLayout>
+
+    <com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout
+        android:id="@+id/floating_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_marginTop="?attr/actionBarSize"
+        app:fabMenuGravity="top"
+        app:fabMenuStyle="popUp"
+        android:visibility="invisible"
+        android:layout_gravity="top|center"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton
+            android:id="@+id/fabFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            app:fabColor="@color/colorAccent"
+            app:fabIcon="@drawable/ic_white_arrow_up_inside_a_circle"
+            app:fabIconColor="@color/colorWhite"
+            app:fabText=""
+            app:fabTextColor="@color/colorWhite" />
+
+
+    </com.robertlevonyan.views.customfloatingactionbutton.FloatingLayout>
 
 </android.support.design.widget.CoordinatorLayout>
 
