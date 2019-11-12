@@ -23,6 +23,7 @@ import com.liker.android.Tool.AppConstants;
 //import com.doodle.Tool.AppConstants;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class StarContributorsAdapter extends RecyclerView.Adapter<StarContributorsAdapter.ViewHolder> {
 
@@ -47,12 +48,16 @@ public class StarContributorsAdapter extends RecyclerView.Adapter<StarContributo
         viewHolder.tvRank.setText(arrayList.get(i).getRank());
         viewHolder.tvScore.setText(arrayList.get(i).getRankPercent() + "%");
         viewHolder.tvName.setText(arrayList.get(i).getFirstName() + " " + arrayList.get(i).getLastName());
-        viewHolder.tvLikes.setText(String.valueOf(Integer.valueOf(arrayList.get(i).getGoldStars()) + Integer.valueOf(arrayList.get(i).getSliverStars())));
+        viewHolder.tvLikes.setText(getFormattedLikerCount(arrayList.get(i).getLikesTotal()));
 
-        if (Integer.valueOf(arrayList.get(i).getRankPercent()) > 5) {
+        if (Integer.valueOf(arrayList.get(i).getRankPercent()) <= 5) {
+            viewHolder.ivStarImage.setVisibility(View.VISIBLE);
+            viewHolder.ivStarImage.setImageResource(R.drawable.ic_star_gold_24dp);
+        } else if (Integer.valueOf(arrayList.get(i).getRankPercent()) <= 10){
+            viewHolder.ivStarImage.setVisibility(View.VISIBLE);
             viewHolder.ivStarImage.setImageResource(R.drawable.ic_star_silver_24dp);
         } else {
-            viewHolder.ivStarImage.setImageResource(R.drawable.ic_star_gold_24dp);
+            viewHolder.ivStarImage.setVisibility(View.GONE);
         }
 
         Glide.with(App.getAppContext())
@@ -69,6 +74,23 @@ public class StarContributorsAdapter extends RecyclerView.Adapter<StarContributo
                 context.startActivity(new Intent(context, ProfileActivity.class).putExtra("user_id", arrayList.get(i).getUserId()).putExtra("user_name", arrayList.get(i).getUserName()));
             }
         });
+    }
+
+    private String getFormattedLikerCount(String likes) {
+        try {
+            String likeString;
+            double likeCount = Double.parseDouble(likes);
+            if (Math.abs(likeCount / 1000000) >= 1) {
+                likeString = String.format(Locale.getDefault(), "%.1f", (likeCount / 1000000)) + "m";
+            } else if (Math.abs(likeCount / 1000) >= 1) {
+                likeString = String.format(Locale.getDefault(), "%.1f", (likeCount / 1000))+ "k";
+            } else {
+                likeString = String.format(Locale.getDefault(), "%.0f", (likeCount));
+            }
+            return likeString;
+        } catch (NumberFormatException e) {
+            return "0";
+        }
     }
 
     @Override

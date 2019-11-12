@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Album"
+            android:text="@string/album"
             android:textSize="16sp"
             android:textColor="@color/colorBlack"
             android:textStyle="bold"/>
@@ -35,25 +35,25 @@
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="Photo Gallery"
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack"
-            android:textStyle="bold"/>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:text="@string/photo_gallery"-->
+<!--            android:textSize="16sp"-->
+<!--            android:textColor="@color/colorBlack"-->
+<!--            android:textStyle="bold"/>-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorBorderBackground"/>
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:background="@color/colorBorderBackground"/>-->
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/photoRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"/>
+<!--        <android.support.v7.widget.RecyclerView-->
+<!--            android:id="@+id/photoRecyclerView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="5dp"/>-->
 
     </LinearLayout>
 

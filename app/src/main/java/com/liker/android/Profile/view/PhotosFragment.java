@@ -62,7 +62,8 @@ import static com.liker.android.Tool.AppConstants.ITEM_KEY;
 public class PhotosFragment extends Fragment {
 
     View view;
-    private RecyclerView albumRecyclerView, photoRecyclerView;
+    private RecyclerView albumRecyclerView;
+//    private RecyclerView photoRecyclerView;
 
     private ProgressDialog progressDialog;
 
@@ -71,7 +72,7 @@ public class PhotosFragment extends Fragment {
     private ProfileService profileService;
     private PrefManager manager;
     private AlbumAdapter albumAdapter;
-    private PhotoAdapter photoAdapter;
+//    private PhotoAdapter photoAdapter;
     private ArrayList<PhotoAlbum> photoAlbums;
     private ArrayList<RecentPhoto> recentPhotos;
     private String deviceId, profileUserId, token, userId;
@@ -99,6 +100,7 @@ public class PhotosFragment extends Fragment {
         photoAlbums = new ArrayList<>();
         recentPhotos = new ArrayList<>();
         deviceId = manager.getDeviceId();
+        assert getArguments() != null;
         profileUserId = getArguments().getString("user_id");
         token = manager.getToken();
         userId = manager.getProfileId();
@@ -118,17 +120,17 @@ public class PhotosFragment extends Fragment {
         };
 
         albumAdapter = new AlbumAdapter(getActivity(), photoAlbums, photoAlbumClickListener);
-        photoAdapter = new PhotoAdapter(getActivity(), recentPhotos);
+//        photoAdapter = new PhotoAdapter(getActivity(), recentPhotos);
 
         albumRecyclerView = view.findViewById(R.id.albumRecyclerView);
-        photoRecyclerView = view.findViewById(R.id.photoRecyclerView);
+//        photoRecyclerView = view.findViewById(R.id.photoRecyclerView);
         albumRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         albumRecyclerView.setNestedScrollingEnabled(false);
-        photoRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
-        photoRecyclerView.setNestedScrollingEnabled(false);
+//        photoRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+//        photoRecyclerView.setNestedScrollingEnabled(false);
 
         albumRecyclerView.setAdapter(albumAdapter);
-        photoRecyclerView.setAdapter(photoAdapter);
+//        photoRecyclerView.setAdapter(photoAdapter);
     }
 
     private void getData() {
@@ -154,8 +156,15 @@ public class PhotosFragment extends Fragment {
 
         tvTitle.setText(photoAlbum.getTitle());
 
-        Call<ArrayList<AlbumPhoto>> callPhotos = profileService.getAlbumPhotos(deviceId, token, userId, profileUserId, String.valueOf(photoAlbum.getAlbumType()), userId, limit, offset);
-        sendAlbumPhotoListRequest(callPhotos, albumPhotos, albumPhotoAdapter);
+        if (photoAlbum.getAlbumType() == -1) {
+            for (RecentPhoto recentPhoto : recentPhotos) {
+                albumPhotos.add(new AlbumPhoto(recentPhoto.getImageName()));
+            }
+            albumPhotoAdapter.notifyDataSetChanged();
+        } else {
+            Call<ArrayList<AlbumPhoto>> callPhotos = profileService.getAlbumPhotos(deviceId, token, userId, profileUserId, String.valueOf(photoAlbum.getAlbumType()), userId, limit, offset);
+            sendAlbumPhotoListRequest(callPhotos, albumPhotos, albumPhotoAdapter);
+        }
 
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,9 +247,11 @@ public class PhotosFragment extends Fragment {
             public void onResponse(Call<ArrayList<RecentPhoto>> call, Response<ArrayList<RecentPhoto>> response) {
 
                 ArrayList<RecentPhoto> arrayList = response.body();
-                if (arrayList != null) {
+                if (arrayList != null && arrayList.size() > 0) {
                     recentPhotos.addAll(arrayList);
-                    photoAdapter.notifyDataSetChanged();
+                    photoAlbums.add(new PhotoAlbum(-1, getString(R.string.photo_gallery), String.valueOf(arrayList.size()), arrayList.get(0).getImageName()));
+                    albumAdapter.notifyDataSetChanged();
+//                    photoAdapter.notifyDataSetChanged();
                 }
                 progressDialog.hide();
             }
