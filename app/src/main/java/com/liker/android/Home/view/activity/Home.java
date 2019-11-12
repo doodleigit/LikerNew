@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -1351,7 +1352,13 @@ public class Home extends AppCompatActivity implements
             isNewPostToggle = true;
             TransitionManager.beginDelayedTransition(drawer, transition);
             newPostContainer.setVisibility(isNewPostToggle ? View.VISIBLE : View.GONE);
-            tvPublishPostCount.setText(String.valueOf(count) + " New Posts");
+            tvPublishPostCount.setText(String.valueOf(count));
+            String stringPostCount=tvPublishPostCount.getText().toString();
+            if("1".equalsIgnoreCase(stringPostCount)){
+                tvPublishPostCount.setText(String.valueOf(count) + " New Post");
+            }else {
+                tvPublishPostCount.setText(String.valueOf(count) + " New Posts");
+            }
         } else {
             newPostContainer.setVisibility(View.GONE);
             tvPublishPostCount.setText("");
@@ -2148,6 +2155,18 @@ public class Home extends AppCompatActivity implements
         });
 
 
+    }
+
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

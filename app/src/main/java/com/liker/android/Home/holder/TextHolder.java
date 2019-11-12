@@ -1262,8 +1262,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View v) {
-
-
                 activity = (AppCompatActivity) v.getContext();
                 PostPermissionSheet reportReasonSheet = PostPermissionSheet.newInstance(postItem, position);
                 reportReasonSheet.show(activity.getSupportFragmentManager(), "ReportReasonSheet");

@@ -863,15 +863,12 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
                             shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
                                 @Override
                                 public void onSuccess(Sharer.Result result) {
-
                                     Toast.makeText(mContext, "Share successFull", Toast.LENGTH_SHORT).show();
                                 }
-
                                 @Override
                                 public void onCancel() {
                                     Toast.makeText(mContext, "Share cancel", Toast.LENGTH_SHORT).show();
                                 }
-
                                 @Override
                                 public void onError(FacebookException error) {
                                     Toast.makeText(mContext, error.getMessage(), Toast.LENGTH_SHORT).show();

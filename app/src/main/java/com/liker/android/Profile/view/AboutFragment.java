@@ -446,7 +446,7 @@ public class AboutFragment extends Fragment {
         days.add(getString(R.string.select_day));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
         int totalDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        for (int i = 1930; i <= thisYear; i++) {
+        for (int i = 1900; i <= thisYear; i++) {
             years.add(Integer.toString(i));
         }
         for (int i = 1; i <= totalDay; i++) {
@@ -1053,7 +1053,7 @@ public class AboutFragment extends Fragment {
         ArrayList<String> years = new ArrayList<>();
         years.add(getString(R.string.select_year));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 1930; i <= thisYear; i++) {
+        for (int i = 1900; i <= thisYear; i++) {
             years.add(Integer.toString(i));
         }
 
@@ -1330,7 +1330,7 @@ public class AboutFragment extends Fragment {
         ArrayList<String> years = new ArrayList<>();
         years.add(getString(R.string.select_year));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 1930; i <= thisYear; i++) {
+        for (int i = 1900; i <= thisYear; i++) {
             years.add(Integer.toString(i));
         }
 
@@ -1498,7 +1498,7 @@ public class AboutFragment extends Fragment {
 //                designation_name: soft
 //                company_name: doodlei
 //                website_url: abc.com
-//                from_date: 1930-01-01
+//                from_date: 1900-01-01
 //                to_date: 0-0-01
 //                currently_worked: true
 //                permission_type: 0
@@ -1706,7 +1706,7 @@ public class AboutFragment extends Fragment {
         ArrayList<String> years = new ArrayList<>();
         years.add(getString(R.string.select_year));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 1930; i <= thisYear; i++) {
+        for (int i = 1900; i <= thisYear; i++) {
             years.add(Integer.toString(i));
         }
 
@@ -2014,7 +2014,7 @@ public class AboutFragment extends Fragment {
         ArrayList<String> years = new ArrayList<>();
         years.add(getString(R.string.select_year));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 1930; i <= thisYear; i++) {
+        for (int i = 1900; i <= thisYear; i++) {
             years.add(Integer.toString(i));
         }
 
