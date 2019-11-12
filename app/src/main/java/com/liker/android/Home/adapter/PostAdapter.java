@@ -1,11 +1,16 @@
 package com.liker.android.Home.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 //import com.doodle.Home.holder.HowLikerWorksHolder;
 //import com.doodle.Home.model.PostItem;
@@ -27,6 +32,7 @@ import com.liker.android.Home.holder.TextHolder;
 import com.liker.android.Home.holder.TextMimHolder;
 import com.liker.android.Home.holder.VideoHolder;
 import com.liker.android.Home.model.PostItem;
+import com.liker.android.Home.service.TabClickListener;
 import com.liker.android.Post.model.Mim;
 import com.liker.android.Post.service.DataProvider;
 import com.liker.android.R;
@@ -78,6 +84,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
+        int orientation = mContext.getResources().getConfiguration().orientation;
         if (viewType == VIEW_TYPE_LIKER_USE) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.how_liker_works_layout, parent, false);
             return new HowLikerWorksHolder(view, mContext);
@@ -91,13 +98,29 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new TextMimHolder(view, mContext, mimListener, className);
         }
         if (viewType == VIEW_TYPE_TEXT_IMAGE) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_image, parent, false);
-            return new ImageHolder(view, mContext, imageListener, className);
+            if(orientation == Configuration.ORIENTATION_PORTRAIT) {
+           //     Toast.makeText(mContext, "PORTRAIT", Toast.LENGTH_SHORT).show();
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_image, parent, false);
+                return new ImageHolder(view, mContext, imageListener, className);
+            }else {
+             //   Toast.makeText(mContext, "LANDSCAPE", Toast.LENGTH_SHORT).show();
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_image, parent, false);
+                return new ImageHolder(view, mContext, imageListener, className);
+            }
         }
+
         if (viewType == VIEW_TYPE_TEXT_LINK_SCRIPT) {
 
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script, parent, false);
-            return new LinkScriptHolder(view, mContext, LinkListener, className);
+            if(orientation == Configuration.ORIENTATION_PORTRAIT){
+              //  Toast.makeText(mContext, "PORTRAIT", Toast.LENGTH_SHORT).show();
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script, parent, false);
+                return new LinkScriptHolder(view, mContext, LinkListener, className);
+            }else {
+               // Toast.makeText(mContext, "LANDSCAPE", Toast.LENGTH_SHORT).show();
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script, parent, false);
+                return new LinkScriptHolder(view, mContext, LinkListener, className);
+            }
+
         }
         if (viewType == VIEW_TYPE_TEXT_LINK_SCRIPT_YOUTUBE) {
 
@@ -209,6 +232,20 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return position;
     }
 
+    public String getScreenOrientation(Context context){
+        final int screenOrientation = ((WindowManager)  context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
+        switch (screenOrientation) {
+            case Surface.ROTATION_0:
+                return "SCREEN_ORIENTATION_PORTRAIT";
+            case Surface.ROTATION_90:
+                return "SCREEN_ORIENTATION_LANDSCAPE";
+            case Surface.ROTATION_180:
+                return "SCREEN_ORIENTATION_REVERSE_PORTRAIT";
+            default:
+                return "SCREEN_ORIENTATION_REVERSE_LANDSCAPE";
+        }
+
+    }
 
 
 }

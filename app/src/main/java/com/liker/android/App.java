@@ -87,6 +87,8 @@ public class App extends Application {
     private static boolean sharePostfooter;
     private static CommentPersistData commentPersistData;
     private static ReplyPersistData replyPersistData;
+    private static boolean configChange;
+
 
 
     public static ReplyPersistData getReplyPersistData() {
@@ -323,6 +325,14 @@ public class App extends Application {
 
     public static void setmSocketId(String mSocketId) {
         App.mSocketId = mSocketId;
+    }
+
+    public static boolean isConfigChange() {
+        return configChange;
+    }
+
+    public static void setConfigChange(boolean configChange) {
+        App.configChange = configChange;
     }
 
     @Override

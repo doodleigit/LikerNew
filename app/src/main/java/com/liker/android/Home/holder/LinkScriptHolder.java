@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -27,8 +28,10 @@ import android.text.style.UnderlineSpan;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -98,6 +101,7 @@ import com.liker.android.Tool.Operation;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Tools;
 import com.skyhope.showmoretextview.ShowMoreTextView;
+import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiTextView;
 
 import org.json.JSONException;
@@ -706,6 +710,7 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
                         .centerCrop()
                         .dontAnimate()
                         .into(imgLinkScript);
+
             } else if (item.getPostType().equalsIgnoreCase("4")) {
                 linkImage = AppConstants.YOUTUBE_IMAGE_PATH + item.getPostImage();
                 Glide.with(App.getAppContext())
@@ -713,6 +718,7 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
                         .centerCrop()
                         .dontAnimate()
                         .into(imgLinkScript);
+
             }
 
         }

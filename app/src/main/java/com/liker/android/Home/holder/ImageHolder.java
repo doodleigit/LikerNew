@@ -528,6 +528,7 @@ public class ImageHolder extends RecyclerView.ViewHolder {
         imgLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (userIds.equalsIgnoreCase(item.getPostUserid())) {
                     Tools.toast(mContext, "On Liker, you can't like your own posts. That would be cheating ", R.drawable.ic_like_status);
                 } else {
@@ -552,7 +553,6 @@ public class ImageHolder extends RecyclerView.ViewHolder {
                                 .centerCrop()
                                 .dontAnimate()
                                 .into(imageFollowUser);
-
                     }else {
                         followToggle(rootView,contentFollow,false);
                     }
