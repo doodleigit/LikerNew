@@ -144,6 +144,11 @@ public class BreakingPost extends Fragment {
         permissionIntent.addAction(AppConstants.PERMISSION_CHANGE_BROADCAST);
         Objects.requireNonNull(getActivity()).registerReceiver(permissionBroadcast, permissionIntent);
 
+        IntentFilter statusIntent = new IntentFilter();
+        statusIntent.addAction(AppConstants.FOLLOW_STATUS_BROADCAST);
+        Objects.requireNonNull(getActivity()).registerReceiver(followStatusBroadcast, statusIntent);
+
+
         manager = new PrefManager(getActivity());
         deviceId = manager.getDeviceId();
         profileId = manager.getProfileId();
@@ -637,6 +642,43 @@ public class BreakingPost extends Fragment {
         }
     };
 
+    BroadcastReceiver followStatusBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
+            int position = intent.getIntExtra("position", -1);
+            String type=intent.getStringExtra("type");
+
+            postItemList.remove(position);
+            postItemList.add(position, postItem);
+            adapter.notifyItemChanged(position);
+
+//            if (position != -1) {
+//                if (postItemList.size() >= position+1) {
+//                    String id=postItemList.get(position).getPostId();
+//                    String ids=postItem.getPostId();
+//                    if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
+//
+//                        postItemList.remove(position);
+//                        postItemList.add(position, postItem);
+//                        adapter.notifyItemChanged(position);
+//                    /*    if("follow".equalsIgnoreCase(type)){
+//                            postItemList.remove(position);
+//                            postItemList.add(position, postItem);
+//                            adapter.notifyItemChanged(position);
+//                        }else {
+//                            postItemList.remove(position);
+//                           // adapter.notifyItemChanged(position);
+//                            adapter.notifyDataSetChanged();
+//                        }*/
+//
+//
+//                    }
+//                }
+//            }
+        }
+    };
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -645,6 +687,7 @@ public class BreakingPost extends Fragment {
         Objects.requireNonNull(getActivity()).unregisterReceiver(broadcastReceiver);
         Objects.requireNonNull(getActivity()).unregisterReceiver(postChangeBroadcast);
         Objects.requireNonNull(getActivity()).unregisterReceiver(permissionBroadcast);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(followStatusBroadcast);
     }
 
 }

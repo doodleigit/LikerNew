@@ -28,6 +28,8 @@ import com.bumptech.glide.Glide;
 //import com.doodle.Tool.AppConstants;
 import com.liker.android.App;
 import com.liker.android.Home.model.PostFile;
+import com.liker.android.Home.model.PostItem;
+import com.liker.android.Home.view.fragment.DownLoadPermissionSheet;
 import com.liker.android.Post.view.fragment.NewMediaFullViewFragment;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
@@ -44,6 +46,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     public static final String ITEM_KEY = "item_key";
     Drawable bitmapDrawable;
     private RecyclerViewClickListener mListener;
+    private boolean isVideoUrl;
 
     public GalleryAdapter(Context context, List<PostFile> postFiles, RecyclerViewClickListener listener) {
         this.mContext = context;
@@ -65,12 +68,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         ViewHolder viewHolder = new ViewHolder(itemView, mListener);
         return viewHolder;
     }
-
+    private AppCompatActivity activity;
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         PostFile item = postFiles.get(position);
         String postImages;
-
+        String imageUrl=AppConstants.POST_IMAGES + item.getImageName();
+        String videoUrl=AppConstants.POST_VIDEOS + item.getVideoName();
         if (item.getPostType().equals("2")) {
             holder.mediaVideoLayout.setVisibility(View.VISIBLE);
             holder.mediaControllerLayout.setVisibility(View.VISIBLE);
@@ -109,6 +113,29 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
                 fullMediaView((ArrayList<PostFile>) postFiles, position);
             }
         });
+
+        holder.mediaVideoLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                activity = (AppCompatActivity) v.getContext();
+                isVideoUrl=true;
+                DownLoadPermissionSheet reportReasonSheet = DownLoadPermissionSheet.newInstance(videoUrl,isVideoUrl);
+                reportReasonSheet.show(activity.getSupportFragmentManager(), "ReportReasonSheet");
+                return false;
+            }
+        });
+
+        holder.imageMedia.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                activity = (AppCompatActivity) v.getContext();
+                isVideoUrl=false;
+                DownLoadPermissionSheet reportReasonSheet = DownLoadPermissionSheet.newInstance(imageUrl,isVideoUrl);
+                reportReasonSheet.show(activity.getSupportFragmentManager(), "ReportReasonSheet");
+                return false;
+            }
+        });
+
 
     }
 

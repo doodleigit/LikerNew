@@ -188,9 +188,12 @@ public class PostCategory extends AppCompatActivity {
 
 
                 categoryItem = response.body();
+
                 if (categoryItem != null) {
+
                     mCategoryList.addAll(categoryItem.getCategories());
                     if (mCategoryList.size() > 0) {
+                        categoryItem.getCategories().remove(0);
                         mCategoryList.remove(0);
                     }
                 }

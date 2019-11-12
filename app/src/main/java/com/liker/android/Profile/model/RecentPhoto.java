@@ -2,14 +2,15 @@
 package com.liker.android.Profile.model;
 
 import java.io.Serializable;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Parcelable.Creator;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RecentPhoto implements Serializable, Parcelable
-{
+public class RecentPhoto implements Serializable, Parcelable {
 
     @SerializedName("post_id")
     @Expose
@@ -19,9 +20,8 @@ public class RecentPhoto implements Serializable, Parcelable
     private String imageName;
     public final static Creator<RecentPhoto> CREATOR = new Creator<RecentPhoto>() {
 
-
         @SuppressWarnings({
-            "unchecked"
+                "unchecked"
         })
         public RecentPhoto createFromParcel(Parcel in) {
             return new RecentPhoto(in);
@@ -31,8 +31,7 @@ public class RecentPhoto implements Serializable, Parcelable
             return (new RecentPhoto[size]);
         }
 
-    }
-    ;
+    };
     private final static long serialVersionUID = 3882874179249823135L;
 
     protected RecentPhoto(Parcel in) {
@@ -65,7 +64,7 @@ public class RecentPhoto implements Serializable, Parcelable
     }
 
     public int describeContents() {
-        return  0;
+        return 0;
     }
 
 }

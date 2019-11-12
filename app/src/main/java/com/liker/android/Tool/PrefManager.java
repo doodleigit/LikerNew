@@ -48,6 +48,7 @@ public class PrefManager {
     private static final String POST_PERMISSION = "post_permission";
     private static final String POST_AUDIENCE = "post_audience";
     private static final String NEW_NOTIFICATION = "new_notification";
+    private static final String NEW_POST = "new_post";
     private static final String NEW_MESSAGE_NOTIFICATION = "new_message_notification";
     private static final String USER_INFO = "user_info";
 
@@ -89,8 +90,18 @@ public class PrefManager {
         editor.apply();
     }
 
+    public void setPostCount() {
+        editor.putInt(NEW_POST, getPostCount() + 1);
+        editor.apply();
+    }
+
     public void setNotificationCountClear() {
         editor.putInt(NEW_NOTIFICATION, 0);
+
+        editor.apply();
+    }
+    public void setPostCountClear() {
+        editor.putInt(NEW_POST, 0);
 
         editor.apply();
     }
@@ -107,6 +118,9 @@ public class PrefManager {
 
     public int getNotificationCount() {
         return pref.getInt(NEW_NOTIFICATION, 0);
+    }
+    public int getPostCount() {
+        return pref.getInt(NEW_POST, 0);
     }
 
     public int getMessageNotificationCount() {

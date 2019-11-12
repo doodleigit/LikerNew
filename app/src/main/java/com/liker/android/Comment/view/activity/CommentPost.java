@@ -1236,7 +1236,6 @@ public class CommentPost extends AppCompatActivity implements View.OnClickListen
 
                 Comment_ commentItems = response.body();
                 int newCommentId = Integer.parseInt(commentItems.getId());
-
                 if (newCommentId > 0) {
                     int totalComment = Integer.parseInt(postItem.getTotalComment()) + 1;
                     postItem.setTotalComment(String.valueOf(totalComment));

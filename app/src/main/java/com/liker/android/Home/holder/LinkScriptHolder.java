@@ -2,6 +2,7 @@ package com.liker.android.Home.holder;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -87,6 +88,7 @@ import com.liker.android.Home.view.activity.Home;
 import com.liker.android.Home.view.activity.PostShare;
 import com.liker.android.Home.view.fragment.LikerUserListFragment;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
+import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Setting.view.SettingActivity;
@@ -126,7 +128,10 @@ import retrofit2.Response;
 import static com.liker.android.Tool.AppConstants.FACEBOOK_SHARE;
 import static com.liker.android.Tool.Tools.containsIllegalCharacters;
 import static com.liker.android.Tool.Tools.delayLoadComment;
+import static com.liker.android.Tool.Tools.fadeInFadeOutFollow;
+import static com.liker.android.Tool.Tools.followToggle;
 import static com.liker.android.Tool.Tools.getDomainName;
+import static com.liker.android.Tool.Tools.getFollowSpannableStringBuilder;
 import static com.liker.android.Tool.Tools.getSpannableStringBuilder;
 import static com.liker.android.Tool.Tools.getSpannableStringShareHeader;
 import static com.liker.android.Tool.Tools.getWallSpannableStringBuilder;
@@ -220,6 +225,13 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
     private MediaPlayer player;
 
     ViewGroup tvLikeShare;
+    //footerFollow Status
+    private ViewGroup contentFollow,layoutFollowUser,rootView;
+    private CircleImageView imageFollowUser;
+    private TextView tvContributorStatus,tvFollowUserName;
+    private ImageView unFollowImage;
+    private String userFollowProfileImage;
+    private ProgressDialog progressDialog;
 
     public interface PostItemListener {
         void deletePost(PostItem postItem, int position);
@@ -237,6 +249,7 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog((Activity) context);
         manager = new PrefManager(App.getAppContext());
+        progressDialog = new ProgressDialog(mContext);
         deviceId = manager.getDeviceId();
         profileId = manager.getProfileId();
         token = manager.getToken();
@@ -309,7 +322,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
         imagePostComment = (ImageView) itemView.findViewById(R.id.imagePostComment);
         commentContainer = itemView.findViewById(R.id.commentContainer);
 
-
         //SHARE_POST_HEADER
         containerHeaderShare = itemView.findViewById(R.id.containerHeaderShare);
         imageSharePostUser = itemView.findViewById(R.id.imageSharePostUser);
@@ -322,6 +334,14 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
         tvShared = (TextView) itemView.findViewById(R.id.tvShared);
         tvWallPostInfo = (TextView) itemView.findViewById(R.id.tvWallPostInfo);
         tvPostShareUserName = (TextView) itemView.findViewById(R.id.tvPostShareUserName);
+
+        contentFollow = itemView.findViewById(R.id.contentFollow);
+        rootView = itemView.findViewById(R.id.main_activity_root_view);
+        layoutFollowUser = itemView.findViewById(R.id.layoutFollowUser);
+        tvContributorStatus = itemView.findViewById(R.id.tvContributorStatus);
+        tvFollowUserName = itemView.findViewById(R.id.tvFollowUserName);
+        imageFollowUser = itemView.findViewById(R.id.imageFollowUser);
+        unFollowImage = itemView.findViewById(R.id.unFollowImage);
     }
 
     AppCompatActivity activity;
@@ -713,6 +733,23 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
                         sendPostLikeRequest(call);
                     }
 
+
+                    if (!postFooters.isFollowed()) {
+                        followToggle(rootView,contentFollow,true);
+                        userFollowProfileImage = item.getUesrProfileImg();
+                        tvFollowUserName.setText("Follow "+item.getUserFirstName());
+                        tvContributorStatus.setText(getFollowSpannableStringBuilder(mContext, item));
+                        tvContributorStatus.setMovementMethod(LinkMovementMethod.getInstance());
+                        String userImageUrl = AppConstants.PROFILE_IMAGE + userFollowProfileImage;
+                        Glide.with(App.getAppContext())
+                                .load(userImageUrl)
+                                .centerCrop()
+                                .dontAnimate()
+                                .into(imageFollowUser);
+
+                    }else {
+                        followToggle(rootView,contentFollow,false);
+                    }
                 }
             }
         });
@@ -826,15 +863,12 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
                             shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
                                 @Override
                                 public void onSuccess(Sharer.Result result) {
-
                                     Toast.makeText(mContext, "Share successFull", Toast.LENGTH_SHORT).show();
                                 }
-
                                 @Override
                                 public void onCancel() {
                                     Toast.makeText(mContext, "Share cancel", Toast.LENGTH_SHORT).show();
                                 }
-
                                 @Override
                                 public void onError(FacebookException error) {
                                     Toast.makeText(mContext, error.getMessage(), Toast.LENGTH_SHORT).show();
@@ -1071,7 +1105,84 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder {
 
             }
         });
+
+
+        layoutFollowUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String followUserId=item.getPostUserid();
+                setFollow(followUserId, position);
+            }
+        });
+        unFollowImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PostFooter postFooter=item.getPostFooter();
+                postFooter.setFollowed(true);
+               // App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) item).putExtra("position", position).putExtra("type", "follow"));
+              //  followToggle(rootView,contentFollow,false);
+                contentFollow.setVisibility(View.GONE);
+            }
+        });
+
     }
+
+    private void setFollow(String followUserId, int position) {
+//        progressBarLoading.setVisibility(View.VISIBLE);
+      //  showProgressBar(mContext.getString(R.string.loading));
+        Call<String> call = webService.setFollow(deviceId, token, profileId, userIds, followUserId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+                       // followToggle(rootView,contentFollow,false);
+                        contentFollow.setVisibility(View.GONE);
+                        PostFooter postFooter=item.getPostFooter();
+                        postFooter.setFollowed(true);
+                      //  App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) item).putExtra("position", position).putExtra("type", "follow"));
+                        sendBrowserNotification(followUserId);
+                    } else {
+                        Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+//                progressBarLoading.setVisibility(View.GONE);
+                hideProgressBar();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+//                progressBarLoading.setVisibility(View.GONE);
+                hideProgressBar();
+            }
+        });
+    }
+    private void showProgressBar(String title) {
+        progressDialog.setMessage(title);
+        progressDialog.show();
+    }
+    private void hideProgressBar() {
+        progressDialog.dismiss();
+    }
+    private void sendBrowserNotification(String followUserId) {
+        Call<String> call = webService.sendBrowserNotification(deviceId, userIds, token, followUserId, userIds, "0", "follow");
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
+        });
+    }
+
 
     private void webLink(String type, String link) {
         Intent termsIntent = new Intent(mContext, SettingActivity.class);

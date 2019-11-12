@@ -257,7 +257,7 @@ public class ReplyImageHolder extends RecyclerView.ViewHolder {
 
 
         commentText = replyItem.getCommentText();
-        commentUserName = replyItem.getFirstName() + " " + commentItem.getUserLastName();
+        commentUserName = replyItem.getFirstName() + " " + replyItem.getLastName();
         commentUserImage = replyItem.getUserPhoto();
         commentImage = replyItem.getCommentImage();
         commentTime = replyItem.getDateTime();

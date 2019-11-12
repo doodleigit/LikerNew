@@ -97,8 +97,10 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -142,7 +144,8 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
     private String[] dayArr = {"Select", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
     private String[] monthArr = {"Month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-    private String[] yearArr = {"Select Year", "2003", "2002", "2001", "2000", "1999", "1998", "1997", "1996", "1995", "1994", "1993", "1992", "1991", "1990", "1989", "1988", "1987", "1986", "1985", "1984", "1983", "1982", "1981", "1980", "1979", "1978", "1977", "1976", "1975", "1974", "1973", "1972", "1971", "1970"};
+    //  private String[] yearArr = {"Select Year", "2003", "2002", "2001", "2000", "1999", "1998", "1997", "1996", "1995", "1994", "1993", "1992", "1991", "1990", "1989", "1988", "1987", "1986", "1985", "1984", "1983", "1982", "1981", "1980", "1979", "1978", "1977", "1976", "1975", "1974", "1973", "1972", "1971", "1970"};
+    private ArrayList<String> yearArr = new ArrayList<>();
 
 
     private TextView tvAcceptTerms, tvAcceptFinish, tvHeader, tvOr;
@@ -300,6 +303,12 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
         slideRightOut = AnimationUtils.loadAnimation(this, R.anim.slide_right_out);
         slideLeftIn = AnimationUtils.loadAnimation(this, R.anim.slide_left_in);
         slideLeftOut = AnimationUtils.loadAnimation(this, R.anim.slide_left_out);
+
+        int thisYear = Calendar.getInstance().get(Calendar.YEAR);
+        yearArr.add("Select Year");
+        for (int i = 1900; i <= thisYear; i++) {
+            yearArr.add(Integer.toString(i));
+        }
 
         ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, dayArr);
         spinnerDay.setAdapter(dayAdapter);
@@ -531,7 +540,8 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    viewModel.validateEmailField(etEmail);
+                    //  viewModel.validateEmailField(etEmail);
+                    viewModel.isValidEmail(mEmail, etEmail);
                 }
             }
         });
@@ -737,7 +747,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                     break;
                 case EditorInfo.IME_ACTION_SEND:
                     if (flipperId == 0) {
-                        if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName) && viewModel.validateEmailField(etEmail)) {
+                        if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName) && viewModel.isValidEmail(mEmail, etEmail) /*viewModel.validateEmailField(etEmail)*/) {
                             flipperId++;
                             mViewFlipper.setInAnimation(slideLeftIn);
                             mViewFlipper.setOutAnimation(slideLeftOut);
@@ -821,7 +831,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                 Log.d(TAG, "onClick: " + flipperId);
                 if (flipperId == 0) {
                     if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName)) {
-                        if (viewModel.validateEmailField(etEmail)) {
+                        if (/*viewModel.validateEmailField(etEmail)*/viewModel.isValidEmail(mEmail, etEmail)) {
                             Call<String> call = webService.checkEmailExists(true, etEmail.getText().toString());
                             sendCheckEmailRequest(call);
                         }

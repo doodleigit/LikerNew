@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.danikula.videocache.HttpProxyCacheServer;
 //import com.doodle.Comment.model.CommentPersistData;
 //import com.doodle.Comment.model.Comment_;
@@ -39,6 +40,7 @@ import com.twitter.sdk.android.core.TwitterConfig;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.twitter.TwitterEmojiProvider;
 
+import io.fabric.sdk.android.Fabric;
 import java.util.List;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_AUTO;
@@ -50,6 +52,7 @@ public class App extends Application {
     private static String fbProvider;
     private static String queryResult;
     private static String socketId;
+    private static String newPostSocketId;
     private static String categoryId;
     private static boolean isFBSignup;
     private static boolean isTwitterSignup;
@@ -149,6 +152,14 @@ public class App extends Application {
 
     public static void setNotificationOff(boolean notificationOff) {
         App.notificationOff = notificationOff;
+    }
+
+    public static String getNewPostSocketId() {
+        return newPostSocketId;
+    }
+
+    public static void setNewPostSocketId(String newPostSocketId) {
+        App.newPostSocketId = newPostSocketId;
     }
 
     public static boolean isIsImagePopup() {
@@ -317,6 +328,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
 
         AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_AUTO);
 

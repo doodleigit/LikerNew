@@ -36,6 +36,7 @@ public class AppConstants {
     public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
     public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
     public static final String SOCKET_WEB = "https://node.liker.com:7800";
+    public static final String SOCKET_NEW_POST = "https://node.liker.com:7902";
     public static final String SOCKET_MESSAGE = "https://node.liker.com:7801";
     public static final String SOCKET_VIDEO = "https://node.liker.com:7806";
     public static final String FACEBOOK_SHARE = "https://www.liker.com/public/posts/";
@@ -142,6 +143,7 @@ public class AppConstants {
 
     public static final String NEW_MESSAGE_BROADCAST = "new_message_broadcast";
     public static final String NEW_MESSAGE_BROADCAST_FROM_HOME = "new_message_broadcast_from_home";
+    public static final String NEW_POST_BROADCAST_FROM_HOME = "new_post_broadcast_from_home";
     public static final String LIST_MESSAGE_BROADCAST = "list_message_broadcast";
     public static final String NEW_NOTIFICATION_BROADCAST = "new_notification_broadcast";
     public static final String RECONNECT_SOCKET_BROADCAST = "reconnect_socket_broadcast";
@@ -151,6 +153,7 @@ public class AppConstants {
     public static final String POST_CHANGE_BROADCAST = "post_change_broadcast";
     public static final String POST_FILTER_CAT_BROADCAST = "post_filter_cat_broadcast";
     public static final String PERMISSION_CHANGE_BROADCAST = "permission_change_broadcast";
+    public static final String FOLLOW_STATUS_BROADCAST = "permission_change_broadcast";
     public static final String REPLY_CHANGE_BROADCAST = "reply_change_broadcast";
     public static final String COMMON_CHANGE_BROADCAST = "common_change_broadcast";
 

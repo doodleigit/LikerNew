@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,10 +78,14 @@ import com.liker.android.Comment.view.fragment.ReportLikerMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
+import com.liker.android.Home.model.PostFooter;
 import com.liker.android.Home.model.PostItem;
+import com.liker.android.Home.service.HomeService;
+import com.liker.android.Home.view.activity.Home;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
 import com.liker.android.Message.model.FriendInfo;
 import com.liker.android.Message.view.MessageActivity;
+import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.adapter.ViewPagerAdapter;
 import com.liker.android.Profile.model.UserAllInfo;
 import com.liker.android.Profile.service.ProfileDataFetchCompleteListener;
@@ -149,6 +154,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     private boolean isOwnProfile, isFollow;
     private android.support.v7.widget.PopupMenu popup;
     private boolean networkOk;
+    private HomeService webService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,6 +172,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         userId = manager.getProfileId();
         token = manager.getToken();
         networkOk = NetworkHelper.hasNetworkAccess(this);
+        webService = HomeService.mRetrofit.create(HomeService.class);
         toolbar = findViewById(R.id.toolbar);
         scrollView = findViewById(R.id.scrollView);
         searchLayout = findViewById(R.id.search_layout);
@@ -901,4 +908,30 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply);
         reportPersonMessageSheet.show(getSupportFragmentManager(), "ReportPersonMessageSheet");
     }
+
+
+    private void sendBrowserNotification(String followUserId) {
+        Call<String> call = webService.sendBrowserNotification(deviceId, userId, token, followUserId, userId, "0", "follow");
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
+        });
+    }
+
+    private void showProgressBar(String title) {
+        progressDialog.setMessage(title);
+        progressDialog.show();
+    }
+
+
+    private void hideProgressBar() {
+        progressDialog.dismiss();
+    }
+
 }

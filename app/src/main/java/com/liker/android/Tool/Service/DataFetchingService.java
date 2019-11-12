@@ -53,6 +53,7 @@ import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.ScreenOnOffBroadcast;
 import com.liker.android.Tool.Tools;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,7 +73,7 @@ import static com.liker.android.Tool.AppConstants.IN_CHAT_MODE;
 public class DataFetchingService extends Service {
 
     NotificationManager notificationManager = null;
-    private Socket socket, mSocket;
+    private Socket socket, mSocket, nSocket;
     private BroadcastReceiver mReceiver;
     String KEY_NOTIFICATION_GROUP = "LIKER_PUSH_NOTIFICATION";
 
@@ -99,6 +100,14 @@ public class DataFetchingService extends Service {
         } else {
             socket = new SocketIOManager().getWSocketInstance();
         }
+        if (nSocket != null) {
+            if (!nSocket.connected()) {
+                nSocket = new SocketIOManager().getNewPostSocketInstance();
+//                Toast.makeText(context, "Web Socket Reconnected", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            nSocket = new SocketIOManager().getNewPostSocketInstance();
+        }
         if (mSocket != null) {
             if (!mSocket.connected()) {
                 mSocket = new SocketIOManager().getMSocketInstance();
@@ -110,12 +119,68 @@ public class DataFetchingService extends Service {
         setBroadcast();
         getNotificationData();
         getMessagesData();
+        getNewPostData();
+    }
+
+    private void getNewPostData() {
+
+
+        nSocket.on("new_post_result", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status = newPostResultJson.getBoolean("status");
+                    String message = newPostResultJson.getString("message");
+                    JSONObject dataJson = newPostResultJson.getJSONObject("data");
+                    int total = dataJson.getInt("total");
+                    JSONArray followers = dataJson.getJSONArray("followers");
+                    int permission = dataJson.getInt("permission");
+
+                    sendBroadcast((
+                            new Intent().putExtra("status", status)
+                                    .putExtra("message", message))
+                            .putExtra("total", total)
+                            .putExtra("followerArray", followers.toString())
+                            .putExtra("permission", permission)
+                            .setAction(AppConstants.NEW_POST_BROADCAST_FROM_HOME));
+
+//                    newMessage.setUserId(messageJson.getString("user_id"));
+//                    newMessage.setToUserId(messageJson.getString("to_user_id"));
+//                    newMessage.setMessage(messageJson.getString("message"));
+//                    newMessage.setReturnResult(messageJson.getBoolean("return_result"));
+//                    newMessage.setTimePosted(messageJson.getString("time_posted"));
+//                    newMessage.setInsertId(messageJson.getString("insert_id"));
+//                    newMessage.setUnreadTotal(messageJson.getString("unread_total"));
+//
+//                    SenderData senderData = new SenderData();
+//                    senderData.setId(messageJson.getJSONObject("user_data").getString("id"));
+//                    senderData.setUserId(messageJson.getJSONObject("user_data").getString("user_id"));
+//
+//                    newMessage.setSenderData(senderData);
+//                    sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("type", 0)).setAction(AppConstants.NEW_MESSAGE_BROADCAST_FROM_HOME));
+//                    sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("is_own", 0)).setAction(AppConstants.NEW_MESSAGE_BROADCAST));
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+
+            }
+        });
+
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!socket.connected()) {
             socket = new SocketIOManager().getWSocketInstance();
+//                Toast.makeText(context, "Web Socket Reconnected", Toast.LENGTH_LONG).show();
+        }
+        if (!nSocket.connected()) {
+            nSocket = new SocketIOManager().getNewPostSocketInstance();
 //                Toast.makeText(context, "Web Socket Reconnected", Toast.LENGTH_LONG).show();
         }
         if (!mSocket.connected()) {
@@ -210,9 +275,11 @@ public class DataFetchingService extends Service {
 //                    intent.putExtra("new_message", (Parcelable) newMessage);
 //                    intent.putExtra("is_own", type);
 //                    getActivity().sendBroadcast(intent);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
-                } catch (NullPointerException ignored) {}
+                } catch (NullPointerException ignored) {
+                }
                 if (!IN_CHAT_MODE)
                     sendBroadcast((new Intent().putExtra("type", "1")).setAction(AppConstants.NEW_NOTIFICATION_BROADCAST));
             }
@@ -256,7 +323,8 @@ public class DataFetchingService extends Service {
                     sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("is_own", 1)).setAction(AppConstants.NEW_MESSAGE_BROADCAST));
                 } catch (JSONException e) {
                     e.printStackTrace();
-                } catch (NullPointerException ignored) {}
+                } catch (NullPointerException ignored) {
+                }
             }
         });
     }
@@ -411,8 +479,10 @@ public class DataFetchingService extends Service {
             socket.off("web_notification");
             mSocket.off("message");
             mSocket.off("message_own");
+            nSocket.off("new_post_result");
             unregisterReceiver(mReceiver);
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 
     @Override
@@ -422,8 +492,10 @@ public class DataFetchingService extends Service {
             socket.off("web_notification");
             mSocket.off("message");
             mSocket.off("message_own");
+            nSocket.off("new_post_result");
             unregisterReceiver(mReceiver);
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
     }
 
 }

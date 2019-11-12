@@ -332,6 +332,10 @@
     <string name="feeling_activity_sticker">Feeling/Activity/Sticker</string>
     <string name="read_file">This app needs access to your file storage so that it can read video.</string>
     <string name="report_profile">Report Profile</string>
+    <string name="download_image">Download photo</string>
+    <string name="download_video">Download video</string>
+    <string name="open_tab">Open in new tab</string>
+    <string name="copy_image">Copy image url</string>
 
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
@@ -424,5 +428,9 @@
         <item>Personal life</item>
         <item>intro</item>
     </string-array>
+
+    <string name="http">http://</string>
+    <string name="download">Download</string>
+    <string name="write_file">This app needs access to your file storage so that it can write files.</string>
 
 </resources>

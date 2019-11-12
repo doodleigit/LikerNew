@@ -21,10 +21,12 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spannable;
@@ -40,6 +42,9 @@ import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -47,8 +52,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -77,6 +86,8 @@ import com.liker.android.Comment.view.fragment.DeletePostDialog;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.model.PostTextIndex;
 import com.liker.android.Home.model.postshare.PostShareItem;
+import com.liker.android.Notification.model.Data;
+import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.fragment.Network;
@@ -161,6 +172,7 @@ public class Tools {
                 .setDuration(Toast.LENGTH_SHORT)
                 .show();
     }
+
     public static void showKeyboard(EditText mEtSearch, Context context) {
         mEtSearch.requestFocus();
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -273,6 +285,7 @@ public class Tools {
         }
         tvPostEmojiContent.setText(s);
     }
+
     public static void stripUnderlines(TextView tvPostEmojiContent) {
 
         Spannable s = new SpannableString(tvPostEmojiContent.getText());
@@ -314,6 +327,7 @@ public class Tools {
         }
         tvPostContent.setText(s);
     }
+
     private void setupAnimation(Context context, View view, final Animation animation,
                                 final int animationID) {
         view.setOnClickListener(new View.OnClickListener() {
@@ -562,6 +576,7 @@ public class Tools {
         return builder;
 
     }
+
 
 
     public static SpannableStringBuilder getSpannableStringShareHeader(String likes, String followers, int totalStars, String categoryName) {
@@ -1167,7 +1182,7 @@ public class Tools {
         return status;
     }
 
-    public static void toggleCustomise(Context context, ActionBarDrawerToggle toggle, String userId ) {
+    public static void toggleCustomise(Context context, ActionBarDrawerToggle toggle, String userId) {
         if (!TextUtils.isEmpty(userId)) {
 
             Bitmap bitmap = Operation.getFacebookProfilePicture(userId);
@@ -1183,14 +1198,14 @@ public class Tools {
     }
 
     public static SpannableStringBuilder addClickablePartTextViewResizable(final Spanned strSpanned, final TextView tv,
-                                                                            final int maxLine, final String spanableText, final boolean viewMore) {
+                                                                           final int maxLine, final String spanableText, final boolean viewMore) {
         String str = strSpanned.toString();
         SpannableStringBuilder ssb = new SpannableStringBuilder(strSpanned);
 
         if (str.contains(spanableText)) {
 
 
-            ssb.setSpan(new MySpannable(false){
+            ssb.setSpan(new MySpannable(false) {
                 @Override
                 public void onClick(View widget) {
                     tv.setLayoutParams(tv.getLayoutParams());
@@ -1244,7 +1259,7 @@ public class Tools {
 
     }
 
-    public static void readMoreText(Context context,TextView textView,String text) {
+    public static void readMoreText(Context context, TextView textView, String text) {
         ReadMoreOption readMoreOption = new ReadMoreOption.Builder(context)
                 // .textLength(3, ReadMoreOption.TYPE_LINE) // OR
                 .textLength(200, ReadMoreOption.TYPE_CHARACTER)
@@ -1259,5 +1274,72 @@ public class Tools {
         readMoreOption.addReadMoreTo(textView, text);
     }
 
+    public static SpannableStringBuilder getFollowSpannableStringBuilder(Context context, PostItem postItem) {
+
+        String userFullName = String.format("%s ", postItem.getUserFirstName());
+        String categoryName = postItem.getCatName();
+        String userName = postItem.getPostUsername();
+        String userId = postItem.getPostUserid();
+        String messageFollow = " is a Star Contributor to the " + categoryName + " category.";
+
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        SpannableString spannableUser = new SpannableString(userFullName);
+
+        ClickableSpan clickableSpanUser = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                context.startActivity(new Intent(context, ProfileActivity.class).putExtra("user_id", userId).putExtra("user_name", userName));
+
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        spannableUser.setSpan(clickableSpanUser, 0, userFullName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ForegroundColorSpan foregroundColorSpan1 = new ForegroundColorSpan(Color.parseColor("#60b2fc"));
+        spannableUser.setSpan(foregroundColorSpan1, 0, userFullName.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannableUser.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, userFullName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        builder.append(spannableUser);
+
+        SpannableString spannableWallInfo = new SpannableString(messageFollow);
+        builder.append(spannableWallInfo);
+
+
+        return builder;
+
+    }
+
+
+    public static void fadeInFadeOutFollow(ViewGroup viewGroup) {
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+        fadeIn.setDuration(1000);
+
+        Animation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+        fadeOut.setStartOffset(1000);
+        fadeOut.setDuration(1000);
+
+        AnimationSet animation = new AnimationSet(false); //change to false
+        animation.addAnimation(fadeIn);
+        animation.addAnimation(fadeOut);
+        viewGroup.setAnimation(animation);
+    }
+
+
+
+    public static void followToggle(ViewGroup parentView,ViewGroup targetView,boolean isFollowToggle) {
+        Transition transition = new Fade();
+        transition.setDuration(600);
+        transition.addTarget(targetView);
+
+        TransitionManager.beginDelayedTransition(parentView, transition);
+        targetView.setVisibility(isFollowToggle ? View.VISIBLE : View.GONE);
+    }
 
 }
