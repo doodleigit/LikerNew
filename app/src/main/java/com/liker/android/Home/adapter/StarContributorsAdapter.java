@@ -47,12 +47,16 @@ public class StarContributorsAdapter extends RecyclerView.Adapter<StarContributo
         viewHolder.tvRank.setText(arrayList.get(i).getRank());
         viewHolder.tvScore.setText(arrayList.get(i).getRankPercent() + "%");
         viewHolder.tvName.setText(arrayList.get(i).getFirstName() + " " + arrayList.get(i).getLastName());
-        viewHolder.tvLikes.setText(String.valueOf(Integer.valueOf(arrayList.get(i).getGoldStars()) + Integer.valueOf(arrayList.get(i).getSliverStars())));
+        viewHolder.tvLikes.setText(String.valueOf(Integer.valueOf(arrayList.get(i).getLikesTotal())));
 
-        if (Integer.valueOf(arrayList.get(i).getRankPercent()) > 5) {
+        if (Integer.valueOf(arrayList.get(i).getRankPercent()) <= 5) {
+            viewHolder.ivStarImage.setVisibility(View.VISIBLE);
+            viewHolder.ivStarImage.setImageResource(R.drawable.ic_star_gold_24dp);
+        } else if (Integer.valueOf(arrayList.get(i).getRankPercent()) <= 10){
+            viewHolder.ivStarImage.setVisibility(View.VISIBLE);
             viewHolder.ivStarImage.setImageResource(R.drawable.ic_star_silver_24dp);
         } else {
-            viewHolder.ivStarImage.setImageResource(R.drawable.ic_star_gold_24dp);
+            viewHolder.ivStarImage.setVisibility(View.GONE);
         }
 
         Glide.with(App.getAppContext())
