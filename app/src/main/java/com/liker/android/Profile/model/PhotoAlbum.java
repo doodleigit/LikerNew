@@ -48,7 +48,11 @@ public class PhotoAlbum implements Serializable, Parcelable
         this.imageName = ((String) in.readValue((String.class.getClassLoader())));
     }
 
-    public PhotoAlbum() {
+    public PhotoAlbum(Integer albumType, String title, String totalImages, String imageName) {
+        this.albumType = albumType;
+        this.title = title;
+        this.totalImages = totalImages;
+        this.imageName = imageName;
     }
 
     public Integer getAlbumType() {

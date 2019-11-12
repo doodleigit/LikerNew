@@ -36,7 +36,8 @@ public class AlbumPhoto implements Serializable, Parcelable
         this.imageName = ((String) in.readValue((String.class.getClassLoader())));
     }
 
-    public AlbumPhoto() {
+    public AlbumPhoto(String imageName) {
+        this.imageName = imageName;
     }
 
     public String getImageName() {
