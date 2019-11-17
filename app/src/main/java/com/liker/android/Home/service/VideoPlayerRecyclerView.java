@@ -15,6 +15,7 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -84,6 +85,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
     private Activity activityContext;
 
     private enum VolumeState {ON, OFF}
+
     // ui
     private ImageView thumbnail, volumeControl, videoPlay, mediaVideoOneThumbnail, mediaVideoTwoThumbnail, mediaVideoThreeThumbnail, mediaVideoFourThumbnail, mediaVideoOneVolumeControl,
             mediaVideoTwoVolumeControl, mediaVideoThreeVolumeControl, mediaVideoFourVolumeControl, mediaVideoOnePlay, mediaVideoTwoPlay, mediaVideoThreePlay, mediaVideoFourPlay;
@@ -108,6 +110,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
 
     // controlling playback state
     private VolumeState volumeState;
+    private View currentFocusedLayout, oldFocusedLayout;
 
     public VideoPlayerRecyclerView(@NonNull Context context) {
         super(context);
@@ -158,6 +161,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                     if (videoPlay != null) {
                         videoPlay.setVisibility(VISIBLE);
                     }
+
                     // There's a special case when the end of the list has been reached.
                     // Need to handle that with this bit of logic
                     if (!recyclerView.canScrollVertically(1)) {
@@ -166,23 +170,28 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                         playVideo(false);
                     }
                 }
+
+
             }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+
             }
         });
 
         addOnChildAttachStateChangeListener(new OnChildAttachStateChangeListener() {
             @Override
             public void onChildViewAttachedToWindow(View view) {
-
+//                startPlayer();
             }
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
                 if (viewHolderParent != null && viewHolderParent.equals(view)) {
+
+//                    pausePlayer();
                     resetVideoView();
                     Log.d("resetVideoView", "resetVideoView");
                 }
@@ -470,6 +479,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                         .createMediaSource(Uri.parse(AppConstants.POST_VIDEOS + mediaTrackingLists.get(trackingPosition).getVideoUrl()));
                 videoPlayer.prepare(videoSource);
                 videoPlayer.setPlayWhenReady(true);
+
             }
 //            Log.d("videoautoplaycheck", "step 3 url = " + AppConstants.POST_VIDEOS);
 
@@ -627,7 +637,8 @@ public class VideoPlayerRecyclerView extends RecyclerView {
 
     public void pausePlayer() {
         if (videoPlayer != null) {
-            videoPlayer.setPlayWhenReady(false);
+            //   videoPlayer.setPlayWhenReady(false);
+            videoPlayer.setPlayWhenReady(!videoPlayer.getPlayWhenReady());
         }
     }
 
@@ -643,6 +654,15 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                     .singleUse("3") // provide a unique ID used to ensure it is only shown once
                     .show();
         }
+    }
+
+    //    private void pausePlayer(){
+//        videoPlayer.setPlayWhenReady(false);
+//        videoPlayer.getPlaybackState();
+//    }
+    public void startPlayer() {
+        videoPlayer.setPlayWhenReady(true);
+        videoPlayer.getPlaybackState();
     }
 
 }

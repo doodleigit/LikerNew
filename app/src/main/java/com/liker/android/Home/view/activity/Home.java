@@ -2163,9 +2163,7 @@ public class Home extends AppCompatActivity implements
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             App.setConfigChange(true);
-         //   Toast.makeText(this, "landscape", Toast.LENGTH_SHORT).show();
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-           // Toast.makeText(this, "portrait", Toast.LENGTH_SHORT).show();
             App.setConfigChange(false);
         }
     }

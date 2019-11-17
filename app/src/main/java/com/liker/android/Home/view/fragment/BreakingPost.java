@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,6 +43,7 @@ import android.widget.TextView;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.google.gson.Gson;
+import com.liker.android.App;
 import com.liker.android.Authentication.model.UserInfo;
 import com.liker.android.Home.adapter.PostAdapter;
 import com.liker.android.Home.holder.ImageHolder;
@@ -118,6 +120,7 @@ public class BreakingPost extends Fragment {
 
     PostItem deletePostItem;
     int deletePosition;
+    private View currentFocusedLayout, oldFocusedLayout;
 
     @Override
     public void onAttach(Context context) {
@@ -197,6 +200,27 @@ public class BreakingPost extends Fragment {
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     isScrolling = true;
                 }
+
+
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    //get the recyclerview position which is completely visible and first
+                    int positionView = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+                    Log.i("VISISBLE", positionView + "");
+                    if (positionView >= 0) {
+                        if (oldFocusedLayout != null) {
+                            //Stop the previous video playback after new scroll
+                        //    onPause();
+
+                        }
+                        currentFocusedLayout = ((LinearLayoutManager) recyclerView.getLayoutManager()).findViewByPosition(positionView);
+
+                        //play video
+                        oldFocusedLayout = currentFocusedLayout;
+                      //  onResume();
+                    }
+                }
+
+
             }
 
             @Override
@@ -285,7 +309,7 @@ public class BreakingPost extends Fragment {
     private void deletePost(PostItem deletePostItem, int deletePosition) {
         new AlertDialog.Builder(getActivity())
                 //  .setTitle("Delete entry")
-             //   .setMessage("Are you sure you want to delete this post? You will permanently lose this post !")
+                //   .setMessage("Are you sure you want to delete this post? You will permanently lose this post !")
                 .setMessage("Are you sure that you want to delete this post?")
 
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -412,6 +436,8 @@ public class BreakingPost extends Fragment {
                 onPostResponsePagination();
             }
         });
+
+     //   recyclerView.pausePlayer();
     }
 
     private void sendPostItemRequest(Call<List<PostItem>> call) {
@@ -524,6 +550,7 @@ public class BreakingPost extends Fragment {
     public void onResume() {
         super.onResume();
         shimmerFrameLayout.startShimmer();
+        recyclerView.startPlayer();
 
     }
 
@@ -532,7 +559,7 @@ public class BreakingPost extends Fragment {
     public void onPause() {
         super.onPause();
         shimmerFrameLayout.stopShimmer();
-        recyclerView.pausePlayer();
+         recyclerView.pausePlayer();
     }
 
     private boolean isViewShown = false;
@@ -618,20 +645,20 @@ public class BreakingPost extends Fragment {
         public void onReceive(Context context, Intent intent) {
             PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
             int position = intent.getIntExtra("position", -1);
-            String type=intent.getStringExtra("type");
+            String type = intent.getStringExtra("type");
 
             if (position != -1) {
                 if (postItemList.size() >= position + 1) {
                     if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
 
 
-                        if("permission".equalsIgnoreCase(type)){
+                        if ("permission".equalsIgnoreCase(type)) {
                             postItemList.remove(position);
                             postItemList.add(position, postItem);
                             adapter.notifyItemChanged(position);
-                        }else {
+                        } else {
                             postItemList.remove(position);
-                           // adapter.notifyItemChanged(position);
+                            // adapter.notifyItemChanged(position);
                             adapter.notifyDataSetChanged();
                         }
 
@@ -647,7 +674,7 @@ public class BreakingPost extends Fragment {
         public void onReceive(Context context, Intent intent) {
             PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
             int position = intent.getIntExtra("position", -1);
-            String type=intent.getStringExtra("type");
+            String type = intent.getStringExtra("type");
 
             postItemList.remove(position);
             postItemList.add(position, postItem);
@@ -690,4 +717,20 @@ public class BreakingPost extends Fragment {
         Objects.requireNonNull(getActivity()).unregisterReceiver(followStatusBroadcast);
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            adapter.screenChanged("LANDSCAPE");
+            getActivity().sendBroadcast((
+                    new Intent().putExtra("orientation", "LANDSCAPE"))
+                    .setAction(AppConstants.NEW_ORIENTATION_BROADCAST));
+
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            adapter.screenChanged("PORTRAIT");
+            getActivity().sendBroadcast((new Intent().putExtra("orientation", "PORTRAIT"))
+                    .setAction(AppConstants.NEW_ORIENTATION_BROADCAST));
+        }
+    }
 }

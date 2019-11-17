@@ -172,14 +172,11 @@ public class PostPopup extends AppCompatActivity
     @Override
     public void onBlockResult(DialogFragment dlg) {
 
-
         PostItem item = new PostItem();
         item = App.getItem();
         if (!isEmpty(item)) {
-
             blockUserId = item.getPostUserid();
         }
-
 
         if (networkOk) {
             Call<String> call = commentService.blockedUser(deviceId, profileId, token, blockUserId, userId);

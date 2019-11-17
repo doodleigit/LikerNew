@@ -144,6 +144,7 @@ public class AppConstants {
     public static final String NEW_MESSAGE_BROADCAST = "new_message_broadcast";
     public static final String NEW_MESSAGE_BROADCAST_FROM_HOME = "new_message_broadcast_from_home";
     public static final String NEW_POST_BROADCAST_FROM_HOME = "new_post_broadcast_from_home";
+    public static final String NEW_ORIENTATION_BROADCAST= "new_orientation_broadcast";
     public static final String LIST_MESSAGE_BROADCAST = "list_message_broadcast";
     public static final String NEW_NOTIFICATION_BROADCAST = "new_notification_broadcast";
     public static final String RECONNECT_SOCKET_BROADCAST = "reconnect_socket_broadcast";

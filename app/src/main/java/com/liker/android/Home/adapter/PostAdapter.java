@@ -1,10 +1,14 @@
 package com.liker.android.Home.adapter;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
@@ -24,6 +28,7 @@ import android.widget.Toast;
 //import com.doodle.Post.service.DataProvider;
 //import com.doodle.R;
 
+import com.liker.android.App;
 import com.liker.android.Home.holder.HowLikerWorksHolder;
 import com.liker.android.Home.holder.ImageHolder;
 import com.liker.android.Home.holder.LinkScriptHolder;
@@ -36,8 +41,10 @@ import com.liker.android.Home.service.TabClickListener;
 import com.liker.android.Post.model.Mim;
 import com.liker.android.Post.service.DataProvider;
 import com.liker.android.R;
+import com.liker.android.Tool.AppConstants;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     final int VIEW_TYPE_LIKER_USE = 0;
@@ -59,6 +66,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public LinkScriptHolder.PostItemListener LinkListener;
     public ImageHolder.PostItemListener imageListener;
     private String className;
+    private String mOrientation="PORTRAIT";
 
     public PostAdapter(Context context, List<PostItem> postItems,
                        TextHolder.PostItemListener listener,
@@ -78,6 +86,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.LinkListener = LinkListener;
         this.imageListener = imageListener;
         this.className = className;
+       // getScreenOrientation(mContext);
+
+//        IntentFilter permissionIntent = new IntentFilter();
+//        permissionIntent.addAction(AppConstants.NEW_ORIENTATION_BROADCAST);
+//        Objects.requireNonNull(mContext).registerReceiver(permissionBroadcast, permissionIntent);
+
     }
 
 
@@ -98,34 +112,48 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new TextMimHolder(view, mContext, mimListener, className);
         }
         if (viewType == VIEW_TYPE_TEXT_IMAGE) {
-            if(orientation == Configuration.ORIENTATION_PORTRAIT) {
-           //     Toast.makeText(mContext, "PORTRAIT", Toast.LENGTH_SHORT).show();
+            if(mOrientation.equalsIgnoreCase("PORTRAIT")) {
+               // Toast.makeText(mContext, "PORTRAIT", Toast.LENGTH_SHORT).show();
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_image, parent, false);
-                return new ImageHolder(view, mContext, imageListener, className);
-            }else {
+                return new ImageHolder(view, mContext, imageListener, className,mOrientation);
+            }else if(mOrientation.equalsIgnoreCase("LANDSCAPE")){
              //   Toast.makeText(mContext, "LANDSCAPE", Toast.LENGTH_SHORT).show();
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_image, parent, false);
-                return new ImageHolder(view, mContext, imageListener, className);
+                return new ImageHolder(view, mContext, imageListener, className,mOrientation);
             }
         }
 
         if (viewType == VIEW_TYPE_TEXT_LINK_SCRIPT) {
 
-            if(orientation == Configuration.ORIENTATION_PORTRAIT){
-              //  Toast.makeText(mContext, "PORTRAIT", Toast.LENGTH_SHORT).show();
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script, parent, false);
+            return new LinkScriptHolder(view, mContext, LinkListener, className);
+
+     /*       if(mOrientation.equalsIgnoreCase("PORTRAIT")){
+                //Toast.makeText(mContext, "PORTRAIT", Toast.LENGTH_SHORT).show();
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script, parent, false);
                 return new LinkScriptHolder(view, mContext, LinkListener, className);
-            }else {
-               // Toast.makeText(mContext, "LANDSCAPE", Toast.LENGTH_SHORT).show();
+            }else if(mOrientation.equalsIgnoreCase("LANDSCAPE")) {
+//                Toast.makeText(mContext, "LANDSCAPE", Toast.LENGTH_SHORT).show();
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script, parent, false);
                 return new LinkScriptHolder(view, mContext, LinkListener, className);
-            }
+            }*/
 
         }
         if (viewType == VIEW_TYPE_TEXT_LINK_SCRIPT_YOUTUBE) {
 
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script_youtube, parent, false);
             return new LinkScriptYoutubeHolder(view, mContext, YoutubeListener, className);
+
+        /*    if(mOrientation.equalsIgnoreCase("PORTRAIT")) {
+//                Toast.makeText(mContext, "PORTRAIT", Toast.LENGTH_SHORT).show();
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script_youtube, parent, false);
+                return new LinkScriptYoutubeHolder(view, mContext, YoutubeListener, className);
+            }else if(mOrientation.equalsIgnoreCase("LANDSCAPE")){
+//                Toast.makeText(mContext, "LANDSCAPE", Toast.LENGTH_SHORT).show();
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_link_script_youtube, parent, false);
+                return new LinkScriptYoutubeHolder(view, mContext, YoutubeListener, className);
+            }*/
+
         }
 //        if (viewType == VIEW_TYPE_VIDEO) {
 //            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_post_video, parent, false);
@@ -236,16 +264,40 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final int screenOrientation = ((WindowManager)  context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
         switch (screenOrientation) {
             case Surface.ROTATION_0:
+                Toast.makeText(context, "SCREEN_ORIENTATION_PORTRAIT", Toast.LENGTH_SHORT).show();
                 return "SCREEN_ORIENTATION_PORTRAIT";
             case Surface.ROTATION_90:
+                Toast.makeText(context, "SCREEN_ORIENTATION_LANDSCAPE", Toast.LENGTH_SHORT).show();
                 return "SCREEN_ORIENTATION_LANDSCAPE";
             case Surface.ROTATION_180:
+                Toast.makeText(context, "SCREEN_ORIENTATION_REVERSE_PORTRAIT", Toast.LENGTH_SHORT).show();
                 return "SCREEN_ORIENTATION_REVERSE_PORTRAIT";
             default:
+                Toast.makeText(context, "SCREEN_ORIENTATION_REVERSE_LANDSCAPE", Toast.LENGTH_SHORT).show();
                 return "SCREEN_ORIENTATION_REVERSE_LANDSCAPE";
         }
 
     }
 
+    public void screenChanged(String orientation){
+        if (orientation.equals("LANDSCAPE")){
+            //code
+            mOrientation="LANDSCAPE";
+        }else{
+            mOrientation="PORTRAIT";
+            //code
+           // Toast.makeText(mContext, "LANDSCAPE", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    BroadcastReceiver permissionBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //     PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
+            //  int position = intent.getIntExtra("position", -1);
+            mOrientation = intent.getStringExtra("orientation");
+            Log.d("broadCastOrientation",mOrientation);
+        }
+    };
 
 }

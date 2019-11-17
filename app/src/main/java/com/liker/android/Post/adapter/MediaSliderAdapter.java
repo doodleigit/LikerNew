@@ -161,10 +161,29 @@ public class MediaSliderAdapter extends PagerAdapter {
                 if (videoViews.get(i).getPlayer() != null) {
                     if (position != i) {
                         videoViews.get(i).getPlayer().setPlayWhenReady(false);
+                        videoViews.get(i).getPlayer().stop();
+                        videoViews.get(i).getPlayer().seekTo(0);
                     }
+//                    videoViews.get(i).getPlayer().setPlayWhenReady(false);
+//                    videoViews.get(i).getPlayer().stop();
+//                    videoViews.get(i).getPlayer().seekTo(0);
                 }
             }
         }
     }
+
+
+    public void stopVideo() {
+        for (int i = 0; i < videoViews.size(); i++) {
+            if (videoViews.get(i) != null) {
+                if (videoViews.get(i).getPlayer() != null) {
+                    videoViews.get(i).getPlayer().setPlayWhenReady(false);
+                    videoViews.get(i).getPlayer().stop();
+                    videoViews.get(i).getPlayer().seekTo(0);
+                }
+            }
+        }
+    }
+
 
 }

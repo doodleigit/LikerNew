@@ -3,10 +3,12 @@ package com.liker.android.Home.holder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -25,13 +27,9 @@ import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.text.util.Linkify;
-import android.transition.Fade;
-import android.transition.Transition;
-import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -44,7 +42,6 @@ import android.widget.Toast;
 
 import com.borjabravo.readmoretextview.ReadMoreTextView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 //import com.doodle.App;
 //import com.doodle.Comment.model.Reason;
 //import com.doodle.Comment.model.ReportReason;
@@ -101,7 +98,6 @@ import com.liker.android.Home.view.activity.PostShare;
 import com.liker.android.Home.view.fragment.LikerUserListFragment;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
 import com.liker.android.Post.view.activity.PostPopup;
-import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
@@ -109,7 +105,6 @@ import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.Operation;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Tools;
-import com.skyhope.showmoretextview.ShowMoreTextView;
 import com.squareup.picasso.Picasso;
 import com.vanniktech.emoji.EmojiTextView;
 
@@ -118,6 +113,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -139,7 +135,6 @@ import retrofit2.Response;
 import static com.liker.android.Tool.AppConstants.FACEBOOK_SHARE;
 import static com.liker.android.Tool.Tools.containsIllegalCharacters;
 import static com.liker.android.Tool.Tools.delayLoadComment;
-import static com.liker.android.Tool.Tools.fadeInFadeOutFollow;
 import static com.liker.android.Tool.Tools.followToggle;
 import static com.liker.android.Tool.Tools.getFollowSpannableStringBuilder;
 import static com.liker.android.Tool.Tools.getSpannableStringBuilder;
@@ -248,17 +243,20 @@ public class ImageHolder extends RecyclerView.ViewHolder {
     private String userFollowProfileImage;
     private ProgressDialog progressDialog;
     private boolean contentFollowShow;
+    private String mOrientation;
 
     public interface PostItemListener {
         void deletePost(PostItem postItem, int position);
     }
 
-    public ImageHolder(View itemView, Context context, PostItemListener listener, String className) {
+    public ImageHolder(View itemView, Context context, PostItemListener listener, String className, String mOrientation) {
         super(itemView);
 
         mContext = context;
         this.listener = listener;
         this.className = className;
+        this.mOrientation=mOrientation;
+        Log.d("myOrientation ",mOrientation);
 
         player = MediaPlayer.create(mContext, R.raw.post_like);
         callbackManager = CallbackManager.Factory.create();
@@ -370,6 +368,7 @@ public class ImageHolder extends RecyclerView.ViewHolder {
         tvFollowUserName = itemView.findViewById(R.id.tvFollowUserName);
         imageFollowUser = itemView.findViewById(R.id.imageFollowUser);
         unFollowImage = itemView.findViewById(R.id.unFollowImage);
+
     }
 
     AppCompatActivity activity;
@@ -1173,7 +1172,6 @@ public class ImageHolder extends RecyclerView.ViewHolder {
 
             }
         });
-
         commentContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1196,7 +1194,6 @@ public class ImageHolder extends RecyclerView.ViewHolder {
 
             }
         });
-
         layoutFollowUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1272,8 +1269,6 @@ public class ImageHolder extends RecyclerView.ViewHolder {
             }
         });
     }
-
-
 
     private void popUpPost(int mediaPosition) {
         Intent intent = new Intent(mContext, PostPopup.class);
@@ -1563,6 +1558,7 @@ public class ImageHolder extends RecyclerView.ViewHolder {
             }
         });
     }
+
 
 
 }

@@ -32,6 +32,7 @@ public class NewMediaFullViewFragment extends DialogFragment {
 
     private ArrayList<PostFile> postFiles;
     private int playPosition;
+    private int mPosition;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -107,6 +108,7 @@ public class NewMediaFullViewFragment extends DialogFragment {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
             public void onPageSelected(int position) {
+                mPosition=position;
                 mediaAdapter.pauseVideo(position);
                 if (viewPager.getCurrentItem() == 0) {
                     previous.setVisibility(View.GONE);
@@ -132,11 +134,13 @@ public class NewMediaFullViewFragment extends DialogFragment {
     @Override
     public void onPause() {
         super.onPause();
+        mediaAdapter.stopVideo();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mediaAdapter.stopVideo();
     }
 
 }
