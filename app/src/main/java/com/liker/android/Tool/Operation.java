@@ -198,7 +198,6 @@ public class Operation {
         if (isSecondTimeLaunch) {
             view.setVisibility(View.VISIBLE);
             Operation.secondarySplashScreen(view);
-
         }
 
         if (!prefManager.isFirstTimeLaunch()) {
@@ -210,7 +209,6 @@ public class Operation {
                 isSecondTimeLaunch = true;
                 prefManager.setSecondTimeLaunch(isSecondTimeLaunch);
             }
-
 
         }
     }

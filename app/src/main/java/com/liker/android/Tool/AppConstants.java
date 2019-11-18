@@ -29,6 +29,8 @@ public class AppConstants {
 //    public static final String FACEBOOK_INVITATION = "https://www.d.liker.com/settings/fbinvite/";
 //    public static final String BASE_URL_LOCATION = "https://www.stg.liker.com/";
 
+    /*http://192.168.0.7:8040/sites/likerapp/user_apprate,
+     parameter: user_id, status*/
 
 
     //=======================LIVE SERVER=============================
@@ -230,5 +232,7 @@ public class AppConstants {
     public static final String HOW_LIKER_WORK = "howllikerwork";
     public static final String HOME = "home";
     public static final String WALL = "wall";
+    public static final String USER_APP_RATE = "user_apprate";
+    public static final String SINGLE_USER_APP_RATE = "single_user_apprate";
 
 }

@@ -14,6 +14,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -106,6 +107,7 @@ import com.google.gson.Gson;
 import com.liker.android.App;
 import com.liker.android.Authentication.model.LoginInfo;
 import com.liker.android.Authentication.model.UserInfo;
+import com.liker.android.Authentication.service.MyService;
 import com.liker.android.Authentication.view.activity.LoginAgain;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reply;
@@ -140,11 +142,13 @@ import com.liker.android.Home.service.TabClickListener;
 import com.liker.android.Home.view.fragment.BreakingPost;
 import com.liker.android.Home.view.fragment.FollowingPost;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
+import com.liker.android.Home.view.fragment.RateusStatus;
 import com.liker.android.Home.view.fragment.TrendingPost;
 import com.liker.android.Message.model.NewMessage;
 import com.liker.android.Message.view.MessageActivity;
 import com.liker.android.Notification.view.NotificationActivity;
 import com.liker.android.Post.view.activity.PostNew;
+import com.liker.android.Post.view.fragment.ContributorStatus;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Search.LikerSearch;
@@ -152,6 +156,7 @@ import com.liker.android.Setting.view.SettingActivity;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
+import com.liker.android.Tool.RateTimerUtil;
 import com.liker.android.Tool.Service.DataFetchingService;
 import com.liker.android.Tool.Tools;
 import com.squareup.picasso.Picasso;
@@ -187,7 +192,8 @@ public class Home extends AppCompatActivity implements
         FollowSheet.BottomSheetListener,
         BlockUserDialog.BlockListener,
         PostPermissionSheet.BottomSheetListener,
-        NavigationView.OnNavigationItemSelectedListener {
+        NavigationView.OnNavigationItemSelectedListener,
+        RateusStatus.RateusStatusListener{
 
     private DrawerLayout drawer;
     private NavigationView mainNavigationView, navigationView, footerNavigationView;
@@ -234,6 +240,8 @@ public class Home extends AppCompatActivity implements
     private TextView tvPublishPostCount;
     private ImageView imageNewPostPublish;
     private boolean isNewPostToggle = true;
+    private boolean isRateusDialog;
+    private boolean isCheckFistTimeRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,8 +278,40 @@ public class Home extends AppCompatActivity implements
         // getNewPostResult();
         // forceCrash();
 
+    //    displayRateusStatus(isRateusDialog);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.i(MyService.TAG, "run: runnable complete");
+             //   displayProgressBar(true, progressDialog);
+              //  isRateusDialog=true;
+                recieveSingleUserRatingStatus(isCheckFistTimeRating);
+               // displayRateusStatus(isRateusDialog);
+            }
+        };
+        Handler handler = new Handler();
+        handler.postDelayed(runnable, 13000);
+
     }
 
+    private void displayRateusStatus(boolean isRateusDialog) {
+        if(isRateusDialog){
+            RateusStatus status = RateusStatus.newInstance("msg");
+            status.setCancelable(false);
+            status.show(getSupportFragmentManager(), "RateusStatus");
+        }
+
+    }
+
+    public  void displayProgressBar(boolean display, ProgressDialog progressDialog) {
+        if (display) {
+//            view.setVisibility(View.VISIBLE);
+            progressDialog.show();
+        } else {
+          //  view.setVisibility(View.GONE);
+            progressDialog.dismiss();
+        }
+    }
 
     public void forceCrash() {
         throw new RuntimeException("This is a crash");
@@ -2167,5 +2207,89 @@ public class Home extends AppCompatActivity implements
             App.setConfigChange(false);
         }
     }
+
+    @Override
+    public void onSure(DialogFragment dlg) {
+
+       final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+      /*   try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }*/
+
+        Intent i = new Intent(android.content.Intent.ACTION_VIEW);
+        i.setData(Uri.parse("https://play.google.com/store/apps/details?id="+appPackageName));
+        startActivity(i);
+        int yesRating=1;
+       // sendUserRatingStatus(yesRating);
+        HomeService homeService = HomeService.mRetrofit.create(HomeService.class);
+        Log.d("ratingStatus",yesRating+"");
+        Call<String> call = homeService.setUserAppRate(deviceId, userId, token, Integer.parseInt(userId),1);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+                Log.d("RatingResponse ",response.toString());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
+        });
+    }
+
+    @Override
+    public void onNoThanks(DialogFragment dlg) {
+
+        int noRating=0;
+        sendUserRatingStatus(noRating);
+    }
+
+
+    private void sendUserRatingStatus(int ratingStatus) {
+         HomeService homeService = HomeService.mRetrofit.create(HomeService.class);
+         Log.d("ratingStatus",ratingStatus+"");
+        Call<String> call = homeService.setUserAppRate(deviceId, userId, token, Integer.parseInt(userId),1);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+                Log.d("RatingResponse ",response.toString());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
+        });
+    }
+
+    private void recieveSingleUserRatingStatus(boolean isCheckFistTimeRating) {
+
+        webService = HomeService.mRetrofit.create(HomeService.class);
+            Call<String> call = webService.setSingleUserAppRate(deviceId, userId, token, Integer.parseInt(userId));
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+
+                    Log.d("RatingResponse ",response.toString());
+
+                    RateusStatus status = RateusStatus.newInstance("msg");
+                    status.setCancelable(false);
+                    status.show(getSupportFragmentManager(), "RateusStatus");
+                    Home.this.isCheckFistTimeRating =true;
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.d("Error",t.getMessage());
+                }
+            });
+
+
+    }
+
+
+
 
 }

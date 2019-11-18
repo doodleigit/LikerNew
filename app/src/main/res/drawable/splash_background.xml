@@ -7,6 +7,13 @@
         <bitmap
             android:gravity="center"
             android:src="@drawable/splash" />
+
+    </item>
+    <item android:bottom="@dimen/_20sdp">
+
+        <bitmap
+            android:gravity="bottom"
+            android:src="@drawable/app_logo_btn" />
     </item>
 
 </layer-list>

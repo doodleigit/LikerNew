@@ -1290,9 +1290,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
 
     }
 
-
-
-
     private void setFollow(String followUserId, int position) {
       //  showProgressBar(mContext.getString(R.string.loading));
         Call<String> call = webService.setFollow(deviceId, token, profileId, userIds, followUserId);
