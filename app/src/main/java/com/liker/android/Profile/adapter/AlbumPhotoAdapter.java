@@ -2,7 +2,12 @@ package com.liker.android.Profile.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -18,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.liker.android.App;
 import com.liker.android.Profile.model.AlbumPhoto;
+import com.liker.android.Profile.view.PhotoFullViewFragment;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 
@@ -55,7 +61,12 @@ public class AlbumPhotoAdapter  extends RecyclerView.Adapter<AlbumPhotoAdapter.V
         viewHolder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewFullImage(url);
+                ArrayList<String> photos = new ArrayList<>();
+                for (AlbumPhoto albumPhoto : arrayList) {
+                    photos.add(albumPhoto.getImageName());
+                }
+                fullPhotoView(photos, i);
+//                viewFullImage(url);
             }
         });
     }
@@ -74,6 +85,23 @@ public class AlbumPhotoAdapter  extends RecyclerView.Adapter<AlbumPhotoAdapter.V
 
             image = itemView.findViewById(R.id.image);
         }
+    }
+
+    private void fullPhotoView(ArrayList<String> photos, int position) {
+        FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
+        Fragment prev = ((AppCompatActivity) context).getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        DialogFragment dialogFragment = new PhotoFullViewFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("media_files", photos);
+        bundle.putInt("position", position);
+        dialogFragment.setArguments(bundle);
+
+        dialogFragment.show(ft, "dialog");
     }
 
     private void viewFullImage(String url) {

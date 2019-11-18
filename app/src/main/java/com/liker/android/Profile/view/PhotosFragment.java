@@ -39,8 +39,10 @@ import com.liker.android.Home.model.PostItem;
 import com.liker.android.Post.view.activity.PostPopup;
 import com.liker.android.Profile.adapter.AlbumAdapter;
 import com.liker.android.Profile.adapter.AlbumPhotoAdapter;
+import com.liker.android.Profile.adapter.PersonalPhotoAdapter;
 import com.liker.android.Profile.adapter.PhotoAdapter;
 import com.liker.android.Profile.model.AlbumPhoto;
+import com.liker.android.Profile.model.PersonalPhoto;
 import com.liker.android.Profile.model.PhotoAlbum;
 import com.liker.android.Profile.model.RecentPhoto;
 import com.liker.android.Profile.service.PhotoAlbumClickListener;
@@ -48,6 +50,10 @@ import com.liker.android.Profile.service.PhotoClickListener;
 import com.liker.android.Profile.service.ProfileService;
 import com.liker.android.R;
 import com.liker.android.Tool.PrefManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -62,8 +68,7 @@ import static com.liker.android.Tool.AppConstants.ITEM_KEY;
 public class PhotosFragment extends Fragment {
 
     View view;
-    private RecyclerView albumRecyclerView;
-//    private RecyclerView photoRecyclerView;
+    private RecyclerView albumRecyclerView, personalPhotoRecyclerView, photoRecyclerView;
 
     private ProgressDialog progressDialog;
 
@@ -72,8 +77,10 @@ public class PhotosFragment extends Fragment {
     private ProfileService profileService;
     private PrefManager manager;
     private AlbumAdapter albumAdapter;
-//    private PhotoAdapter photoAdapter;
+    private PersonalPhotoAdapter personalPhotoAdapter;
+    private PhotoAdapter photoAdapter;
     private ArrayList<PhotoAlbum> photoAlbums;
+    private ArrayList<PersonalPhoto> personalPhotos;
     private ArrayList<RecentPhoto> recentPhotos;
     private String deviceId, profileUserId, token, userId;
     int limit = 10;
@@ -98,6 +105,7 @@ public class PhotosFragment extends Fragment {
         profileService = ProfileService.mRetrofit.create(ProfileService.class);
         manager = new PrefManager(getContext());
         photoAlbums = new ArrayList<>();
+        personalPhotos = new ArrayList<>();
         recentPhotos = new ArrayList<>();
         deviceId = manager.getDeviceId();
         assert getArguments() != null;
@@ -120,17 +128,22 @@ public class PhotosFragment extends Fragment {
         };
 
         albumAdapter = new AlbumAdapter(getActivity(), photoAlbums, photoAlbumClickListener);
-//        photoAdapter = new PhotoAdapter(getActivity(), recentPhotos);
+        personalPhotoAdapter = new PersonalPhotoAdapter(getActivity(), personalPhotos, null);
+        photoAdapter = new PhotoAdapter(getActivity(), recentPhotos);
 
         albumRecyclerView = view.findViewById(R.id.albumRecyclerView);
-//        photoRecyclerView = view.findViewById(R.id.photoRecyclerView);
+        personalPhotoRecyclerView = view.findViewById(R.id.personalPhotoRecyclerView);
+        photoRecyclerView = view.findViewById(R.id.photoRecyclerView);
         albumRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         albumRecyclerView.setNestedScrollingEnabled(false);
-//        photoRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
-//        photoRecyclerView.setNestedScrollingEnabled(false);
+        personalPhotoRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        personalPhotoRecyclerView.setNestedScrollingEnabled(false);
+        photoRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        photoRecyclerView.setNestedScrollingEnabled(false);
 
         albumRecyclerView.setAdapter(albumAdapter);
-//        photoRecyclerView.setAdapter(photoAdapter);
+        personalPhotoRecyclerView.setAdapter(personalPhotoAdapter);
+        photoRecyclerView.setAdapter(photoAdapter);
     }
 
     private void getData() {
@@ -138,6 +151,8 @@ public class PhotosFragment extends Fragment {
         sendAlbumListRequest(callAlbums);
         Call<ArrayList<RecentPhoto>> callPhotos = profileService.getRecentPhotos(deviceId, token, userId, profileUserId, userId, limit, offset);
         sendRecentListRequest(callPhotos);
+        Call<String> callPersonalPhotos = profileService.getFeaturedPhotos(deviceId, token, userId, profileUserId, userId, limit, offset);
+        sendPersonalPhotoRequest(callPersonalPhotos);
     }
 
     private void showAlbumPhotos(PhotoAlbum photoAlbum) {
@@ -239,6 +254,39 @@ public class PhotosFragment extends Fragment {
 
     }
 
+    private void sendPersonalPhotoRequest(Call<String> call) {
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body());
+                    boolean status = jsonObject.getBoolean("status");
+                    if (status) {
+                        JSONArray jsonArray = jsonObject.getJSONArray("data");
+                        ArrayList<PersonalPhoto> arrayList = new ArrayList<>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            String id, imageName;
+                            id = object.getString("id");
+                            imageName = object.getString("image_name");
+                            arrayList.add(new PersonalPhoto(id, imageName));
+                        }
+                        personalPhotos.addAll(arrayList);
+                        personalPhotoAdapter.notifyDataSetChanged();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.hide();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressDialog.hide();
+            }
+        });
+    }
+
     private void sendRecentListRequest(Call<ArrayList<RecentPhoto>> call) {
 
         call.enqueue(new Callback<ArrayList<RecentPhoto>>() {
@@ -249,9 +297,9 @@ public class PhotosFragment extends Fragment {
                 ArrayList<RecentPhoto> arrayList = response.body();
                 if (arrayList != null && arrayList.size() > 0) {
                     recentPhotos.addAll(arrayList);
-                    photoAlbums.add(new PhotoAlbum(-1, getString(R.string.photo_gallery), String.valueOf(arrayList.size()), arrayList.get(0).getImageName()));
-                    albumAdapter.notifyDataSetChanged();
-//                    photoAdapter.notifyDataSetChanged();
+//                    photoAlbums.add(new PhotoAlbum(-1, getString(R.string.photo_gallery), String.valueOf(arrayList.size()), arrayList.get(0).getImageName()));
+//                    albumAdapter.notifyDataSetChanged();
+                    photoAdapter.notifyDataSetChanged();
                 }
                 progressDialog.hide();
             }
