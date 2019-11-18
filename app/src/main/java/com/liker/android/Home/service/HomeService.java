@@ -335,8 +335,26 @@ public interface HomeService {
             @Header("User-Id") String userId,
             @Field("user_id") String userIds
     );
+
+
+    @POST(AppConstants.USER_APP_RATE)
+    @FormUrlEncoded
+    Call<String> setUserAppRate(
+            @Header("Device-Id") String deviceId,
+            @Header("Security-Token") String token,
+            @Header("User-Id") String userId,
+            @Field("user_id") int userIds,
+            @Field("status") int status
+    );
+    //http://192.168.0.7:8040/sites/likerapp/single_user_apprate,
+    @POST(AppConstants.SINGLE_USER_APP_RATE)
+    @FormUrlEncoded
+    Call<String> setSingleUserAppRate(
+            @Header("Device-Id") String deviceId,
+            @Header("Security-Token") String token,
+            @Header("User-Id") String userId,
+            @Field("user_id") int userIds
+    );
     //https://www.api.liker.com/follow
-
-
 
 }

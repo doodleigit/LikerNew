@@ -89,6 +89,7 @@ import com.liker.android.Comment.view.activity.CommentPost;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Home.model.MediaFrame;
 import com.liker.android.Home.model.MediaViewHolder;
+import com.liker.android.Home.model.PostFile;
 import com.liker.android.Home.model.PostFooter;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.model.SharedProfile;
@@ -98,6 +99,7 @@ import com.liker.android.Home.view.activity.PostShare;
 import com.liker.android.Home.view.fragment.LikerUserListFragment;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
 import com.liker.android.Post.view.activity.PostPopup;
+import com.liker.android.Post.view.fragment.NewMediaFullViewFragment;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
@@ -852,7 +854,15 @@ public class ImageHolder extends RecyclerView.ViewHolder {
                 mediaViewHolders.get(i).getMediaVideoLayout().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        popUpPost(mediaPosition);
+
+                         List<PostFile> postFiles=item.getPostFiles();
+
+                         if (postFiles.size()==1){
+                             fullMediaView((ArrayList<PostFile>) postFiles, position);
+                         }else {
+                             popUpPost(mediaPosition);
+                         }
+
                     }
                 });
             } else {
@@ -970,7 +980,6 @@ public class ImageHolder extends RecyclerView.ViewHolder {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         int id = menuItem.getItemId();
-
                         if (id == R.id.shareAsPost) {
                             String postId = item.getSharedPostId();
 //                            Call<PostShareItem> call = webService.getPostDetails(deviceId, profileId, token, userIds, postId);
@@ -978,7 +987,6 @@ public class ImageHolder extends RecyclerView.ViewHolder {
                             sendShareItemRequest(call);
 
                         }
-
                         if (id == R.id.shareFacebook) {
 
                             shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
@@ -1019,7 +1027,6 @@ public class ImageHolder extends RecyclerView.ViewHolder {
                             i.setData(Uri.parse(url));
                             mContext.startActivity(i);
                         }
-
                         if (id == R.id.copyLink) {
 
                             ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -1558,7 +1565,22 @@ public class ImageHolder extends RecyclerView.ViewHolder {
             }
         });
     }
+    private void fullMediaView(ArrayList<PostFile> postFiles, int position) {
+        FragmentTransaction ft = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
+        Fragment prev = ((AppCompatActivity) mContext).getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        DialogFragment dialogFragment = new NewMediaFullViewFragment();
 
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("media_files", postFiles);
+        bundle.putInt("position", position);
+        dialogFragment.setArguments(bundle);
+
+        dialogFragment.show(ft, "dialog");
+    }
 
 
 }

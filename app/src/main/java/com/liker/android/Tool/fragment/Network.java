@@ -40,8 +40,6 @@ public class Network extends DialogFragment {
               }
           });
 
-
-
         // TODO: return the created dialog
         return builder.create();
     }

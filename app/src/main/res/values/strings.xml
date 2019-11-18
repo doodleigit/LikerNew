@@ -435,5 +435,7 @@
     <string name="photo_gallery">Photo Gallery</string>
     <string name="personal_photos">Personal Photos</string>
     <string name="album">Album</string>
+    <string name="no_thanks">No, Thanks</string>
+    <string name="sure">Rate Now</string>
 
 </resources>

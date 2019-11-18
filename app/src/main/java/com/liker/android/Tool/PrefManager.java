@@ -57,6 +57,8 @@ public class PrefManager {
     private static final String COMMENT_LIKE_INTRO = "user_info";
     private static final String NEW_POST_INTRO = "new_post_intro";
     private static final String NEW_POST_AUDIENCE_INTRO = "new_post_audience_intro";
+    private static final String FIRST_TIME_RATING_SHOW = "first_time_rating_show";
+
 
     public PrefManager(Context context) {
         this._context = context;
@@ -72,6 +74,11 @@ public class PrefManager {
 
     public void setFirstTimeLaunch(boolean isFirstTime) {
         editor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
+        editor.apply();
+    }
+
+    public void setFirstTimeRatingShow(boolean isFirstTime) {
+        editor.putBoolean(FIRST_TIME_RATING_SHOW, isFirstTime);
         editor.apply();
     }
 
@@ -100,6 +107,7 @@ public class PrefManager {
 
         editor.apply();
     }
+
     public void setPostCountClear() {
         editor.putInt(NEW_POST, 0);
 
@@ -119,6 +127,7 @@ public class PrefManager {
     public int getNotificationCount() {
         return pref.getInt(NEW_NOTIFICATION, 0);
     }
+
     public int getPostCount() {
         return pref.getInt(NEW_POST, 0);
     }
@@ -134,6 +143,11 @@ public class PrefManager {
     public boolean isFirstTimeLaunch() {
         return pref.getBoolean(IS_FIRST_TIME_LAUNCH, false);
     }
+
+    public boolean isFirstTimeRatingShow() {
+        return pref.getBoolean(FIRST_TIME_RATING_SHOW, false);
+    }
+
 
     public boolean isValidateField() {
         return pref.getBoolean(IS_VALIDATE_FIELD, false);
