@@ -279,7 +279,7 @@ public class Home extends AppCompatActivity implements
         // forceCrash();
 
     //    displayRateusStatus(isRateusDialog);
-        Runnable runnable = new Runnable() {
+    /*    Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 Log.i(MyService.TAG, "run: runnable complete");
@@ -290,8 +290,9 @@ public class Home extends AppCompatActivity implements
             }
         };
         Handler handler = new Handler();
-        handler.postDelayed(runnable, 13000);
-
+        handler.postDelayed(runnable, 13000);*/
+//        sendUserRatingStatus(1);
+        recieveSingleUserRatingStatus(true);
     }
 
     private void displayRateusStatus(boolean isRateusDialog) {
@@ -2285,7 +2286,6 @@ public class Home extends AppCompatActivity implements
                     Log.d("Error",t.getMessage());
                 }
             });
-
 
     }
 
