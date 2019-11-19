@@ -30,15 +30,16 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface HomeService {
 
 
     OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(1, TimeUnit.MINUTES)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+//            .connectTimeout(1, TimeUnit.MINUTES)
+//            .readTimeout(30, TimeUnit.SECONDS)
+//            .writeTimeout(15, TimeUnit.SECONDS)
             .build();
 
     Retrofit mRetrofit = new Retrofit.Builder()
@@ -337,6 +338,7 @@ public interface HomeService {
     );
 
 
+    @Headers({ "Content-Type: application/json;charset=UTF-8"})
     @POST(AppConstants.USER_APP_RATE)
     @FormUrlEncoded
     Call<String> setUserAppRate(
@@ -347,13 +349,14 @@ public interface HomeService {
             @Field("status") int status
     );
     //http://192.168.0.7:8040/sites/likerapp/single_user_apprate,
+    @Headers({ "Content-Type: application/json;charset=UTF-8"})
     @POST(AppConstants.SINGLE_USER_APP_RATE)
     @FormUrlEncoded
     Call<String> setSingleUserAppRate(
             @Header("Device-Id") String deviceId,
             @Header("Security-Token") String token,
             @Header("User-Id") String userId,
-            @Field("user_id") int userIds
+            @Field("user_id") String userIds
     );
     //https://www.api.liker.com/follow
 

@@ -193,7 +193,7 @@ public class Home extends AppCompatActivity implements
         BlockUserDialog.BlockListener,
         PostPermissionSheet.BottomSheetListener,
         NavigationView.OnNavigationItemSelectedListener,
-        RateusStatus.RateusStatusListener{
+        RateusStatus.RateusStatusListener {
 
     private DrawerLayout drawer;
     private NavigationView mainNavigationView, navigationView, footerNavigationView;
@@ -278,38 +278,25 @@ public class Home extends AppCompatActivity implements
         // getNewPostResult();
         // forceCrash();
 
-    //    displayRateusStatus(isRateusDialog);
-    /*    Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.i(MyService.TAG, "run: runnable complete");
-             //   displayProgressBar(true, progressDialog);
-              //  isRateusDialog=true;
-                recieveSingleUserRatingStatus(isCheckFistTimeRating);
-               // displayRateusStatus(isRateusDialog);
-            }
-        };
-        Handler handler = new Handler();
-        handler.postDelayed(runnable, 13000);*/
+        //    displayRateusStatus(isRateusDialog);
+
 //        sendUserRatingStatus(1);
         recieveSingleUserRatingStatus(true);
+//        getPostFilters("1", false);
     }
 
-    private void displayRateusStatus(boolean isRateusDialog) {
-        if(isRateusDialog){
-            RateusStatus status = RateusStatus.newInstance("msg");
-            status.setCancelable(false);
-            status.show(getSupportFragmentManager(), "RateusStatus");
-        }
-
+    private void displayRateusStatus() {
+        RateusStatus status = RateusStatus.newInstance("msg");
+        status.setCancelable(false);
+        status.show(getSupportFragmentManager(), "RateusStatus");
     }
 
-    public  void displayProgressBar(boolean display, ProgressDialog progressDialog) {
+    public void displayProgressBar(boolean display, ProgressDialog progressDialog) {
         if (display) {
 //            view.setVisibility(View.VISIBLE);
             progressDialog.show();
         } else {
-          //  view.setVisibility(View.GONE);
+            //  view.setVisibility(View.GONE);
             progressDialog.dismiss();
         }
     }
@@ -1394,10 +1381,10 @@ public class Home extends AppCompatActivity implements
             TransitionManager.beginDelayedTransition(drawer, transition);
             newPostContainer.setVisibility(isNewPostToggle ? View.VISIBLE : View.GONE);
             tvPublishPostCount.setText(String.valueOf(count));
-            String stringPostCount=tvPublishPostCount.getText().toString();
-            if("1".equalsIgnoreCase(stringPostCount)){
+            String stringPostCount = tvPublishPostCount.getText().toString();
+            if ("1".equalsIgnoreCase(stringPostCount)) {
                 tvPublishPostCount.setText(String.valueOf(count) + " New Post");
-            }else {
+            } else {
                 tvPublishPostCount.setText(String.valueOf(count) + " New Posts");
             }
         } else {
@@ -1523,18 +1510,18 @@ public class Home extends AppCompatActivity implements
             String jsonArray = intent.getStringExtra("followerArray");
 
 
-            if(2==permission){
+            if (2 == permission) {
                 try {
                     JSONArray array = new JSONArray(jsonArray);
-                    if(array.length()>0){
-                        for (int i = 0; i <array.length() ; i++) {
-                            String id= String.valueOf(array.get(i));
-                            if(userId.equalsIgnoreCase(id)){
+                    if (array.length() > 0) {
+                        for (int i = 0; i < array.length(); i++) {
+                            String id = String.valueOf(array.get(i));
+                            if (userId.equalsIgnoreCase(id)) {
                                 if (total > 0) {
                                     manager.setPostCount();
                                     int newCount = manager.getPostCount();
                                     setPostCount(newCount);
-                                 //   notificationSoundWhenUserActive();
+                                    //   notificationSoundWhenUserActive();
                                 }
 
                                 break;
@@ -1545,15 +1532,15 @@ public class Home extends AppCompatActivity implements
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }else if(0==permission){
+            } else if (0 == permission) {
                 if (total > 0) {
                     manager.setPostCount();
                     int newCount = manager.getPostCount();
                     setPostCount(newCount);
-                 //   notificationSoundWhenUserActive();
+                    //   notificationSoundWhenUserActive();
                 }
 
-            }else if(1==permission){
+            } else if (1 == permission) {
                 manager.setPostCountClear();
                 setPostCount(0);
             }
@@ -2204,7 +2191,7 @@ public class Home extends AppCompatActivity implements
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             App.setConfigChange(true);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             App.setConfigChange(false);
         }
     }
@@ -2212,7 +2199,7 @@ public class Home extends AppCompatActivity implements
     @Override
     public void onSure(DialogFragment dlg) {
 
-       final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+        final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
       /*   try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
         } catch (android.content.ActivityNotFoundException anfe) {
@@ -2220,43 +2207,28 @@ public class Home extends AppCompatActivity implements
         }*/
 
         Intent i = new Intent(android.content.Intent.ACTION_VIEW);
-        i.setData(Uri.parse("https://play.google.com/store/apps/details?id="+appPackageName));
+        i.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName));
         startActivity(i);
-        int yesRating=1;
-       // sendUserRatingStatus(yesRating);
-        HomeService homeService = HomeService.mRetrofit.create(HomeService.class);
-        Log.d("ratingStatus",yesRating+"");
-        Call<String> call = homeService.setUserAppRate(deviceId, userId, token, Integer.parseInt(userId),1);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-
-                Log.d("RatingResponse ",response.toString());
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-            }
-        });
+        int yesRating = 1;
+        sendUserRatingStatus(yesRating);
     }
 
     @Override
     public void onNoThanks(DialogFragment dlg) {
-
-        int noRating=0;
+        int noRating = 0;
         sendUserRatingStatus(noRating);
     }
 
 
     private void sendUserRatingStatus(int ratingStatus) {
-         HomeService homeService = HomeService.mRetrofit.create(HomeService.class);
-         Log.d("ratingStatus",ratingStatus+"");
-        Call<String> call = homeService.setUserAppRate(deviceId, userId, token, Integer.parseInt(userId),1);
+        HomeService homeService = HomeService.mRetrofit.create(HomeService.class);
+        Log.d("ratingStatus", ratingStatus + "");
+        Call<String> call = homeService.setUserAppRate(deviceId, userId, token, Integer.parseInt(userId), ratingStatus);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 
-                Log.d("RatingResponse ",response.toString());
+                Log.d("RatingResponse ", response.toString());
             }
 
             @Override
@@ -2266,30 +2238,36 @@ public class Home extends AppCompatActivity implements
     }
 
     private void recieveSingleUserRatingStatus(boolean isCheckFistTimeRating) {
-
         webService = HomeService.mRetrofit.create(HomeService.class);
-            Call<String> call = webService.setSingleUserAppRate(deviceId, userId, token, Integer.parseInt(userId));
-            call.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-
-                    Log.d("RatingResponse ",response.toString());
-
-                    RateusStatus status = RateusStatus.newInstance("msg");
-                    status.setCancelable(false);
-                    status.show(getSupportFragmentManager(), "RateusStatus");
-                    Home.this.isCheckFistTimeRating =true;
+        Call<String> call = webService.setSingleUserAppRate(deviceId, userId, token, userId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body());
+                    boolean status = jsonObject.getBoolean("status");
+                    if (status) {
+                    } else {
+                        Runnable runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                displayRateusStatus();
+                            }
+                        };
+                        Handler handler = new Handler();
+                        handler.postDelayed(runnable, 12000);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Log.d("Error",t.getMessage());
-                }
-            });
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
 
     }
-
-
 
 
 }

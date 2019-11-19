@@ -9,11 +9,11 @@
             android:src="@drawable/splash" />
 
     </item>
-    <item android:bottom="@dimen/_20sdp">
+    <item android:bottom="@dimen/_40sdp">
 
         <bitmap
             android:gravity="bottom"
-            android:src="@drawable/app_logo_btn" />
+            android:src="@drawable/app_logo_company" />
     </item>
 
 </layer-list>
