@@ -2274,10 +2274,10 @@ public class Home extends AppCompatActivity implements
 
                     Log.d("RatingResponse ",response.toString());
 
-                    RateusStatus status = RateusStatus.newInstance("msg");
-                    status.setCancelable(false);
-                    status.show(getSupportFragmentManager(), "RateusStatus");
-                    Home.this.isCheckFistTimeRating =true;
+//                    RateusStatus status = RateusStatus.newInstance("msg");
+//                    status.setCancelable(false);
+//                    status.show(getSupportFragmentManager(), "RateusStatus");
+//                    Home.this.isCheckFistTimeRating =true;
                 }
 
                 @Override

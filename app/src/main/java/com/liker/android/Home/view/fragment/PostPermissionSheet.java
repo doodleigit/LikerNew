@@ -343,8 +343,6 @@ public class PostPermissionSheet extends BottomSheetDialogFragment implements Vi
     }
 
     public void sendDeletePostRequest(Call<String> call) {
-
-
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

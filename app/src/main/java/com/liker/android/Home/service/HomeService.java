@@ -16,10 +16,12 @@ import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.model.SinglePostFilters;
 import com.liker.android.Home.model.StarContributor;
 import com.liker.android.Home.model.postshare.PostShareItem;
+import com.liker.android.Profile.model.AddFeatured;
 import com.liker.android.Tool.AppConstants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -28,6 +30,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -48,6 +51,15 @@ public interface HomeService {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
+    @POST("getFeaturedImages")
+    @FormUrlEncoded
+    Call<String> addFeaturedPhoto(
+            @Header("Device-Id") String deviceId,
+            @Header("Security-Token") String token,
+            @Header("User-Id") String userId,
+            @Field("user_id") String userIds,
+            @FieldMap Map<String, String> map
+    );
 
     @POST(AppConstants.FEED)
     @FormUrlEncoded
@@ -346,6 +358,7 @@ public interface HomeService {
             @Field("user_id") int userIds,
             @Field("status") int status
     );
+
     //http://192.168.0.7:8040/sites/likerapp/single_user_apprate,
     @POST(AppConstants.SINGLE_USER_APP_RATE)
     @FormUrlEncoded

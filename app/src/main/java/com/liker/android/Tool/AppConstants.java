@@ -4,16 +4,17 @@ public class AppConstants {
 
     //===============LOCAL SERVER==================
 
-//    public static final String BASE_URL = "http://192.168.0.6:8040/sites/likerapp/";
-//    public static final String BASE_URL_MEDIA = "http://192.168.0.6:8040/sites/likeropt/";
-//    public static final String BASE_URL_IMAGES = "http://192.168.0.6:8040/sites/likeropt/";
-//    public static final String LINK_IMAGES = "http://192.168.0.6:8040/sites/likeropt/uploads/link_images";
-//    public static final String SOCKET_WEB = "http://192.168.0.6:4001";
-//    public static final String SOCKET_MESSAGE = "http://192.168.0.6:4002";
-//    public static final String SOCKET_VIDEO = "http://192.168.0.6:4004";
-//    public static final String FACEBOOK_SHARE = "http://192.168.0.6:8040/sites/likerapp/public/posts/";
-//    public static final String FACEBOOK_INVITATION = "http://192.168.0.6:8040/sites/likerapp/settings/fbinvite/";
-//    public static final String BASE_URL_LOCATION = "http://192.168.0.6:8040/sites/likerapp/";
+    public static final String BASE_URL = "http://192.168.0.99:8040/sites/likerapp/";
+    public static final String BASE_URL_MEDIA = "http://192.168.0.99:8040/sites/likeropt/";
+    public static final String BASE_URL_IMAGES = "http://192.168.0.99:8040/sites/likeropt/";
+    public static final String LINK_IMAGES = "http://192.168.0.99:8040/sites/likeropt/uploads/link_images";
+    public static final String SOCKET_WEB = "http://192.168.0.99:4001";
+    public static final String SOCKET_NEW_POST = "http://192.168.0.99:7902";
+    public static final String SOCKET_MESSAGE = "http://192.168.0.99:4002";
+    public static final String SOCKET_VIDEO = "http://192.168.0.99:4004";
+    public static final String FACEBOOK_SHARE = "http://192.168.0.99:8040/sites/likerapp/public/posts/";
+    public static final String FACEBOOK_INVITATION = "http://192.168.0.99:8040/sites/likerapp/settings/fbinvite/";
+    public static final String BASE_URL_LOCATION = "http://192.168.0.99:8040/sites/likerapp/";
 
     //==========================STG SERVER=====================
 
@@ -34,17 +35,17 @@ public class AppConstants {
 
 
     //=======================LIVE SERVER=============================
-    public static final String BASE_URL = "https://www.api.liker.com/";
-    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
-    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
-    public static final String SOCKET_WEB = "https://node.liker.com:7800";
-    public static final String SOCKET_NEW_POST = "https://node.liker.com:7902";
-    public static final String SOCKET_MESSAGE = "https://node.liker.com:7801";
-    public static final String SOCKET_VIDEO = "https://node.liker.com:7806";
-    public static final String FACEBOOK_SHARE = "https://www.liker.com/public/posts/";
-    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
-    public static final String FACEBOOK_INVITATION = "https://www.liker.com/settings/fbinvite/";
-    public static final String BASE_URL_LOCATION = "https://www.api.liker.com/";
+//    public static final String BASE_URL = "https://www.api.liker.com/";
+//    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
+//    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
+//    public static final String SOCKET_WEB = "https://node.liker.com:7800";
+//    public static final String SOCKET_NEW_POST = "https://node.liker.com:7902";
+//    public static final String SOCKET_MESSAGE = "https://node.liker.com:7801";
+//    public static final String SOCKET_VIDEO = "https://node.liker.com:7806";
+//    public static final String FACEBOOK_SHARE = "https://www.liker.com/public/posts/";
+//    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
+//    public static final String FACEBOOK_INVITATION = "https://www.liker.com/settings/fbinvite/";
+//    public static final String BASE_URL_LOCATION = "https://www.api.liker.com/";
 
     public static final String API_KEY = "cd662c2e9b2e49fc9d4d763089597ea8";
     public static final String NEWS_FEED = "top-headlines?country=us&apiKey=" + API_KEY;
@@ -90,6 +91,8 @@ public class AppConstants {
     public static final String POST_ADDED = "postAdded";
     public static final String POST_EDITED = "postEdited";
     public static final String ADD_PHOTO = "addPhoto";
+    public static final String ADD_FEATURED_PHOTO = "addFeaturedImage";
+    public static final String DELETE_FEATURED_PHOTO = "deleteFeaturedImage";
     public static final String UPLOAD_VIDEO = "/upload";
     public static final String SEARCH_MENTION_USER = "searchMentionUser";
     public static final String ADDED_POST_CONTRIBUTOR = "addedPostContributor";
@@ -159,6 +162,7 @@ public class AppConstants {
     public static final String FOLLOW_STATUS_BROADCAST = "permission_change_broadcast";
     public static final String REPLY_CHANGE_BROADCAST = "reply_change_broadcast";
     public static final String COMMON_CHANGE_BROADCAST = "common_change_broadcast";
+    public static final String PERSONAL_PHOTO_BROADCAST = "personal_photo_broadcast";
 
     public static final String NOTIFICATION = "newNotification";
     public static final String CHAT_USERS = "get_chat_users";

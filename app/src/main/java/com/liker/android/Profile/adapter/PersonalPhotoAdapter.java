@@ -1,6 +1,7 @@
 package com.liker.android.Profile.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -12,12 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
 import com.liker.android.Profile.model.PersonalPhoto;
 import com.liker.android.Profile.service.AddPhotoClickListener;
-import com.liker.android.Profile.view.EditPersonalPhotoFragment;
+import com.liker.android.Profile.view.EditPersonalPhotoActivity;
 import com.liker.android.Profile.view.PhotoFullViewFragment;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
@@ -43,7 +45,7 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         if (i == ITEM_HOLDER) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_photo_item, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.personal_photo_item, viewGroup, false);
             return new ViewHolder(view);
         } else if (i == ADD_ITEM_HOLDER) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.add_photo_item, viewGroup, false);
@@ -92,19 +94,9 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void editPersonalPhoto(ArrayList<PersonalPhoto> photos) {
-        FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-        Fragment prev = ((AppCompatActivity) context).getSupportFragmentManager().findFragmentByTag("dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-        DialogFragment dialogFragment = new EditPersonalPhotoFragment();
-
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("media_files", photos);
-        dialogFragment.setArguments(bundle);
-
-        dialogFragment.show(ft, "dialog");
+        Intent intent = new Intent(context, EditPersonalPhotoActivity.class);
+        intent.putParcelableArrayListExtra("media_files", photos);
+        context.startActivity(intent);
     }
 
     private void fullPhotoView(ArrayList<String> photos, int position) {
