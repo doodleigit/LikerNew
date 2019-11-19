@@ -167,6 +167,7 @@ public class AppConstants {
     public static final String FRIEND_LIST = "friendlist";
     public static final String VIEW_ALBUMS = "view_albums";
     public static final String GET_ALBUM_PHOTOS = "get_album_photos";
+    public static final String GET_FEATURED_IMAGES = "getFeaturedImages";
     public static final String GET_RECENT_PHOTOS = "get_recent_photos";
     public static final String GET_PROFILE_INFO = "get_profile_info_app";
     public static final String GET_EDUCATION_SUGGESTION = "get_education_suggestions";

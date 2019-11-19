@@ -138,6 +138,18 @@ public interface ProfileService {
             @Field("offset") int offset
     );
 
+    @POST(AppConstants.GET_FEATURED_IMAGES)
+    @FormUrlEncoded
+    Call<String> getFeaturedPhotos(
+            @Header("Device-Id") String deviceId,
+            @Header("Security-Token") String token,
+            @Header("User-Id") String userId,
+            @Field("profile_user_id") String profileUserId,
+            @Field("user_id") String userIds,
+            @Field("limit") int limit,
+            @Field("offset") int offset
+    );
+
     @POST(AppConstants.GET_RECENT_PHOTOS)
     @FormUrlEncoded
     Call<ArrayList<RecentPhoto>> getRecentPhotos(
@@ -148,6 +160,15 @@ public interface ProfileService {
             @Field("user_id") String userIds,
             @Field("limit") int limit,
             @Field("offset") int offset
+    );
+
+    @Multipart
+    @POST(AppConstants.ADD_PHOTO)
+    Call<String> addPhoto(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Part MultipartBody.Part file
     );
 
     @POST(AppConstants.GET_PROFILE_INFO)
