@@ -21,11 +21,22 @@
         style="@android:style/Widget.ProgressBar.Inverse"/>
 
     <ImageView
+        android:id="@+id/featured"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:tint="@color/colorMainBackground"
+        android:src="@drawable/ic_unfeatured_24dp"/>
+
+    <ImageView
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:padding="10dp"
+        android:padding="5dp"
+        android:tint="@color/colorMainBackground"
         android:src="@drawable/ic_close_black_24dp"/>
 
 </RelativeLayout>

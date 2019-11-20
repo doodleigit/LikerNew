@@ -29,16 +29,19 @@ import java.util.ArrayList;
 public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
-    private ArrayList<PersonalPhoto> arrayList;
+    private ArrayList<PersonalPhoto> arrayList, arrayListAll;
     private AddPhotoClickListener addPhotoClickListener;
 
+    private boolean isOwnProfile;
     private int ITEM_HOLDER = 0;
     private int ADD_ITEM_HOLDER = 1;
 
-    public PersonalPhotoAdapter(Context context, ArrayList<PersonalPhoto> arrayList, AddPhotoClickListener addPhotoClickListener) {
+    public PersonalPhotoAdapter(Context context, ArrayList<PersonalPhoto> arrayList, ArrayList<PersonalPhoto> arrayListAll, AddPhotoClickListener addPhotoClickListener, boolean isOwnProfile) {
         this.context = context;
         this.arrayList = arrayList;
+        this.arrayListAll = arrayListAll;
         this.addPhotoClickListener = addPhotoClickListener;
+        this.isOwnProfile = isOwnProfile;
     }
 
     @NonNull
@@ -87,7 +90,7 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
                     if (addPhotoClickListener != null)
                         addPhotoClickListener.onClickListener();
                     else
-                        editPersonalPhoto(arrayList);
+                        editPersonalPhoto(arrayListAll);
                 }
             });
         }
@@ -118,7 +121,10 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return arrayList.size() + 1;
+        if (isOwnProfile)
+            return arrayList.size() + 1;
+        else
+            return arrayList.size();
     }
 
     @Override
