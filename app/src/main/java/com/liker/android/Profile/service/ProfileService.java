@@ -17,6 +17,7 @@ package com.liker.android.Profile.service;
 
 import com.liker.android.Comment.model.CommentItem;
 import com.liker.android.Home.model.PostItem;
+import com.liker.android.Profile.model.AddFeatured;
 import com.liker.android.Profile.model.AlbumPhoto;
 import com.liker.android.Profile.model.AllFriend;
 import com.liker.android.Profile.model.Cities;
@@ -32,6 +33,7 @@ import com.liker.android.Tool.AppConstants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -39,6 +41,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -169,6 +172,27 @@ public interface ProfileService {
             @Header("User-Id") String userId,
             @Header("Security-Token") String token,
             @Part MultipartBody.Part file
+    );
+
+    @POST(AppConstants.ADD_FEATURED_PHOTO)
+    @FormUrlEncoded
+    Call<String> addFeaturedPhoto(
+            @Header("Device-Id") String deviceId,
+            @Header("Security-Token") String token,
+            @Header("User-Id") String userId,
+            @Field("user_id") String userIds,
+            @FieldMap Map<String, String> map
+    );
+
+    @POST(AppConstants.DELETE_FEATURED_PHOTO)
+    @FormUrlEncoded
+    Call<String> deleteFeaturedPhoto(
+            @Header("Device-Id") String deviceId,
+            @Header("Security-Token") String token,
+            @Header("User-Id") String userId,
+            @Field("user_id") String userIds,
+            @Field("featured_id") String featuredId
+
     );
 
     @POST(AppConstants.GET_PROFILE_INFO)

@@ -2,7 +2,10 @@ package com.liker.android.Profile.view;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -49,6 +52,7 @@ import com.liker.android.Profile.service.PhotoAlbumClickListener;
 import com.liker.android.Profile.service.PhotoClickListener;
 import com.liker.android.Profile.service.ProfileService;
 import com.liker.android.R;
+import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.PrefManager;
 
 import org.json.JSONArray;
@@ -56,6 +60,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -98,6 +103,10 @@ public class PhotosFragment extends Fragment {
     }
 
     private void initialComponent() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(AppConstants.PERSONAL_PHOTO_BROADCAST);
+        Objects.requireNonNull(getActivity()).registerReceiver(broadcastReceiver, intentFilter);
+
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getString(R.string.loading));
         progressDialog.show();
@@ -262,7 +271,8 @@ public class PhotosFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(response.body());
                     boolean status = jsonObject.getBoolean("status");
                     if (status) {
-                        JSONArray jsonArray = jsonObject.getJSONArray("data");
+                        personalPhotos.clear();
+                        JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("all_featured");
                         ArrayList<PersonalPhoto> arrayList = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
@@ -337,4 +347,17 @@ public class PhotosFragment extends Fragment {
 
     }
 
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Call<String> callPersonalPhotos = profileService.getFeaturedPhotos(deviceId, token, userId, profileUserId, userId, limit, offset);
+            sendPersonalPhotoRequest(callPersonalPhotos);
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Objects.requireNonNull(getActivity()).unregisterReceiver(broadcastReceiver);
+    }
 }

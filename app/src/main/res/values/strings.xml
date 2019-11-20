@@ -337,6 +337,16 @@
     <string name="open_tab">Open in new tab</string>
     <string name="copy_image">Copy image url</string>
 
+    <string name="http">http://</string>
+    <string name="download">Download</string>
+    <string name="write_file">This app needs access to your file storage so that it can write files.</string>
+    <string name="photo_gallery">Photo Gallery</string>
+    <string name="personal_photos">Personal Photos</string>
+    <string name="album">Album</string>
+
+    <string name="no_thanks">No, Thanks</string>
+    <string name="sure">Rate Now</string>
+    <string name="saving">Saving…</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>
@@ -358,6 +368,7 @@
         <item>Gnocchi</item>
         <item>Lasagnette</item>
     </string-array>
+
     <string-array name="string_array_cold_drinks">
         <item>Cola</item>
         <item>Lemonade</item>
@@ -375,7 +386,6 @@
         <item>Only Me</item>
         <item>Friends</item>
     </string-array>
-
     <string-array name="privacy_list_two">
         <item>Everyone</item>
         <item>Nobody</item>
@@ -428,14 +438,5 @@
         <item>Personal life</item>
         <item>intro</item>
     </string-array>
-
-    <string name="http">http://</string>
-    <string name="download">Download</string>
-    <string name="write_file">This app needs access to your file storage so that it can write files.</string>
-    <string name="photo_gallery">Photo Gallery</string>
-    <string name="personal_photos">Personal Photos</string>
-    <string name="album">Album</string>
-    <string name="no_thanks">No, Thanks</string>
-    <string name="sure">Rate Now</string>
 
 </resources>

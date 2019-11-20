@@ -6,6 +6,7 @@ import android.os.Parcelable;
 public class PersonalPhoto implements Parcelable {
 
     private String id, imageName;
+    private boolean isUploading = false;
 
     public PersonalPhoto(String id, String imageName) {
         this.id = id;
@@ -15,6 +16,7 @@ public class PersonalPhoto implements Parcelable {
     protected PersonalPhoto(Parcel in) {
         id = in.readString();
         imageName = in.readString();
+        isUploading = in.readByte() != 0;
     }
 
     public static final Creator<PersonalPhoto> CREATOR = new Creator<PersonalPhoto>() {
@@ -45,6 +47,14 @@ public class PersonalPhoto implements Parcelable {
         this.imageName = imageName;
     }
 
+    public boolean isUploading() {
+        return isUploading;
+    }
+
+    public void setUploading(boolean uploading) {
+        isUploading = uploading;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -54,5 +64,6 @@ public class PersonalPhoto implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(id);
         parcel.writeString(imageName);
+        parcel.writeByte((byte) (isUploading ? 1 : 0));
     }
 }

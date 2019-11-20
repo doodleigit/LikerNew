@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
 //import com.doodle.App;
@@ -83,6 +84,8 @@ public class VideoPlayerRecyclerView extends RecyclerView {
     private static final String TAG = "VideoPlayerRecyclerView";
 
     private Activity activityContext;
+    private boolean isStateReady;
+    private boolean isPauseVideo;
 
     private enum VolumeState {ON, OFF}
 
@@ -170,6 +173,15 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                         playVideo(false);
                     }
                 }
+                if (isStateReady) {
+                    if(!isPauseVideo){
+                        pausePlayer();
+                    }else {
+                        startPlayer();
+                    }
+
+                  //  Toast.makeText(context, "scrolled change!", Toast.LENGTH_SHORT).show();
+                }
 
 
             }
@@ -177,7 +189,9 @@ public class VideoPlayerRecyclerView extends RecyclerView {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
+                if (videoPlayer.isLoading()) {
+                //    Toast.makeText(context, "scrolled!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -185,13 +199,16 @@ public class VideoPlayerRecyclerView extends RecyclerView {
             @Override
             public void onChildViewAttachedToWindow(View view) {
 //                startPlayer();
+                // Toast.makeText(context, "onChildViewAttachedToWindow", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onChildViewDetachedFromWindow(View view) {
                 if (viewHolderParent != null && viewHolderParent.equals(view)) {
 
+
 //                    pausePlayer();
+                    //    Toast.makeText(context, "onChildViewDetachedFromWindow", Toast.LENGTH_SHORT).show();
                     resetVideoView();
                     Log.d("resetVideoView", "resetVideoView");
                 }
@@ -224,14 +241,16 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                         if (progressBar != null) {
                             progressBar.setVisibility(VISIBLE);
                         }
-
+                    //    Toast.makeText(context, "STATE_BUFFERING", Toast.LENGTH_SHORT).show();
                         break;
                     case Player.STATE_ENDED:
                         Log.d(TAG, "onPlayerStateChanged: Video ended.");
 //                        videoPlayer.seekTo(0);
+                      //  Toast.makeText(context, "STATE_ENDED", Toast.LENGTH_SHORT).show();
                         break;
                     case Player.STATE_IDLE:
 
+                        Toast.makeText(context, "STATE_IDLE", Toast.LENGTH_SHORT).show();
                         break;
                     case Player.STATE_READY:
                         Log.e(TAG, "onPlayerStateChanged: Ready to play.");
@@ -241,6 +260,8 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                         if (!isVideoViewAdded) {
                             addVideoView();
                         }
+                        isStateReady = true;
+                   //     Toast.makeText(context, "STATE_READY", Toast.LENGTH_SHORT).show();
                         break;
                     default:
                         break;
@@ -444,6 +465,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
             playPosition = -1;
         }
 
+
     }
 
     private void manualVideoPlay(int position) {
@@ -591,7 +613,6 @@ public class VideoPlayerRecyclerView extends RecyclerView {
             } else if (volumeState == VolumeState.ON) {
                 Log.d(TAG, "togglePlaybackState: disabling volume.");
                 setVolumeControl(VolumeState.OFF);
-
             }
         }
     }
@@ -639,6 +660,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
         if (videoPlayer != null) {
             //   videoPlayer.setPlayWhenReady(false);
             videoPlayer.setPlayWhenReady(!videoPlayer.getPlayWhenReady());
+            isPauseVideo=true;
         }
     }
 

@@ -131,6 +131,7 @@ import com.liker.android.Home.model.PostFilters;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.model.SetUser;
 import com.liker.android.Home.model.SinglePostFilters;
+import com.liker.android.Home.model.SingleUserAppRate;
 import com.liker.android.Home.model.TopContributorStatus;
 import com.liker.android.Home.service.CategoryExpandListener;
 import com.liker.android.Home.service.CategoryRemoveListener;
@@ -165,6 +166,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -173,6 +175,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -281,7 +285,7 @@ public class Home extends AppCompatActivity implements
         //    displayRateusStatus(isRateusDialog);
 
 //        sendUserRatingStatus(1);
-        recieveSingleUserRatingStatus(true);
+        recieveSingleUserRatingStatus();
 //        getPostFilters("1", false);
     }
 
@@ -2221,9 +2225,8 @@ public class Home extends AppCompatActivity implements
 
 
     private void sendUserRatingStatus(int ratingStatus) {
-        HomeService homeService = HomeService.mRetrofit.create(HomeService.class);
-        Log.d("ratingStatus", ratingStatus + "");
-        Call<String> call = homeService.setUserAppRate(deviceId, userId, token, Integer.parseInt(userId), ratingStatus);
+
+        Call<String> call = webService.setUserAppRate(deviceId, token,userId, userId, ratingStatus);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -2237,9 +2240,9 @@ public class Home extends AppCompatActivity implements
         });
     }
 
-    private void recieveSingleUserRatingStatus(boolean isCheckFistTimeRating) {
-        webService = HomeService.mRetrofit.create(HomeService.class);
-        Call<String> call = webService.setSingleUserAppRate(deviceId, userId, token, userId);
+    private void recieveSingleUserRatingStatus() {
+
+        Call<String> call = webService.setSingleUserAppRate(deviceId,token, userId, userId);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -2255,7 +2258,7 @@ public class Home extends AppCompatActivity implements
                             }
                         };
                         Handler handler = new Handler();
-                        handler.postDelayed(runnable, 12000);
+                        handler.postDelayed(runnable, 600000);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

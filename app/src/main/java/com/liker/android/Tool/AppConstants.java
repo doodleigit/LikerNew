@@ -4,17 +4,17 @@ public class AppConstants {
 
     //===============LOCAL SERVER==================
 
-//    public static final String BASE_URL = "http://192.168.0.7:8040/sites/likerapp/";
-//    public static final String BASE_URL_MEDIA = "http://192.168.0.7:8040/sites/likeropt/";
-//    public static final String BASE_URL_IMAGES = "http://192.168.0.7:8040/sites/likeropt/";
-//    public static final String LINK_IMAGES = "http://192.168.0.7:8040/sites/likeropt/uploads/link_images";
-//    public static final String SOCKET_WEB = "http://192.168.0.7:4001";
-//    public static final String SOCKET_MESSAGE = "http://192.168.0.7:4002";
-//    public static final String SOCKET_VIDEO = "http://192.168.0.7:4004";
-//    public static final String FACEBOOK_SHARE = "http://192.168.0.7:8040/sites/likerapp/public/posts/";
-//    public static final String FACEBOOK_INVITATION = "http://192.168.0.7:8040/sites/likerapp/settings/fbinvite/";
-//    public static final String BASE_URL_LOCATION = "http://192.168.0.7:8040/sites/likerapp/";
-//    public static final String SOCKET_NEW_POST = "http://192.168.0.7:7902";
+//    public static final String BASE_URL = "http://192.168.0.6:8040/sites/likerapp/";
+//    public static final String BASE_URL_MEDIA = "http://192.168.0.6:8040/sites/likeropt/";
+//    public static final String BASE_URL_IMAGES = "http://192.168.0.6:8040/sites/likeropt/";
+//    public static final String LINK_IMAGES = "http://192.168.0.6:8040/sites/likeropt/uploads/link_images";
+//    public static final String SOCKET_WEB = "http://192.168.0.6:4001";
+//    public static final String SOCKET_MESSAGE = "http://192.168.0.6:4002";
+//    public static final String SOCKET_VIDEO = "http://192.168.0.6:4004";
+//    public static final String SOCKET_NEW_POST = "http://192.168.0.6:7902";
+//    public static final String FACEBOOK_SHARE = "http://192.168.0.6:8040/sites/likerapp/public/posts/";
+//    public static final String FACEBOOK_INVITATION = "http://192.168.0.6:8040/sites/likerapp/settings/fbinvite/";
+//    public static final String BASE_URL_LOCATION = "http://192.168.0.6:8040/sites/likerapp/";
 
     //==========================STG SERVER=====================
 
@@ -91,6 +91,8 @@ public class AppConstants {
     public static final String POST_ADDED = "postAdded";
     public static final String POST_EDITED = "postEdited";
     public static final String ADD_PHOTO = "addPhoto";
+    public static final String ADD_FEATURED_PHOTO = "addFeaturedImage";
+    public static final String DELETE_FEATURED_PHOTO = "deleteFeaturedImage";
     public static final String UPLOAD_VIDEO = "/upload";
     public static final String SEARCH_MENTION_USER = "searchMentionUser";
     public static final String ADDED_POST_CONTRIBUTOR = "addedPostContributor";
@@ -160,6 +162,7 @@ public class AppConstants {
     public static final String FOLLOW_STATUS_BROADCAST = "permission_change_broadcast";
     public static final String REPLY_CHANGE_BROADCAST = "reply_change_broadcast";
     public static final String COMMON_CHANGE_BROADCAST = "common_change_broadcast";
+    public static final String PERSONAL_PHOTO_BROADCAST = "personal_photo_broadcast";
 
     public static final String NOTIFICATION = "newNotification";
     public static final String CHAT_USERS = "get_chat_users";

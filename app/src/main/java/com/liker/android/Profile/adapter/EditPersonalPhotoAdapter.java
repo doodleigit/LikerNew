@@ -20,13 +20,12 @@ import com.liker.android.App;
 import com.liker.android.Profile.model.PersonalPhoto;
 import com.liker.android.Profile.service.AddPhotoClickListener;
 import com.liker.android.Profile.view.EditPersonalPhotoActivity;
-import com.liker.android.Profile.view.PhotoFullViewFragment;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 
 import java.util.ArrayList;
 
-public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private ArrayList<PersonalPhoto> arrayList;
@@ -35,7 +34,7 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
     private int ITEM_HOLDER = 0;
     private int ADD_ITEM_HOLDER = 1;
 
-    public PersonalPhotoAdapter(Context context, ArrayList<PersonalPhoto> arrayList, AddPhotoClickListener addPhotoClickListener) {
+    public EditPersonalPhotoAdapter(Context context, ArrayList<PersonalPhoto> arrayList, AddPhotoClickListener addPhotoClickListener) {
         this.context = context;
         this.arrayList = arrayList;
         this.addPhotoClickListener = addPhotoClickListener;
@@ -45,7 +44,7 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         if (i == ITEM_HOLDER) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.personal_photo_item, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.edit_personal_photo_item, viewGroup, false);
             return new ViewHolder(view);
         } else if (i == ADD_ITEM_HOLDER) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.add_photo_item, viewGroup, false);
@@ -68,14 +67,29 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
                     .dontAnimate()
                     .into(holder.imageView);
 
+            if (arrayList.get(i).isUploading()) {
+                holder.imageView.setVisibility(View.GONE);
+                holder.close.setVisibility(View.GONE);
+                holder.progressBar.setVisibility(View.VISIBLE);
+            } else {
+                holder.imageView.setVisibility(View.VISIBLE);
+                holder.close.setVisibility(View.VISIBLE);
+                holder.progressBar.setVisibility(View.GONE);
+            }
+
             holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ArrayList<String> photos = new ArrayList<>();
-                    for (PersonalPhoto personalPhoto : arrayList) {
-                        photos.add(personalPhoto.getImageName());
-                    }
-                    fullPhotoView(photos, i);
+
+                }
+            });
+
+            holder.close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    addPhotoClickListener.onDeleteClick(arrayList.get(i).getId());
+                    arrayList.remove(i);
+                    notifyDataSetChanged();
                 }
             });
 
@@ -84,36 +98,10 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (addPhotoClickListener != null)
-                        addPhotoClickListener.onClickListener();
-                    else
-                        editPersonalPhoto(arrayList);
+                    addPhotoClickListener.onClickListener();
                 }
             });
         }
-    }
-
-    private void editPersonalPhoto(ArrayList<PersonalPhoto> photos) {
-        Intent intent = new Intent(context, EditPersonalPhotoActivity.class);
-        intent.putParcelableArrayListExtra("media_files", photos);
-        context.startActivity(intent);
-    }
-
-    private void fullPhotoView(ArrayList<String> photos, int position) {
-        FragmentTransaction ft = ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction();
-        Fragment prev = ((AppCompatActivity) context).getSupportFragmentManager().findFragmentByTag("dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-        DialogFragment dialogFragment = new PhotoFullViewFragment();
-
-        Bundle bundle = new Bundle();
-        bundle.putStringArrayList("media_files", photos);
-        bundle.putInt("position", position);
-        dialogFragment.setArguments(bundle);
-
-        dialogFragment.show(ft, "dialog");
     }
 
     @Override
@@ -135,11 +123,14 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView imageView;
+        ImageView imageView, close;
+        ProgressBar progressBar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image);
+            close = itemView.findViewById(R.id.close);
+            progressBar = itemView.findViewById(R.id.progress_bar);
         }
     }
 
@@ -153,4 +144,28 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
+    public void addUploadingAnimation(PersonalPhoto personalPhoto) {
+        arrayList.add(personalPhoto);
+        notifyDataSetChanged();
+    }
+
+    public void stopUploadingAnimation(String id, PersonalPhoto personalPhoto) {
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (id.equals(arrayList.get(i).getId())) {
+                arrayList.set(i, personalPhoto);
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
+    public void removeUpload(String id) {
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (id.equals(arrayList.get(i).getId())) {
+                arrayList.remove(i);
+                notifyDataSetChanged();
+                break;
+            }
+        }
+    }
 }

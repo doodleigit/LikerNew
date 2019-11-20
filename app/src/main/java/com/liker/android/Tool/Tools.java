@@ -809,7 +809,6 @@ public class Tools {
         return categories;
     }
 
-
     public static void shareTwitter(String message, Context context) {
         Intent tweetIntent = new Intent(Intent.ACTION_SEND);
         tweetIntent.putExtra(Intent.EXTRA_TEXT, "This is a Test.");

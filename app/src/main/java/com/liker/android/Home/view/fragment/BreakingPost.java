@@ -57,6 +57,7 @@ import com.liker.android.Home.service.HomeService;
 import com.liker.android.Home.service.TabClickListener;
 import com.liker.android.Home.service.VideoPlayerRecyclerView;
 import com.liker.android.Home.view.activity.Home;
+import com.liker.android.Profile.model.AddFeatured;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.NetworkHelper;
@@ -67,6 +68,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
