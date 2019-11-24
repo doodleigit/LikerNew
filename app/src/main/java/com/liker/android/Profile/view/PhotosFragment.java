@@ -86,6 +86,7 @@ public class PhotosFragment extends Fragment {
     private PhotoAdapter photoAdapter;
     private ArrayList<PhotoAlbum> photoAlbums;
     private ArrayList<PersonalPhoto> personalPhotos;
+    private ArrayList<PersonalPhoto> allPersonalPhotos;
     private ArrayList<RecentPhoto> recentPhotos;
     private String deviceId, profileUserId, token, userId;
     int limit = 10;
@@ -115,6 +116,7 @@ public class PhotosFragment extends Fragment {
         manager = new PrefManager(getContext());
         photoAlbums = new ArrayList<>();
         personalPhotos = new ArrayList<>();
+        allPersonalPhotos = new ArrayList<>();
         recentPhotos = new ArrayList<>();
         deviceId = manager.getDeviceId();
         assert getArguments() != null;
@@ -137,7 +139,7 @@ public class PhotosFragment extends Fragment {
         };
 
         albumAdapter = new AlbumAdapter(getActivity(), photoAlbums, photoAlbumClickListener);
-        personalPhotoAdapter = new PersonalPhotoAdapter(getActivity(), personalPhotos, null);
+        personalPhotoAdapter = new PersonalPhotoAdapter(getActivity(), personalPhotos, allPersonalPhotos, null, (profileUserId.equals(userId)));
         photoAdapter = new PhotoAdapter(getActivity(), recentPhotos);
 
         albumRecyclerView = view.findViewById(R.id.albumRecyclerView);
@@ -160,8 +162,8 @@ public class PhotosFragment extends Fragment {
         sendAlbumListRequest(callAlbums);
         Call<ArrayList<RecentPhoto>> callPhotos = profileService.getRecentPhotos(deviceId, token, userId, profileUserId, userId, limit, offset);
         sendRecentListRequest(callPhotos);
-        Call<String> callPersonalPhotos = profileService.getFeaturedPhotos(deviceId, token, userId, profileUserId, userId, limit, offset);
-        sendPersonalPhotoRequest(callPersonalPhotos);
+//        Call<String> callPersonalPhotos = profileService.getFeaturedPhotos(deviceId, token, userId, profileUserId, userId, limit, offset);
+//        sendPersonalPhotoRequest(callPersonalPhotos);
     }
 
     private void showAlbumPhotos(PhotoAlbum photoAlbum) {
@@ -240,12 +242,9 @@ public class PhotosFragment extends Fragment {
     }
 
     private void sendAlbumListRequest(Call<ArrayList<PhotoAlbum>> call) {
-
         call.enqueue(new Callback<ArrayList<PhotoAlbum>>() {
-
             @Override
             public void onResponse(Call<ArrayList<PhotoAlbum>> call, Response<ArrayList<PhotoAlbum>> response) {
-
                 ArrayList<PhotoAlbum> arrayList = response.body();
                 if (arrayList != null) {
                     photoAlbums.addAll(arrayList);
@@ -272,16 +271,26 @@ public class PhotosFragment extends Fragment {
                     boolean status = jsonObject.getBoolean("status");
                     if (status) {
                         personalPhotos.clear();
+                        allPersonalPhotos.clear();
                         JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("all_featured");
+                        JSONArray array = jsonObject.getJSONObject("data").getJSONArray("is_featured");
                         ArrayList<PersonalPhoto> arrayList = new ArrayList<>();
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i);
                             String id, imageName;
                             id = object.getString("id");
                             imageName = object.getString("image_name");
-                            arrayList.add(new PersonalPhoto(id, imageName));
+                            arrayList.add(new PersonalPhoto(id, imageName, false));
                         }
-                        personalPhotos.addAll(arrayList);
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = array.getJSONObject(i);
+                            String id, imageName;
+                            id = object.getString("id");
+                            imageName = object.getString("image_name");
+                            arrayList.add(new PersonalPhoto(id, imageName, true));
+                            personalPhotos.add(new PersonalPhoto(id, imageName, true));
+                        }
+                        allPersonalPhotos.addAll(arrayList);
                         personalPhotoAdapter.notifyDataSetChanged();
                     }
                 } catch (JSONException e) {

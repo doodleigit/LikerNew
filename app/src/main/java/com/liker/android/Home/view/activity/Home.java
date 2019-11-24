@@ -242,7 +242,6 @@ public class Home extends AppCompatActivity implements
     //private com.robertlevonyan.views.customfloatingactionbutton.FloatingActionButton fabFollowing;
     private ViewGroup newPostContainer;
     private TextView tvPublishPostCount;
-    private ImageView imageNewPostPublish;
     private boolean isNewPostToggle = true;
     private boolean isRateusDialog;
     private boolean isCheckFistTimeRating;
@@ -279,14 +278,7 @@ public class Home extends AppCompatActivity implements
 
         setData();
         sendCategoryListRequest();
-        // getNewPostResult();
-        // forceCrash();
-
-        //    displayRateusStatus(isRateusDialog);
-
-//        sendUserRatingStatus(1);
         recieveSingleUserRatingStatus();
-//        getPostFilters("1", false);
     }
 
     private void displayRateusStatus() {
@@ -382,7 +374,6 @@ public class Home extends AppCompatActivity implements
 
         newPostContainer = findViewById(R.id.newPostContainer);
         tvPublishPostCount = findViewById(R.id.tvPublishPostCount);
-        imageNewPostPublish = findViewById(R.id.imageNewPostPublish);
         newPostContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -509,8 +500,10 @@ public class Home extends AppCompatActivity implements
         setNotificationCount(newNotificationCount);
         int newMessageCount = manager.getMessageNotificationCount();
         setMessageNotificationCount(newMessageCount);
-        int newPostCount = manager.getPostCount();
-        setPostCount(newPostCount);
+//        int newPostCount = manager.getPostCount();
+//        setPostCount(newPostCount);
+        manager.setPostCountClear();
+        setPostCount(0);
         categories.add(new PostFilterCategory("1", "All Categories", new ArrayList<>()));
         categories.add(new PostFilterCategory("2", "My Favorites", new ArrayList<>()));
         categories.add(new PostFilterCategory("3", "Single Category", new ArrayList<>()));
@@ -2231,7 +2224,6 @@ public class Home extends AppCompatActivity implements
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 
-                Log.d("RatingResponse ", response.toString());
             }
 
             @Override
@@ -2259,6 +2251,7 @@ public class Home extends AppCompatActivity implements
                         };
                         Handler handler = new Handler();
                         handler.postDelayed(runnable, 600000);
+//                        handler.postDelayed(runnable, 12000);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

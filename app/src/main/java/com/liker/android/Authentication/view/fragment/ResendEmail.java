@@ -54,7 +54,6 @@ public class ResendEmail extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle argument = getArguments();
         if (argument != null) {
-//            UserInfo data = argument.getParcelable(MESSAGE_key);
             message = argument.getString(MESSAGE_key);
             Log.d(TAG, "onCreateView: " + message);
         }
@@ -73,7 +72,6 @@ public class ResendEmail extends BottomSheetDialogFragment {
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // mListener.onButtonClicked("Button 2 clicked");
                 dismiss();
             }
         });
@@ -103,5 +101,13 @@ public class ResendEmail extends BottomSheetDialogFragment {
         mListener = null;
     }
 
+    @Override
+    public void onDestroyView() {
+        if (getView() != null) {
+            ViewGroup parent = (ViewGroup) getView().getParent();
+            parent.removeAllViews();
+        }
+        super.onDestroyView();
+    }
 }
 

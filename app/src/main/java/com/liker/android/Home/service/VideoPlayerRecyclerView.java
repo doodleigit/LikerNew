@@ -250,7 +250,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                         break;
                     case Player.STATE_IDLE:
 
-                        Toast.makeText(context, "STATE_IDLE", Toast.LENGTH_SHORT).show();
+                     //   Toast.makeText(context, "STATE_IDLE", Toast.LENGTH_SHORT).show();
                         break;
                     case Player.STATE_READY:
                         Log.e(TAG, "onPlayerStateChanged: Ready to play.");

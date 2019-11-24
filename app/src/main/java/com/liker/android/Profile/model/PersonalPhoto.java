@@ -7,10 +7,12 @@ public class PersonalPhoto implements Parcelable {
 
     private String id, imageName;
     private boolean isUploading = false;
+    private boolean isFeatured;
 
-    public PersonalPhoto(String id, String imageName) {
+    public PersonalPhoto(String id, String imageName, boolean isFeatured) {
         this.id = id;
         this.imageName = imageName;
+        this.isFeatured = isFeatured;
     }
 
     protected PersonalPhoto(Parcel in) {
@@ -53,6 +55,14 @@ public class PersonalPhoto implements Parcelable {
 
     public void setUploading(boolean uploading) {
         isUploading = uploading;
+    }
+
+    public boolean isFeatured() {
+        return isFeatured;
+    }
+
+    public void setFeatured(boolean featured) {
+        isFeatured = featured;
     }
 
     @Override

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 import com.liker.android.R;
@@ -61,4 +63,17 @@ public class Network extends DialogFragment {
         super.onAttach(context);
        // mHost=(NetworkDialogListener)context;
     }
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        try {
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.add(this, tag).addToBackStack(null);
+            ft.commitAllowingStateLoss();
+        } catch (IllegalStateException e) {
+            Log.e("IllegalStateException", "Exception", e);
+        }
+
+    }
+
 }

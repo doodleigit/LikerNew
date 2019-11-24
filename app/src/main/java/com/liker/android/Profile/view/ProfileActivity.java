@@ -269,7 +269,6 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                             blockUserDialog.show(getSupportFragmentManager(), "BlockUserDialog");
                         }
                         if (id == R.id.reportProfile) {
-                            //makeText(ProfileActivity.this, "report user", LENGTH_SHORT).show();
 
                             PostItem item = new PostItem();
                             item.setUserFirstName(userAllInfo.getFirstName());

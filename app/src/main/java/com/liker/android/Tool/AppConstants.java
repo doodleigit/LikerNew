@@ -4,17 +4,17 @@ public class AppConstants {
 
     //===============LOCAL SERVER==================
 
-//    public static final String BASE_URL = "http://192.168.0.6:8040/sites/likerapp/";
-//    public static final String BASE_URL_MEDIA = "http://192.168.0.6:8040/sites/likeropt/";
-//    public static final String BASE_URL_IMAGES = "http://192.168.0.6:8040/sites/likeropt/";
-//    public static final String LINK_IMAGES = "http://192.168.0.6:8040/sites/likeropt/uploads/link_images";
-//    public static final String SOCKET_WEB = "http://192.168.0.6:4001";
-//    public static final String SOCKET_MESSAGE = "http://192.168.0.6:4002";
-//    public static final String SOCKET_VIDEO = "http://192.168.0.6:4004";
-//    public static final String SOCKET_NEW_POST = "http://192.168.0.6:7902";
-//    public static final String FACEBOOK_SHARE = "http://192.168.0.6:8040/sites/likerapp/public/posts/";
-//    public static final String FACEBOOK_INVITATION = "http://192.168.0.6:8040/sites/likerapp/settings/fbinvite/";
-//    public static final String BASE_URL_LOCATION = "http://192.168.0.6:8040/sites/likerapp/";
+//    public static final String BASE_URL = "http://192.168.0.99:8040/sites/likerapp/";
+//    public static final String BASE_URL_MEDIA = "http://192.168.0.99:8040/sites/likeropt/";
+//    public static final String BASE_URL_IMAGES = "http://192.168.0.99:8040/sites/likeropt/";
+//    public static final String LINK_IMAGES = "http://192.168.0.99:8040/sites/likeropt/uploads/link_images";
+//    public static final String SOCKET_WEB = "http://192.168.0.99:4001";
+//    public static final String SOCKET_NEW_POST = "http://192.168.0.99:7902";
+//    public static final String SOCKET_MESSAGE = "http://192.168.0.99:4002";
+//    public static final String SOCKET_VIDEO = "http://192.168.0.99:4004";
+//    public static final String FACEBOOK_SHARE = "http://192.168.0.99:8040/sites/likerapp/public/posts/";
+//    public static final String FACEBOOK_INVITATION = "http://192.168.0.99:8040/sites/likerapp/settings/fbinvite/";
+//    public static final String BASE_URL_LOCATION = "http://192.168.0.99:8040/sites/likerapp/";
 
     //==========================STG SERVER=====================
 

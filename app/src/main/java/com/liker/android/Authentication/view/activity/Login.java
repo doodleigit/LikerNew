@@ -395,27 +395,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
                 try {
-                    Log.d("DATA", object.toString());
+                    if(object!=null){
+                        String first_name = object.getString("first_name");
+                        String last_name = object.getString("last_name");
+                        String email = object.getString("email");
+                        String oauthId = object.getString("id");
+                        String image_url = "https://graph.facebook.com/" + oauthId + "/picture?type=normal";
+                        String name = object.getString("name");
 
-                    String first_name = object.getString("first_name");
-                    String last_name = object.getString("last_name");
-                    String email = object.getString("email");
-                    String oauthId = object.getString("id");
-                    String image_url = "https://graph.facebook.com/" + oauthId + "/picture?type=normal";
-                    String name = object.getString("name");
+                        socialInfo.setAuthId(oauthId);
+                        socialInfo.setFirstName(first_name);
+                        socialInfo.setLastName(last_name);
+                        socialInfo.setEmail(email);
+                        socialInfo.setSocialName(name);
+                        socialInfo.setImage(image_url);
+                        socialInfo.setProvider(getString(R.string.facebook));
 
-                    socialInfo.setAuthId(oauthId);
-                    socialInfo.setFirstName(first_name);
-                    socialInfo.setLastName(last_name);
-                    socialInfo.setEmail(email);
-                    socialInfo.setSocialName(name);
-                    socialInfo.setImage(image_url);
-                    socialInfo.setProvider(getString(R.string.facebook));
+                        String appSocialAccessCode = AppConstants.APP_SOCIAL_ACCESS_CODE;
+                        String oauthProvider = AppConstants.OAUTH_PROVIDER_FB;
+                        String deviceId = manager.getDeviceId();
+                        socialLoginFacebook(appSocialAccessCode, oauthProvider, oauthId, deviceId);
+                    }
 
-                    String appSocialAccessCode = AppConstants.APP_SOCIAL_ACCESS_CODE;
-                    String oauthProvider = AppConstants.OAUTH_PROVIDER_FB;
-                    String deviceId = manager.getDeviceId();
-                    socialLoginFacebook(appSocialAccessCode, oauthProvider, oauthId, deviceId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
