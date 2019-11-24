@@ -15,7 +15,7 @@
         <ImageView
             android:id="@+id/image_post_set"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_400sdp"
             android:contentDescription="empty"
             android:scaleType="centerCrop" />
 
@@ -31,7 +31,6 @@
             android:textColor="@android:color/white"
             android:visibility="visible"
             app:fabSize="mini" />
-
 
         <!--        <TextView
                 android:id="@+id/close"

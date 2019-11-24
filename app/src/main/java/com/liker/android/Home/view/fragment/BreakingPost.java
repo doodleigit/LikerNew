@@ -21,6 +21,40 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.google.gson.Gson;
+import com.liker.android.Authentication.model.UserInfo;
+import com.liker.android.Home.adapter.PostAdapter;
+import com.liker.android.Home.holder.ImageHolder;
+import com.liker.android.Home.holder.LinkScriptHolder;
+import com.liker.android.Home.holder.LinkScriptYoutubeHolder;
+import com.liker.android.Home.holder.TextHolder;
+import com.liker.android.Home.holder.TextMimHolder;
+import com.liker.android.Home.holder.VideoHolder;
+import com.liker.android.Home.model.PostItem;
+import com.liker.android.Home.service.HomeService;
+import com.liker.android.Home.service.TabClickListener;
+import com.liker.android.Home.service.VideoPlayerRecyclerView;
+import com.liker.android.Home.view.activity.Home;
+import com.liker.android.R;
+import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.NetworkHelper;
+import com.liker.android.Tool.PrefManager;
+import com.liker.android.Tool.Tools;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 //import com.doodle.Authentication.model.UserInfo;
 //import com.doodle.App;
@@ -40,41 +74,6 @@ import android.widget.TextView;
 //import com.doodle.Tool.NetworkHelper;
 //import com.doodle.Tool.PrefManager;
 //import com.doodle.Tool.Tools;
-import com.facebook.shimmer.ShimmerFrameLayout;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
-import com.google.gson.Gson;
-import com.liker.android.App;
-import com.liker.android.Authentication.model.UserInfo;
-import com.liker.android.Home.adapter.PostAdapter;
-import com.liker.android.Home.holder.ImageHolder;
-import com.liker.android.Home.holder.LinkScriptHolder;
-import com.liker.android.Home.holder.LinkScriptYoutubeHolder;
-import com.liker.android.Home.holder.TextHolder;
-import com.liker.android.Home.holder.TextMimHolder;
-import com.liker.android.Home.holder.VideoHolder;
-import com.liker.android.Home.model.PostItem;
-import com.liker.android.Home.service.HomeService;
-import com.liker.android.Home.service.TabClickListener;
-import com.liker.android.Home.service.VideoPlayerRecyclerView;
-import com.liker.android.Home.view.activity.Home;
-import com.liker.android.Profile.model.AddFeatured;
-import com.liker.android.R;
-import com.liker.android.Tool.AppConstants;
-import com.liker.android.Tool.NetworkHelper;
-import com.liker.android.Tool.PrefManager;
-import com.liker.android.Tool.Tools;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -310,26 +309,31 @@ public class BreakingPost extends Fragment {
 
     private void deletePost(PostItem deletePostItem, int deletePosition) {
         new AlertDialog.Builder(getActivity())
-                //  .setTitle("Delete entry")
-                //   .setMessage("Are you sure you want to delete this post? You will permanently lose this post !")
                 .setMessage("Are you sure that you want to delete this post?")
-
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        if (NetworkHelper.hasNetworkAccess(getContext())) {
-                            Call<String> call = webService.postDelete(deviceId, profileId, token, userIds, deletePostItem.getPostId());
-                            sendDeletePostRequest(call);
-                        } else {
-                            Tools.showNetworkDialog(getActivity().getSupportFragmentManager());
-                        }
-
-
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    Toast.makeText(getActivity(), "positive button", Toast.LENGTH_SHORT).show();
+                    if (NetworkHelper.hasNetworkAccess(getContext())) {
+                        Call<String> call = webService.postDelete(deviceId, profileId, token, userIds, deletePostItem.getPostId());
+                        sendDeletePostRequest(call);
+                    } else {
+                        Tools.showNetworkDialog(getActivity().getSupportFragmentManager());
                     }
+
                 })
-                .setNegativeButton(android.R.string.no, null)
-                // .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+                .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                }).show();
+
+
+//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+//        alertDialogBuilder.setTitle(R.string.RESOURCE).setMessage(R.string.RESOURCE2).setPositiveButton(R.string.RESOURCE3, new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//            }
+//        }).setNegativeButton(R.string.RESOURCE4, new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//            }
+//        }).show();
+
+
     }
 
 
@@ -347,7 +351,7 @@ public class BreakingPost extends Fragment {
 //                                adapter.deleteItem(deletePosition);
                                 postItemList.remove(deletePosition);
                                 adapter.notifyDataSetChanged();
-                                offset--;
+                                --offset;
                                 recyclerView.smoothScrollToPosition(0);
                             }
 
@@ -660,8 +664,17 @@ public class BreakingPost extends Fragment {
                             adapter.notifyItemChanged(position);
                         } else {
                             postItemList.remove(position);
-                            // adapter.notifyItemChanged(position);
                             adapter.notifyDataSetChanged();
+//                            postItemList.remove(position);
+//                            postItemList.remove(position);
+//                            recyclerView.smoothScrollToPosition(0);
+//                            adapter.notifyItemRemoved(position);
+                           // adapter.removeItemAtPosition(position);
+                           // recyclerView.smoothScrollToPosition(0);
+                        //   adapter.deleteItem(position);
+                          //  adapter.notifyDataSetChanged();
+                          //  recyclerView.smoothScrollToPosition(0);
+                            //--offset;
                         }
 
 

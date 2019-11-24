@@ -364,10 +364,14 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         findViewById(R.id.imageCancelPost).setOnClickListener(this);
         tvPermission = findViewById(R.id.tvPermission);
 
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        imgPermission = findViewById(R.id.imgPermission);
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
         tvAudience = findViewById(R.id.tvAudience);
         tvAudience.setText(manager.getPostAudience().isEmpty() ? getString(R.string.audience) : manager.getPostAudience());
-        imgPermission = findViewById(R.id.imgPermission);
+      //  imgPermission = findViewById(R.id.imgPermission);
         contentPostPermission = findViewById(R.id.contentPostPermission);
         contentPostPermission.setOnClickListener(this);
         contentPostView = findViewById(R.id.contentPostView);
@@ -1024,13 +1028,21 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     @Override
     protected void onRestart() {
         super.onRestart();
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        imgPermission = findViewById(R.id.imgPermission);
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        imgPermission = findViewById(R.id.imgPermission);
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
         Subcatg mSubcatg = App.getmSubcatg();
 
@@ -1064,7 +1076,11 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        imgPermission = findViewById(R.id.imgPermission);
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
         Subcatg mSubcatg = App.getmSubcatg();
 
@@ -1334,8 +1350,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                Log.i("Response", response.body().toString());
-                //Toast.makeText()
+
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
 
@@ -1466,6 +1481,8 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     public void sendImageFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         imageUri = getImageUri();
+        if(imageUri == null)
+            throw new IllegalArgumentException("The filename cannot be null!");
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_TAKE_CAMERA);
@@ -2265,7 +2282,8 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-
+                if(uri == null)
+                    throw new IllegalArgumentException("The filename cannot be null!");
                 return getDataColumn(context, contentUri, null, null);
             }
             // MediaProvider
@@ -2287,6 +2305,8 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 final String[] selectionArgs = new String[]{
                         split[1]
                 };
+                if(contentUri == null)
+                    throw new IllegalArgumentException("The filename cannot be null!");
 
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             }
@@ -2297,7 +2317,8 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             // Return the remote address
             if (isGooglePhotosUri(uri))
                 return uri.getLastPathSegment();
-
+            if(uri == null)
+                throw new IllegalArgumentException("The filename cannot be null!");
             return getDataColumn(context, uri, null, null);
         }
         // File
@@ -2817,6 +2838,24 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     @Override
     public void onNeutralResult(DialogFragment dlg) {
 
+    }
+
+
+    private void setPermissionData(String permissionData) {
+        switch (permissionData) {
+            case "Public":
+                imgPermission.setImageResource(R.drawable.ic_public_black_12dp);
+                postPermission = 0;
+                break;
+            case "Only me":
+                imgPermission.setImageResource(R.drawable.ic_lock_outline_black_12dp);
+                postPermission = 1;
+                break;
+            case "Followers Only":
+                imgPermission.setImageResource(R.drawable.ic_people_outline_black_12dp);
+                postPermission = 2;
+                break;
+        }
     }
 
 

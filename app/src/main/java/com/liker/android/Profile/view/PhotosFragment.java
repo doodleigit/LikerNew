@@ -266,35 +266,38 @@ public class PhotosFragment extends Fragment {
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response.body());
-                    boolean status = jsonObject.getBoolean("status");
-                    if (status) {
-                        personalPhotos.clear();
-                        allPersonalPhotos.clear();
-                        JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("all_featured");
-                        JSONArray array = jsonObject.getJSONObject("data").getJSONArray("is_featured");
-                        ArrayList<PersonalPhoto> arrayList = new ArrayList<>();
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject object = jsonArray.getJSONObject(i);
-                            String id, imageName;
-                            id = object.getString("id");
-                            imageName = object.getString("image_name");
-                            arrayList.add(new PersonalPhoto(id, imageName, false));
+
+                if(response.body()!=null){
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body());
+                        boolean status = jsonObject.getBoolean("status");
+                        if (status) {
+                            personalPhotos.clear();
+                            allPersonalPhotos.clear();
+                            JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("all_featured");
+                            JSONArray array = jsonObject.getJSONObject("data").getJSONArray("is_featured");
+                            ArrayList<PersonalPhoto> arrayList = new ArrayList<>();
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject object = jsonArray.getJSONObject(i);
+                                String id, imageName;
+                                id = object.getString("id");
+                                imageName = object.getString("image_name");
+                                arrayList.add(new PersonalPhoto(id, imageName, false));
+                            }
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject object = array.getJSONObject(i);
+                                String id, imageName;
+                                id = object.getString("id");
+                                imageName = object.getString("image_name");
+                                arrayList.add(new PersonalPhoto(id, imageName, true));
+                                personalPhotos.add(new PersonalPhoto(id, imageName, true));
+                            }
+                            allPersonalPhotos.addAll(arrayList);
+                            personalPhotoAdapter.notifyDataSetChanged();
                         }
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject object = array.getJSONObject(i);
-                            String id, imageName;
-                            id = object.getString("id");
-                            imageName = object.getString("image_name");
-                            arrayList.add(new PersonalPhoto(id, imageName, true));
-                            personalPhotos.add(new PersonalPhoto(id, imageName, true));
-                        }
-                        allPersonalPhotos.addAll(arrayList);
-                        personalPhotoAdapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
                 progressDialog.hide();
             }

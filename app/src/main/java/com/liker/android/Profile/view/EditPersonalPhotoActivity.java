@@ -171,11 +171,15 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
                 for (int i = 0; i < clipData.getItemCount(); i++) {
                     ClipData.Item item = clipData.getItemAt(i);
                     Uri uri = item.getUri();
+                    if(uri == null)
+                        throw new IllegalArgumentException("The filename cannot be null!");
                     String imageFilePath = FileUtils.getPath(getApplicationContext(), uri);
                     addPhoto(imageFilePath);
                 }
             } else if (data.getData() != null) {
                 Uri uri = data.getData();
+                if(uri == null)
+                    throw new IllegalArgumentException("The filename cannot be null!");
                 String imageFilePath = FileUtils.getPath(getApplicationContext(), uri);
                 addPhoto(imageFilePath);
             }

@@ -401,10 +401,13 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         findViewById(R.id.imageVideo).setOnClickListener(this);
         findViewById(R.id.imageCancelPost).setOnClickListener(this);
         tvPermission = findViewById(R.id.tvPermission);
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        imgPermission = findViewById(R.id.imgPermission);
+      //  String permissionData=manager.getPostPermission();
+     //   tvPermission.setText(permissionData);
+      //  setPermissionData(permissionData);
         tvAudience = findViewById(R.id.tvAudience);
         tvAudience.setText(manager.getPostAudience());
-        imgPermission = findViewById(R.id.imgPermission);
         contentPostPermission = findViewById(R.id.contentPostPermission);
         contentPostPermission.setOnClickListener(this);
         contentPostView = findViewById(R.id.contentPostView);
@@ -749,7 +752,26 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         String postMessage = editPostItem.getPostText();
         editPostMessage.append(postMessage);
         tvAudience.setText(editPostItem.getCatName());
-        tvPermission.setText(editPostItem.getPermission());
+        String permission=editPostItem.getPermission();
+        switch (permission){
+            case "0":
+                manager.setPostPermission("Public");
+                postPermission = 0;
+                break;
+            case "1":
+                manager.setPostPermission("Only me");
+                postPermission = 1;
+                break;
+            case "2":
+                manager.setPostPermission("Followers Only");
+                postPermission = 2;
+                break;
+        }
+
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
+     //   tvPermission.setText(editPostItem.getPermission());
         categoryId = editPostItem.getCatId();
         subCategoryId = editPostItem.getCatId();
         editPostId = editPostItem.getPostId();
@@ -1586,13 +1608,20 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
     @Override
     protected void onRestart() {
         super.onRestart();
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
         Subcatg mSubcatg = App.getmSubcatg();
 
@@ -1624,7 +1653,10 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
         Subcatg mSubcatg = App.getmSubcatg();
 
@@ -3684,5 +3716,22 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
 
+    }
+
+    private void setPermissionData(String permissionData) {
+        switch (permissionData) {
+            case "Public":
+                imgPermission.setImageResource(R.drawable.ic_public_black_12dp);
+                postPermission = 0;
+                break;
+            case "Only me":
+                imgPermission.setImageResource(R.drawable.ic_lock_outline_black_12dp);
+                postPermission = 1;
+                break;
+            case "Followers Only":
+                imgPermission.setImageResource(R.drawable.ic_people_outline_black_12dp);
+                postPermission = 2;
+                break;
+        }
     }
 }

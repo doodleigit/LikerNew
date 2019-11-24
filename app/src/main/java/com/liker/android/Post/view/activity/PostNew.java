@@ -413,11 +413,13 @@ public class PostNew extends AppCompatActivity implements
         findViewById(R.id.imageVideo).setOnClickListener(this);
         findViewById(R.id.imageCancelPost).setOnClickListener(this);
         tvPermission = findViewById(R.id.tvPermission);
+        imgPermission = findViewById(R.id.imgPermission);
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
 
-        tvPermission.setText(manager.getPostPermission());
         tvAudience = findViewById(R.id.tvAudience);
         tvAudience.setText(manager.getPostAudience().isEmpty() ? getString(R.string.audience) : manager.getPostAudience());
-        imgPermission = findViewById(R.id.imgPermission);
         contentPostPermission = findViewById(R.id.contentPostPermission);
         contentPostPermission.setOnClickListener(this);
         contentPostView = findViewById(R.id.contentPostView);
@@ -795,6 +797,23 @@ public class PostNew extends AppCompatActivity implements
 
     }
 
+    private void setPermissionData(String permissionData) {
+        switch (permissionData) {
+            case "Public":
+                imgPermission.setImageResource(R.drawable.ic_public_black_12dp);
+                postPermission = 0;
+                break;
+            case "Only me":
+                imgPermission.setImageResource(R.drawable.ic_lock_outline_black_12dp);
+                postPermission = 1;
+                break;
+            case "Followers Only":
+                imgPermission.setImageResource(R.drawable.ic_people_outline_black_12dp);
+                postPermission = 2;
+                break;
+        }
+    }
+
     private void sendIsDuplicateUrl(Call<String> call, String url) {
 
         call.enqueue(new Callback<String>() {
@@ -1163,13 +1182,19 @@ public class PostNew extends AppCompatActivity implements
     @Override
     protected void onRestart() {
         super.onRestart();
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
         Subcatg mSubcatg = App.getmSubcatg();
 
@@ -1203,7 +1228,10 @@ public class PostNew extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        tvPermission.setText(manager.getPostPermission());
+//        tvPermission.setText(manager.getPostPermission());
+        String permissionData=manager.getPostPermission();
+        tvPermission.setText(permissionData);
+        setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
         Subcatg mSubcatg = App.getmSubcatg();
 
@@ -2532,7 +2560,8 @@ public class PostNew extends AppCompatActivity implements
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-
+                if(uri == null)
+                    throw new IllegalArgumentException("The filename cannot be null!");
                 return getDataColumn(context, contentUri, null, null);
             }
             // MediaProvider
@@ -2554,6 +2583,8 @@ public class PostNew extends AppCompatActivity implements
                 final String[] selectionArgs = new String[]{
                         split[1]
                 };
+                if(uri == null)
+                    throw new IllegalArgumentException("The filename cannot be null!");
 
                 return getDataColumn(context, contentUri, selection, selectionArgs);
             }
@@ -2564,7 +2595,8 @@ public class PostNew extends AppCompatActivity implements
             // Return the remote address
             if (isGooglePhotosUri(uri))
                 return uri.getLastPathSegment();
-
+            if(uri == null)
+                throw new IllegalArgumentException("The filename cannot be null!");
             return getDataColumn(context, uri, null, null);
         }
         // File

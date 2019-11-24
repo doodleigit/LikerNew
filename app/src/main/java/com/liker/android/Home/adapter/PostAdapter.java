@@ -250,8 +250,13 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         // comment_list.remove(position);
 
         //   postItems.remove(position);
+   //     notifyItemRemoved(position);
+     //   notifyDataSetChanged();
+
+        postItems.remove(position);
         notifyItemRemoved(position);
-        notifyDataSetChanged();
+        notifyItemRangeChanged(position, postItems.size());
+      //  holder.itemView.setVisibility(View.GONE);
 
     }
 

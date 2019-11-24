@@ -44,7 +44,9 @@ public class LoginAgain extends AppCompatActivity implements View.OnClickListene
 
         manager = new PrefManager(this);
         loginInfo = (LoginInfo) getIntent().getSerializableExtra("login_info");
-
+        if (loginInfo == null) {
+            throw new AssertionError("Null data item received!");
+        }
         findViewById(R.id.tvLoginPage).setOnClickListener(this);
         findViewById(R.id.tvSignUpPage).setOnClickListener(this);
         findViewById(R.id.profile_layout).setOnClickListener(this);

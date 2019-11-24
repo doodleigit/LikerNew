@@ -23,7 +23,12 @@ public class SettingActivity extends AppCompatActivity {
     private void initialComponent() {
         settingType = getIntent().getStringExtra("type");
         url = getIntent().getStringExtra("link");
-
+        if (settingType == null) {
+            throw new AssertionError("Null data item received!");
+        }
+        if (url == null) {
+            throw new AssertionError("Null data item received!");
+        }
         switch (settingType) {
             case "account":
                 initialFragment(new AccountSettingFragment());

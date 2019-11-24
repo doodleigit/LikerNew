@@ -1346,7 +1346,6 @@ public class CommentPost extends AppCompatActivity implements View.OnClickListen
                                 int totalComment = Integer.parseInt(postItem.getTotalComment()) - 1;
                                 postItem.setTotalComment(String.valueOf(totalComment));
                                 App.getAppContext().sendBroadcast((new Intent().putExtra("post_item", (Serializable) postItem).putExtra("position", position).putExtra("isFooterChange", true).setAction(AppConstants.POST_CHANGE_BROADCAST)));
-
                                 comment_list.remove(position);
 //                                adapter.deleteItem(position);
                                 adapter.notifyDataSetChanged();

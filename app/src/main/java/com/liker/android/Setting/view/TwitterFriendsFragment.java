@@ -133,16 +133,19 @@ public class TwitterFriendsFragment extends Fragment {
             @Override
             public void onResponse(Call<Social> call, Response<Social> response) {
                 socialFriends.clear();
-                Social social = response.body();
-                if (social != null) {
-                    socialFriends.addAll(social.getSocialFriends());
-                    offset += limit;
+                if(response.body()!=null){
+                    Social social = response.body();
+                    if (social != null) {
+                        socialFriends.addAll(social.getSocialFriends());
+                        offset += limit;
+                    }
+                    if (socialFriends.size() == 0) {
+                        tvAlertText.setVisibility(View.VISIBLE);
+                    } else {
+                        tvAlertText.setVisibility(View.GONE);
+                    }
                 }
-                if (socialFriends.size() == 0) {
-                    tvAlertText.setVisibility(View.VISIBLE);
-                } else {
-                    tvAlertText.setVisibility(View.GONE);
-                }
+
                 socialFriendsAdapter.notifyDataSetChanged();
                 progressDialog.hide();
                 refreshLayout.setRefreshing(false);

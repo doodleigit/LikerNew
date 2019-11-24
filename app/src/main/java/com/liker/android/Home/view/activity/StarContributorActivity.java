@@ -87,7 +87,12 @@ public class StarContributorActivity extends AppCompatActivity {
     private void initialComponent() {
         selectedCategory = getIntent().getStringExtra("category_id");
         selectedCategoryName = getIntent().getStringExtra("category_name");
-
+        if (selectedCategory == null) {
+            throw new AssertionError("Null data item received!");
+        }
+        if (selectedCategoryName == null) {
+            throw new AssertionError("Null data item received!");
+        }
         layoutManager = new LinearLayoutManager(getApplicationContext());
         toolbar = findViewById(R.id.toolbar);
         recyclerView = findViewById(R.id.recyclerView);

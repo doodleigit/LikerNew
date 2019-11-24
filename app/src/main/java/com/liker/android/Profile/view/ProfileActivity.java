@@ -119,6 +119,7 @@ import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
 import static com.liker.android.Tool.Tools.isEmpty;
 import static com.liker.android.Tool.Tools.isNullOrEmpty;
+import static java.util.Objects.isNull;
 //import static com.doodle.Tool.Tools.isEmpty;
 
 public class ProfileActivity extends AppCompatActivity implements ReportReasonSheet.BottomSheetListener,
@@ -270,11 +271,13 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                         }
                         if (id == R.id.reportProfile) {
 
-                            PostItem item = new PostItem();
-                            item.setUserFirstName(userAllInfo.getFirstName());
-                            item.setUserLastName(userAllInfo.getLastName());
-                            item.setPostUserid(profileUserId);
-                            App.setItem(item);
+                            if(!isEmpty(userAllInfo)){
+                                PostItem item = new PostItem();
+                                item.setUserFirstName(userAllInfo.getFirstName());
+                                item.setUserLastName(userAllInfo.getLastName());
+                                item.setPostUserid(profileUserId);
+                                App.setItem(item);
+                            }
 
                             if (networkOk) {
                                 Call<ReportReason> call = commentService.getReportReason(deviceId, userId, token, profileUserId, "1", userId);
@@ -282,7 +285,6 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                             } else {
                                 Tools.showNetworkDialog(getSupportFragmentManager());
                             }
-
 
                         }
                         if (id == R.id.message) {

@@ -115,7 +115,9 @@ public class SearchActivity extends AppCompatActivity {
         deviceId = manager.getDeviceId();
         token = manager.getToken();
         advanceSearches = getIntent().getExtras().getParcelable("ADVANCE-SEARCH");
-
+        if (advanceSearches == null) {
+            throw new AssertionError("Null data item received!");
+        }
         mUserList = advanceSearches.getUser();
         mPostList = advanceSearches.getPost();
 

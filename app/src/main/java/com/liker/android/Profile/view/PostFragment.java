@@ -406,7 +406,7 @@ public class PostFragment extends Fragment {
                     postItemList.clear();
                     postItemList.addAll(itemList);
 
-                    String totalPostIDs;
+//                    String totalPostIDs;
                     List<String> postIdSet = new ArrayList<>();
                     for (PostItem temp : postItemList) {
 
@@ -422,9 +422,8 @@ public class PostFragment extends Fragment {
                     for (String s : postIdSet) {
                         sb.append(separator).append(s);
                     }
-
-                    totalPostIDs = sb.substring(separator.length()).replaceAll("\\s+", "");
-                    Log.d("friends", totalPostIDs);
+//                    totalPostIDs = sb.substring(separator.length()).replaceAll("\\s+", "");
+//                    Log.d("friends", totalPostIDs);
 
                     offset = limit;
                     onPostResponse();
