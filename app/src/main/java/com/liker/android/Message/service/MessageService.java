@@ -76,4 +76,25 @@ public interface MessageService {
             @Field("name") String searchQuery
     );
 
+    @POST(AppConstants.BLOCK_USER)
+    @FormUrlEncoded
+    Call<String> setBlockChatUser(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("blocked_userid") String blockedUserId
+    );
+
+    @POST(AppConstants.UNBLOCK_USER)
+    @FormUrlEncoded
+    Call<String> setUnBlockChatUser(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("blocked_userid") String blockedUserId
+    );
+
+
 }

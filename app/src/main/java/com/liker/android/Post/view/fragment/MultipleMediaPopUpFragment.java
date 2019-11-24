@@ -1075,7 +1075,7 @@ public class MultipleMediaPopUpFragment extends Fragment {
             public void onResponse(Call<CommentItem> mCall, Response<CommentItem> response) {
                 if (response.body() != null) {
                     CommentItem commentItem = response.body();
-                    Intent intent = new Intent(getActivity(), CommentPost.class);
+                    Intent intent = new Intent(getContext(), CommentPost.class);
                     intent.putExtra(COMMENT_KEY, (Parcelable) commentItem);
                     intent.putExtra(ITEM_KEY, (Parcelable) item);
                     startActivity(intent);

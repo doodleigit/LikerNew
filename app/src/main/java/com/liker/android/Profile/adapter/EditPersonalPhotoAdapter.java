@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
@@ -90,7 +91,8 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
                     if (motionEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
-                        touchHelper.startDrag(holder);
+                        if (arrayList.get(i).isFeatured())
+                            touchHelper.startDrag(holder);
                     }
                     return false;
                 }
@@ -100,8 +102,18 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
                 @Override
                 public void onClick(View view) {
                     if (holder.featured.getVisibility() == View.VISIBLE) {
-                        arrayList.get(i).setFeatured(!arrayList.get(i).isFeatured());
-                        notifyItemChanged(i);
+                        if (arrayList.get(i).isFeatured()) {
+                            arrayList.get(i).setFeatured(!arrayList.get(i).isFeatured());
+                            notifyItemChanged(i);
+                        } else {
+                            if (getFeaturedCount() < 9) {
+                                arrayList.get(i).setFeatured(!arrayList.get(i).isFeatured());
+                                notifyItemChanged(i);
+                            }
+//                            else {
+//                                Toast.makeText(context, "You have already reached maximum number of featured image", Toast.LENGTH_SHORT).show();
+//                            }
+                        }
                     }
                 }
             });
@@ -126,8 +138,20 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
+    private int getFeaturedCount() {
+        int count = 0;
+        for (PersonalPhoto personalPhoto : arrayList) {
+            if (personalPhoto.isFeatured()) {
+                ++count;
+            }
+        }
+        return count;
+    }
+
     @Override
     public int getItemCount() {
+        if (arrayList.size() == 0)
+            return 0;
         return arrayList.size() + 1;
     }
 

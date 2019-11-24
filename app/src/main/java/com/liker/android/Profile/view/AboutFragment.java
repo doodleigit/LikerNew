@@ -403,6 +403,7 @@ public class AboutFragment extends Fragment {
         }
     }
 
+    boolean stopUpdate = false;
     String numberType = "", storyType = "", phoneNumberPrivacyType = "", emailPrivacyType = "", storyPrivacyType = "";
     Phone phone;
 
@@ -1032,6 +1033,7 @@ public class AboutFragment extends Fragment {
         Dialog dialog = new Dialog(getActivity(), R.style.Theme_Dialog);
         dialog.setContentView(R.layout.add_education_layout);
 
+        stopUpdate = false;
         instituteName = "";
         degreeName = "";
         fieldStudyName = "";
@@ -1092,6 +1094,7 @@ public class AboutFragment extends Fragment {
 
             @Override
             public void onSuggestionClick(AdvanceSuggestion experienceSuggestion) {
+                stopUpdate = true;
                 etInstituteName.setText(experienceSuggestion.getInstituteName());
                 etSiteAddress.setText(experienceSuggestion.getWebsiteUrl());
                 etSearchPlace.setText(experienceSuggestion.getLocationName());
@@ -1138,6 +1141,7 @@ public class AboutFragment extends Fragment {
             startYear = education.getStartYear();
             endYear = education.getEndYear();
             permissionType = education.getPermissionType();
+            stopUpdate = true;
             instituteSpinner.setSelection(Integer.valueOf(education.getInstituteType()));
             etInstituteName.setText(education.getInstituteName());
             etSearchPlace.setText(education.getLocationName());
@@ -1229,12 +1233,16 @@ public class AboutFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (etInstituteName.getText().toString().length() > 2) {
-                    Call<String> call = profileService.getSuggestion(deviceId, token, userId, "institute", etInstituteName.getText().toString());
-                    getAdvanceSuggestion(call, advanceSuggestions, institutionNameRecyclerView);
+                if (!stopUpdate) {
+                    if (etInstituteName.getText().toString().length() > 2) {
+                        Call<String> call = profileService.getSuggestion(deviceId, token, userId, "institute", etInstituteName.getText().toString());
+                        getAdvanceSuggestion(call, advanceSuggestions, institutionNameRecyclerView);
+                    } else {
+                        advanceSuggestions.clear();
+                        Objects.requireNonNull(institutionNameRecyclerView.getAdapter()).notifyDataSetChanged();
+                    }
                 } else {
-                    advanceSuggestions.clear();
-                    Objects.requireNonNull(institutionNameRecyclerView.getAdapter()).notifyDataSetChanged();
+                    stopUpdate = false;
                 }
             }
         });
@@ -1401,6 +1409,7 @@ public class AboutFragment extends Fragment {
 
             @Override
             public void onSuggestionClick(AdvanceSuggestion experienceSuggestion) {
+                stopUpdate = true;
                 etCompanyName.setText(experienceSuggestion.getInstituteName());
                 etSiteAddress.setText(experienceSuggestion.getWebsiteUrl());
                 etSearchPlace.setText(experienceSuggestion.getLocationName());
@@ -1433,7 +1442,7 @@ public class AboutFragment extends Fragment {
         if (isUpdate) {
             btnRemove.setVisibility(View.VISIBLE);
             permissionType = experience.getPermissionType();
-            etDesignation.setText(experience.getDescription());
+            etDesignation.setText(experience.getDesignationName());
             etCompanyName.setText(experience.getCompanyName());
             etSiteAddress.setText(experience.getWebsiteUrl());
             etSearchPlace.setText(experience.getLocationName());
@@ -1564,12 +1573,16 @@ public class AboutFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (etDesignation.getText().toString().length() > 2) {
-                    Call<String> call = profileService.getExperienceSuggestion(deviceId, token, userId, "designation", etDesignation.getText().toString());
-                    getSuggestion(call, designations, designationRecyclerView);
+                if (!stopUpdate) {
+                    if (etDesignation.getText().toString().length() > 2) {
+                        Call<String> call = profileService.getExperienceSuggestion(deviceId, token, userId, "designation", etDesignation.getText().toString());
+                        getSuggestion(call, designations, designationRecyclerView);
+                    } else {
+                        designations.clear();
+                        Objects.requireNonNull(designationRecyclerView.getAdapter()).notifyDataSetChanged();
+                    }
                 } else {
-                    designations.clear();
-                    Objects.requireNonNull(designationRecyclerView.getAdapter()).notifyDataSetChanged();
+                    stopUpdate = false;
                 }
             }
         });
@@ -1597,12 +1610,16 @@ public class AboutFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (etCompanyName.getText().toString().length() > 2) {
-                    Call<String> call = profileService.getExperienceSuggestion(deviceId, token, userId, "institute", etCompanyName.getText().toString());
-                    getAdvanceSuggestion(call, advanceSuggestions, companyNameRecyclerView);
+                if (!stopUpdate) {
+                    if (etCompanyName.getText().toString().length() > 2) {
+                        Call<String> call = profileService.getExperienceSuggestion(deviceId, token, userId, "institute", etCompanyName.getText().toString());
+                        getAdvanceSuggestion(call, advanceSuggestions, companyNameRecyclerView);
+                    } else {
+                        advanceSuggestions.clear();
+                        companyNameRecyclerView.getAdapter().notifyDataSetChanged();
+                    }
                 } else {
-                    advanceSuggestions.clear();
-                    companyNameRecyclerView.getAdapter().notifyDataSetChanged();
+                    stopUpdate = false;
                 }
             }
         });

@@ -185,12 +185,8 @@ public class PostCategory extends AppCompatActivity {
 
             @Override
             public void onResponse(Call<CategoryItem> call, Response<CategoryItem> response) {
-
-
-                categoryItem = response.body();
-
-                if (categoryItem != null) {
-
+                if (response.body() != null && response.body().getCategories() != null) {
+                    categoryItem = response.body();
                     mCategoryList.addAll(categoryItem.getCategories());
                     if (mCategoryList.size() > 0) {
                         categoryItem.getCategories().remove(0);

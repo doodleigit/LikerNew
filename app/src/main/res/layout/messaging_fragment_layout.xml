@@ -21,46 +21,61 @@
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:popupTheme="@style/AppTheme.PopupOverlay" >
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="start|center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="User Name"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="match_parent"
+                    android:gravity="start|center"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/likes"
+                        android:id="@+id/user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5 likes"
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="12sp" />
+                        android:text="User Name"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
 
-                    <TextView
-                        android:id="@+id/stars"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:text="8 Stars"
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="12sp" />
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/likes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5 likes"
+                            android:textColor="@android:color/darker_gray"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/stars"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:text="8 Stars"
+                            android:textColor="@android:color/darker_gray"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentEnd="true"
+                    android:padding="15dp"
+                    android:src="@drawable/ic_settings_black_24dp"/>
+
+            </RelativeLayout>
 
 
         </android.support.v7.widget.Toolbar>
@@ -87,13 +102,27 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/progress_bar"
-            android:layout_above="@+id/bottom_bar" />
+            android:layout_above="@+id/bottom_bar"
+            />
+
+        <TextView
+            android:id="@+id/unblock_text"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:background="#FBF0E0"
+            android:text="Unblock UserName"
+            android:textSize="14sp"
+            android:textColor="#8B7556"
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:id="@+id/bottom_bar"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:visibility="gone">
 
             <View
                 android:layout_width="match_parent"

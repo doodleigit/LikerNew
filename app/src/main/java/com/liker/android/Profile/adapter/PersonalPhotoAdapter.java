@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
@@ -32,6 +32,7 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
     private ArrayList<PersonalPhoto> arrayList, arrayListAll;
     private AddPhotoClickListener addPhotoClickListener;
 
+    private int count = 0;
     private boolean isOwnProfile;
     private int ITEM_HOLDER = 0;
     private int ADD_ITEM_HOLDER = 1;
@@ -51,7 +52,7 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.personal_photo_item, viewGroup, false);
             return new ViewHolder(view);
         } else if (i == ADD_ITEM_HOLDER) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.add_photo_item, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.photo_item_count, viewGroup, false);
             return new AddViewHolder(view);
         }
 
@@ -84,6 +85,16 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         } else if (viewHolder instanceof AddViewHolder) {
             AddViewHolder holder = (AddViewHolder) viewHolder;
+
+            if (count == 0) {
+                holder.imageView.setVisibility(View.VISIBLE);
+                holder.mediaCount.setVisibility(View.GONE);
+            } else {
+                holder.imageView.setVisibility(View.GONE);
+                holder.mediaCount.setVisibility(View.VISIBLE);
+                holder.mediaCount.setText("+" + count);
+            }
+
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -152,11 +163,17 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
     public class AddViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
+        TextView mediaCount;
 
         public AddViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image);
+            mediaCount = itemView.findViewById(R.id.media_count);
         }
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
 }

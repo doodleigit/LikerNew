@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,7 +15,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.liker.android.Profile.adapter.EditPersonalPhotoAdapter;
 import com.liker.android.Profile.model.PersonalPhoto;
@@ -47,17 +51,22 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
     private ImageView close;
     private RecyclerView recyclerView;
     private FloatingActionButton save;
+    private ProgressBar progressBar;
 
     private ProgressDialog progressDialog;
 
     private ProfileService profileService;
     private PrefManager manager;
     private EditPersonalPhotoAdapter personalPhotoAdapter;
+    private StaggeredGridLayoutManager layoutManager;
     private ArrayList<PersonalPhoto> personalPhotos;
     private ArrayList<String> addedPhotos;
     private String deviceId, profileUserId, token;
-    int limit = 10;
+    int limit = 25;
     int offset = 0;
+    private boolean isScrolling;
+    private boolean loading = true;
+    private int pastVisibleItems, visibleItemCount, totalItemCount;
 
     private static final int REQUEST_TAKE_GALLARY = 101;
 
@@ -98,8 +107,10 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
 
         close = findViewById(R.id.close);
         save = findViewById(R.id.save);
+        progressBar = findViewById(R.id.progress_bar);
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+        layoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(personalPhotoAdapter);
 
         SwipeAndDragHelper swipeAndDragHelper = new SwipeAndDragHelper(personalPhotoAdapter);
@@ -109,6 +120,33 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
         touchHelper.attachToRecyclerView(recyclerView);
 
         getPhotos();
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    isScrolling = true;
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                visibleItemCount = layoutManager.getChildCount();
+                totalItemCount = layoutManager.getItemCount();
+                int[] firstVisibleItems = null;
+                firstVisibleItems = layoutManager.findFirstVisibleItemPositions(firstVisibleItems);
+                if (firstVisibleItems != null && firstVisibleItems.length > 0) {
+                    pastVisibleItems = firstVisibleItems[0];
+                }
+
+                if (isScrolling && (visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                    isScrolling = false;
+                    getPagination();
+                }
+            }
+        });
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,6 +182,11 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
     private void getPhotos() {
         Call<String> callPersonalPhotos = profileService.getFeaturedPhotos(deviceId, token, profileUserId, profileUserId, profileUserId, limit, offset);
         sendPersonalPhotoRequest(callPersonalPhotos);
+    }
+
+    private void getPagination() {
+        Call<String> callPersonalPhotos = profileService.getFeaturedPhotos(deviceId, token, profileUserId, profileUserId, profileUserId, limit, offset);
+        sendPersonalPhotoPaginationRequest(callPersonalPhotos);
     }
 
     private void checkGalleryPermission() {
@@ -184,11 +227,14 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
 
     private void addPhoto(String imageFilePath) {
         File file = new File(imageFilePath);
+        long fileSize = file.length();
         //Parsing any Media type file
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
-        MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
-        Call<String> mediaCall = profileService.addPhoto(deviceId, profileUserId, token, fileToUpload);
-        addPhotoRequest(mediaCall, imageFilePath);
+        if (fileSize < 8 * 1000000) {
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
+            MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
+            Call<String> mediaCall = profileService.addPhoto(deviceId, profileUserId, token, fileToUpload);
+            addPhotoRequest(mediaCall, imageFilePath);
+        }
     }
 
     private void sendPersonalPhotoRequest(Call<String> call) {
@@ -201,6 +247,7 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response.body());
                     boolean status = jsonObject.getBoolean("status");
                     if (status) {
+                        offset += limit;
                         personalPhotos.clear();
                         JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("all_featured");
                         JSONArray array = jsonObject.getJSONObject("data").getJSONArray("is_featured");
@@ -244,6 +291,57 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
         });
     }
 
+    private void sendPersonalPhotoPaginationRequest(Call<String> call) {
+        progressBar.setVisibility(View.VISIBLE);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body());
+                    boolean status = jsonObject.getBoolean("status");
+                    if (status) {
+                        offset += limit;
+                        JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("all_featured");
+                        JSONArray array = jsonObject.getJSONObject("data").getJSONArray("is_featured");
+                        ArrayList<PersonalPhoto> featuredArray = new ArrayList<>();
+                        ArrayList<PersonalPhoto> allFeaturedArray = new ArrayList<>();
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = array.getJSONObject(i);
+                            String id, imageName;
+                            id = object.getString("id");
+                            imageName = object.getString("image_name");
+                            featuredArray.add(new PersonalPhoto(id, imageName, true));
+                        }
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            String id, imageName;
+                            id = object.getString("id");
+                            imageName = object.getString("image_name");
+                            boolean hasAlready = false;
+                            for (PersonalPhoto personalPhoto : featuredArray) {
+                                if (personalPhoto.getId().equals(id)) {
+                                    hasAlready = true;
+                                }
+                            }
+                            if (!hasAlready)
+                                allFeaturedArray.add(new PersonalPhoto(id, imageName, false));
+                        }
+                        personalPhotos.addAll(allFeaturedArray);
+                        personalPhotoAdapter.notifyDataSetChanged();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
     private void addPhotoRequest(Call<String> call, String id) {
         PersonalPhoto personalPhoto = new PersonalPhoto(id, "", false);
         personalPhoto.setUploading(true);
@@ -257,6 +355,7 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
                         try {
                             JSONObject object = new JSONObject(response.body());
                             addedPhotos.add(object.getString("filename"));
+                            personalPhoto.setImageName(object.getString("filename"));
                             personalPhoto.setUploading(false);
                             personalPhotoAdapter.stopUploadingAnimation(id, personalPhoto);
                             success = true;
@@ -296,12 +395,15 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                 }
                 progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
         });

@@ -347,6 +347,7 @@
     <string name="no_thanks">No, Thanks</string>
     <string name="sure">Rate Now</string>
     <string name="saving">Saving…</string>
+    <string name="unblock">Unblock</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>
