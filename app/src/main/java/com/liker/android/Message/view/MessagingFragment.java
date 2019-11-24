@@ -10,10 +10,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -21,6 +23,7 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 //import com.doodle.Home.model.Headers;
@@ -57,6 +60,9 @@ import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Tools;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
@@ -72,10 +78,11 @@ public class MessagingFragment extends Fragment {
     private View view;
     private Toolbar toolbar;
     private RecyclerView recyclerView;
+    private RelativeLayout bottomBar;
     private LinearLayoutManager layoutManager;
-    private TextView tvUserName, tvLikes, tvStars;
+    private TextView tvUserName, tvLikes, tvStars, tvUnblock;
     private EditText etReply;
-    private ImageView tvSend;
+    private ImageView tvSend, ivSetting;
     private ProgressBar progressBar;
     private ProgressDialog progressDialog;
 
@@ -88,6 +95,7 @@ public class MessagingFragment extends Fragment {
     private ArrayList<Messages> messages;
     private ArrayList<User> users;
     private String deviceId, profileId, token, userName, likes, stars, userIds, toUserId, chatUserName;
+    private boolean isBlock;
     int limit = 20;
     int offset = 0;
     private boolean isScrolling;
@@ -132,12 +140,15 @@ public class MessagingFragment extends Fragment {
         tvUserName = view.findViewById(R.id.user_name);
         tvLikes = view.findViewById(R.id.likes);
         tvStars = view.findViewById(R.id.stars);
+        tvUnblock = view.findViewById(R.id.unblock_text);
+        ivSetting = view.findViewById(R.id.setting);
         tvSend = view.findViewById(R.id.send);
         etReply = view.findViewById(R.id.reply);
         layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setReverseLayout(true);
         toolbar = view.findViewById(R.id.toolbar);
         progressBar = view.findViewById(R.id.progress_bar);
+        bottomBar = view.findViewById(R.id.bottom_bar);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -183,6 +194,21 @@ public class MessagingFragment extends Fragment {
             }
         });
 
+        tvUnblock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Call<String> call = messageService.setUnBlockChatUser(deviceId, profileId, token, userIds, toUserId);
+                sendBlockRequest(call, false);
+            }
+        });
+
+        ivSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSetting(ivSetting);
+            }
+        });
+
         tvSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,6 +229,32 @@ public class MessagingFragment extends Fragment {
         } else {
             Tools.showNetworkDialog(getChildFragmentManager());
         }
+    }
+
+    private void openSetting(View view) {
+        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+        if (isBlock) {
+            popupMenu.getMenuInflater().inflate(R.menu.messaging_unblock_setting, popupMenu.getMenu());
+        } else {
+            popupMenu.getMenuInflater().inflate(R.menu.messaging_block_setting, popupMenu.getMenu());
+        }
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                if (id == R.id.action_block) {
+                    Call<String> call = messageService.setBlockChatUser(deviceId, profileId, token, userIds, toUserId);
+                    sendBlockRequest(call, true);
+                } else if (id == R.id.action_unblock) {
+                    Call<String> call = messageService.setUnBlockChatUser(deviceId, profileId, token, userIds, toUserId);
+                    sendBlockRequest(call, false);
+                }
+                return true;
+            }
+        });
+
+        popupMenu.show();
     }
 
     private void sendReply(String reply) {
@@ -273,6 +325,8 @@ public class MessagingFragment extends Fragment {
                     users.addAll(chats.getUsers());
                     messagingAdapter.notifyDataSetChanged();
                     offset += limit;
+                    isBlock = chats.getPrivacy().getChatUserBlock();
+                    changeViewForBlock(isBlock);
                 }
                 progressDialog.hide();
             }
@@ -310,6 +364,46 @@ public class MessagingFragment extends Fragment {
             }
         });
 
+    }
+
+    private void sendBlockRequest(Call<String> call, boolean block) {
+
+        call.enqueue(new Callback<String>() {
+
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body());
+                        boolean status = jsonObject.getBoolean("status");
+                        if (status) {
+                            changeViewForBlock(block);
+                            isBlock = block;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("MESSAGE: ", t.getMessage());
+
+            }
+        });
+
+    }
+
+    private void changeViewForBlock(boolean block) {
+        tvUnblock.setText(getString(R.string.unblock) + " " + friendInfo.getFullName());
+        if (block) {
+            bottomBar.setVisibility(View.GONE);
+            tvUnblock.setVisibility(View.VISIBLE);
+        } else {
+            bottomBar.setVisibility(View.VISIBLE);
+            tvUnblock.setVisibility(View.GONE);
+        }
     }
 
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

@@ -33,6 +33,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -134,10 +135,10 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     //    private ViewPager viewPager;
     private Toolbar toolbar;
     private ScrollView scrollView;
-    private LinearLayout searchLayout, followLayout, moreLayout;
+    private LinearLayout contentHolderLayout, searchLayout, followLayout, moreLayout, alertLayout;
     private RelativeLayout coverImageLayout, profileImageLayout;
     private ImageView ivCoverImage, ivProfileImage, ivChangeCoverImage, ivChangeProfileImage;
-    private TextView tvUserName, tvTotalInfoCount, tvFollow;
+    private TextView tvUserName, tvTotalInfoCount, tvFollow, tvRetry;
 
     private ProfileService profileService;
     private CommentService commentService;
@@ -176,9 +177,11 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         webService = HomeService.mRetrofit.create(HomeService.class);
         toolbar = findViewById(R.id.toolbar);
         scrollView = findViewById(R.id.scrollView);
+        contentHolderLayout = findViewById(R.id.content_holder_layout);
         searchLayout = findViewById(R.id.search_layout);
         followLayout = findViewById(R.id.follow_layout);
         moreLayout = findViewById(R.id.more_layout);
+        alertLayout = findViewById(R.id.alert_layout);
         coverImageLayout = findViewById(R.id.cover_image_layout);
         profileImageLayout = findViewById(R.id.profile_image_layout);
         ivCoverImage = findViewById(R.id.cover_image);
@@ -188,6 +191,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         tvUserName = findViewById(R.id.user_name);
         tvTotalInfoCount = findViewById(R.id.total_info_count);
         tvFollow = findViewById(R.id.follow);
+        tvRetry = findViewById(R.id.retry);
         tabLayout = findViewById(R.id.tabs);
 //        viewPager = findViewById(R.id.viewpager);
 
@@ -203,6 +207,13 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(ProfileActivity.this, LikerSearch.class));
+            }
+        });
+
+        tvRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getData();
             }
         });
 
@@ -376,7 +387,6 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     }
 
     private void getData() {
-
         Call<UserAllInfo> call = profileService.getUserInfo(deviceId, userId, token, userId, profileUserName, true);
         getUserInfo(call);
     }
@@ -620,7 +630,6 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.following)));
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.photos)));
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.stars)));
-        initialFragment(new PostFragment());
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -689,17 +698,36 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         call.enqueue(new Callback<UserAllInfo>() {
             @Override
             public void onResponse(Call<UserAllInfo> call, Response<UserAllInfo> response) {
-                userAllInfo = response.body();
-                isFriendStatus();
-                setData();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        userAllInfo = response.body();
+                        isFriendStatus();
+                        setData();
+                        viewHandler(true);
+                    } else {
+                        viewHandler(false);
+                    }
+                }
                 progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<UserAllInfo> call, Throwable t) {
+                viewHandler(false);
                 progressDialog.dismiss();
             }
         });
+    }
+
+    private void viewHandler(boolean status) {
+        if (status) {
+            contentHolderLayout.setVisibility(View.VISIBLE);
+            alertLayout.setVisibility(View.GONE);
+            initialFragment(new PostFragment());
+        } else {
+            contentHolderLayout.setVisibility(View.GONE);
+            alertLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setFollow(String followUserId) {

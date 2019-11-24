@@ -559,47 +559,50 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
             @Override
             public void onResponse(Call<LoginUser> call, Response<LoginUser> response) {
                 LoginUser loginUser = response.body();
-                boolean status = loginUser.isStatus();
-                if (status) {
-                    String mToken = loginUser.getToken();
-                    showSnackbar(getString(R.string.login_success));
-                    UserInfo userInfo = loginUser.getUserInfo();
-                    Gson gson = new Gson();
-                    String json = gson.toJson(userInfo);
-                    String profileName = userInfo.getFirstName() + " " + userInfo.getLastName();
-                    String userName = userInfo.getUserName();
-                    String photo = userInfo.getPhoto();
-                    App.setProfilePhoto(photo);
-                    String profileId = userInfo.getUserId();
+                if (loginUser != null) {
+                    if (loginUser.isStatus()) {
+                        String mToken = loginUser.getToken();
+                        showSnackbar(getString(R.string.login_success));
+                        UserInfo userInfo = loginUser.getUserInfo();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(userInfo);
+                        String profileName = userInfo.getFirstName() + " " + userInfo.getLastName();
+                        String userName = userInfo.getUserName();
+                        String photo = userInfo.getPhoto();
+                        App.setProfilePhoto(photo);
+                        String profileId = userInfo.getUserId();
 
-                    manager.setToken(mToken);
-                    manager.setUserInfo(json);
-                    manager.setProfileName(profileName);
-                    manager.setProfileImage(PROFILE_IMAGE + photo);
-                    manager.setProfileId(profileId);
-                    manager.setUserName(userName);
-                    Intent intent = new Intent(Login.this, Home.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                } else {
-                    String msg = getString(R.string.username_and_password_miss_match);
-                    showStatus(msg);
-
-                    if (loginUser.getIsVerified() != null && loginUser.getBounceData() != null) {
-                        if (loginUser.getIsVerified().equalsIgnoreCase("0") && loginUser.getBounceData().equalsIgnoreCase("0")) {
-                            userInfo = loginUser.getUserInfo();
-                            if (userInfo != null) {
-                                String message = getString(R.string.a_verification_email_has_been_sent_to_your_email_address);
-                                ResendEmail resendEmail = ResendEmail.newInstance(message);
-                                resendEmail.show(getSupportFragmentManager(), "ResendEmail");
-                            }
-
-                        } else if (loginUser.getBounceData().equalsIgnoreCase(String.valueOf(1)) || loginUser.getBounceData().equalsIgnoreCase(String.valueOf(2))) {
-                            Toast.makeText(Login.this,  getString(R.string.email_is_invalid), Toast.LENGTH_SHORT).show();
-                        }
+                        manager.setToken(mToken);
+                        manager.setUserInfo(json);
+                        manager.setProfileName(profileName);
+                        manager.setProfileImage(PROFILE_IMAGE + photo);
+                        manager.setProfileId(profileId);
+                        manager.setUserName(userName);
+                        Intent intent = new Intent(Login.this, Home.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     } else {
-                        Toast.makeText(Login.this,  getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
+                        String msg = getString(R.string.username_and_password_miss_match);
+                        showStatus(msg);
+
+                        if (loginUser.getIsVerified() != null && loginUser.getBounceData() != null) {
+                            if (loginUser.getIsVerified().equalsIgnoreCase("0") && loginUser.getBounceData().equalsIgnoreCase("0")) {
+                                userInfo = loginUser.getUserInfo();
+                                if (userInfo != null) {
+                                    String message = getString(R.string.a_verification_email_has_been_sent_to_your_email_address);
+                                    ResendEmail resendEmail = ResendEmail.newInstance(message);
+                                    resendEmail.show(getSupportFragmentManager(), "ResendEmail");
+                                }
+
+                            } else if (loginUser.getBounceData().equalsIgnoreCase(String.valueOf(1)) || loginUser.getBounceData().equalsIgnoreCase(String.valueOf(2))) {
+                                Toast.makeText(Login.this, getString(R.string.email_is_invalid), Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(Login.this, getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
+                        }
                     }
+                } else {
+                    Toast.makeText(Login.this, getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                 }
 
                 progressBar.setVisibility(View.GONE);

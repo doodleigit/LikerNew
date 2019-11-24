@@ -41,6 +41,9 @@ public class Privacy implements Serializable, Parcelable
     @SerializedName("is_friends")
     @Expose
     private Boolean isFriends;
+    @SerializedName("chatuser_block")
+    @Expose
+    private Boolean chatUserBlock;
     public final static Creator<Privacy> CREATOR = new Creator<Privacy>() {
 
 
@@ -70,6 +73,7 @@ public class Privacy implements Serializable, Parcelable
         this.messageSendPermission = ((String) in.readValue((String.class.getClassLoader())));
         this.modifyDate = ((String) in.readValue((String.class.getClassLoader())));
         this.isFriends = ((Boolean) in.readValue((Boolean.class.getClassLoader())));
+        this.chatUserBlock = ((Boolean) in.readValue((Boolean.class.getClassLoader())));
     }
 
     public Privacy() {
@@ -155,6 +159,14 @@ public class Privacy implements Serializable, Parcelable
         this.isFriends = isFriends;
     }
 
+    public Boolean getChatUserBlock() {
+        return chatUserBlock;
+    }
+
+    public void setChatUserBlock(Boolean chatUserBlock) {
+        this.chatUserBlock = chatUserBlock;
+    }
+
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
         dest.writeValue(userId);
@@ -166,6 +178,7 @@ public class Privacy implements Serializable, Parcelable
         dest.writeValue(messageSendPermission);
         dest.writeValue(modifyDate);
         dest.writeValue(isFriends);
+        dest.writeValue(chatUserBlock);
     }
 
     public int describeContents() {

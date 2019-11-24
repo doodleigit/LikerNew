@@ -12,6 +12,18 @@
         android:layout_margin="25dp"
         android:src="@drawable/ic_add_black_24dp"
         android:background="@drawable/round_one"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/media_count"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="25dp"
+        android:background="@drawable/round_one"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/colorWhite"
+        android:textSize="32sp" />
 
 </LinearLayout>

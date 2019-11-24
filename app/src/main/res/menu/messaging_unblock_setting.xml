@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_unblock"
+        android:title="@string/unblock"
+        android:icon="@drawable/ic_block_24dp">
+    </item>
+</menu>

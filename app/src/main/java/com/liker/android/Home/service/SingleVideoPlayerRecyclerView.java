@@ -318,7 +318,7 @@ public class SingleVideoPlayerRecyclerView extends RecyclerView {
             if (mediaUrl != null) {
                 MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                         .createMediaSource(Uri.parse(AppConstants.POST_VIDEOS + mediaUrl));
-                if (videoSource != null) {
+                if (videoPlayer != null) {
                     videoPlayer.prepare(videoSource);
                     videoPlayer.setPlayWhenReady(true);
                 }

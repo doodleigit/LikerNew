@@ -784,11 +784,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        android:gravity="start|top"
                         android:background="@drawable/rectangle_corner_round_five"
                         android:hint=""
                         android:minHeight="80dp"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
+                        android:padding="10dp"
                         android:textSize="14sp" />
 
                     <RelativeLayout

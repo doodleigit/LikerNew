@@ -299,6 +299,45 @@ public class PhotosFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body());
+                    boolean status = jsonObject.getBoolean("status");
+                    if (status) {
+                        personalPhotos.clear();
+                        allPersonalPhotos.clear();
+                        JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("all_featured");
+                        JSONArray array = jsonObject.getJSONObject("data").getJSONArray("is_featured");
+                        int totalImage;
+                        try {
+                            totalImage = Integer.parseInt(jsonObject.getJSONObject("data").getString("total_image"));
+                        } catch (NumberFormatException e) {
+                            totalImage = 0;
+                        }
+                        ArrayList<PersonalPhoto> arrayList = new ArrayList<>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject object = jsonArray.getJSONObject(i);
+                            String id, imageName;
+                            id = object.getString("id");
+                            imageName = object.getString("image_name");
+                            arrayList.add(new PersonalPhoto(id, imageName, false));
+                        }
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject object = array.getJSONObject(i);
+                            String id, imageName;
+                            id = object.getString("id");
+                            imageName = object.getString("image_name");
+                            arrayList.add(new PersonalPhoto(id, imageName, true));
+                            personalPhotos.add(new PersonalPhoto(id, imageName, true));
+                        }
+                        if (totalImage - personalPhotos.size() > 0) {
+                            personalPhotoAdapter.setCount(totalImage - personalPhotos.size());
+                        }
+                        allPersonalPhotos.addAll(arrayList);
+                        personalPhotoAdapter.notifyDataSetChanged();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored){}
                 progressDialog.hide();
             }
 
