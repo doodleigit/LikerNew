@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
@@ -77,9 +78,11 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
                 if (arrayList.get(i).isFeatured()) {
                     holder.close.setVisibility(View.GONE);
                     holder.featured.setImageResource(R.drawable.ic_featured_24dp);
+                    holder.mainLayout.setBackgroundResource(R.drawable.rectangle_one);
                 } else {
                     holder.close.setVisibility(View.VISIBLE);
                     holder.featured.setImageResource(R.drawable.ic_unfeatured_24dp);
+                    holder.mainLayout.setBackgroundResource(R.color.colorWhite);
                 }
             }
 
@@ -93,11 +96,13 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
                 }
             });
 
-            holder.featured.setOnClickListener(new View.OnClickListener() {
+            holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    arrayList.get(i).setFeatured(!arrayList.get(i).isFeatured());
-                    notifyItemChanged(i);
+                    if (holder.featured.getVisibility() == View.VISIBLE) {
+                        arrayList.get(i).setFeatured(!arrayList.get(i).isFeatured());
+                        notifyItemChanged(i);
+                    }
                 }
             });
 
@@ -169,11 +174,13 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
+        RelativeLayout mainLayout;
         ImageView imageView, featured, close;
         ProgressBar progressBar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            mainLayout = itemView.findViewById(R.id.main_layout);
             imageView = itemView.findViewById(R.id.image);
             featured = itemView.findViewById(R.id.featured);
             close = itemView.findViewById(R.id.close);
