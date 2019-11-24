@@ -162,8 +162,8 @@ public class PhotosFragment extends Fragment {
         sendAlbumListRequest(callAlbums);
         Call<ArrayList<RecentPhoto>> callPhotos = profileService.getRecentPhotos(deviceId, token, userId, profileUserId, userId, limit, offset);
         sendRecentListRequest(callPhotos);
-        Call<String> callPersonalPhotos = profileService.getFeaturedPhotos(deviceId, token, userId, profileUserId, userId, limit, offset);
-        sendPersonalPhotoRequest(callPersonalPhotos);
+//        Call<String> callPersonalPhotos = profileService.getFeaturedPhotos(deviceId, token, userId, profileUserId, userId, limit, offset);
+//        sendPersonalPhotoRequest(callPersonalPhotos);
     }
 
     private void showAlbumPhotos(PhotoAlbum photoAlbum) {
@@ -242,12 +242,9 @@ public class PhotosFragment extends Fragment {
     }
 
     private void sendAlbumListRequest(Call<ArrayList<PhotoAlbum>> call) {
-
         call.enqueue(new Callback<ArrayList<PhotoAlbum>>() {
-
             @Override
             public void onResponse(Call<ArrayList<PhotoAlbum>> call, Response<ArrayList<PhotoAlbum>> response) {
-
                 ArrayList<PhotoAlbum> arrayList = response.body();
                 if (arrayList != null) {
                     photoAlbums.addAll(arrayList);

@@ -200,7 +200,6 @@ public class PostShare extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_share);
-
         PostItem item = getIntent().getExtras().getParcelable(TextHolder.ITEM_KEY);
         if (item == null) {
             throw new AssertionError("Null data item received!");
@@ -304,46 +303,6 @@ public class PostShare extends AppCompatActivity implements
 
         String hasMim = item.getHasMeme();
         int mimId = Integer.parseInt(hasMim);
-
-
-        //HEADER ID
-
-//
-//        switch (viewType) {
-//            case 1:
-//                if (mimId > 0) {
-//                    onlyMim.setVisibility(View.VISIBLE);
-//                    setMim(item);
-//                    break;
-//                } else {
-//                    onlyText.setVisibility(View.VISIBLE);
-//                    setText(item);
-//                    break;
-//                }
-//
-//            case 2:
-//                onlyImage.setVisibility(View.VISIBLE);
-//                setImage(item);
-//                break;
-//            case 3:
-//                onlyLinkScript.setVisibility(View.VISIBLE);
-//                setLinkScript(item);
-//                break;
-//            case 4:
-//                onlyLinkScriptYoutube.setVisibility(View.VISIBLE);
-//                setLinkScriptYoutube(item);
-//                break;
-//            case 5:
-//                onlyVideo.setVisibility(View.VISIBLE);
-//                setVideo(item);
-//                break;
-//
-//        }
-
-
-        //HEADER SET
-       // initheader();
-        //setHeader(item);
 
 
     }
@@ -929,8 +888,6 @@ public class PostShare extends AppCompatActivity implements
                 shareAsPost();
                 break;
         }
-
-
     }
 
     @Override
@@ -1023,7 +980,6 @@ public class PostShare extends AppCompatActivity implements
         });
 
     }
-
     private void sendBrowserNotificationRequest(Call<String> mCall) {
         mCall.enqueue(new Callback<String>() {
 
@@ -1074,8 +1030,6 @@ public class PostShare extends AppCompatActivity implements
         });
 
     }
-
-
     private void setUpEmojiPopup() {
         emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
                 .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
@@ -1088,7 +1042,6 @@ public class PostShare extends AppCompatActivity implements
                 .setPageTransformer(new PageTransformer())
                 .build(editPostMessage);
     }
-
 
     @Override
     public void onButtonClicked(int image, String text) {
@@ -1110,7 +1063,6 @@ public class PostShare extends AppCompatActivity implements
         }
 
     }
-
 
     @Override
     public void deletePost(PostItem postItem, int position) {

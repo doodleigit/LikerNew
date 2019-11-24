@@ -14,6 +14,7 @@ import com.liker.android.Home.model.LikeUsers;
 import com.liker.android.Home.model.PostFilters;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.model.SinglePostFilters;
+import com.liker.android.Home.model.SingleUserAppRate;
 import com.liker.android.Home.model.StarContributor;
 import com.liker.android.Home.model.postshare.PostShareItem;
 import com.liker.android.Profile.model.AddFeatured;
@@ -25,23 +26,26 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface HomeService {
 
 
     OkHttpClient okHttpClient = new OkHttpClient.Builder()
-            .connectTimeout(1, TimeUnit.MINUTES)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+//            .connectTimeout(1, TimeUnit.MINUTES)
+//            .readTimeout(30, TimeUnit.SECONDS)
+//            .writeTimeout(15, TimeUnit.SECONDS)
             .build();
 
     Retrofit mRetrofit = new Retrofit.Builder()
@@ -349,25 +353,32 @@ public interface HomeService {
     );
 
 
-    @POST(AppConstants.USER_APP_RATE)
+    // @Headers({ "Content-Type: application/json;charset=UTF-8"})
+//   @Headers({"Content-Type: multipart/form-data","Content-Type: text/plain"})
+//    @Headers({"Content-Type: application/json", "Cache-Control: no-cache"})
     @FormUrlEncoded
+    @POST(AppConstants.USER_APP_RATE)
     Call<String> setUserAppRate(
             @Header("Device-Id") String deviceId,
             @Header("Security-Token") String token,
             @Header("User-Id") String userId,
-            @Field("user_id") int userIds,
+            @Field("user_id") String userIds,
             @Field("status") int status
     );
 
     //http://192.168.0.7:8040/sites/likerapp/single_user_apprate,
+//    @Headers({"Content-Type: multipart/form-data","Content-Type: text/plain"})
+//    @Headers({"Content-Type: application/json", "Cache-Control: no-cache"})
+//    @Headers({ "Content-Type: application/json;charset=UTF-8"})
     @POST(AppConstants.SINGLE_USER_APP_RATE)
     @FormUrlEncoded
     Call<String> setSingleUserAppRate(
             @Header("Device-Id") String deviceId,
             @Header("Security-Token") String token,
             @Header("User-Id") String userId,
-            @Field("user_id") int userIds
-    );
+            @Field("user_id") String userIds
+            );
+    //   @Headers({ "Content-Type: application/json;charset=UTF-8"})
     //https://www.api.liker.com/follow
 
 }

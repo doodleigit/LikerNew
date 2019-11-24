@@ -377,9 +377,7 @@ public class TextHolder extends RecyclerView.ViewHolder {
         this.postItem = item;
         this.position = position;
         userPostId = item.getPostUserid();
-
         String postPermission = item.getPermission();
-
         switch (postPermission) {
             case "0":
                 imagePostPermission.setBackgroundResource(R.drawable.ic_public_black_24dp);
@@ -391,8 +389,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
                 imagePostPermission.setBackgroundResource(R.drawable.ic_friends_12dp);
                 break;
         }
-
-
         isShared = item.getIsShared();
 
         if (App.isSharePostfooter()) {
@@ -514,7 +510,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             }
         });
 
-
         tvCommentLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -530,7 +525,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
-
 
         text = item.getPostText();
         String contentUrl = FACEBOOK_SHARE + item.getSharedPostId();

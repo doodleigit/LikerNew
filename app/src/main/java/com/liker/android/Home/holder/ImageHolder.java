@@ -854,11 +854,10 @@ public class ImageHolder extends RecyclerView.ViewHolder {
                 mediaViewHolders.get(i).getMediaVideoLayout().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
                          List<PostFile> postFiles=item.getPostFiles();
-
                          if (postFiles.size()==1){
                              fullMediaView((ArrayList<PostFile>) postFiles, position);
+
                          }else {
                              popUpPost(mediaPosition);
                          }
@@ -1578,9 +1577,7 @@ public class ImageHolder extends RecyclerView.ViewHolder {
         bundle.putParcelableArrayList("media_files", postFiles);
         bundle.putInt("position", position);
         dialogFragment.setArguments(bundle);
-
         dialogFragment.show(ft, "dialog");
     }
-
 
 }

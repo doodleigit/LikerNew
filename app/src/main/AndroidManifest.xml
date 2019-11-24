@@ -13,12 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round_two"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
         android:vmSafeMode="true"
+        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Profile.view.EditPersonalPhotoActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".Post.view.activity.WallPost"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -172,6 +170,7 @@
             android:name=".Home.Liker"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <!--
         <intent-filter>
         <action android:name="android.intent.action.MAIN" />
@@ -179,10 +178,12 @@
         <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         -->
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -210,37 +211,37 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="b1889dbc25a0c7d0e77a7bccb1b8c144442541e7" />
         <provider
             android:name=".Search.CouponsSearchContentProvider"
             android:authorities="com.doodle" />
-
         <provider
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider{@string/facebook_app_id}"
             android:exported="true" />
+
         <service
             android:name=".Authentication.service.MyService"
             android:enabled="true"
             android:exported="true" />
-
         <service
             android:name=".Tool.Service.DataFetchingService"
             android:enabled="true"
             android:exported="true" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="b1889dbc25a0c7d0e77a7bccb1b8c144442541e7" />
     </application>
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
     <uses-permission android:name="android.permission.CAMERA" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

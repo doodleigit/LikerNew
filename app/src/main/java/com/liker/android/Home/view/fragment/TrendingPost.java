@@ -353,6 +353,7 @@ public class TrendingPost extends Fragment   {
             sendPostItemRequest(call);
         } else {
             Tools.showNetworkDialog(getActivity().getSupportFragmentManager());
+           // commitAllowingStateLoss();
             progressView.setVisibility(View.GONE);
             progressView.stopAnimation();
             refreshLayout.setRefreshing(false);
@@ -490,7 +491,8 @@ public class TrendingPost extends Fragment   {
         Gson gson = new Gson();
         String json = manager.getUserInfo();
         UserInfo userInfo = gson.fromJson(json, UserInfo.class);
-        if (userInfo.getLearnAboutSite().equals("0")) {
+      //  if (userInfo.getLearnAboutSite().equals("0")) {
+        if (userInfo.getLearnAboutSite() != null && userInfo.getLearnAboutSite().equals("0")) {
             PostItem postItem = new PostItem();
             postItem.setPostId("");
             postItem.setHasMeme("0");
