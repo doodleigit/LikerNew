@@ -42,9 +42,9 @@ public class PostItem implements Serializable, Parcelable
     @Expose
     private boolean isNotificationOff;
 
-    @SerializedName("is_app")
+    @SerializedName("post_source")
     @Expose
-    private boolean isApp;
+    private int postSource;
 
     @SerializedName("is_shared")
     @Expose
@@ -195,12 +195,12 @@ public class PostItem implements Serializable, Parcelable
         this.catName = ((String) in.readValue((String.class.getClassLoader())));
         this.dateTime = ((String) in.readValue((String.class.getClassLoader())));
         this.frameNumber = ((int) in.readValue((int.class.getClassLoader())));
+        this.postSource = ((int) in.readValue((int.class.getClassLoader())));
         this.hasMeme = ((String) in.readValue((String.class.getClassLoader())));
         this.hasMention = ((String) in.readValue((String.class.getClassLoader())));
         this.hasShared = ((int) in.readValue((int.class.getClassLoader())));
         this.inputAddClassName = ((String) in.readValue((String.class.getClassLoader())));
         this.isNotificationOff = ((boolean) in.readValue((boolean.class.getClassLoader())));
-        this.isApp = ((boolean) in.readValue((boolean.class.getClassLoader())));
         this.isShared = ((String) in.readValue((String.class.getClassLoader())));
         this.isWall = ((String) in.readValue((String.class.getClassLoader())));
         this.listClassName = ((String) in.readValue((String.class.getClassLoader())));
@@ -280,6 +280,14 @@ public class PostItem implements Serializable, Parcelable
         this.frameNumber = frameNumber;
     }
 
+    public int getPostSource() {
+        return postSource;
+    }
+
+    public void setPostSource(int postSource) {
+        this.postSource = postSource;
+    }
+
     public String getHasMeme() {
         return hasMeme;
     }
@@ -320,13 +328,6 @@ public class PostItem implements Serializable, Parcelable
         this.isNotificationOff = isNotificationOff;
     }
 
-    public boolean isApp() {
-        return isApp;
-    }
-
-    public void setApp(boolean app) {
-        isApp = app;
-    }
 
     public String getIsShared() {
         return isShared;
@@ -670,12 +671,12 @@ public class PostItem implements Serializable, Parcelable
         dest.writeValue(catName);
         dest.writeValue(dateTime);
         dest.writeValue(frameNumber);
+        dest.writeValue(postSource);
         dest.writeValue(hasMeme);
         dest.writeValue(hasMention);
         dest.writeValue(hasShared);
         dest.writeValue(inputAddClassName);
         dest.writeValue(isNotificationOff);
-        dest.writeValue(isApp);
         dest.writeValue(isShared);
         dest.writeValue(isWall);
         dest.writeValue(listClassName);

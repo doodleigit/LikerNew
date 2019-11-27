@@ -95,6 +95,9 @@ import com.leocardz.link.preview.library.TextCrawler;
 import com.liker.android.App;
 import com.liker.android.Home.holder.mediaHolder.ImageViewHolder;
 import com.liker.android.Home.holder.mediaHolder.VideoViewHolder;
+import com.liker.android.Home.model.Headers;
+import com.liker.android.Home.model.TopContributorStatus;
+import com.liker.android.Home.service.SocketIOManager;
 import com.liker.android.Post.adapter.ChatAdapter;
 import com.liker.android.Post.adapter.ImageAdapter;
 import com.liker.android.Post.adapter.LinkScriptAdapter;
@@ -117,6 +120,8 @@ import com.liker.android.Post.view.fragment.ContributorStatus;
 import com.liker.android.Post.view.fragment.PostPermission;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.AppSingleton;
+import com.liker.android.Tool.EditTextLinesLimiter;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PageTransformer;
 import com.liker.android.Tool.PrefManager;
@@ -147,6 +152,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.socket.client.Ack;
+import io.socket.client.Socket;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -319,12 +326,14 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     List<String> videoList;
     List<LinkScriptItem> scriptItemList;
     private Context mContext;
+    private boolean isMimSelected;
+    private Socket socket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wall_post);
-        mContext=this;
+        mContext = this;
 
         manager = new PrefManager(this);
         webService = PostService.mRetrofit.create(PostService.class);
@@ -332,6 +341,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         networkOk = NetworkHelper.hasNetworkAccess(this);
         progressView = (CircularProgressView) findViewById(R.id.progress_view);
         mView = new View(this);
+        socket = SocketIOManager.nSocket;
         mediaList = new HashSet<>();
         videoList = new ArrayList<>();
         scriptItemList = new ArrayList<>();
@@ -366,12 +376,12 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
 //        tvPermission.setText(manager.getPostPermission());
         imgPermission = findViewById(R.id.imgPermission);
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
         tvAudience = findViewById(R.id.tvAudience);
         tvAudience.setText(manager.getPostAudience().isEmpty() ? getString(R.string.audience) : manager.getPostAudience());
-      //  imgPermission = findViewById(R.id.imgPermission);
+        //  imgPermission = findViewById(R.id.imgPermission);
         contentPostPermission = findViewById(R.id.contentPostPermission);
         contentPostPermission.setOnClickListener(this);
         contentPostView = findViewById(R.id.contentPostView);
@@ -403,6 +413,57 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                     }
                 }
 
+
+                if (isMimSelected) {
+                    if (postImages.isEmpty() && postVideos.isEmpty()) {
+                        String mimColor = AppSingleton.getInstance().getMimColor();
+                        if (mimColor.startsWith("#")) {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            int mColor = Color.parseColor(mimColor);
+                            messageContainer.setBackgroundColor(mColor);
+                            editPostMessage.setTextSize(22f);
+                            if (mimColor.contentEquals("#C6FFD4")) {
+                                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                            } else {
+                                editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                            }
+                            ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                            params.height = (int) getResources().getDimension(R.dimen._200sdp);
+                            messageContainer.setLayoutParams(params);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+
+                        } else {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            String imageUrl = AppConstants.MIM_IMAGE + mimColor;
+                            Picasso.with(WallPost.this).load(imageUrl).into(target);
+                            messageContainer.setBackground(mDrawable);
+                            editPostMessage.setHeight(200);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+                            editPostMessage.setTextSize(22f);
+                            switch (mimColor) {
+                                case "img_bg_birthday.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    break;
+                                case "img_bg_love.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#2D4F73"));
+                                    break;
+                                case "img_bg_love2.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#444748"));
+                                    break;
+                                case "img_bg_red.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                                case "img_bg_love3.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                            }
+
+                        }
+                    }
+                }
+
             }
         };
         videoListen = new VideoViewHolder.VideoListen() {
@@ -412,7 +473,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 mediaAdapter.deleteItem(position);
                 mediaRecyclerView.scrollToPosition(position);
                 String mdFiveFile = postVideo.getMdFive();
-
 
                 for (int i = 0; i < mediaFiles.size(); i++) {
 
@@ -428,6 +488,56 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                     }
                 }
 
+                if (isMimSelected) {
+                    if (postImages.isEmpty() && postVideos.isEmpty()) {
+                        String mimColor = AppSingleton.getInstance().getMimColor();
+                        if (mimColor.startsWith("#")) {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            int mColor = Color.parseColor(mimColor);
+                            messageContainer.setBackgroundColor(mColor);
+                            editPostMessage.setTextSize(22f);
+                            if (mimColor.contentEquals("#C6FFD4")) {
+                                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                            } else {
+                                editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                            }
+                            ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                            params.height = (int) getResources().getDimension(R.dimen._200sdp);
+                            messageContainer.setLayoutParams(params);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+
+                        } else {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            String imageUrl = AppConstants.MIM_IMAGE + mimColor;
+                            Picasso.with(WallPost.this).load(imageUrl).into(target);
+                            messageContainer.setBackground(mDrawable);
+                            editPostMessage.setHeight(200);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+                            editPostMessage.setTextSize(22f);
+                            switch (mimColor) {
+                                case "img_bg_birthday.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    break;
+                                case "img_bg_love.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#2D4F73"));
+                                    break;
+                                case "img_bg_love2.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#444748"));
+                                    break;
+                                case "img_bg_red.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                                case "img_bg_love3.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                            }
+
+                        }
+                    }
+                }
+
             }
         };
 
@@ -436,38 +546,50 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
             String mimColor = viewColors.get(position).getMimColor();
             hasMim = viewColors.get(position).getId();
+            AppSingleton.getInstance().setMimColor(mimColor);
+            AppSingleton.getInstance().setHasMim(hasMim);
+            isMimSelected = true;
             if (mimColor.startsWith("#")) {
                 if (mimColor.contentEquals("#FFFFFF")) {
+                    editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
                     int mColor = Color.parseColor(mimColor);
                     messageContainer.setBackgroundColor(mColor);
                     messageContainer.setGravity(Gravity.START);
                     editPostMessage.setGravity(Gravity.START);
-                    editPostMessage.setTextAppearance(this, android.R.style.TextAppearance_Medium);
+                    editPostMessage.setTextSize(12f);
                     editPostMessage.setTextColor(Color.parseColor("#000000"));
                     ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
-                    params.height = (int) getResources().getDimension(R.dimen._220sdp);
+                    params.height = (int) getResources().getDimension(R.dimen._150sdp);
                     messageContainer.setLayoutParams(params);
                 } else {
+                    editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
                     int mColor = Color.parseColor(mimColor);
                     messageContainer.setBackgroundColor(mColor);
+                    editPostMessage.setTextSize(22f);
                     if (mimColor.contentEquals("#C6FFD4")) {
                         editPostMessage.setTextColor(Color.parseColor("#000000"));
+                    } else {
+                        editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
                     }
                     ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
                     params.height = (int) getResources().getDimension(R.dimen._200sdp);
                     messageContainer.setLayoutParams(params);
                     messageContainer.setGravity(Gravity.CENTER);
                     editPostMessage.setGravity(Gravity.CENTER);
-                    editPostMessage.setTextAppearance(this, android.R.style.TextAppearance_Large);
-                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+
                 }
 
 
             } else {
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
                 String imageUrl = AppConstants.MIM_IMAGE + mimColor;
                 Picasso.with(this).load(imageUrl).into(target);
                 messageContainer.setBackground(mDrawable);
-                editPostMessage.setHeight(150);
+                editPostMessage.setHeight(200);
+                editPostMessage.setTextSize(22f);
+                messageContainer.setGravity(Gravity.CENTER);
+                editPostMessage.setGravity(Gravity.CENTER);
+                //  editPostMessage.setTextAppearance(PostNew.this, android.R.style.TextAppearance_Large);
                 switch (mimColor) {
                     case "img_bg_birthday.png":
                         editPostMessage.setTextColor(Color.parseColor("#000000"));
@@ -485,8 +607,8 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
                         break;
                 }
-            }
 
+            }
 
         };
         MimAdapter adapter = new MimAdapter(this, viewColors, listener);
@@ -517,6 +639,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                     .into(imgPostUser);
         }
 
+        checkIsOwnProfile();
 
 //        emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
 //        sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
@@ -1030,7 +1153,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         super.onRestart();
 //        tvPermission.setText(manager.getPostPermission());
         imgPermission = findViewById(R.id.imgPermission);
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
     }
@@ -1040,7 +1163,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         super.onPause();
 //        tvPermission.setText(manager.getPostPermission());
         imgPermission = findViewById(R.id.imgPermission);
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
@@ -1078,7 +1201,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         super.onResume();
 //        tvPermission.setText(manager.getPostPermission());
         imgPermission = findViewById(R.id.imgPermission);
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
@@ -1177,13 +1300,19 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 checkContentType();
                 if (contentTitle.isEmpty()) {
                     Tools.showCustomToast(WallPost.this, mView, "Please add a post description", Gravity.TOP);
-                } /*else if (categoryId.isEmpty() && subCategoryId.isEmpty()) {
-                    Tools.showCustomToast(WallPost.this, mView, "Please select your post’s audience.", Gravity.TOP);
-                }*/ else if (!isAddContentTitle) {
+                } else if (toUserId.equalsIgnoreCase(profileId)) {
+                    if (categoryId.isEmpty() && subCategoryId.isEmpty()) {
+                        Tools.showCustomToast(WallPost.this, mView, "Please select your post’s audience.", Gravity.TOP);
+                    }
+                }
+                else if (!isAddContentTitle) {
                     Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
                 } else if (contentTitle.length() < 8) {
                     Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
                 } else {
+                    if (!toUserId.equalsIgnoreCase(profileId)) {
+                        categoryId = "26";
+                    }
                     createNewPost();
                 }
                 // Tools.showCustomToast(LikerSearch.this, mView, " Write Minimum Three Characters !", Gravity.TOP);
@@ -1246,7 +1375,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                     imageFile,
                     fileEncoded,//"",
                     postPermission,//0,
-                    "26",//3,
+                    categoryId,//3,
                     subCategoryId,// 54,
                     contentType,//1,
                     contentTitle,//contentTitle,//"Here is studio.. ",
@@ -1386,6 +1515,28 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                     sendBroadcast((new Intent()).setAction(AppConstants.NEW_POST_ADD_BROADCAST));
                                 }
 
+                                TopContributorStatus contributorStatus = new TopContributorStatus();
+                                Headers headers = new Headers();
+                                //   String categoryId = App.getCategoryId();
+                                headers.setDeviceId(deviceId);
+                                headers.setIsApps(true);
+                                headers.setSecurityToken(token);
+                                headers.setUserId(userIds);
+                                contributorStatus.setCategoryId(categoryId);
+                                contributorStatus.setUserId(userIds);
+                                contributorStatus.setMaxPostId("423487");
+                                contributorStatus.setPermission(String.valueOf(postPermission));
+                                contributorStatus.setHeaders(headers);
+                                Gson gson = new Gson();
+                                String json = gson.toJson(contributorStatus);
+
+                                socket.emit("new_post", json, new Ack() {
+                                    @Override
+                                    public void call(Object... args) {
+
+                                    }
+                                });
+
                             }
 
                             JSONObject errorObject = object.getJSONObject("errors");
@@ -1481,7 +1632,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     public void sendImageFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         imageUri = getImageUri();
-        if(imageUri == null)
+        if (imageUri == null)
             throw new IllegalArgumentException("The filename cannot be null!");
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -1659,6 +1810,19 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                 mediaRecyclerView.setAdapter(mediaAdapter);
                 progressDialog.dismiss();
+
+
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                int mColor = Color.parseColor("#FFFFFF");
+                messageContainer.setBackgroundColor(mColor);
+                messageContainer.setGravity(Gravity.START);
+                editPostMessage.setGravity(Gravity.START);
+                editPostMessage.setTextSize(12f);
+                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                messageContainer.setLayoutParams(params);
+
 
             } else {
                 Toast.makeText(this, "Cancel Camera Capture", Toast.LENGTH_SHORT).show();
@@ -1935,8 +2099,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                 //Tools.showCustomToast(WallPost.this, mView, message, Gravity.CENTER);
 
 
-
-
                                 progressDialog.show();
                                 progressDialog.dismiss();
 
@@ -1951,8 +2113,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                 mediaRecyclerViewToggle();
                                 mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                                 mediaRecyclerView.setAdapter(mediaAdapter);
-
-
 
 
                             } else {
@@ -1978,6 +2138,18 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                     mediaRecyclerViewToggle();
                                     mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                                     mediaRecyclerView.setAdapter(mediaAdapter);
+
+
+                                    editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                                    int mColor = Color.parseColor("#FFFFFF");
+                                    messageContainer.setBackgroundColor(mColor);
+                                    messageContainer.setGravity(Gravity.START);
+                                    editPostMessage.setGravity(Gravity.START);
+                                    editPostMessage.setTextSize(12f);
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                                    params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                                    messageContainer.setLayoutParams(params);
 
 
                                 }
@@ -2143,7 +2315,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                             if (status) {
 
 
-
                                 // String message = "You have already posted it .";
                                 //Tools.showCustomToast(WallPost.this, mView, message, Gravity.CENTER);
 
@@ -2179,6 +2350,19 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                     mediaRecyclerView.setAdapter(mediaAdapter);
                                     progressView.setVisibility(View.GONE);
                                     progressView.stopAnimation();
+
+
+                                    editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                                    int mColor = Color.parseColor("#FFFFFF");
+                                    messageContainer.setBackgroundColor(mColor);
+                                    messageContainer.setGravity(Gravity.START);
+                                    editPostMessage.setGravity(Gravity.START);
+                                    editPostMessage.setTextSize(12f);
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                                    params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                                    messageContainer.setLayoutParams(params);
+
 
                                 }
 
@@ -2282,7 +2466,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                if(uri == null)
+                if (uri == null)
                     throw new IllegalArgumentException("The filename cannot be null!");
                 return getDataColumn(context, contentUri, null, null);
             }
@@ -2305,7 +2489,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 final String[] selectionArgs = new String[]{
                         split[1]
                 };
-                if(contentUri == null)
+                if (contentUri == null)
                     throw new IllegalArgumentException("The filename cannot be null!");
 
                 return getDataColumn(context, contentUri, selection, selectionArgs);
@@ -2317,7 +2501,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             // Return the remote address
             if (isGooglePhotosUri(uri))
                 return uri.getLastPathSegment();
-            if(uri == null)
+            if (uri == null)
                 throw new IllegalArgumentException("The filename cannot be null!");
             return getDataColumn(context, uri, null, null);
         }
@@ -2700,7 +2884,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     }
 
 
-     /**
+    /**
      * Change the current image in image set
      */
     private void changeImage(Button previousButton, Button forwardButton,
@@ -2855,6 +3039,16 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 imgPermission.setImageResource(R.drawable.ic_people_outline_black_12dp);
                 postPermission = 2;
                 break;
+        }
+    }
+
+    private void checkIsOwnProfile() {
+        if (toUserId.equalsIgnoreCase(profileId)) {
+            findViewById(R.id.contentCategoryDisable).setVisibility(View.GONE);
+            findViewById(R.id.contentCategory).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.contentCategoryDisable).setVisibility(View.VISIBLE);
+            findViewById(R.id.contentCategory).setVisibility(View.GONE);
         }
     }
 

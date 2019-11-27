@@ -821,9 +821,9 @@ public class TextHolder extends RecyclerView.ViewHolder {
 
         int totalStars = silverStar + goldStar;
         String categoryName = item.getCatName();
-        boolean isApp=item.isApp();
+        int postSource=item.getPostSource();
 
-        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName,isApp);
+        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName,postSource);
 
 
         if (!isNullOrEmpty(item.getPostWallFirstName())) {

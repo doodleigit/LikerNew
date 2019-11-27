@@ -135,6 +135,7 @@ import com.liker.android.Post.view.fragment.ContributorStatus;
 import com.liker.android.Post.view.fragment.PostPermission;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.EditTextLinesLimiter;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PageTransformer;
@@ -365,7 +366,7 @@ public class PostNew extends AppCompatActivity implements
 
 
     private Socket socket;
-
+    private boolean isMimSelected;
 
 
     @Override
@@ -414,7 +415,7 @@ public class PostNew extends AppCompatActivity implements
         findViewById(R.id.imageCancelPost).setOnClickListener(this);
         tvPermission = findViewById(R.id.tvPermission);
         imgPermission = findViewById(R.id.imgPermission);
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
 
@@ -446,12 +447,60 @@ public class PostNew extends AppCompatActivity implements
                         if (base64md5.equalsIgnoreCase(mdFiveFile)) {
                             mediaFiles.remove(i);
                         }
-                        Log.d("base64md5 ", base64md5 + "");
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+                if (isMimSelected) {
+                    if (postImages.isEmpty() && postVideos.isEmpty()) {
+                        String mimColor = AppSingleton.getInstance().getMimColor();
+                        if (mimColor.startsWith("#")) {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            int mColor = Color.parseColor(mimColor);
+                            messageContainer.setBackgroundColor(mColor);
+                            editPostMessage.setTextSize(22f);
+                            if (mimColor.contentEquals("#C6FFD4")) {
+                                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                            } else {
+                                editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                            }
+                            ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                            params.height = (int) getResources().getDimension(R.dimen._200sdp);
+                            messageContainer.setLayoutParams(params);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
 
+                        } else {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            String imageUrl = AppConstants.MIM_IMAGE + mimColor;
+                            Picasso.with(PostNew.this).load(imageUrl).into(target);
+                            messageContainer.setBackground(mDrawable);
+                            editPostMessage.setHeight(200);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+                            editPostMessage.setTextSize(22f);
+                            switch (mimColor) {
+                                case "img_bg_birthday.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    break;
+                                case "img_bg_love.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#2D4F73"));
+                                    break;
+                                case "img_bg_love2.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#444748"));
+                                    break;
+                                case "img_bg_red.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                                case "img_bg_love3.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                            }
+
+                        }
+                    }
+                }
             }
         };
         videoListen = new VideoViewHolder.VideoListen() {
@@ -477,6 +526,56 @@ public class PostNew extends AppCompatActivity implements
                     }
                 }
 
+                if (isMimSelected) {
+                    if (postImages.isEmpty() && postVideos.isEmpty()) {
+                        String mimColor = AppSingleton.getInstance().getMimColor();
+                        if (mimColor.startsWith("#")) {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            int mColor = Color.parseColor(mimColor);
+                            messageContainer.setBackgroundColor(mColor);
+                            editPostMessage.setTextSize(22f);
+                            if (mimColor.contentEquals("#C6FFD4")) {
+                                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                            } else {
+                                editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                            }
+                            ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                            params.height = (int) getResources().getDimension(R.dimen._200sdp);
+                            messageContainer.setLayoutParams(params);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+
+                        } else {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            String imageUrl = AppConstants.MIM_IMAGE + mimColor;
+                            Picasso.with(PostNew.this).load(imageUrl).into(target);
+                            messageContainer.setBackground(mDrawable);
+                            editPostMessage.setHeight(200);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+                            editPostMessage.setTextSize(22f);
+
+                            switch (mimColor) {
+                                case "img_bg_birthday.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    break;
+                                case "img_bg_love.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#2D4F73"));
+                                    break;
+                                case "img_bg_love2.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#444748"));
+                                    break;
+                                case "img_bg_red.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                                case "img_bg_love3.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                            }
+
+                        }
+                    }
+                }
             }
         };
 
@@ -485,6 +584,9 @@ public class PostNew extends AppCompatActivity implements
 
             String mimColor = viewColors.get(position).getMimColor();
             hasMim = viewColors.get(position).getId();
+            AppSingleton.getInstance().setMimColor(mimColor);
+            AppSingleton.getInstance().setHasMim(hasMim);
+            isMimSelected = true;
             if (mimColor.startsWith("#")) {
                 if (mimColor.contentEquals("#FFFFFF")) {
                     editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
@@ -492,26 +594,26 @@ public class PostNew extends AppCompatActivity implements
                     messageContainer.setBackgroundColor(mColor);
                     messageContainer.setGravity(Gravity.START);
                     editPostMessage.setGravity(Gravity.START);
-                    editPostMessage.setTextAppearance(this, android.R.style.TextAppearance_Medium);
+                    editPostMessage.setTextSize(12f);
                     editPostMessage.setTextColor(Color.parseColor("#000000"));
                     ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
-                    params.height = (int) getResources().getDimension(R.dimen._220sdp);
+                    params.height = (int) getResources().getDimension(R.dimen._150sdp);
                     messageContainer.setLayoutParams(params);
                 } else {
                     editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
                     int mColor = Color.parseColor(mimColor);
                     messageContainer.setBackgroundColor(mColor);
+                    editPostMessage.setTextSize(22f);
                     if (mimColor.contentEquals("#C6FFD4")) {
                         editPostMessage.setTextColor(Color.parseColor("#000000"));
+                    } else {
+                        editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
                     }
                     ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
                     params.height = (int) getResources().getDimension(R.dimen._200sdp);
                     messageContainer.setLayoutParams(params);
                     messageContainer.setGravity(Gravity.CENTER);
                     editPostMessage.setGravity(Gravity.CENTER);
-                    //   editPostMessage.setFilters(new InputFilter[]{new MaxLinesInputFilter(2)});
-                    editPostMessage.setTextAppearance(this, android.R.style.TextAppearance_Large);
-                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
 
                 }
 
@@ -521,7 +623,11 @@ public class PostNew extends AppCompatActivity implements
                 String imageUrl = AppConstants.MIM_IMAGE + mimColor;
                 Picasso.with(this).load(imageUrl).into(target);
                 messageContainer.setBackground(mDrawable);
-                editPostMessage.setHeight(150);
+                editPostMessage.setHeight(200);
+                editPostMessage.setTextSize(22f);
+                messageContainer.setGravity(Gravity.CENTER);
+                editPostMessage.setGravity(Gravity.CENTER);
+                //  editPostMessage.setTextAppearance(PostNew.this, android.R.style.TextAppearance_Large);
                 switch (mimColor) {
                     case "img_bg_birthday.png":
                         editPostMessage.setTextColor(Color.parseColor("#000000"));
@@ -1182,7 +1288,7 @@ public class PostNew extends AppCompatActivity implements
     protected void onRestart() {
         super.onRestart();
 //        tvPermission.setText(manager.getPostPermission());
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
     }
@@ -1191,7 +1297,7 @@ public class PostNew extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
 //        tvPermission.setText(manager.getPostPermission());
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
@@ -1228,7 +1334,7 @@ public class PostNew extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
 //        tvPermission.setText(manager.getPostPermission());
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
@@ -1557,27 +1663,27 @@ public class PostNew extends AppCompatActivity implements
                                     finish();
                                     sendBroadcast((new Intent()).setAction(AppConstants.NEW_POST_ADD_BROADCAST));
                                 }
-                                 TopContributorStatus contributorStatus=new TopContributorStatus();
-                                Headers headers=new Headers();
-                                 //   String categoryId = App.getCategoryId();
-                                    headers.setDeviceId(deviceId);
-                                    headers.setIsApps(true);
-                                    headers.setSecurityToken(token);
-                                    headers.setUserId(userIds);
-                                    contributorStatus.setCategoryId(categoryId);
-                                    contributorStatus.setUserId(userIds);
-                                    contributorStatus.setMaxPostId("423487");
-                                    contributorStatus.setPermission(String.valueOf(postPermission));
-                                    contributorStatus.setHeaders(headers);
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(contributorStatus);
+                                TopContributorStatus contributorStatus = new TopContributorStatus();
+                                Headers headers = new Headers();
+                                //   String categoryId = App.getCategoryId();
+                                headers.setDeviceId(deviceId);
+                                headers.setIsApps(true);
+                                headers.setSecurityToken(token);
+                                headers.setUserId(userIds);
+                                contributorStatus.setCategoryId(categoryId);
+                                contributorStatus.setUserId(userIds);
+                                contributorStatus.setMaxPostId("423487");
+                                contributorStatus.setPermission(String.valueOf(postPermission));
+                                contributorStatus.setHeaders(headers);
+                                Gson gson = new Gson();
+                                String json = gson.toJson(contributorStatus);
 
-                                    socket.emit("new_post", json, new Ack() {
-                                        @Override
-                                        public void call(Object... args) {
+                                socket.emit("new_post", json, new Ack() {
+                                    @Override
+                                    public void call(Object... args) {
 
-                                        }
-                                    });
+                                    }
+                                });
 
 
                             }
@@ -1853,6 +1959,18 @@ public class PostNew extends AppCompatActivity implements
                 mediaRecyclerView.setAdapter(mediaAdapter);
                 progressDialog.dismiss();
 
+
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                int mColor = Color.parseColor("#FFFFFF");
+                messageContainer.setBackgroundColor(mColor);
+                messageContainer.setGravity(Gravity.START);
+                editPostMessage.setGravity(Gravity.START);
+                editPostMessage.setTextSize(12f);
+                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                messageContainer.setLayoutParams(params);
+
             } else {
                 Toast.makeText(this, "Cancel Camera Capture", Toast.LENGTH_SHORT).show();
             }
@@ -1887,6 +2005,17 @@ public class PostNew extends AppCompatActivity implements
                 mediaRecyclerViewToggle();
                 mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                 mediaRecyclerView.setAdapter(mediaAdapter);
+
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                int mColor = Color.parseColor("#FFFFFF");
+                messageContainer.setBackgroundColor(mColor);
+                messageContainer.setGravity(Gravity.START);
+                editPostMessage.setGravity(Gravity.START);
+                editPostMessage.setTextSize(12f);
+                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                messageContainer.setLayoutParams(params);
 
 
             } else {
@@ -1944,7 +2073,7 @@ public class PostNew extends AppCompatActivity implements
         if (cursor == null) {
             SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
             String m_curentDateandTime = m_sdf.format(new Date());
-            return contentURI.getPath()+m_curentDateandTime;
+            return contentURI.getPath() + m_curentDateandTime;
         } else {
             cursor.moveToFirst();
             int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
@@ -2270,6 +2399,17 @@ public class PostNew extends AppCompatActivity implements
                                     mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                                     mediaRecyclerView.setAdapter(mediaAdapter);
 
+                                    editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                                    int mColor = Color.parseColor("#FFFFFF");
+                                    messageContainer.setBackgroundColor(mColor);
+                                    messageContainer.setGravity(Gravity.START);
+                                    editPostMessage.setGravity(Gravity.START);
+                                    editPostMessage.setTextSize(12f);
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                                    params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                                    messageContainer.setLayoutParams(params);
+
                                 }
 
                                 //     String message = "Add gallery successfully!";
@@ -2461,6 +2601,17 @@ public class PostNew extends AppCompatActivity implements
                                     progressView.setVisibility(View.GONE);
                                     progressView.stopAnimation();
 
+                                    editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                                    int mColor = Color.parseColor("#FFFFFF");
+                                    messageContainer.setBackgroundColor(mColor);
+                                    messageContainer.setGravity(Gravity.START);
+                                    editPostMessage.setGravity(Gravity.START);
+                                    editPostMessage.setTextSize(12f);
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                                    params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                                    messageContainer.setLayoutParams(params);
+
                                 }
 
 //                                String message = "Add gallery successfully!";
@@ -2562,7 +2713,7 @@ public class PostNew extends AppCompatActivity implements
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                if(uri == null)
+                if (uri == null)
                     throw new IllegalArgumentException("The filename cannot be null!");
                 return getDataColumn(context, contentUri, null, null);
             }
@@ -2585,7 +2736,7 @@ public class PostNew extends AppCompatActivity implements
                 final String[] selectionArgs = new String[]{
                         split[1]
                 };
-                if(uri == null)
+                if (uri == null)
                     throw new IllegalArgumentException("The filename cannot be null!");
 
                 return getDataColumn(context, contentUri, selection, selectionArgs);
@@ -2597,7 +2748,7 @@ public class PostNew extends AppCompatActivity implements
             // Return the remote address
             if (isGooglePhotosUri(uri))
                 return uri.getLastPathSegment();
-            if(uri == null)
+            if (uri == null)
                 throw new IllegalArgumentException("The filename cannot be null!");
             return getDataColumn(context, uri, null, null);
         }
@@ -3518,6 +3669,18 @@ public class PostNew extends AppCompatActivity implements
                 mediaRecyclerViewToggle();
                 mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                 mediaRecyclerView.setAdapter(mediaAdapter);
+
+
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                int mColor = Color.parseColor("#FFFFFF");
+                messageContainer.setBackgroundColor(mColor);
+                messageContainer.setGravity(Gravity.START);
+                editPostMessage.setGravity(Gravity.START);
+                editPostMessage.setTextSize(12f);
+                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                messageContainer.setLayoutParams(params);
             }
         }
     }

@@ -198,11 +198,17 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
     }
 
     public void sendImageFromGallery() {
-        Intent intent1 = new Intent();
-        intent1.setType("image/*");
-        intent1.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent1.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent1, "Select images"), REQUEST_TAKE_GALLARY);
+//        Intent intent1 = new Intent();
+//        intent1.setType("image/*");
+//        intent1.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//        intent1.setAction(Intent.ACTION_GET_CONTENT);
+//        startActivityForResult(Intent.createChooser(intent1, "Select images"), REQUEST_TAKE_GALLARY);
+
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_TAKE_GALLARY);
     }
 
     @Override

@@ -483,9 +483,25 @@ public class Tools {
     }
 
 
-    public static SpannableStringBuilder getSpannableStringBuilder(Context context, String catId, String likes, String followers, int totalStars, String categoryName,boolean isApp) {
+    public static SpannableStringBuilder getSpannableStringBuilder(Context context, String catId, String likes, String followers, int totalStars, String categoryName, int postSource) {
 
-        String postFrom = isApp ? " | Liker on android" : " | Liker on web";
+        String postFrom;
+        switch (postSource) {
+            case 0:
+                //  postFrom = " | Liker on web";
+                postFrom = "";
+                break;
+            case 1:
+                postFrom = " | Posted using Liker on Android";
+                break;
+            case 2:
+                //  postFrom = " | Liker on ios";
+                postFrom = "";
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + postSource);
+        }
+
         String headerInfo = String.format("%s Likes | %d Stars | %s Followers | %s", likes, totalStars, followers, "");
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
@@ -540,8 +556,8 @@ public class Tools {
         ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#60b2fc"));
         spannableCategory.setSpan(foregroundColorSpan, 0, categoryName.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         builder.append(spannableCategory);
-   //     SpannableString spannablePostFromStr = new SpannableString(postFrom);
-     //   builder.append(spannablePostFromStr);
+        //     SpannableString spannablePostFromStr = new SpannableString(postFrom);
+        //   builder.append(spannablePostFromStr);
         return builder;
 
     }
@@ -611,7 +627,6 @@ public class Tools {
     }
 
 
-
     public static SpannableStringBuilder getSpannableStringShareHeader(String likes, String followers, int totalStars, String categoryName) {
 
         String headerInfo = String.format("%s Likes | %d Stars | %s", likes, totalStars, "");
@@ -660,8 +675,6 @@ public class Tools {
             // "<a href="http://example.com"><b>example</b></a>"
             String linkInnerH = link.html(); // "<b>example</b>"*/
         return text;
-
-
     }
 
     public static String extractMentionText(Comment_ item) {
@@ -1364,8 +1377,7 @@ public class Tools {
     }
 
 
-
-    public static void followToggle(ViewGroup parentView,ViewGroup targetView,boolean isFollowToggle) {
+    public static void followToggle(ViewGroup parentView, ViewGroup targetView, boolean isFollowToggle) {
         Transition transition = new Fade();
         transition.setDuration(600);
         transition.addTarget(targetView);
