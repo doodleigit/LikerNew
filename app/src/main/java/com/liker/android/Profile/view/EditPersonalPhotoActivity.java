@@ -17,6 +17,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -49,6 +50,7 @@ import retrofit2.Response;
 public class EditPersonalPhotoActivity extends AppCompatActivity {
 
     private ImageView close;
+    private LinearLayout addPhotoLayout;
     private RecyclerView recyclerView;
     private FloatingActionButton save;
     private ProgressBar progressBar;
@@ -106,6 +108,7 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
         personalPhotoAdapter = new EditPersonalPhotoAdapter(this, personalPhotos, addPhotoClickListener);
 
         close = findViewById(R.id.close);
+        addPhotoLayout = findViewById(R.id.add_photo);
         save = findViewById(R.id.save);
         progressBar = findViewById(R.id.progress_bar);
         recyclerView = findViewById(R.id.recyclerView);
@@ -152,6 +155,13 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+            }
+        });
+
+        addPhotoLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addPhotoClickListener.onClickListener();
             }
         });
 

@@ -447,7 +447,8 @@ public class AboutFragment extends Fragment {
         years.add(getString(R.string.select_year));
         days.add(getString(R.string.select_day));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        int totalDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+//        int totalDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        int totalDay = 31;
 //        for (int i = 1900; i <= thisYear; i++) {
 //            years.add(Integer.toString(i));
 //        }
@@ -455,7 +456,7 @@ public class AboutFragment extends Fragment {
             years.add(Integer.toString(i));
         }
         for (int i = 1; i <= totalDay; i++) {
-            days.add(Integer.toString(i));
+            days.add(Integer.toString(i).length() < 2 ? ("0" + i) : Integer.toString(i));
         }
         for (CountryInfo countryInfo : countries) {
             countryList.add(countryInfo.getCountryName());
@@ -799,7 +800,9 @@ public class AboutFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String emailAddress = etNewEmail.getText().toString();
-                addEmailRequest(emailAddress, emailPrivacyType, addEmailAdapter, etNewEmail, addEmailLayout);
+                if (isEmailValid(etNewEmail, emailAddress)) {
+                    addEmailRequest(emailAddress, emailPrivacyType, addEmailAdapter, etNewEmail, addEmailLayout);
+                }
             }
         });
 
@@ -823,7 +826,13 @@ public class AboutFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String phoneNumber = etNewPhone.getText().toString();
-                addPhoneRequest(phoneNumber, numberType, phoneNumberPrivacyType, phone, addPhoneAdapter, etNewPhone, phoneCountrySpinner, addPhoneLayout);
+                if (phone != null && !phone.getCountryId().isEmpty()) {
+                    if (isPhoneValid(etNewPhone, phoneNumber, phone.getCountryPhoneCode())) {
+                        addPhoneRequest(phoneNumber, numberType, phoneNumberPrivacyType, phone, addPhoneAdapter, etNewPhone, phoneCountrySpinner, addPhoneLayout);
+                    }
+                } else {
+                    Toast.makeText(getContext(), getString(R.string.please_select_country_code), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -1458,8 +1467,8 @@ public class AboutFragment extends Fragment {
             etSearchPlace.setText(experience.getLocationName());
             etSummary.setText(experience.getDescription());
             currentlyWorkingCheck.setChecked(experience.getCurrentlyWorked());
-            toYearSpinner.setEnabled(experience.getCurrentlyWorked());
-            toMonthSpinner.setEnabled(experience.getCurrentlyWorked());
+            toYearSpinner.setEnabled(!experience.getCurrentlyWorked());
+            toMonthSpinner.setEnabled(!experience.getCurrentlyWorked());
             privacySpinner.setSelection(Integer.valueOf(experience.getPermissionType()));
             for (int i = 0; i < years.size(); i++) {
                 if (experience.getFromYear().equals(String.valueOf(years.get(i)))) {
@@ -1647,7 +1656,7 @@ public class AboutFragment extends Fragment {
         fromYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                fromYear[0] = years.get(position);
+                fromYear[0] = position == 0 ? "0" : years.get(position);
             }
 
             @Override
@@ -1659,7 +1668,7 @@ public class AboutFragment extends Fragment {
         fromMonthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                fromMonth[0] = months.get(position);
+                fromMonth[0] = position == 0 ? "0" : months.get(position);
             }
 
             @Override
@@ -1671,7 +1680,7 @@ public class AboutFragment extends Fragment {
         toYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                toYear[0] = years.get(position);
+                toYear[0] = position == 0 ? "0" : years.get(position);
             }
 
             @Override
@@ -1683,7 +1692,7 @@ public class AboutFragment extends Fragment {
         toMonthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                toMonth[0] = months.get(position);
+                toMonth[0] = position == 0 ? "0" : months.get(position);
             }
 
             @Override
@@ -2158,7 +2167,7 @@ public class AboutFragment extends Fragment {
             etCertificateNumber.setText(certification.getLicenseNumber());
             etCertificateUrl.setText(certification.getCertificationUrl());
             notExpireCheck.setChecked(certification.getIsExpired());
-            toYearSpinner.setEnabled(certification.getIsExpired());
+            toYearSpinner.setEnabled(!certification.getIsExpired());
             privacySpinner.setSelection(Integer.valueOf(certification.getPermissionType()));
             //Need to work
             for (int i = 0; i < years.size(); i++) {
@@ -2318,7 +2327,7 @@ public class AboutFragment extends Fragment {
         fromYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                fromYear[0] = years.get(position);
+                fromYear[0] = position == 0 ? "0" : years.get(position);
             }
 
             @Override
@@ -2330,7 +2339,7 @@ public class AboutFragment extends Fragment {
         toYearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                toYear[0] = years.get(position);
+                toYear[0] = position == 0 ? "0" : years.get(position);
             }
 
             @Override
@@ -2551,7 +2560,8 @@ public class AboutFragment extends Fragment {
                         getData();
                         dialog.dismiss();
                     } else {
-                        Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                        String message = obj.getString("message");
+                        Toast.makeText(getContext(), message.isEmpty() ? getString(R.string.something_went_wrong) : message, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -3124,6 +3134,25 @@ public class AboutFragment extends Fragment {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
 
+    }
+
+    private boolean isEmailValid(EditText etEmail, String email) {
+        if (android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            return true;
+        } else {
+            etEmail.setError(getString(R.string.invalid_email_address));
+            return false;
+        }
+    }
+
+    private boolean isPhoneValid(EditText etNumber, String phoneNumber, String countryCode) {
+        String phone = countryCode + phoneNumber;
+        if (phone.length() >= 9) {
+            return true;
+        } else {
+            etNumber.setError(getString(R.string.invalid_phone_number));
+            return false;
+        }
     }
 
 }

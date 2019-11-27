@@ -476,6 +476,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="30dp"
                             android:background="@drawable/rectangle_corner_round_five"
+                            android:inputType="phone"
                             android:hint="New Phone"
                             android:paddingStart="10dp"
                             android:paddingEnd="10dp"

@@ -699,7 +699,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             @Override
             public void onResponse(Call<UserAllInfo> call, Response<UserAllInfo> response) {
                 if (response.isSuccessful()) {
-                    if (response.body() != null) {
+                    if (response.body() != null && response.body().getId() != null) {
                         userAllInfo = response.body();
                         isFriendStatus();
                         setData();

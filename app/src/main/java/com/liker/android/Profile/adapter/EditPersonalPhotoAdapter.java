@@ -98,6 +98,26 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
                 }
             });
 
+            holder.featured.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (holder.featured.getVisibility() == View.VISIBLE) {
+                        if (arrayList.get(i).isFeatured()) {
+                            arrayList.get(i).setFeatured(!arrayList.get(i).isFeatured());
+                            notifyItemChanged(i);
+                        } else {
+                            if (getFeaturedCount() < 9) {
+                                arrayList.get(i).setFeatured(!arrayList.get(i).isFeatured());
+                                notifyItemChanged(i);
+                            }
+//                            else {
+//                                Toast.makeText(context, "You have already reached maximum number of featured image", Toast.LENGTH_SHORT).show();
+//                            }
+                        }
+                    }
+                }
+            });
+
             holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -150,7 +170,7 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemCount() {
-        return arrayList.size() + 1;
+        return arrayList.size();
     }
 
     @Override
