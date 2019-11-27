@@ -41,6 +41,11 @@ public class PostItem implements Serializable, Parcelable
     @SerializedName("is_notification_off")
     @Expose
     private boolean isNotificationOff;
+
+    @SerializedName("is_app")
+    @Expose
+    private boolean isApp;
+
     @SerializedName("is_shared")
     @Expose
     private String isShared;
@@ -195,6 +200,7 @@ public class PostItem implements Serializable, Parcelable
         this.hasShared = ((int) in.readValue((int.class.getClassLoader())));
         this.inputAddClassName = ((String) in.readValue((String.class.getClassLoader())));
         this.isNotificationOff = ((boolean) in.readValue((boolean.class.getClassLoader())));
+        this.isApp = ((boolean) in.readValue((boolean.class.getClassLoader())));
         this.isShared = ((String) in.readValue((String.class.getClassLoader())));
         this.isWall = ((String) in.readValue((String.class.getClassLoader())));
         this.listClassName = ((String) in.readValue((String.class.getClassLoader())));
@@ -312,6 +318,14 @@ public class PostItem implements Serializable, Parcelable
 
     public void setIsNotificationOff(boolean isNotificationOff) {
         this.isNotificationOff = isNotificationOff;
+    }
+
+    public boolean isApp() {
+        return isApp;
+    }
+
+    public void setApp(boolean app) {
+        isApp = app;
     }
 
     public String getIsShared() {
@@ -661,6 +675,7 @@ public class PostItem implements Serializable, Parcelable
         dest.writeValue(hasShared);
         dest.writeValue(inputAddClassName);
         dest.writeValue(isNotificationOff);
+        dest.writeValue(isApp);
         dest.writeValue(isShared);
         dest.writeValue(isWall);
         dest.writeValue(listClassName);

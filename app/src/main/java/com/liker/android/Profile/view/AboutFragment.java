@@ -114,6 +114,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -447,7 +448,10 @@ public class AboutFragment extends Fragment {
         days.add(getString(R.string.select_day));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
         int totalDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        for (int i = 1900; i <= thisYear; i++) {
+//        for (int i = 1900; i <= thisYear; i++) {
+//            years.add(Integer.toString(i));
+//        }
+        for(int i=thisYear;i>=1900;i--){
             years.add(Integer.toString(i));
         }
         for (int i = 1; i <= totalDay; i++) {
@@ -1055,10 +1059,12 @@ public class AboutFragment extends Fragment {
         ArrayList<String> years = new ArrayList<>();
         years.add(getString(R.string.select_year));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 1900; i <= thisYear; i++) {
+//        for (int i = 1900; i <= thisYear; i++) {
+//            years.add(Integer.toString(i));
+//        }
+        for(int i=thisYear;i>=1900;i--){
             years.add(Integer.toString(i));
         }
-
         Toolbar toolbar = dialog.findViewById(R.id.toolbar);
         Button btnRemove;
         EditText etInstituteName, etSearchPlace, etSiteAddress, etDegree, etStudyMajor, etGrade, etSummary;
@@ -1338,7 +1344,11 @@ public class AboutFragment extends Fragment {
         ArrayList<String> years = new ArrayList<>();
         years.add(getString(R.string.select_year));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 1900; i <= thisYear; i++) {
+//        for (int i = 1900; i <= thisYear; i++) {
+//            years.add(Integer.toString(i));
+//        }
+
+        for(int i=thisYear;i>=1900;i--){
             years.add(Integer.toString(i));
         }
 
@@ -1723,7 +1733,11 @@ public class AboutFragment extends Fragment {
         ArrayList<String> years = new ArrayList<>();
         years.add(getString(R.string.select_year));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 1900; i <= thisYear; i++) {
+//        for (int i = 1900; i <= thisYear; i++) {
+//            years.add(Integer.toString(i));
+//        }
+
+        for(int i=thisYear;i>=1900;i--){
             years.add(Integer.toString(i));
         }
 
@@ -2031,10 +2045,12 @@ public class AboutFragment extends Fragment {
         ArrayList<String> years = new ArrayList<>();
         years.add(getString(R.string.select_year));
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        for (int i = 1900; i <= thisYear; i++) {
+//        for (int i = 1900; i <= thisYear; i++) {
+//            years.add(Integer.toString(i));
+//        }
+        for(int i=thisYear;i>=1900;i--){
             years.add(Integer.toString(i));
         }
-
         Toolbar toolbar = dialog.findViewById(R.id.toolbar);
         Button btnRemove;
         TextView tvFileName;

@@ -150,8 +150,6 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemCount() {
-        if (arrayList.size() == 0)
-            return 0;
         return arrayList.size() + 1;
     }
 

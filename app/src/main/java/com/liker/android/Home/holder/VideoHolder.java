@@ -558,8 +558,8 @@ public class VideoHolder extends RecyclerView.ViewHolder {
         int totalStars = silverStar + goldStar;
         String categoryName = item.getCatName();
 //
-
-        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName);
+        boolean isApp=item.isApp();
+        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName,isApp);
 
 
         tvPostUserName.setText(String.format("%s %s", item.getUserFirstName(), item.getUserLastName()));
@@ -679,7 +679,7 @@ public class VideoHolder extends RecyclerView.ViewHolder {
                 } else {
                     popup.getMenu().add(1, R.id.shareAsPost, 1, "Share as a Post ("+postTotalShare+")").setIcon(R.drawable.like_normal);
                 }
-                
+
 
 //                popup.show();
                 MenuPopupHelper menuHelper = new MenuPopupHelper(mContext, (MenuBuilder) popup.getMenu(), v);

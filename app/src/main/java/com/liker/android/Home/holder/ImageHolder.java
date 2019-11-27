@@ -765,8 +765,8 @@ public class ImageHolder extends RecyclerView.ViewHolder {
             tvWallPostInfo.setVisibility(View.GONE);
         }
 
-
-        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName);
+        boolean isApp=item.isApp();
+        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName,isApp);
         if ("1".equalsIgnoreCase(isShared)) {
             tvPostUserName.setText(String.format("%s %s", item.getUserFirstName().trim(), item.getUserLastName().trim()));
             tvShared.setVisibility(View.VISIBLE);

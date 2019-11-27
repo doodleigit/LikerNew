@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/album_layout"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <RelativeLayout
             android:layout_width="match_parent"

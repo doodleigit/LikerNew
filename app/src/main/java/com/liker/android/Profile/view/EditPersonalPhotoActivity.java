@@ -284,7 +284,7 @@ public class EditPersonalPhotoActivity extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }
+                } catch (NullPointerException e) {}
                 progressDialog.dismiss();
             }
 

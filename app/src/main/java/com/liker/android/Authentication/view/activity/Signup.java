@@ -304,12 +304,14 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
         slideLeftIn = AnimationUtils.loadAnimation(this, R.anim.slide_left_in);
         slideLeftOut = AnimationUtils.loadAnimation(this, R.anim.slide_left_out);
 
-        int thisYear = Calendar.getInstance().get(Calendar.YEAR);
+        int thisYear = Calendar.getInstance().get(Calendar.YEAR)-16;
         yearArr.add("Select Year");
-        for (int i = 1900; i <= thisYear; i++) {
+//        for (int i = 1900; i <= thisYear; i++) {
+//            yearArr.add(Integer.toString(i));
+//        }
+        for(int i=thisYear;i>=1900;i--){
             yearArr.add(Integer.toString(i));
         }
-
         ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, dayArr);
         spinnerDay.setAdapter(dayAdapter);
         ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, monthArr);
@@ -824,18 +826,18 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        PrefManager manager = new PrefManager(this);
         switch (id) {
 
             case R.id.btnSignUp:
                 Log.d(TAG, "onClick: " + flipperId);
                 if (flipperId == 0) {
-                    if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName)) {
-                        if (/*viewModel.validateEmailField(etEmail)*/viewModel.isValidEmail(mEmail, etEmail)) {
-                            Call<String> call = webService.checkEmailExists(true, etEmail.getText().toString());
-                            sendCheckEmailRequest(call);
-                        }
-                    }
+//                    if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName)) {
+//                        if (/*viewModel.validateEmailField(etEmail)*/viewModel.isValidEmail(mEmail, etEmail)) {
+//                            Call<String> call = webService.checkEmailExists(true, etEmail.getText().toString());
+//                            sendCheckEmailRequest(call);
+//                        }
+//                    }
+                    next();
                 }
 
                 break;

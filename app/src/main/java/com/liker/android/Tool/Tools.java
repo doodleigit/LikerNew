@@ -483,9 +483,9 @@ public class Tools {
     }
 
 
-    public static SpannableStringBuilder getSpannableStringBuilder(Context context, String catId, String likes, String followers, int totalStars, String categoryName) {
+    public static SpannableStringBuilder getSpannableStringBuilder(Context context, String catId, String likes, String followers, int totalStars, String categoryName,boolean isApp) {
 
-
+        String postFrom = isApp ? " | Liker on android" : " | Liker on web";
         String headerInfo = String.format("%s Likes | %d Stars | %s Followers | %s", likes, totalStars, followers, "");
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
@@ -508,6 +508,40 @@ public class Tools {
         ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#60b2fc"));
         spannableCategory.setSpan(foregroundColorSpan, 0, categoryName.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         builder.append(spannableCategory);
+        SpannableString spannablePostFromStr = new SpannableString(postFrom);
+        builder.append(spannablePostFromStr);
+        return builder;
+
+    }
+
+
+    public static SpannableStringBuilder getSpannableStringBuilder(Context context, String catId, String likes, String followers, int totalStars, String categoryName) {
+
+//        String postFrom = isApp ? "|Liker on Web" : "|Liker on Android";
+        String headerInfo = String.format("%s Likes | %d Stars | %s Followers | %s", likes, totalStars, followers, "");
+
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        SpannableString spannableUserStr = new SpannableString(headerInfo);
+        builder.append(spannableUserStr);
+        SpannableString spannableCategory = new SpannableString(String.format(categoryName));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                context.sendBroadcast((new Intent().putExtra("category_id", catId)).setAction(AppConstants.POST_FILTER_CAT_BROADCAST));
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        spannableCategory.setSpan(clickableSpan, 0, categoryName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#60b2fc"));
+        spannableCategory.setSpan(foregroundColorSpan, 0, categoryName.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        builder.append(spannableCategory);
+   //     SpannableString spannablePostFromStr = new SpannableString(postFrom);
+     //   builder.append(spannablePostFromStr);
         return builder;
 
     }

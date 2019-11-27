@@ -2238,24 +2238,28 @@ public class Home extends AppCompatActivity implements
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response.body());
-                    boolean status = jsonObject.getBoolean("status");
-                    if (status) {
-                    } else {
-                        Runnable runnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                displayRateusStatus();
-                            }
-                        };
-                        Handler handler = new Handler();
-                        handler.postDelayed(runnable, 600000);
+
+                if(response.body()!=null){
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body());
+                        boolean status = jsonObject.getBoolean("status");
+                        if (status) {
+                        } else {
+                            Runnable runnable = new Runnable() {
+                                @Override
+                                public void run() {
+                                    displayRateusStatus();
+                                }
+                            };
+                            Handler handler = new Handler();
+                            handler.postDelayed(runnable, 600000);
 //                        handler.postDelayed(runnable, 12000);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {

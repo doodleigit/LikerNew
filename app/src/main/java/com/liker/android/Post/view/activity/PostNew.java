@@ -1077,7 +1077,6 @@ public class PostNew extends AppCompatActivity implements
         }
     }
 
-
     public static List<String> extractUrls(String text) {
         List<String> containedUrls = new ArrayList<String>();
         String urlRegex = "((https?|ftp|gopher|telnet|file):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
@@ -1450,6 +1449,8 @@ public class PostNew extends AppCompatActivity implements
             if (contentTitle.length() > 0 && postImages.size() > 0) {
                 contentType = 2;
                 status = 2;
+
+
             }/* else if (contentTitle.length() > 0 && extractedUrls.size() > 0) {
                 contentType = 3;
                 status = 3;
@@ -1459,6 +1460,7 @@ public class PostNew extends AppCompatActivity implements
             } */ else if (contentTitle.length() > 0 && postVideos.size() > 0) {
                 contentType = 2;
                 status = 2;
+
             } else {
                 contentType = 1;
                 status = 1;

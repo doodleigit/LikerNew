@@ -686,10 +686,8 @@ public class TextMimHolder extends RecyclerView.ViewHolder {
 
         int totalStars = silverStar + goldStar;
         String categoryName = item.getCatName();
-//
-
-
-        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName);
+        boolean isApp=item.isApp();
+        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName,isApp);
 
 
         if (!isNullOrEmpty(item.getPostWallFirstName())) {

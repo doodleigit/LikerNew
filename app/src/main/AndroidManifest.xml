@@ -206,6 +206,9 @@
             android:name=".Notification.view.NotificationActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Profile.view.EditPersonalPhotoActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -148,9 +149,7 @@ public class BreakingPost extends Fragment {
         permissionIntent.addAction(AppConstants.PERMISSION_CHANGE_BROADCAST);
         Objects.requireNonNull(getActivity()).registerReceiver(permissionBroadcast, permissionIntent);
 
-        IntentFilter statusIntent = new IntentFilter();
-        statusIntent.addAction(AppConstants.FOLLOW_STATUS_BROADCAST);
-        Objects.requireNonNull(getActivity()).registerReceiver(followStatusBroadcast, statusIntent);
+
 
 
         manager = new PrefManager(getActivity());
@@ -185,6 +184,7 @@ public class BreakingPost extends Fragment {
         tvAlert = root.findViewById(R.id.alert);
         refreshLayout = root.findViewById(R.id.refreshLayout);
         recyclerView = root.findViewById(R.id.rvBreakingPost);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -453,7 +453,7 @@ public class BreakingPost extends Fragment {
             @Override
             public void onResponse(Call<List<PostItem>> call, Response<List<PostItem>> response) {
 
-                List<PostItem> itemList = response.body();
+                 List<PostItem> itemList = response.body();
                 if (itemList != null) {
                     postItemList.clear();
                     checkLearnAboutSiteStatus();
@@ -652,12 +652,9 @@ public class BreakingPost extends Fragment {
             PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
             int position = intent.getIntExtra("position", -1);
             String type = intent.getStringExtra("type");
-
             if (position != -1) {
                 if (postItemList.size() >= position + 1) {
                     if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
-
-
                         if ("permission".equalsIgnoreCase(type)) {
                             postItemList.remove(position);
                             postItemList.add(position, postItem);
@@ -665,18 +662,8 @@ public class BreakingPost extends Fragment {
                         } else {
                             postItemList.remove(position);
                             adapter.notifyDataSetChanged();
-//                            postItemList.remove(position);
-//                            postItemList.remove(position);
-//                            recyclerView.smoothScrollToPosition(0);
-//                            adapter.notifyItemRemoved(position);
-                           // adapter.removeItemAtPosition(position);
-                           // recyclerView.smoothScrollToPosition(0);
-                        //   adapter.deleteItem(position);
-                          //  adapter.notifyDataSetChanged();
-                          //  recyclerView.smoothScrollToPosition(0);
-                            //--offset;
-                        }
 
+                        }
 
                     }
                 }
@@ -684,42 +671,7 @@ public class BreakingPost extends Fragment {
         }
     };
 
-    BroadcastReceiver followStatusBroadcast = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
-            int position = intent.getIntExtra("position", -1);
-            String type = intent.getStringExtra("type");
 
-            postItemList.remove(position);
-            postItemList.add(position, postItem);
-            adapter.notifyItemChanged(position);
-
-//            if (position != -1) {
-//                if (postItemList.size() >= position+1) {
-//                    String id=postItemList.get(position).getPostId();
-//                    String ids=postItem.getPostId();
-//                    if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
-//
-//                        postItemList.remove(position);
-//                        postItemList.add(position, postItem);
-//                        adapter.notifyItemChanged(position);
-//                    /*    if("follow".equalsIgnoreCase(type)){
-//                            postItemList.remove(position);
-//                            postItemList.add(position, postItem);
-//                            adapter.notifyItemChanged(position);
-//                        }else {
-//                            postItemList.remove(position);
-//                           // adapter.notifyItemChanged(position);
-//                            adapter.notifyDataSetChanged();
-//                        }*/
-//
-//
-//                    }
-//                }
-//            }
-        }
-    };
 
     @Override
     public void onDestroy() {
@@ -729,7 +681,7 @@ public class BreakingPost extends Fragment {
         Objects.requireNonNull(getActivity()).unregisterReceiver(broadcastReceiver);
         Objects.requireNonNull(getActivity()).unregisterReceiver(postChangeBroadcast);
         Objects.requireNonNull(getActivity()).unregisterReceiver(permissionBroadcast);
-        Objects.requireNonNull(getActivity()).unregisterReceiver(followStatusBroadcast);
+      //  Objects.requireNonNull(getActivity()).unregisterReceiver(followStatusBroadcast);
     }
 
     @Override

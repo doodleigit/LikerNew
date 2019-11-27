@@ -545,7 +545,6 @@ public class PostFragment extends Fragment {
                     }
                 }
             }
-
         }
     };
 
@@ -560,7 +559,6 @@ public class PostFragment extends Fragment {
                 if (postItemList.size() >= position + 1) {
                     if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
 
-
                         if ("permission".equalsIgnoreCase(type)) {
                             postItemList.remove(position);
                             postItemList.add(position, postItem);
@@ -570,8 +568,6 @@ public class PostFragment extends Fragment {
                             // adapter.notifyItemChanged(position);
                             adapter.notifyDataSetChanged();
                         }
-
-
                     }
                 }
             }
