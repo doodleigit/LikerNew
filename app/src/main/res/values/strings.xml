@@ -315,6 +315,7 @@
     <string name="email_is_invalid">Email is invalid</string>
     <string name="password_request_send_to_your_email">Forgot password request send to your email address successfully. Please, check your email.</string>
     <string name="invalid_email_address">Invalid email address</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
     <string name="oauth_verifier">oauth_verifier</string>
     <string name="twitter">twitter</string>
     <string name="facebook">facebook</string>
@@ -336,6 +337,7 @@
     <string name="download_video">Download video</string>
     <string name="open_tab">Open in new tab</string>
     <string name="copy_image">Copy image url</string>
+    <string name="please_select_country_code">Please select country code first</string>
 
     <string name="http">http://</string>
     <string name="download">Download</string>

@@ -267,7 +267,7 @@ public class PhotosFragment extends Fragment {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 
-                if(response.body()!= null){
+                if(response.body() != null){
                     try {
                         JSONObject jsonObject = new JSONObject(response.body());
                         boolean status = jsonObject.getBoolean("status");

@@ -35,7 +35,8 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
     private int count = 0;
     private boolean isOwnProfile;
     private int ITEM_HOLDER = 0;
-    private int ADD_ITEM_HOLDER = 1;
+    private int COUNT_ITEM_HOLDER = 1;
+    private int ADD_ITEM_HOLDER = 2;
 
     public PersonalPhotoAdapter(Context context, ArrayList<PersonalPhoto> arrayList, ArrayList<PersonalPhoto> arrayListAll, AddPhotoClickListener addPhotoClickListener, boolean isOwnProfile) {
         this.context = context;
@@ -51,8 +52,11 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (i == ITEM_HOLDER) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.personal_photo_item, viewGroup, false);
             return new ViewHolder(view);
-        } else if (i == ADD_ITEM_HOLDER) {
+        } else if (i == COUNT_ITEM_HOLDER) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.photo_item_count, viewGroup, false);
+            return new CountViewHolder(view);
+        } else if (i == ADD_ITEM_HOLDER) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.add_photo_item, viewGroup, false);
             return new AddViewHolder(view);
         }
 
@@ -85,6 +89,17 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         } else if (viewHolder instanceof AddViewHolder) {
             AddViewHolder holder = (AddViewHolder) viewHolder;
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (addPhotoClickListener != null)
+                        addPhotoClickListener.onClickListener();
+                    else
+                        editPersonalPhoto(arrayListAll);
+                }
+            });
+        } else if (viewHolder instanceof CountViewHolder) {
+            CountViewHolder holder = (CountViewHolder) viewHolder;
 
             if (count == 0) {
                 holder.imageView.setVisibility(View.VISIBLE);
@@ -133,20 +148,29 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public int getItemCount() {
         if (isOwnProfile)
-            return arrayList.size() + 1;
+            if (count > 0)
+                return arrayList.size() + 2;
+            else
+                return arrayList.size() + 1;
         else
             return arrayList.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (isPositionFooter(position)) {
+        if (isPositionCount(position)) {
+            return COUNT_ITEM_HOLDER;
+        } else if (isPositionAdd(position)){
             return ADD_ITEM_HOLDER;
         }
         return ITEM_HOLDER;
     }
 
-    private boolean isPositionFooter(int position) {
+    private boolean isPositionCount(int position) {
+        return position == arrayList.size() + 1;
+    }
+
+    private boolean isPositionAdd(int position) {
         return position == arrayList.size();
     }
 
@@ -163,9 +187,19 @@ public class PersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.View
     public class AddViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
-        TextView mediaCount;
 
         public AddViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.image);
+        }
+    }
+
+    public class CountViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView imageView;
+        TextView mediaCount;
+
+        public CountViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image);
             mediaCount = itemView.findViewById(R.id.media_count);
