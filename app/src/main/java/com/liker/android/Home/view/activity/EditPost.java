@@ -394,7 +394,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         idSet = new ArrayList<>();
         contentPost = findViewById(R.id.contentPost);
         linkScriptContainer = findViewById(R.id.linkScriptContainer);
-
+        rootView = findViewById(R.id.main_activity_root_view);
         findViewById(R.id.btnAttachment).setOnClickListener(this);
         tvSubmitPost = findViewById(R.id.tvSubmitPost);
         tvSubmitPost.setOnClickListener(this);
@@ -627,12 +627,14 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         MimAdapter adapter = new MimAdapter(this, viewColors, listener);
         mimRecyclerView.setAdapter(adapter);
 
+        rvMimShow = true;
+        rvMimToggle();
+
         profileId = manager.getProfileId();
         userIds = manager.getProfileId();
         toUserId = manager.getProfileId();
         deviceId = manager.getDeviceId();
         token = manager.getToken();
-
 
         chatAdapter = new ChatAdapter();
 
@@ -649,7 +651,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                     .into(imgPostUser);
         }
 
-        rootView = findViewById(R.id.main_activity_root_view);
+
         emojiButton = findViewById(R.id.main_activity_emoji);
         final ImageView sendButton = findViewById(R.id.main_activity_send);
 

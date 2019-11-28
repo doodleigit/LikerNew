@@ -406,7 +406,7 @@ public class PostNew extends AppCompatActivity implements
         intro = findViewById(R.id.intro);
         tvSubmitPost = findViewById(R.id.tvSubmitPost);
         postButton = (FloatingActionButton) findViewById(R.id.post);
-
+        rootView = findViewById(R.id.main_activity_root_view);
         tvSubmitPost.setOnClickListener(this);
         findViewById(R.id.contentCategory).setOnClickListener(this);
         findViewById(R.id.imageCamera).setOnClickListener(this);
@@ -648,10 +648,12 @@ public class PostNew extends AppCompatActivity implements
 
             }
 
-
         };
         MimAdapter adapter = new MimAdapter(this, viewColors, listener);
         mimRecyclerView.setAdapter(adapter);
+
+        rvMimShow = true;
+        rvMimToggle();
 
         profileId = manager.getProfileId();
         userIds = manager.getProfileId();
@@ -662,7 +664,7 @@ public class PostNew extends AppCompatActivity implements
         chatAdapter = new ChatAdapter();
 
 
-        rootView = findViewById(R.id.main_activity_root_view);
+
         emojiButton = findViewById(R.id.main_activity_emoji);
         final ImageView sendButton = findViewById(R.id.main_activity_send);
         imgPostUser = findViewById(R.id.imgPostUser);

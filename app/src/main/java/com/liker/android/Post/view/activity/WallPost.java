@@ -360,7 +360,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
         contentPost = findViewById(R.id.contentPost);
         linkScriptContainer = findViewById(R.id.linkScriptContainer);
-
+        rootView = findViewById(R.id.main_activity_root_view);
         findViewById(R.id.btnAttachment).setOnClickListener(this);
         intro = findViewById(R.id.intro);
         tvSubmitPost = findViewById(R.id.tvSubmitPost);
@@ -614,6 +614,9 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         MimAdapter adapter = new MimAdapter(this, viewColors, listener);
         mimRecyclerView.setAdapter(adapter);
 
+        rvMimShow = true;
+        rvMimToggle();
+
         toUserId = getIntent().getStringExtra("wall_user_id");
         profileId = manager.getProfileId();
         userIds = manager.getProfileId();
@@ -621,9 +624,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         token = manager.getToken();
 
         chatAdapter = new ChatAdapter();
-
-
-        rootView = findViewById(R.id.main_activity_root_view);
         emojiButton = findViewById(R.id.main_activity_emoji);
         final ImageView sendButton = findViewById(R.id.main_activity_send);
         imgPostUser = findViewById(R.id.imgPostUser);
@@ -1296,35 +1296,35 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.tvSubmitPost:
-
                 checkContentType();
-                if (contentTitle.isEmpty()) {
-                    Tools.showCustomToast(WallPost.this, mView, "Please add a post description", Gravity.TOP);
-                } else if (toUserId.equalsIgnoreCase(profileId)) {
-                    if (categoryId.isEmpty() && subCategoryId.isEmpty()) {
+                if(toUserId.equalsIgnoreCase(profileId)){
+                    if (contentTitle.isEmpty()) {
+                        Tools.showCustomToast(WallPost.this, mView, "Please add a post description", Gravity.TOP);
+                    } else if (categoryId.isEmpty() && subCategoryId.isEmpty()) {
                         Tools.showCustomToast(WallPost.this, mView, "Please select your post’s audience.", Gravity.TOP);
+                    } else if (!isAddContentTitle) {
+                        Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
+                    } else if (contentTitle.length() < 8) {
+                        Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
+                    }  else {
+                        createNewPost();
                     }
-                }
-                else if (!isAddContentTitle) {
-                    Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
-                } else if (contentTitle.length() < 8) {
-                    Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
-                } else {
-                    if (!toUserId.equalsIgnoreCase(profileId)) {
+
+                }else {
+                    if (contentTitle.isEmpty()) {
+                        Tools.showCustomToast(WallPost.this, mView, "Please add a post description", Gravity.TOP);
+                    }  else if (!isAddContentTitle) {
+                        Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
+                    } else if (contentTitle.length() < 8) {
+                        Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
+                    } else{
                         categoryId = "26";
+                        createNewPost();
                     }
-                    createNewPost();
                 }
-                // Tools.showCustomToast(LikerSearch.this, mView, " Write Minimum Three Characters !", Gravity.TOP);
 
-
-//                String linkText = editPostMessage.getText().toString();
-//                textCrawler.makePreview(callback, linkText);
-//                if (linkText.startsWith("http")) {
-//                }
                 break;
             case R.id.contentCategory:
-
                 Intent intent = new Intent(WallPost.this, PostCategory.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.bottom_up, R.anim.nothing);
@@ -1337,25 +1337,20 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 } else {
                     checkCameraPermission();
                 }
-
                 break;
             case R.id.imageGallery:
-
                 rvMimShow = false;
                 rvMimToggle();
                 if (isGrantGallery) {
-
                     sendImageFromGallery();
                 } else {
                     checkGalleryPermission();
                 }
-                //
                 break;
             case R.id.imageVideo:
                 rvMimShow = false;
                 rvMimToggle();
                 checkVideoPermission();
-
                 break;
         }
     }
@@ -1396,7 +1391,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             Tools.showNetworkDialog(getSupportFragmentManager());
             progressView.setVisibility(View.GONE);
             progressView.stopAnimation();
-
         }
     }
 

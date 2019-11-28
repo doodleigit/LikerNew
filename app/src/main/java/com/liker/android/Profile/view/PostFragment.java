@@ -565,7 +565,6 @@ public class PostFragment extends Fragment {
                             adapter.notifyItemChanged(position);
                         } else {
                             postItemList.remove(position);
-                            // adapter.notifyItemChanged(position);
                             adapter.notifyDataSetChanged();
                         }
                     }
