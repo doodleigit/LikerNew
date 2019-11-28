@@ -1131,28 +1131,34 @@ public class Home extends AppCompatActivity implements
         }
     }
 
-    private void setupTabIcons() {
+    private boolean viewBackgroundActive(int viewPosition, int currentPosition) {
+        return viewPosition == currentPosition;
+    }
+
+    private void setupTabIcons(int position) {
 
         tabOne = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         tabOneText = tabOne.findViewById(R.id.tab);
         tabOneInfo = tabOne.findViewById(R.id.tab_info);
         tabOneText.setText("Trending");
-        tabOneText.setTextColor(Color.parseColor("#1483C9"));
-        tabOneInfo.setImageResource(R.drawable.ic_info_outline_blue_24dp);
+        tabOneText.setTextColor(viewBackgroundActive(0, position) ? Color.parseColor("#1483C9") : Color.parseColor("#AAAAAA"));
+        tabOneInfo.setImageResource(viewBackgroundActive(0, position) ? R.drawable.ic_info_outline_blue_24dp : R.drawable.ic_info_outline_black_24dp);
         tabLayout.getTabAt(0).setCustomView(tabOne);
 
         tabTwo = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         tabTwoText = tabTwo.findViewById(R.id.tab);
         tabTwoInfo = tabTwo.findViewById(R.id.tab_info);
         tabTwoText.setText("Breaking");
-        tabTwoInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+        tabTwoText.setTextColor(viewBackgroundActive(1, position) ? Color.parseColor("#1483C9") : Color.parseColor("#AAAAAA"));
+        tabTwoInfo.setImageResource(viewBackgroundActive(1, position) ? R.drawable.ic_info_outline_blue_24dp : R.drawable.ic_info_outline_black_24dp);
         tabLayout.getTabAt(1).setCustomView(tabTwo);
 
         tabThree = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         tabThreeText = tabThree.findViewById(R.id.tab);
         tabThreeInfo = tabThree.findViewById(R.id.tab_info);
         tabThreeText.setText("Following");
-        tabThreeInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+        tabThreeText.setTextColor(viewBackgroundActive(2, position) ? Color.parseColor("#1483C9") : Color.parseColor("#AAAAAA"));
+        tabThreeInfo.setImageResource(viewBackgroundActive(2, position) ? R.drawable.ic_info_outline_blue_24dp : R.drawable.ic_info_outline_black_24dp);
         tabLayout.getTabAt(2).setCustomView(tabThree);
 
 //        tabOne.setOnClickListener(new View.OnClickListener() {
@@ -1256,7 +1262,7 @@ public class Home extends AppCompatActivity implements
             public void onPageSelected(int position) {
                 viewPager.getAdapter().notifyDataSetChanged();
                 tabLayout.setupWithViewPager(viewPager);
-                setupTabIcons();
+                setupTabIcons(position);
                 appBarLayout.setExpanded(true);
 
             }
@@ -1269,7 +1275,7 @@ public class Home extends AppCompatActivity implements
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-        setupTabIcons();
+        setupTabIcons(0);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -1278,36 +1284,36 @@ public class Home extends AppCompatActivity implements
                 //  viewPager.setCurrentItem(tab.getPosition());
 
                 if (tab.getPosition() == 0) {
-                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_blue_24dp);
-                    tabOneText.setTextColor(Color.parseColor("#1483C9"));
-
-                    tabTwoInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
-                    tabTwoText.setTextColor(Color.parseColor("#AAAAAA"));
-
-                    tabThreeInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
-                    tabThreeText.setTextColor(Color.parseColor("#AAAAAA"));
+//                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_blue_24dp);
+//                    tabOneText.setTextColor(Color.parseColor("#1483C9"));
+//
+//                    tabTwoInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+//                    tabTwoText.setTextColor(Color.parseColor("#AAAAAA"));
+//
+//                    tabThreeInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+//                    tabThreeText.setTextColor(Color.parseColor("#AAAAAA"));
                     manager.setPostCountClear();
                     setPostCount(0);
                 } else if (tab.getPosition() == 1) {
-                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
-                    tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
-
-                    tabTwoInfo.setImageResource(R.drawable.ic_info_outline_blue_24dp);
-                    tabTwoText.setTextColor(Color.parseColor("#1483C9"));
-
-                    tabThreeInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
-                    tabThreeText.setTextColor(Color.parseColor("#AAAAAA"));
+//                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+//                    tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
+//
+//                    tabTwoInfo.setImageResource(R.drawable.ic_info_outline_blue_24dp);
+//                    tabTwoText.setTextColor(Color.parseColor("#1483C9"));
+//
+//                    tabThreeInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+//                    tabThreeText.setTextColor(Color.parseColor("#AAAAAA"));
                     manager.setPostCountClear();
                     setPostCount(0);
                 } else {
-                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
-                    tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
-
-                    tabTwoInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
-                    tabTwoText.setTextColor(Color.parseColor("#AAAAAA"));
-
-                    tabThreeInfo.setImageResource(R.drawable.ic_info_outline_blue_24dp);
-                    tabThreeText.setTextColor(Color.parseColor("#1483C9"));
+//                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+//                    tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
+//
+//                    tabTwoInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+//                    tabTwoText.setTextColor(Color.parseColor("#AAAAAA"));
+//
+//                    tabThreeInfo.setImageResource(R.drawable.ic_info_outline_blue_24dp);
+//                    tabThreeText.setTextColor(Color.parseColor("#1483C9"));
                     manager.setPostCountClear();
                     setPostCount(0);
                 }

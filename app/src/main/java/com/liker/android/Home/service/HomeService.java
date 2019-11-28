@@ -77,8 +77,8 @@ public interface HomeService {
             @Field("feed") String feed,
             @Field("cat_id") String cat_id,
             @Field("filter") int filter,
-            @Field("is_public") boolean isPublic
-
+            @Field("is_public") boolean isPublic,
+            @Field("is_within_time") int isWithInTime
     );
 
     //https://www.stg.liker.com/get_postscomments
