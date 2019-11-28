@@ -108,6 +108,7 @@ public class BreakingPost extends Fragment {
     private boolean isScrolling, isPaginationDone = true;
     int limit = 15;
     int offset = 0;
+    int isWithInTime = 1;
     private String catIds = "";
     private ShimmerFrameLayout shimmerFrameLayout;
     private TextView tvAlert;
@@ -148,9 +149,6 @@ public class BreakingPost extends Fragment {
         IntentFilter permissionIntent = new IntentFilter();
         permissionIntent.addAction(AppConstants.PERMISSION_CHANGE_BROADCAST);
         Objects.requireNonNull(getActivity()).registerReceiver(permissionBroadcast, permissionIntent);
-
-
-
 
         manager = new PrefManager(getActivity());
         deviceId = manager.getDeviceId();
@@ -379,7 +377,7 @@ public class BreakingPost extends Fragment {
         if (NetworkHelper.hasNetworkAccess(getContext())) {
             progressView.setVisibility(View.VISIBLE);
             progressView.startAnimation();
-            Call<List<PostItem>> call = webService.feed(deviceId, profileId, token, userIds, limit, offset, "breaking", catIds, filter, false);
+            Call<List<PostItem>> call = webService.feed(deviceId, profileId, token, userIds, limit, offset, "breaking", catIds, filter, false, isWithInTime);
             sendPostItemRequest(call);
         } else {
             Tools.showNetworkDialog(getActivity().getSupportFragmentManager());
@@ -392,7 +390,7 @@ public class BreakingPost extends Fragment {
     private void PerformPagination() {
         progressView.setVisibility(View.VISIBLE);
         progressView.startAnimation();
-        Call<List<PostItem>> call = webService.feed(deviceId, profileId, token, userIds, limit, offset, "breaking", catIds, filter, false);
+        Call<List<PostItem>> call = webService.feed(deviceId, profileId, token, userIds, limit, offset, "breaking", catIds, filter, false, isWithInTime);
         PostItemPagingRequest(call);
     }
 
@@ -428,7 +426,10 @@ public class BreakingPost extends Fragment {
                     Log.d("friends", totalPostIDs);
 //                    Call<CommentItem> mCall = webService.getPostComments(deviceId, profileId, token, "false", limit, offset, "DESC", totalPostIDs, userIds);
 //                    sendCommentItemPagingRequest(mCall);
-                    offset += 15;
+                    if (list.size() < limit) {
+                        isWithInTime = 0;
+                    }
+                    offset += list.size();
                     onPostResponsePagination();
                 } else {
                     onPostResponsePagination();
@@ -453,7 +454,7 @@ public class BreakingPost extends Fragment {
             @Override
             public void onResponse(Call<List<PostItem>> call, Response<List<PostItem>> response) {
 
-                 List<PostItem> itemList = response.body();
+                List<PostItem> itemList = response.body();
                 if (itemList != null) {
                     postItemList.clear();
                     checkLearnAboutSiteStatus();
@@ -478,8 +479,13 @@ public class BreakingPost extends Fragment {
 
                     totalPostIDs = sb.substring(separator.length()).replaceAll("\\s+", "");
                     Log.d("friends", totalPostIDs);
-
-                    offset = limit;
+                    offset = itemList.size();
+                    if (itemList.size() < limit) {
+                        isWithInTime = 0;
+                        if (itemList.size() < 5) {
+                            PerformPagination();
+                        }
+                    }
                     onPostResponse();
                 } else {
                     postItemList.clear();

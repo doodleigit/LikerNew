@@ -101,6 +101,7 @@ public class FollowingPost extends Fragment   {
     private boolean isScrolling, isPaginationDone = true;
     int limit = 15;
     int offset = 0;
+    int isWithInTime = 1;
     private String catIds = "";
     private ShimmerFrameLayout shimmerFrameLayout;
     private TextView tvAlert;
@@ -343,7 +344,7 @@ public class FollowingPost extends Fragment   {
         if (NetworkHelper.hasNetworkAccess(getContext())) {
             progressView.setVisibility(View.VISIBLE);
             progressView.startAnimation();
-            Call<List<PostItem>> call = webService.feed(deviceId, profileId, token, userIds, limit, offset, "following", catIds, filter, false);
+            Call<List<PostItem>> call = webService.feed(deviceId, profileId, token, userIds, limit, offset, "following", catIds, filter, false, isWithInTime);
             sendPostItemRequest(call);
         } else {
             Tools.showNetworkDialog(getActivity().getSupportFragmentManager());
@@ -356,7 +357,7 @@ public class FollowingPost extends Fragment   {
     private void PerformPagination() {
         progressView.setVisibility(View.VISIBLE);
         progressView.startAnimation();
-        Call<List<PostItem>> call = webService.feed(deviceId, profileId, token, userIds, limit, offset, "following", catIds, filter, false);
+        Call<List<PostItem>> call = webService.feed(deviceId, profileId, token, userIds, limit, offset, "following", catIds, filter, false, isWithInTime);
         PostItemPagingRequest(call);
 
     }
@@ -394,7 +395,10 @@ public class FollowingPost extends Fragment   {
                     Log.d("friends", totalPostIDs);
 //                    Call<CommentItem> mCall = webService.getPostComments(deviceId, profileId, token, "false", 1, 0, "DESC", totalPostIDs, userIds);
 //                    sendCommentItemPagingRequest(mCall);
-                    offset += 15;
+                    if (list.size() < limit) {
+                        isWithInTime = 0;
+                    }
+                    offset += list.size();
                     onPostResponsePagination();
                 } else {
                     onPostResponsePagination();
@@ -442,31 +446,14 @@ public class FollowingPost extends Fragment   {
 
                     totalPostIDs = sb.substring(separator.length()).replaceAll("\\s+", "");
                     Log.d("friends", totalPostIDs);
-
-                    offset = limit;
-                    onPostResponse();
-
-//                    Call<CommentItem> mCall = webService.getPostComments(deviceId, profileId, token, "false", 3, 0, "DESC", totalPostIDs, userIds);
-//                    sendCommentItemRequest(mCall);
-
-
-             /*        adapter = new PostAdapter(getActivity(), postItemList);
-
-                   new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            shimmerFrameLayout.stopShimmer();
-                            shimmerFrameLayout.setVisibility(View.GONE);
-
-                            recyclerView.setVisibility(View.VISIBLE);
-                            recyclerView.setAdapter(adapter);
+                    offset = itemList.size();
+                    if (itemList.size() < limit) {
+                        isWithInTime = 0;
+                        if (itemList.size() == 5) {
+                            PerformPagination();
                         }
-                    }, 5000);*/
-
-
-                    //  Log.d("PostItem: ", categoryItem.toString() + "");
-                    progressView.setVisibility(View.GONE);
-                    progressView.stopAnimation();
+                    }
+                    onPostResponse();
                 } else {
                     postItemList.clear();
                     onPostResponseFailure();
