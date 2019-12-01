@@ -48,6 +48,7 @@ import com.liker.android.Message.model.NewMessage;
 import com.liker.android.Message.model.UserData;
 import com.liker.android.Message.service.ListClickResponseService;
 import com.liker.android.Message.service.MessageService;
+import com.liker.android.Message.service.OnlineStatusChangeListener;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.NetworkHelper;
@@ -73,7 +74,6 @@ public class MessageListFragment extends Fragment {
     private ProgressBar progressBar;
     private ProgressDialog progressDialog;
 
-    private Socket socket;
     private PrefManager manager;
     private boolean networkOk;
     private ListClickResponseService listClickResponseService;
@@ -109,7 +109,6 @@ public class MessageListFragment extends Fragment {
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getString(R.string.loading));
 
-        socket = SocketIOManager.mSocket;
         manager = new PrefManager(getContext());
         deviceId = manager.getDeviceId();
         profileId = manager.getProfileId();
@@ -131,7 +130,8 @@ public class MessageListFragment extends Fragment {
             @Override
             public void onMessageClick(ChatUser chatUser) {
                 FriendInfo friendInfo = new FriendInfo(chatUser.getUserData().getUserName(), chatUser.getUserData().getUserId(),
-                        (chatUser.getUserData().getFirstName() + " " + chatUser.getUserData().getLastName()), chatUser.getUserData().getTotalLikes(), chatUser.getUserData().getGoldStars());
+                        (chatUser.getUserData().getFirstName() + " " + chatUser.getUserData().getLastName()), chatUser.getUserData().getTotalLikes(),
+                        chatUser.getUserData().getGoldStars(), chatUser.getUserData().getOnline());
                 initiateFragment(friendInfo);
             }
         };
@@ -140,6 +140,19 @@ public class MessageListFragment extends Fragment {
         recyclerView.setAdapter(messageListAdapter);
 
         getData();
+
+        ((MessageActivity) getActivity()).listUserOnlineListener = new OnlineStatusChangeListener() {
+            @Override
+            public void onOnlineListener(String userId, String online) {
+                for (int i = 0; i < chatUsers.size(); i++) {
+                    if (userId.equals(chatUsers.get(i).getUserData().getUserId())) {
+                        chatUsers.get(i).getUserData().setOnline(online);
+                        messageListAdapter.notifyItemChanged(i);
+                        break;
+                    }
+                }
+            }
+        };
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -382,6 +395,8 @@ public class MessageListFragment extends Fragment {
             setNewMessageToList(newMessage, type);
         }
     };
+
+
 
     @Override
     public void onDestroy() {
