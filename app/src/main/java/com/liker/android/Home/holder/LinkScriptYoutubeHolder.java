@@ -455,6 +455,7 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
             Linkify.addLinks(tvPostEmojiContent, Linkify.ALL);
             //set user name in blue color and remove underline from the textview
             Tools.stripUnderlines(tvPostEmojiContent);
+            readMoreText(mContext,tvPostEmojiContent,text);
 
         } else {
             tvPostEmojiContent.setVisibility(View.GONE);

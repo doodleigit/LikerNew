@@ -57,10 +57,16 @@ import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.liker.android.App;
+import com.liker.android.Comment.adapter.CommentAdapter;
+import com.liker.android.Comment.holder.CommentImageHolder;
+import com.liker.android.Comment.holder.CommentLinkScriptHolder;
+import com.liker.android.Comment.holder.CommentTextHolder;
+import com.liker.android.Comment.holder.CommentYoutubeHolder;
 import com.liker.android.Comment.model.CommentItem;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.MentionItem;
 //import com.liker.android.Comment.model.Reason;
+import com.liker.android.Comment.model.Reply;
 import com.liker.android.Comment.model.ReportReason;
 import com.liker.android.Comment.service.CommentService;
 import com.liker.android.Comment.view.activity.CommentPost;
@@ -156,7 +162,11 @@ import static java.lang.Integer.parseInt;
 //import static com.doodle.Tool.Tools.readMoreText;
 //import static com.doodle.Tool.Tools.setMargins;
 
-public class TextHolder extends RecyclerView.ViewHolder {
+public class TextHolder extends RecyclerView.ViewHolder implements
+        CommentTextHolder.CommentListener,
+        CommentImageHolder.CommentListener,
+        CommentYoutubeHolder.CommentListener,
+        CommentLinkScriptHolder.CommentListener {
 
 
     public static final String POST_ITEM_POSITION = "post_item_position";
@@ -253,11 +263,26 @@ public class TextHolder extends RecyclerView.ViewHolder {
     private String userFollowProfileImage;
     private ProgressDialog progressDialog;
 
+    private RecyclerView rvPopularComment;
+    CommentAdapter adapter;
+
+    @Override
+    public void onTitleClicked(Comment_ commentItem, int position, Reply reply) {
+
+    }
+
+    @Override
+    public void commentDelete(Comment_ commentItem, int position, Reply reply) {
+
+    }
+//    CommentTextHolder.CommentListener textListener;
+//    CommentLinkScriptHolder.CommentListener linkScriptListener;
+//    CommentYoutubeHolder.CommentListener youtubeListener;
+//    CommentImageHolder.CommentListener imageListener;
 
     public interface PostItemListener {
         void deletePost(PostItem postItem, int position);
     }
-
     public TextHolder(View itemView, Context context, PostItemListener postTextListener, String className) {
         super(itemView);
 
@@ -278,7 +303,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
         imagePermission = (ImageView) itemView.findViewById(R.id.imagePermission);
         imagePostPermission = itemView.findViewById(R.id.imagePostPermission);
         tvLikeShare = itemView.findViewById(R.id.tvLikeShare);
-
 
         mentions = new ArrayList<>();
         mList = new ArrayList<>();
@@ -316,7 +340,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
         star14 = itemView.findViewById(R.id.star14);
         star15 = itemView.findViewById(R.id.star15);
         star16 = itemView.findViewById(R.id.star16);
-
 
         //Comment
         tvCommentMessage = itemView.findViewById(R.id.tvCommentMessage);
@@ -356,7 +379,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
         tvWallPost = itemView.findViewById(R.id.tvWallPost);
         tvWallPostInfo = itemView.findViewById(R.id.tvWallPostInfo);
 
-
         contentFollow = itemView.findViewById(R.id.contentFollow);
         rootView = itemView.findViewById(R.id.main_activity_root_view);
         layoutFollowUser = itemView.findViewById(R.id.layoutFollowUser);
@@ -365,7 +387,21 @@ public class TextHolder extends RecyclerView.ViewHolder {
         imageFollowUser = itemView.findViewById(R.id.imageFollowUser);
         unFollowImage = itemView.findViewById(R.id.unFollowImage);
 
-
+        rvPopularComment=itemView.findViewById(R.id.rvPopularComment);
+        List<Comment_> comment_list=new ArrayList<>();
+        Comment_ comment=new Comment_();
+        comment.setCommentType("1");
+        comment.setUserFirstName("Azharul");
+        comment.setUserLastName("Islam");
+        comment.setUserSliverStars("12");
+        comment.setUserGoldStars("3");
+        comment.setCommentText("1......return...Popular");
+        comment.setDateTime("1221313");
+        comment.setTotalLike("12");
+        comment.setTotalReply("45");
+        comment_list.add(comment);
+       // adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, true);
+       // rvPopularComment.setAdapter(adapter);
     }
 
 
@@ -401,8 +437,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             //imagePostShareSetting.setVisibility(View.GONE);
         }
         if ("1".equalsIgnoreCase(isShared)) {
-
-
             setMargins(postBodyLayer, 10, 10, 10, 10);
             postBodyLayer.setBackgroundResource(R.drawable.drawable_comment);
             sharePostBody.setBackgroundColor(Color.parseColor("#cfcfcf"));
@@ -411,7 +445,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             // imagePermission.setVisibility(View.GONE);
 
             SharedProfile itemSharedProfile = item.getSharedProfile();
-
             sharedFirstName = itemSharedProfile.getUserFirstName();
             sharedLastName = itemSharedProfile.getUserLastName();
             sharedFullName = sharedFirstName + " " + sharedLastName;
@@ -438,7 +471,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             } else {
                 tvSharePostContent.setVisibility(View.VISIBLE);
             }
-
             switch (sharedPostPermission) {
                 case "0":
                     imageSharePostPermission.setBackgroundResource(R.drawable.ic_public_black_24dp);
@@ -471,7 +503,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
 
-
                 if (userIds.equalsIgnoreCase(item.getPostUserid())) {
                     Tools.toast(mContext, "On Liker, you can't like your own posts. That would be cheating ", R.drawable.ic_like_status);
                 } else {
@@ -499,14 +530,10 @@ public class TextHolder extends RecyclerView.ViewHolder {
                                 .dontAnimate()
                                 .into(imageFollowUser);
 
-
-
                     }else {
                         followToggle(rootView,contentFollow,false);
                     }
-
                 }
-
             }
         });
 
@@ -549,6 +576,7 @@ public class TextHolder extends RecyclerView.ViewHolder {
             tvPostContent.setVisibility(View.GONE);
             tvPostEmojiContent.setVisibility(View.VISIBLE);
             tvPostEmojiContent.setText(text);
+            readMoreText(mContext,tvPostEmojiContent,text);
         } else if (extractedUrls.size() > 0) {
             tvPostEmojiContent.setVisibility(View.GONE);
             tvPostContent.setVisibility(View.VISIBLE);
@@ -561,7 +589,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             readMoreText(mContext, tvPostContent, text);
 
         }
-
 
         if (mentionUrl.size() > 0 && nameBuilder.toString().length() > 0) {
 
@@ -597,13 +624,10 @@ public class TextHolder extends RecyclerView.ViewHolder {
                             clickableSpan = new ClickableSpan() {
                                 @Override
                                 public void onClick(View view) {
-
                                     mContext.startActivity(new Intent(mContext, ProfileActivity.class).putExtra("user_id", temp.getMentionUserId()).putExtra("user_name", temp.getMentionUserName()));
                                 }
-
                                 @Override
                                 public void updateDrawState(TextPaint ds) {
-
                                     ds.setColor(ds.linkColor);    // you can use custom color
                                     ds.setUnderlineText(false);    // this remove the underline
                                 }
@@ -621,7 +645,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
             } else {
                 tvPostEmojiContent.setVisibility(View.GONE);
                 tvPostContent.setVisibility(View.VISIBLE);
-
 
                 String nameStr = nameBuilder.toString();
                 String[] mentionArr = nameStr.split(" ");
@@ -656,7 +679,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
 
                                 @Override
                                 public void updateDrawState(TextPaint ds) {
-
                                     ds.setColor(ds.linkColor);    // you can use custom color
                                     ds.setUnderlineText(false);    // this remove the underline
                                 }
@@ -822,9 +844,7 @@ public class TextHolder extends RecyclerView.ViewHolder {
         int totalStars = silverStar + goldStar;
         String categoryName = item.getCatName();
         int postSource=item.getPostSource();
-
         SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName,postSource);
-
 
         if (!isNullOrEmpty(item.getPostWallFirstName())) {
 
@@ -981,8 +1001,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
                     delayLoadComment(mProgressBar);
                 } else {
                     Tools.showNetworkDialog(activity.getSupportFragmentManager());
-
-
                 }
 
             }
@@ -1002,8 +1020,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
                 } else {
                     popup.getMenu().add(1, R.id.shareAsPost, 1, "Share as a Post (" + postTotalShare + ")").setIcon(R.drawable.like_normal);
                 }
-
-
 //                popup.show();
                 MenuPopupHelper menuHelper = new MenuPopupHelper(mContext, (MenuBuilder) popup.getMenu(), v);
                 menuHelper.setForceShowIcon(true);
@@ -1027,7 +1043,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
                             shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
                                 @Override
                                 public void onSuccess(Sharer.Result result) {
-
                                     Toast.makeText(mContext, "Share successFull", Toast.LENGTH_SHORT).show();
                                 }
 
@@ -1076,7 +1091,6 @@ public class TextHolder extends RecyclerView.ViewHolder {
 
             }
         });
-
 
         imagePermission.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")

@@ -482,6 +482,7 @@ public class TextMimHolder extends RecyclerView.ViewHolder {
             tvPostContent.setVisibility(View.GONE);
             tvPostEmojiContent.setVisibility(View.VISIBLE);
             tvPostEmojiContent.setText(item.getPostText());
+            readMoreText(mContext,tvPostEmojiContent,text);
 
         } else {
             tvPostEmojiContent.setVisibility(View.GONE);

@@ -831,13 +831,13 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             case R.id.btnSignUp:
                 Log.d(TAG, "onClick: " + flipperId);
                 if (flipperId == 0) {
-//                    if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName)) {
-//                        if (/*viewModel.validateEmailField(etEmail)*/viewModel.isValidEmail(mEmail, etEmail)) {
-//                            Call<String> call = webService.checkEmailExists(true, etEmail.getText().toString());
-//                            sendCheckEmailRequest(call);
-//                        }
-//                    }
-                    next();
+                    if (viewModel.validateNameField(etFirstName) && viewModel.validateNameField(etLastName)) {
+                        if (/*viewModel.validateEmailField(etEmail)*/viewModel.isValidEmail(mEmail, etEmail)) {
+                            Call<String> call = webService.checkEmailExists(true, etEmail.getText().toString());
+                            sendCheckEmailRequest(call);
+                        }
+                    }
+                 //   next();
                 }
 
                 break;
