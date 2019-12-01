@@ -164,7 +164,7 @@ public class NewMessageFragment extends Fragment {
             @Override
             public void onListItemClick(Friend friend) {
                 FriendInfo friendInfo = new FriendInfo(friend.getUserName(), friend.getUserId(), (friend.getFirstName() + " " + friend.getLastName()),
-                        friend.getTotalLikes(), friend.getGoldStars());
+                        friend.getTotalLikes(), friend.getGoldStars(), "0");
                 initiateFragment(friendInfo);
             }
         };

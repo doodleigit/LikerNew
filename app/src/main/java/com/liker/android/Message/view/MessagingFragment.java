@@ -54,6 +54,7 @@ import com.liker.android.Message.model.Messages;
 import com.liker.android.Message.model.NewMessage;
 import com.liker.android.Message.model.User;
 import com.liker.android.Message.service.MessageService;
+import com.liker.android.Message.service.OnlineStatusChangeListener;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.NetworkHelper;
@@ -82,7 +83,7 @@ public class MessagingFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private TextView tvUserName, tvLikes, tvStars, tvUnblock;
     private EditText etReply;
-    private ImageView tvSend, ivSetting;
+    private ImageView tvSend, ivSetting, ivOnline;
     private ProgressBar progressBar;
     private ProgressDialog progressDialog;
 
@@ -94,7 +95,7 @@ public class MessagingFragment extends Fragment {
     private FriendInfo friendInfo;
     private ArrayList<Messages> messages;
     private ArrayList<User> users;
-    private String deviceId, profileId, token, userName, likes, stars, userIds, toUserId, chatUserName;
+    private String deviceId, profileId, token, userName, likes, stars, userIds, toUserId, chatUserName, online;
     private boolean isBlock;
     int limit = 20;
     int offset = 0;
@@ -132,6 +133,7 @@ public class MessagingFragment extends Fragment {
         userName = friendInfo.getFullName();
         likes = friendInfo.getLikes();
         stars = friendInfo.getStars();
+        online = friendInfo.getOnline();
         networkOk = NetworkHelper.hasNetworkAccess(getContext());
         messageService = MessageService.mRetrofit.create(MessageService.class);
         messages = new ArrayList<>();
@@ -142,6 +144,7 @@ public class MessagingFragment extends Fragment {
         tvStars = view.findViewById(R.id.stars);
         tvUnblock = view.findViewById(R.id.unblock_text);
         ivSetting = view.findViewById(R.id.setting);
+        ivOnline = view.findViewById(R.id.online);
         tvSend = view.findViewById(R.id.send);
         etReply = view.findViewById(R.id.reply);
         layoutManager = new LinearLayoutManager(getContext());
@@ -158,6 +161,15 @@ public class MessagingFragment extends Fragment {
         getData();
         setData();
         messageSeen();
+
+        ((MessageActivity) getActivity()).messagingUserOnlineListener = new OnlineStatusChangeListener() {
+            @Override
+            public void onOnlineListener(String userId, String online) {
+                if (userId.equals(toUserId)) {
+                    ivOnline.setImageResource(online.equals("0") ? R.drawable.user_offline : R.drawable.user_online);
+                }
+            }
+        };
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -301,6 +313,7 @@ public class MessagingFragment extends Fragment {
         tvUserName.setText(userName);
         tvLikes.setText(likes + " " + getString(R.string.likes));
         tvStars.setText(stars + " " + getString(R.string.stars));
+        ivOnline.setImageResource(online.equals("0") ? R.drawable.user_offline : R.drawable.user_online);
     }
 
     private void getPagination() {
@@ -326,7 +339,7 @@ public class MessagingFragment extends Fragment {
                     messagingAdapter.notifyDataSetChanged();
                     offset += limit;
                     isBlock = chats.getPrivacy().getChatUserBlock();
-                    changeViewForBlock(isBlock);
+                    changeView(isBlock);
                 }
                 progressDialog.hide();
             }
@@ -377,7 +390,7 @@ public class MessagingFragment extends Fragment {
                         JSONObject jsonObject = new JSONObject(response.body());
                         boolean status = jsonObject.getBoolean("status");
                         if (status) {
-                            changeViewForBlock(block);
+                            changeView(block);
                             isBlock = block;
                         }
                     } catch (JSONException e) {
@@ -395,7 +408,7 @@ public class MessagingFragment extends Fragment {
 
     }
 
-    private void changeViewForBlock(boolean block) {
+    private void changeView(boolean block) {
         tvUnblock.setText(getString(R.string.unblock) + " " + friendInfo.getFullName());
         if (block) {
             bottomBar.setVisibility(View.GONE);

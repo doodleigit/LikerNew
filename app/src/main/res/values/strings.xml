@@ -195,7 +195,7 @@
     <string name="network_error">Network Error</string>
     <string name="advance_search">Advance Search</string>
     <string name="search_item">Search…</string>
-    <string name="write_minimum_three_characters">Write at-least 3 characters</string>
+    <string name="write_minimum_three_characters">Write at least 3 characters</string>
     <string name="we_could_not_find_anything_for">We could not find anything for</string>
     <string name="please_wait">Please wait.!</string>
     <string name="forward_">Forward</string>
@@ -225,7 +225,7 @@
     <string name="add_new_email">Add New Email</string>
     <string name="old_password_">Old Password:</string>
     <string name="new_password_">New Password:</string>
-    <string name="retype_new_password_">Retype New Password:</string>
+    <string name="retype_new_password_">Retype Password:</string>
     <string name="active_deactive_your_account">Activate / Deactivate your account</string>
     <string name="terms_of_service">Terms of Service</string>
     <string name="privacy">Privacy</string>
@@ -245,7 +245,7 @@
     <string name="contributor_settings">Contributor Settings</string>
     <string name="notification_settings">Notification Settings</string>
     <string name="privacy_and_security">Privacy and Security</string>
-    <string name="please_input">Please input atleast two character</string>
+    <string name="please_input">Please input at least two character</string>
     <string name="password_length_is_less_than_8">password length is less than 8</string>
     <string name="new_password_confirm_password_does_not_match">New password and confirm password does not match !</string>
     <string name="password_has_been_updated">Password has been updated</string>

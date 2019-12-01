@@ -59,6 +59,9 @@ public class UserData implements Serializable, Parcelable
     @SerializedName("description")
     @Expose
     private String description;
+    @SerializedName("online")
+    @Expose
+    private String online;
     public final static Creator<UserData> CREATOR = new Creator<UserData>() {
 
 
@@ -94,6 +97,7 @@ public class UserData implements Serializable, Parcelable
         this.isTopCommenter = ((String) in.readValue((String.class.getClassLoader())));
         this.isMaster = ((String) in.readValue((String.class.getClassLoader())));
         this.description = ((String) in.readValue((String.class.getClassLoader())));
+        this.online = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     public UserData() {
@@ -227,6 +231,14 @@ public class UserData implements Serializable, Parcelable
         this.description = description;
     }
 
+    public String getOnline() {
+        return online;
+    }
+
+    public void setOnline(String online) {
+        this.online = online;
+    }
+
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
         dest.writeValue(userId);
@@ -244,6 +256,7 @@ public class UserData implements Serializable, Parcelable
         dest.writeValue(isTopCommenter);
         dest.writeValue(isMaster);
         dest.writeValue(description);
+        dest.writeValue(online);
     }
 
     public int describeContents() {

@@ -43,6 +43,7 @@ import com.liker.android.Setting.service.EmailModificationListener;
 import com.liker.android.Setting.service.SettingService;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Tools;
+import com.raywenderlich.android.validatetor.ValidateTor;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -547,11 +548,32 @@ public class AccountSettingFragment extends Fragment {
     }
 
     private boolean passwordFieldValidation(String type, EditText editText) {
-        if (editText.getText().toString().trim().length() < 8) {
-            editText.setError(type + " " + getString(R.string.password_length_is_less_than_8));
+        ValidateTor validateTor = new ValidateTor();
+        String password = editText.getText().toString();
+
+//        if (editText.getText().toString().trim().length() < 8) {
+//            editText.setError(type + " " + getString(R.string.password_length_is_less_than_8));
+//            return false;
+//        } else {
+//            return true;
+//        }
+
+        // Check if password field is empty
+        if (validateTor.isEmpty(password)) {
+            editText.setError("Field is empty!");
             return false;
-        } else {
+        }
+
+        if (validateTor.isAtleastLength(password, 8)
+                && validateTor.isAtMostLength(password, 20)
+                && validateTor.hasAtleastOneDigit(password)
+                && validateTor.hasAtleastOneLetter(password)
+                && !validateTor.containsSubstring(password, " ")
+        ) {
             return true;
+        } else {
+            editText.setError("Be between 8-20 characters" + "\n" + "Contain at least 1 letter" + "\n" + "Contain at least 1 digit" + "\n" + "Not contain a space");
+            return false;
         }
     }
 

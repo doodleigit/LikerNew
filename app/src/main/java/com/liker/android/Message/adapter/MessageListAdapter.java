@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -54,6 +55,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         viewHolder.tvUserName.setText(arrayList.get(i).getUserData().getFirstName() + " " + arrayList.get(i).getUserData().getLastName());
         viewHolder.tvMessage.setText(arrayList.get(i).getMessageData().getContent());
         viewHolder.tvMessageTime.setText(Tools.chatDateCompare(context, Long.valueOf(arrayList.get(i).getMessageData().getTimePosted())));
+        viewHolder.ivOnline.setImageResource(arrayList.get(i).getUserData().getOnline().equals("0") ? R.drawable.user_offline : R.drawable.user_online);
 
         Glide.with(App.getAppContext())
                 .load(AppConstants.PROFILE_IMAGE + arrayList.get(i).getUserData().getPhoto())
@@ -91,6 +93,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         RelativeLayout mainLayout;
         CircleImageView ivUserImage;
         TextView tvUserName, tvMessage, tvMessageTime;
+        ImageView ivOnline;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -100,6 +103,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
             tvUserName = itemView.findViewById(R.id.userName);
             tvMessage = itemView.findViewById(R.id.message);
             tvMessageTime = itemView.findViewById(R.id.messageTime);
+            ivOnline = itemView.findViewById(R.id.online);
 
         }
     }

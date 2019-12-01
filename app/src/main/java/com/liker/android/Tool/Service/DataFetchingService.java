@@ -38,10 +38,13 @@ import android.widget.RemoteViews;
 //import com.doodle.Tool.ScreenOnOffBroadcast;
 //import com.doodle.Tool.Tools;
 
+import com.google.gson.Gson;
+import com.liker.android.Home.model.Headers;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.SocketIOManager;
 import com.liker.android.Home.view.activity.StarContributorActivity;
 import com.liker.android.Message.model.NewMessage;
+import com.liker.android.Message.model.OnlineNotify;
 import com.liker.android.Message.model.SenderData;
 import com.liker.android.Notification.model.NotificationItem;
 import com.liker.android.Notification.service.NotificationService;
@@ -118,6 +121,7 @@ public class DataFetchingService extends Service {
         }
         setBroadcast();
         getNotificationData();
+        setUserStatus();
         getMessagesData();
         getNewPostData();
     }
@@ -230,6 +234,19 @@ public class DataFetchingService extends Service {
 //                }
             }
         });
+    }
+
+    private void setUserStatus() {
+        OnlineNotify onlineNotify = new OnlineNotify();
+        Headers headers = new Headers();
+        headers.setDeviceId(deviceId);
+        headers.setIsApps(true);
+        headers.setSecurityToken(token);
+        onlineNotify.setUserId(userIds);
+        onlineNotify.setHeaders(headers);
+        Gson gson = new Gson();
+        String json = gson.toJson(onlineNotify);
+        mSocket.emit("online_users", json);
     }
 
     private void getMessagesData() {
