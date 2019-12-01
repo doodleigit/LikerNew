@@ -483,9 +483,29 @@ public class Tools {
     }
 
 
-    public static SpannableStringBuilder getSpannableStringBuilder(Context context, String catId, String likes, String followers, int totalStars, String categoryName,boolean isApp) {
+    public static SpannableStringBuilder getSpannableStringBuilder(Context context, String catId, String likes, String followers, int totalStars, String categoryName, int postSource) {
 
-        String postFrom = isApp ? " | Liker on android" : " | Liker on web";
+        String postFrom;
+        String prefixPostSource;
+        switch (postSource) {
+            case 0:
+                prefixPostSource="";
+                //  postFrom = " | Liker on web";
+                postFrom = "";
+                break;
+            case 1:
+                prefixPostSource=" | Posted using";
+                postFrom = " Liker on Android";
+                break;
+            case 2:
+                //  postFrom = " | Liker on ios";
+                postFrom = "";
+                prefixPostSource="";
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + postSource);
+        }
+
         String headerInfo = String.format("%s Likes | %d Stars | %s Followers | %s", likes, totalStars, followers, "");
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
@@ -508,7 +528,31 @@ public class Tools {
         ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#60b2fc"));
         spannableCategory.setSpan(foregroundColorSpan, 0, categoryName.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         builder.append(spannableCategory);
+        SpannableString spannablePostFromStrPrefix = new SpannableString(prefixPostSource);
+        builder.append(spannablePostFromStrPrefix);
         SpannableString spannablePostFromStr = new SpannableString(postFrom);
+        ClickableSpan androidClickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+            //    context.sendBroadcast((new Intent().putExtra("category_id", catId)).setAction(AppConstants.POST_FILTER_CAT_BROADCAST));
+                final String appPackageName = App.getAppContext().getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                }
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        spannablePostFromStr.setSpan(androidClickableSpan, 0, postFrom.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ForegroundColorSpan foregroundColorSpans = new ForegroundColorSpan(Color.parseColor("#60b2fc"));
+        spannablePostFromStr.setSpan(foregroundColorSpans, 0, postFrom.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         builder.append(spannablePostFromStr);
         return builder;
 
@@ -540,8 +584,8 @@ public class Tools {
         ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.parseColor("#60b2fc"));
         spannableCategory.setSpan(foregroundColorSpan, 0, categoryName.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         builder.append(spannableCategory);
-   //     SpannableString spannablePostFromStr = new SpannableString(postFrom);
-     //   builder.append(spannablePostFromStr);
+        //     SpannableString spannablePostFromStr = new SpannableString(postFrom);
+        //   builder.append(spannablePostFromStr);
         return builder;
 
     }
@@ -611,7 +655,6 @@ public class Tools {
     }
 
 
-
     public static SpannableStringBuilder getSpannableStringShareHeader(String likes, String followers, int totalStars, String categoryName) {
 
         String headerInfo = String.format("%s Likes | %d Stars | %s", likes, totalStars, "");
@@ -660,8 +703,6 @@ public class Tools {
             // "<a href="http://example.com"><b>example</b></a>"
             String linkInnerH = link.html(); // "<b>example</b>"*/
         return text;
-
-
     }
 
     public static String extractMentionText(Comment_ item) {
@@ -1364,8 +1405,7 @@ public class Tools {
     }
 
 
-
-    public static void followToggle(ViewGroup parentView,ViewGroup targetView,boolean isFollowToggle) {
+    public static void followToggle(ViewGroup parentView, ViewGroup targetView, boolean isFollowToggle) {
         Transition transition = new Fade();
         transition.setDuration(600);
         transition.addTarget(targetView);

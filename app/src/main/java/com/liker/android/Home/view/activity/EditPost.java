@@ -132,6 +132,8 @@ import com.liker.android.Post.view.fragment.ContributorStatus;
 import com.liker.android.Post.view.fragment.PostPermission;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.AppSingleton;
+import com.liker.android.Tool.EditTextLinesLimiter;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PageTransformer;
 import com.liker.android.Tool.PrefManager;
@@ -354,6 +356,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
     private static final String SERVER_PATH = "";
     List<LinkScriptItem> scriptItemList;
     private boolean editLinkShare;
+    private boolean isMimSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -391,7 +394,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         idSet = new ArrayList<>();
         contentPost = findViewById(R.id.contentPost);
         linkScriptContainer = findViewById(R.id.linkScriptContainer);
-
+        rootView = findViewById(R.id.main_activity_root_view);
         findViewById(R.id.btnAttachment).setOnClickListener(this);
         tvSubmitPost = findViewById(R.id.tvSubmitPost);
         tvSubmitPost.setOnClickListener(this);
@@ -430,7 +433,56 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                     App.setDeleteMediaIds(deleteMediaFiles);
                 }
 
-                //   makeText(EditPost.this, "image delete", LENGTH_SHORT).show();
+                if (isMimSelected) {
+                    if (postImages.isEmpty() && postVideos.isEmpty()) {
+                        String mimColor = AppSingleton.getInstance().getMimColor();
+                        if (mimColor.startsWith("#")) {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            int mColor = Color.parseColor(mimColor);
+                            messageContainer.setBackgroundColor(mColor);
+                            editPostMessage.setTextSize(22f);
+                            if (mimColor.contentEquals("#C6FFD4")) {
+                                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                            } else {
+                                editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                            }
+                            ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                            params.height = (int) getResources().getDimension(R.dimen._200sdp);
+                            messageContainer.setLayoutParams(params);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+
+                        } else {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            String imageUrl = AppConstants.MIM_IMAGE + mimColor;
+                            Picasso.with(EditPost.this).load(imageUrl).into(target);
+                            messageContainer.setBackground(mDrawable);
+                            editPostMessage.setHeight(200);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+                            editPostMessage.setTextSize(22f);
+
+                            switch (mimColor) {
+                                case "img_bg_birthday.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    break;
+                                case "img_bg_love.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#2D4F73"));
+                                    break;
+                                case "img_bg_love2.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#444748"));
+                                    break;
+                                case "img_bg_red.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                                case "img_bg_love3.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                            }
+
+                        }
+                    }
+                }
 
             }
         };
@@ -446,7 +498,56 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                     App.setDeleteMediaIds(deleteMediaFiles);
                 }
 
-                //    makeText(EditPost.this, "video delete", LENGTH_SHORT).show();
+                if (isMimSelected) {
+                    if (postImages.isEmpty() && postVideos.isEmpty()) {
+                        String mimColor = AppSingleton.getInstance().getMimColor();
+                        if (mimColor.startsWith("#")) {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            int mColor = Color.parseColor(mimColor);
+                            messageContainer.setBackgroundColor(mColor);
+                            editPostMessage.setTextSize(22f);
+                            if (mimColor.contentEquals("#C6FFD4")) {
+                                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                            } else {
+                                editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                            }
+                            ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                            params.height = (int) getResources().getDimension(R.dimen._200sdp);
+                            messageContainer.setLayoutParams(params);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+
+                        } else {
+                            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
+                            String imageUrl = AppConstants.MIM_IMAGE + mimColor;
+                            Picasso.with(EditPost.this).load(imageUrl).into(target);
+                            messageContainer.setBackground(mDrawable);
+                            editPostMessage.setHeight(200);
+                            messageContainer.setGravity(Gravity.CENTER);
+                            editPostMessage.setGravity(Gravity.CENTER);
+                            editPostMessage.setTextSize(22f);
+
+                            switch (mimColor) {
+                                case "img_bg_birthday.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#000000"));
+                                    break;
+                                case "img_bg_love.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#2D4F73"));
+                                    break;
+                                case "img_bg_love2.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#444748"));
+                                    break;
+                                case "img_bg_red.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                                case "img_bg_love3.png":
+                                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                                    break;
+                            }
+
+                        }
+                    }
+                }
             }
         };
 
@@ -457,38 +558,50 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
 
             String mimColor = viewColors.get(position).getMimColor();
             hasMim = viewColors.get(position).getId();
+            AppSingleton.getInstance().setMimColor(mimColor);
+            AppSingleton.getInstance().setHasMim(hasMim);
+            isMimSelected = true;
             if (mimColor.startsWith("#")) {
                 if (mimColor.contentEquals("#FFFFFF")) {
+                    editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
                     int mColor = Color.parseColor(mimColor);
                     messageContainer.setBackgroundColor(mColor);
                     messageContainer.setGravity(Gravity.START);
                     editPostMessage.setGravity(Gravity.START);
-                    editPostMessage.setTextAppearance(this, android.R.style.TextAppearance_Medium);
+                    editPostMessage.setTextSize(12f);
                     editPostMessage.setTextColor(Color.parseColor("#000000"));
                     ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
-                    params.height = (int) getResources().getDimension(R.dimen._220sdp);
+                    params.height = (int) getResources().getDimension(R.dimen._150sdp);
                     messageContainer.setLayoutParams(params);
                 } else {
+                    editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
                     int mColor = Color.parseColor(mimColor);
                     messageContainer.setBackgroundColor(mColor);
+                    editPostMessage.setTextSize(22f);
                     if (mimColor.contentEquals("#C6FFD4")) {
                         editPostMessage.setTextColor(Color.parseColor("#000000"));
+                    } else {
+                        editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
                     }
                     ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
                     params.height = (int) getResources().getDimension(R.dimen._200sdp);
                     messageContainer.setLayoutParams(params);
                     messageContainer.setGravity(Gravity.CENTER);
                     editPostMessage.setGravity(Gravity.CENTER);
-                    editPostMessage.setTextAppearance(this, android.R.style.TextAppearance_Large);
-                    editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+
                 }
 
 
             } else {
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
                 String imageUrl = AppConstants.MIM_IMAGE + mimColor;
                 Picasso.with(this).load(imageUrl).into(target);
                 messageContainer.setBackground(mDrawable);
-                editPostMessage.setHeight(150);
+                editPostMessage.setHeight(200);
+                editPostMessage.setTextSize(22f);
+                messageContainer.setGravity(Gravity.CENTER);
+                editPostMessage.setGravity(Gravity.CENTER);
+                //  editPostMessage.setTextAppearance(PostNew.this, android.R.style.TextAppearance_Large);
                 switch (mimColor) {
                     case "img_bg_birthday.png":
                         editPostMessage.setTextColor(Color.parseColor("#000000"));
@@ -506,6 +619,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                         editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
                         break;
                 }
+
             }
 
 
@@ -513,12 +627,14 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         MimAdapter adapter = new MimAdapter(this, viewColors, listener);
         mimRecyclerView.setAdapter(adapter);
 
+        rvMimShow = true;
+        rvMimToggle();
+
         profileId = manager.getProfileId();
         userIds = manager.getProfileId();
         toUserId = manager.getProfileId();
         deviceId = manager.getDeviceId();
         token = manager.getToken();
-
 
         chatAdapter = new ChatAdapter();
 
@@ -535,7 +651,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                     .into(imgPostUser);
         }
 
-        rootView = findViewById(R.id.main_activity_root_view);
+
         emojiButton = findViewById(R.id.main_activity_emoji);
         final ImageView sendButton = findViewById(R.id.main_activity_send);
 
@@ -791,30 +907,37 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
             int id = temp.getId();
             if (id == hasMim) {
                 String mimColor = temp.getMimColor();
+
+                AppSingleton.getInstance().setMimColor(mimColor);
+                AppSingleton.getInstance().setHasMim(hasMim);
+                isMimSelected = true;
+
                 if (mimColor.startsWith("#")) {
                     if (mimColor.contentEquals("#FFFFFF")) {
                         int mColor = Color.parseColor(mimColor);
                         messageContainer.setBackgroundColor(mColor);
                         messageContainer.setGravity(Gravity.START);
                         editPostMessage.setGravity(Gravity.START);
-                        editPostMessage.setTextAppearance(this, android.R.style.TextAppearance_Medium);
+                        editPostMessage.setTextSize(12f);
                         editPostMessage.setTextColor(Color.parseColor("#000000"));
                         ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
-                        params.height = 300;
+                        params.height = 100;
                         messageContainer.setLayoutParams(params);
                     } else {
                         int mColor = Color.parseColor(mimColor);
                         messageContainer.setBackgroundColor(mColor);
                         if (mimColor.contentEquals("#C6FFD4")) {
                             editPostMessage.setTextColor(Color.parseColor("#000000"));
+                        }else {
+                            editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
                         }
                         ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
-                        params.height = 350;
+                        params.height = 200;
                         messageContainer.setLayoutParams(params);
                         messageContainer.setGravity(Gravity.CENTER);
                         editPostMessage.setGravity(Gravity.CENTER);
-                        editPostMessage.setTextAppearance(this, android.R.style.TextAppearance_Large);
-                        editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
+                        editPostMessage.setTextSize(22f);
+
                     }
 
 
@@ -822,7 +945,8 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                     String imageUrl = AppConstants.MIM_IMAGE + mimColor;
                     Picasso.with(this).load(imageUrl).into(target);
                     messageContainer.setBackground(mDrawable);
-                    editPostMessage.setHeight(150);
+                    editPostMessage.setHeight(200);
+                    editPostMessage.setTextSize(22f);
                     switch (mimColor) {
                         case "img_bg_birthday.png":
                             editPostMessage.setTextColor(Color.parseColor("#000000"));
@@ -1014,6 +1138,18 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
             mediaRecyclerViewToggle();
             MediaAdapter mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
             mediaRecyclerView.setAdapter(mediaAdapter);
+
+
+            editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+            int mColor = Color.parseColor("#FFFFFF");
+            messageContainer.setBackgroundColor(mColor);
+            messageContainer.setGravity(Gravity.START);
+            editPostMessage.setGravity(Gravity.START);
+            editPostMessage.setTextSize(12f);
+            editPostMessage.setTextColor(Color.parseColor("#000000"));
+            ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+            params.height = (int) getResources().getDimension(R.dimen._150sdp);
+            messageContainer.setLayoutParams(params);
 
         }
 
@@ -2255,6 +2391,17 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                 mediaRecyclerView.setAdapter(mediaAdapter);
                 progressDialog.dismiss();
 
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                int mColor = Color.parseColor("#FFFFFF");
+                messageContainer.setBackgroundColor(mColor);
+                messageContainer.setGravity(Gravity.START);
+                editPostMessage.setGravity(Gravity.START);
+                editPostMessage.setTextSize(12f);
+                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                messageContainer.setLayoutParams(params);
+
 
             } else {
                 Toast.makeText(this, "Cancel Camera Capture", Toast.LENGTH_SHORT).show();
@@ -2288,6 +2435,17 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                 mediaRecyclerViewToggle();
                 mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                 mediaRecyclerView.setAdapter(mediaAdapter);
+
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                int mColor = Color.parseColor("#FFFFFF");
+                messageContainer.setBackgroundColor(mColor);
+                messageContainer.setGravity(Gravity.START);
+                editPostMessage.setGravity(Gravity.START);
+                editPostMessage.setTextSize(12f);
+                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                messageContainer.setLayoutParams(params);
 
 
             } else {
@@ -3709,6 +3867,18 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                 mediaRecyclerViewToggle();
                 mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                 mediaRecyclerView.setAdapter(mediaAdapter);
+
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                int mColor = Color.parseColor("#FFFFFF");
+                messageContainer.setBackgroundColor(mColor);
+                messageContainer.setGravity(Gravity.START);
+                editPostMessage.setGravity(Gravity.START);
+                editPostMessage.setTextSize(12f);
+                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                messageContainer.setLayoutParams(params);
+
             }
         }
     }

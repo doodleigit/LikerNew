@@ -148,6 +148,7 @@
                             android:background="@null"
                             android:isScrollContainer="true"
                             android:hint="Speak your mind..."
+                            android:textSize="@dimen/_12sdp"
                             android:imeOptions="actionSend"
                             android:inputType="textCapSentences|textMultiLine" >
                             <requestFocus />
