@@ -131,7 +131,7 @@ public class MessageListFragment extends Fragment {
             public void onMessageClick(ChatUser chatUser) {
                 FriendInfo friendInfo = new FriendInfo(chatUser.getUserData().getUserName(), chatUser.getUserData().getUserId(),
                         (chatUser.getUserData().getFirstName() + " " + chatUser.getUserData().getLastName()), chatUser.getUserData().getTotalLikes(),
-                        chatUser.getUserData().getGoldStars(), chatUser.getUserData().getOnline());
+                        chatUser.getUserData().getGoldStars(), chatUser.getUserData().getOnline(), chatUser.getUserData().getChatboxTurnOnOff());
                 initiateFragment(friendInfo);
             }
         };
@@ -143,11 +143,12 @@ public class MessageListFragment extends Fragment {
 
         ((MessageActivity) getActivity()).listUserOnlineListener = new OnlineStatusChangeListener() {
             @Override
-            public void onOnlineListener(String userId, String online) {
+            public void onOnlineListener(String userId, String online, String chatboxTurnOnOff) {
                 for (int i = 0; i < chatUsers.size(); i++) {
                     if (userId.equals(chatUsers.get(i).getUserData().getUserId())) {
                         chatUsers.get(i).getUserData().setOnline(online);
-                        messageListAdapter.notifyItemChanged(i);
+                        chatUsers.get(i).getUserData().setChatboxTurnOnOff(chatboxTurnOnOff);
+                        getActivity().sendBroadcast((new Intent()).setAction(AppConstants.LIST_MESSAGE_BROADCAST));
                         break;
                     }
                 }
@@ -395,8 +396,6 @@ public class MessageListFragment extends Fragment {
             setNewMessageToList(newMessage, type);
         }
     };
-
-
 
     @Override
     public void onDestroy() {

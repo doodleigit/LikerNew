@@ -55,7 +55,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         viewHolder.tvUserName.setText(arrayList.get(i).getUserData().getFirstName() + " " + arrayList.get(i).getUserData().getLastName());
         viewHolder.tvMessage.setText(arrayList.get(i).getMessageData().getContent());
         viewHolder.tvMessageTime.setText(Tools.chatDateCompare(context, Long.valueOf(arrayList.get(i).getMessageData().getTimePosted())));
-        viewHolder.ivOnline.setImageResource(arrayList.get(i).getUserData().getOnline().equals("0") ? R.drawable.user_offline : R.drawable.user_online);
+        viewHolder.ivOnline.setImageResource(arrayList.get(i).getUserData().getOnline().equals("1") && arrayList.get(i).getUserData().getChatboxTurnOnOff().equals("1") ?
+                R.drawable.user_online : R.drawable.user_offline);
 
         Glide.with(App.getAppContext())
                 .load(AppConstants.PROFILE_IMAGE + arrayList.get(i).getUserData().getPhoto())

@@ -59,11 +59,15 @@ public class MessageActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(args[0].toString());
                     String userId, online;
-                    userId = jsonObject.getString("user_id");
+                    userId = jsonObject.getString("follower_id");
                     online = jsonObject.getString("online");
-                    Objects.requireNonNull(listUserOnlineListener).onOnlineListener(userId, online);
-                    Objects.requireNonNull(messagingUserOnlineListener).onOnlineListener(userId, online);
-                } catch (JSONException e) {
+                    if (listUserOnlineListener != null) {
+                        listUserOnlineListener.onOnlineListener(userId, online, "1");
+                    }
+                    if (messagingUserOnlineListener != null) {
+                        messagingUserOnlineListener.onOnlineListener(userId, online, "1");
+                    }
+                } catch (JSONException | NullPointerException e) {
                     e.printStackTrace();
                 }
             }
@@ -75,11 +79,15 @@ public class MessageActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(args[0].toString());
                     String userId, online;
-                    userId = jsonObject.getString("user_id");
+                    userId = jsonObject.getString("follower_id");
                     online = jsonObject.getString("online");
-                    Objects.requireNonNull(listUserOnlineListener).onOnlineListener(userId, online);
-                    Objects.requireNonNull(messagingUserOnlineListener).onOnlineListener(userId, online);
-                } catch (JSONException e) {
+                    if (listUserOnlineListener != null) {
+                        listUserOnlineListener.onOnlineListener(userId, online, "1");
+                    }
+                    if (messagingUserOnlineListener != null) {
+                        messagingUserOnlineListener.onOnlineListener(userId, online, "1");
+                    }
+                } catch (JSONException | NullPointerException e) {
                     e.printStackTrace();
                 }
             }
@@ -89,6 +97,8 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mSocket.off("get_online_user");
+        mSocket.off("get_offline_user");
         IN_CHAT_MODE = false;
     }
 
