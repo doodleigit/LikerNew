@@ -24,6 +24,7 @@
             android:layout_toLeftOf="@+id/imageCommentSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            //+8801766228554
 
             <TextView
                 android:id="@+id/tvCommentUserName"
@@ -71,7 +72,6 @@
             android:layout_toLeftOf="@id/imageCommentSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
 
             <ProgressBar
                 android:id="@+id/ProgressBar"
@@ -131,7 +131,6 @@
                     android:src="@drawable/ic_thumb_up_black_24dp"
                     android:padding="@dimen/_2sdp"
                     />
-
 
             </LinearLayout>
             <TextView

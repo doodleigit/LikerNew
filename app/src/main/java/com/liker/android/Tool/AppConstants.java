@@ -163,6 +163,7 @@ public class AppConstants {
     public static final String REPLY_CHANGE_BROADCAST = "reply_change_broadcast";
     public static final String COMMON_CHANGE_BROADCAST = "common_change_broadcast";
     public static final String PERSONAL_PHOTO_BROADCAST = "personal_photo_broadcast";
+    public static final String TOP_POST_COMMENT_CHANGE_BROADCAST = "top_post_comment_change_broadcast";
 
     public static final String NOTIFICATION = "newNotification";
     public static final String CHAT_USERS = "get_chat_users";

@@ -143,6 +143,9 @@ public class FollowingPost extends Fragment   {
         permissionIntent.addAction(AppConstants.PERMISSION_CHANGE_BROADCAST);
         Objects.requireNonNull(getActivity()).registerReceiver(permissionBroadcast, permissionIntent);
 
+        IntentFilter topCommentChangeIntent = new IntentFilter();
+        topCommentChangeIntent.addAction(AppConstants.TOP_POST_COMMENT_CHANGE_BROADCAST);
+        Objects.requireNonNull(getActivity()).registerReceiver(topCommentChangeBroadcast, topCommentChangeIntent);
 
         manager = new PrefManager(getActivity());
         deviceId = manager.getDeviceId();
@@ -613,6 +616,26 @@ public class FollowingPost extends Fragment   {
     };
 
 
+    BroadcastReceiver topCommentChangeBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
+            int position = intent.getIntExtra("position", -1);
+            if (position != -1) {
+                if (postItemList.size() >= position + 1) {
+                    if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
+
+                        postItemList.remove(position);
+                        postItemList.add(position, postItem);
+                        adapter.notifyItemChanged(position);
+
+
+                    }
+                }
+            }
+        }
+    };
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -621,6 +644,7 @@ public class FollowingPost extends Fragment   {
         Objects.requireNonNull(getActivity()).unregisterReceiver(broadcastReceiver);
         Objects.requireNonNull(getActivity()).unregisterReceiver(postFooterChangeBroadcast);
         Objects.requireNonNull(getActivity()).unregisterReceiver(permissionBroadcast);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(topCommentChangeBroadcast);
     }
 
 

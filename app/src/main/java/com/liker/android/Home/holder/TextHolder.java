@@ -62,6 +62,7 @@ import com.liker.android.Comment.holder.CommentImageHolder;
 import com.liker.android.Comment.holder.CommentLinkScriptHolder;
 import com.liker.android.Comment.holder.CommentTextHolder;
 import com.liker.android.Comment.holder.CommentYoutubeHolder;
+import com.liker.android.Comment.model.Comment;
 import com.liker.android.Comment.model.CommentItem;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.MentionItem;
@@ -86,6 +87,7 @@ import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.Operation;
 import com.liker.android.Tool.PrefManager;
@@ -98,6 +100,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -193,6 +196,8 @@ public class TextHolder extends RecyclerView.ViewHolder implements
     private String deviceId, profileId, token, userIds;
     private Context mContext;
     public static final String ITEM_KEY = "item_key";
+    public static final String REPLY_ITEM_KEY = "reply_item_key";
+    public static final String COMMENT_ITEM_POSITION_KEY = "comment_item_position_key";
 
     public CallbackManager callbackManager;
     public ShareDialog shareDialog;
@@ -217,6 +222,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
 
     public ImageView imagePostComment;
     public static final String COMMENT_KEY = "comment_item_key";
+    public static final String COMMENT_TYPE_KEY = "comment_type_key";
     private ProgressBar mProgressBar;
 
     //POST LIKE
@@ -256,24 +262,98 @@ public class TextHolder extends RecyclerView.ViewHolder implements
     private TextView tvWallPost, tvWallPostInfo;
 
     //footerFollow Status
-    private ViewGroup contentFollow,layoutFollowUser,rootView;
+    private ViewGroup contentFollow, layoutFollowUser, rootView;
     private CircleImageView imageFollowUser;
-    private TextView tvContributorStatus,tvFollowUserName;
+    private TextView tvContributorStatus, tvFollowUserName;
     private ImageView unFollowImage;
     private String userFollowProfileImage;
     private ProgressDialog progressDialog;
 
+
     private RecyclerView rvPopularComment;
-    CommentAdapter adapter;
+    private CommentAdapter adapter;
+    private List<Comment_> comment_list;
 
     @Override
-    public void onTitleClicked(Comment_ commentItem, int position, Reply reply) {
+    public void onTitleClicked(Comment_ commentItem, int CommentPosition, Reply reply) {
+
+
+        App.setCommentItem(commentItem);
+        App.setReplyItem(reply);
+        List<Comment> comments = new ArrayList<>();
+        List<Comment_> commentList = new ArrayList<>();
+        commentList.add(commentItem);
+        Comment comment = new Comment();
+        comment.setComments(commentList);
+        comments.add(comment);
+
+        CommentItem commentItems = new CommentItem();
+        commentItems.setComments(comments);
+
+        Intent intent = new Intent(mContext, CommentPost.class);
+        intent.putExtra(COMMENT_KEY, (Parcelable) commentItems);
+        intent.putExtra(ITEM_KEY, (Parcelable) postItem);
+        intent.putExtra(POST_ITEM_POSITION, position);
+        intent.putExtra(COMMENT_TYPE_KEY, "TopComment");
+        mContext.startActivity(intent);
+
+        // finish();
 
     }
 
     @Override
     public void commentDelete(Comment_ commentItem, int position, Reply reply) {
 
+
+        String commentId = commentItem.getId();
+        String postId = commentItem.getPostId();
+        Call<String> call = commentService.deletePostComment(deviceId, profileId, token, commentId, postId, userIds);
+        sendDeleteCommentRequest(call);
+    }
+
+    private void sendDeleteCommentRequest(Call<String> call) {
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        try {
+                            JSONObject object = new JSONObject(response.body());
+                            boolean status = object.getBoolean("status");
+
+                            if (status) {
+
+                                int totalComment = Integer.parseInt(postItem.getTotalComment()) - 1;
+                                postItem.setTotalComment(String.valueOf(totalComment));
+                                if (!isNullOrEmpty(postItem.getTotalComment()) && !"0".equalsIgnoreCase(postItem.getTotalComment())) {
+                                    tvCommentCount.setVisibility(View.VISIBLE);
+                                    tvCommentCount.setText(postItem.getTotalComment());
+                                } else {
+                                    tvCommentCount.setVisibility(View.GONE);
+                                    tvCommentCount.setText("");
+                                }
+                                comment_list.clear();
+//                                adapter.deleteItem(position);
+                                adapter.notifyDataSetChanged();
+
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
     }
 //    CommentTextHolder.CommentListener textListener;
 //    CommentLinkScriptHolder.CommentListener linkScriptListener;
@@ -283,6 +363,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
     public interface PostItemListener {
         void deletePost(PostItem postItem, int position);
     }
+
     public TextHolder(View itemView, Context context, PostItemListener postTextListener, String className) {
         super(itemView);
 
@@ -387,21 +468,10 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         imageFollowUser = itemView.findViewById(R.id.imageFollowUser);
         unFollowImage = itemView.findViewById(R.id.unFollowImage);
 
-        rvPopularComment=itemView.findViewById(R.id.rvPopularComment);
-        List<Comment_> comment_list=new ArrayList<>();
-        Comment_ comment=new Comment_();
-        comment.setCommentType("1");
-        comment.setUserFirstName("Azharul");
-        comment.setUserLastName("Islam");
-        comment.setUserSliverStars("12");
-        comment.setUserGoldStars("3");
-        comment.setCommentText("1......return...Popular");
-        comment.setDateTime("1221313");
-        comment.setTotalLike("12");
-        comment.setTotalReply("45");
-        comment_list.add(comment);
-       // adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, true);
-       // rvPopularComment.setAdapter(adapter);
+        rvPopularComment = itemView.findViewById(R.id.rvPopularComment);
+        comment_list = new ArrayList<>();
+        //    adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, true);
+        //  rvPopularComment.setAdapter(adapter);
     }
 
 
@@ -498,7 +568,6 @@ public class TextHolder extends RecyclerView.ViewHolder implements
             }
         }
 
-
         imgLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -518,9 +587,9 @@ public class TextHolder extends RecyclerView.ViewHolder implements
 
                     if (!postFooters.isFollowed()) {
 
-                        followToggle(rootView,contentFollow,true);
+                        followToggle(rootView, contentFollow, true);
                         userFollowProfileImage = item.getUesrProfileImg();
-                        tvFollowUserName.setText("Follow "+item.getUserFirstName());
+                        tvFollowUserName.setText("Follow " + item.getUserFirstName());
                         tvContributorStatus.setText(getFollowSpannableStringBuilder(mContext, item));
                         tvContributorStatus.setMovementMethod(LinkMovementMethod.getInstance());
                         String userImageUrl = AppConstants.PROFILE_IMAGE + userFollowProfileImage;
@@ -530,8 +599,8 @@ public class TextHolder extends RecyclerView.ViewHolder implements
                                 .dontAnimate()
                                 .into(imageFollowUser);
 
-                    }else {
-                        followToggle(rootView,contentFollow,false);
+                    } else {
+                        followToggle(rootView, contentFollow, false);
                     }
                 }
             }
@@ -576,7 +645,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
             tvPostContent.setVisibility(View.GONE);
             tvPostEmojiContent.setVisibility(View.VISIBLE);
             tvPostEmojiContent.setText(text);
-            readMoreText(mContext,tvPostEmojiContent,text);
+            readMoreText(mContext, tvPostEmojiContent, text);
         } else if (extractedUrls.size() > 0) {
             tvPostEmojiContent.setVisibility(View.GONE);
             tvPostContent.setVisibility(View.VISIBLE);
@@ -626,6 +695,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
                                 public void onClick(View view) {
                                     mContext.startActivity(new Intent(mContext, ProfileActivity.class).putExtra("user_id", temp.getMentionUserId()).putExtra("user_name", temp.getMentionUserName()));
                                 }
+
                                 @Override
                                 public void updateDrawState(TextPaint ds) {
                                     ds.setColor(ds.linkColor);    // you can use custom color
@@ -697,7 +767,6 @@ public class TextHolder extends RecyclerView.ViewHolder implements
 
             }
         }
-
 
         String likes = item.getUserProfileLikes();
         String followers = item.getUserTotalFollowers();
@@ -843,8 +912,8 @@ public class TextHolder extends RecyclerView.ViewHolder implements
 
         int totalStars = silverStar + goldStar;
         String categoryName = item.getCatName();
-        int postSource=item.getPostSource();
-        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName,postSource);
+        int postSource = item.getPostSource();
+        SpannableStringBuilder builder = getSpannableStringBuilder(mContext, item.getCatId(), likes, followers, totalStars, categoryName, postSource);
 
         if (!isNullOrEmpty(item.getPostWallFirstName())) {
 
@@ -976,8 +1045,6 @@ public class TextHolder extends RecyclerView.ViewHolder implements
                 mContext.startActivity(new Intent(mContext, ProfileActivity.class).putExtra("user_id", item.getPostUserid()).putExtra("user_name", item.getPostUsername()));
             }
         });
-
-
         imagePostUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1281,25 +1348,34 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         layoutFollowUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String followUserId=item.getPostUserid();
+                String followUserId = item.getPostUserid();
                 setFollow(followUserId, position);
             }
         });
         unFollowImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PostFooter postFooter=postItem.getPostFooter();
+                PostFooter postFooter = postItem.getPostFooter();
                 postFooter.setFollowed(true);
                 //App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) postItem).putExtra("position", position).putExtra("type", "follow"));
-                followToggle(rootView,contentFollow,false);
+                followToggle(rootView, contentFollow, false);
                 contentFollow.setVisibility(View.GONE);
             }
         });
 
+
+        //ADD MOST POPULAR COMMENT
+        if (postItem.getPostTopComment().size() > 0) {
+            comment_list.clear();
+            comment_list.addAll(postItem.getPostTopComment().get(0).getComment());
+            adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, true);
+            rvPopularComment.setAdapter(adapter);
+        }
+
     }
 
     private void setFollow(String followUserId, int position) {
-      //  showProgressBar(mContext.getString(R.string.loading));
+        //  showProgressBar(mContext.getString(R.string.loading));
         Call<String> call = webService.setFollow(deviceId, token, profileId, userIds, followUserId);
         call.enqueue(new Callback<String>() {
             @Override
@@ -1309,11 +1385,11 @@ public class TextHolder extends RecyclerView.ViewHolder implements
                     JSONObject obj = new JSONObject(jsonResponse);
                     boolean status = obj.getBoolean("status");
                     if (status) {
-                      //  followToggle(rootView,contentFollow,false);
+                        //  followToggle(rootView,contentFollow,false);
                         contentFollow.setVisibility(View.GONE);
-                        PostFooter postFooter=postItem.getPostFooter();
+                        PostFooter postFooter = postItem.getPostFooter();
                         postFooter.setFollowed(true);
-                      //  App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) postItem).putExtra("position", position).putExtra("type", "follow"));
+                        //  App.getAppContext().sendBroadcast(new Intent(AppConstants.FOLLOW_STATUS_BROADCAST).putExtra("post_item", (Parcelable) postItem).putExtra("position", position).putExtra("type", "follow"));
                         sendBrowserNotification(followUserId);
                     } else {
                         Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
@@ -1344,7 +1420,6 @@ public class TextHolder extends RecyclerView.ViewHolder implements
             }
         });
     }
-
 
 
     private void sendPostUnLikeRequest(Call<String> call) {
@@ -1616,12 +1691,11 @@ public class TextHolder extends RecyclerView.ViewHolder implements
                     intent.putExtra(COMMENT_KEY, (Parcelable) commentItem);
                     intent.putExtra(ITEM_KEY, (Parcelable) postItem);
                     intent.putExtra(POST_ITEM_POSITION, position);
+                    intent.putExtra(COMMENT_TYPE_KEY, "AllComment");
                     //intent.putExtra(COMMENT_CHILD_KEY, (Parcelable) comment_Item);
                     //  intent.putExtra(REASON_KEY, (Parcelable) reportReason);
                     mContext.startActivity(intent);
-
                 }
-
 
             }
 
@@ -1695,7 +1769,6 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         blockUserDialog.show(activity.getSupportFragmentManager(), "BlockUserDialog");
 //        blockUserDialog.show(activity.getSupportFragmentManager(), "BlockUserDialog");
     }*/
-
 
 
     private void showProgressBar(String title) {

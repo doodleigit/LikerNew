@@ -91,6 +91,7 @@ public class App extends Application {
 
 
 
+
     public static ReplyPersistData getReplyPersistData() {
         return replyPersistData;
     }
@@ -106,7 +107,6 @@ public class App extends Application {
     public static void setCommentPersistData(CommentPersistData commentPersistData) {
         App.commentPersistData = commentPersistData;
     }
-
 
     public static boolean isSharePostfooter() {
         return sharePostfooter;

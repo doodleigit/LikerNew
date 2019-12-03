@@ -73,10 +73,16 @@ import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.liker.android.App;
+import com.liker.android.Comment.adapter.CommentAdapter;
+import com.liker.android.Comment.holder.CommentImageHolder;
+import com.liker.android.Comment.holder.CommentLinkScriptHolder;
+import com.liker.android.Comment.holder.CommentTextHolder;
+import com.liker.android.Comment.holder.CommentYoutubeHolder;
 import com.liker.android.Comment.model.Comment;
 import com.liker.android.Comment.model.CommentItem;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reason;
+import com.liker.android.Comment.model.Reply;
 import com.liker.android.Comment.model.ReportReason;
 import com.liker.android.Comment.service.CommentService;
 import com.liker.android.Comment.view.activity.CommentPost;
@@ -141,7 +147,11 @@ import static com.liker.android.Tool.Tools.readMoreText;
 import static com.liker.android.Tool.Tools.setMargins;
 import static java.lang.Integer.parseInt;
 
-public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
+public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
+        CommentTextHolder.CommentListener,
+        CommentImageHolder.CommentListener,
+        CommentYoutubeHolder.CommentListener,
+        CommentLinkScriptHolder.CommentListener{
     public static final String POST_ITEM_POSITION = "post_item_position";
     public TextView tvHeaderInfo, tvPostTime, tvPostUserName, tvImgShareCount, tvPostLikeCount, tvLinkScriptText, tvCommentCount;
     public CircleImageView imagePostUser;
@@ -163,6 +173,8 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
     private String deviceId, profileId, token, userIds;
     private Context mContext;
     public static final String ITEM_KEY = "item_key";
+    public static final String COMMENT_TYPE_KEY = "comment_type_key";
+
     ShareDialog shareDialog;
     String linkImage;
     CallbackManager callbackManager;
@@ -230,6 +242,93 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
     private ImageView unFollowImage;
     private String userFollowProfileImage;
     private ProgressDialog progressDialog;
+
+
+    private RecyclerView rvPopularComment;
+    private CommentAdapter adapter;
+    private List<Comment_> comment_list;
+
+    @Override
+    public void onTitleClicked(Comment_ commentItem, int commentPosition, Reply reply) {
+
+
+        App.setCommentItem(commentItem);
+        App.setReplyItem(reply);
+        List<Comment> comments = new ArrayList<>();
+        List<Comment_> commentList = new ArrayList<>();
+        commentList.add(commentItem);
+        Comment comment = new Comment();
+        comment.setComments(commentList);
+        comments.add(comment);
+
+        CommentItem commentItems = new CommentItem();
+        commentItems.setComments(comments);
+
+        Intent intent = new Intent(mContext, CommentPost.class);
+        intent.putExtra(COMMENT_KEY, (Parcelable) commentItems);
+        intent.putExtra(ITEM_KEY, (Parcelable) item);
+        intent.putExtra(POST_ITEM_POSITION, position);
+        intent.putExtra(COMMENT_TYPE_KEY, "TopComment");
+        mContext.startActivity(intent);
+
+        // finish();
+
+    }
+
+    @Override
+    public void commentDelete(Comment_ commentItem, int position, Reply reply) {
+
+
+        String commentId = commentItem.getId();
+        String postId = commentItem.getPostId();
+        Call<String> call = commentService.deletePostComment(deviceId, profileId, token, commentId, postId, userIds);
+        sendDeleteCommentRequest(call);
+    }
+
+    private void sendDeleteCommentRequest(Call<String> call) {
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        try {
+                            JSONObject object = new JSONObject(response.body());
+                            boolean status = object.getBoolean("status");
+
+                            if (status) {
+
+                                int totalComment = Integer.parseInt(item.getTotalComment()) - 1;
+                                item.setTotalComment(String.valueOf(totalComment));
+                                if (!isNullOrEmpty(item.getTotalComment()) && !"0".equalsIgnoreCase(item.getTotalComment())) {
+                                    tvCommentCount.setVisibility(View.VISIBLE);
+                                    tvCommentCount.setText(item.getTotalComment());
+                                } else {
+                                    tvCommentCount.setVisibility(View.GONE);
+                                    tvCommentCount.setText("");
+                                }
+                                comment_list.clear();
+//                                adapter.deleteItem(position);
+                                adapter.notifyDataSetChanged();
+
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+    }
 
     public interface PostItemListener {
         void deletePost(PostItem postItem, int position);
@@ -334,6 +433,9 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
         tvFollowUserName = itemView.findViewById(R.id.tvFollowUserName);
         imageFollowUser = itemView.findViewById(R.id.imageFollowUser);
         unFollowImage = itemView.findViewById(R.id.unFollowImage);
+
+        rvPopularComment = itemView.findViewById(R.id.rvPopularComment);
+        comment_list = new ArrayList<>();
     }
 
     int position;
@@ -1128,6 +1230,16 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
             }
         });
 
+
+
+        //ADD MOST POPULAR COMMENT
+        if (item.getPostTopComment().size() > 0) {
+            comment_list.clear();
+            comment_list.addAll(item.getPostTopComment().get(0).getComment());
+            adapter = new CommentAdapter(mContext, comment_list, item, this, this, this, this, true);
+            rvPopularComment.setAdapter(adapter);
+        }
+
     }
 
     private void setFollow(String followUserId, int position) {
@@ -1389,6 +1501,7 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder {
                     intent.putExtra(COMMENT_KEY, (Parcelable) commentItem);
                     intent.putExtra(ITEM_KEY, (Parcelable) item);
                     intent.putExtra(POST_ITEM_POSITION, position);
+                    intent.putExtra(COMMENT_TYPE_KEY, "AllComment");
                     mContext.startActivity(intent);
 
 

@@ -4,15 +4,17 @@ package com.liker.android.Home.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Parcelable.Creator;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.liker.android.Comment.model.Comment_;
 
 
-public class PostItem implements Serializable, Parcelable
-{
+public class PostItem implements Serializable, Parcelable {
 
     @SerializedName("cat_id")
     @Expose
@@ -94,6 +96,11 @@ public class PostItem implements Serializable, Parcelable
     @SerializedName("post_text_index")
     @Expose
     private List<PostTextIndex> postTextIndex = new ArrayList<PostTextIndex>();
+
+    @SerializedName("post_top_comment")
+    @Expose
+    private List<PostTopComment> postTopComment = new ArrayList<PostTopComment>();
+
     @SerializedName("post_type")
     @Expose
     private String postType;
@@ -139,6 +146,7 @@ public class PostItem implements Serializable, Parcelable
     @SerializedName("shared_post_text_index")
     @Expose
     private List<SharedPostTextIndex> sharedPostTextIndex = new ArrayList<SharedPostTextIndex>();
+
     @SerializedName("shared_profile")
     @Expose
     private SharedProfile sharedProfile;
@@ -176,7 +184,7 @@ public class PostItem implements Serializable, Parcelable
 
 
         @SuppressWarnings({
-            "unchecked"
+                "unchecked"
         })
         public PostItem createFromParcel(Parcel in) {
             return new PostItem(in);
@@ -186,8 +194,7 @@ public class PostItem implements Serializable, Parcelable
             return (new PostItem[size]);
         }
 
-    }
-    ;
+    };
     private final static long serialVersionUID = -859773688598186189L;
 
     protected PostItem(Parcel in) {
@@ -217,6 +224,7 @@ public class PostItem implements Serializable, Parcelable
         this.postLinkUrl = ((String) in.readValue((String.class.getClassLoader())));
         this.postText = ((String) in.readValue((String.class.getClassLoader())));
         in.readList(this.postTextIndex, (PostTextIndex.class.getClassLoader()));
+        in.readList(this.postTopComment, (PostTopComment.class.getClassLoader()));
         this.postType = ((String) in.readValue((String.class.getClassLoader())));
         this.postUserid = ((String) in.readValue((String.class.getClassLoader())));
         this.postUsername = ((String) in.readValue((String.class.getClassLoader())));
@@ -328,6 +336,13 @@ public class PostItem implements Serializable, Parcelable
         this.isNotificationOff = isNotificationOff;
     }
 
+    public List<PostTopComment> getPostTopComment() {
+        return postTopComment;
+    }
+
+    public void setPostTopComment(List<PostTopComment> postTopComment) {
+        this.postTopComment = postTopComment;
+    }
 
     public String getIsShared() {
         return isShared;
@@ -693,6 +708,7 @@ public class PostItem implements Serializable, Parcelable
         dest.writeValue(postLinkUrl);
         dest.writeValue(postText);
         dest.writeList(postTextIndex);
+        dest.writeList(postTopComment);
         dest.writeValue(postType);
         dest.writeValue(postUserid);
         dest.writeValue(postUsername);
@@ -719,10 +735,11 @@ public class PostItem implements Serializable, Parcelable
         dest.writeValue(userSilverStars);
         dest.writeValue(userTopCommenter);
         dest.writeValue(userTotalFollowers);
+
     }
 
     public int describeContents() {
-        return  0;
+        return 0;
     }
 
 }

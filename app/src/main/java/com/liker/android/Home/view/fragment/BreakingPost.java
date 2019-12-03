@@ -36,6 +36,7 @@ import com.liker.android.Home.holder.TextHolder;
 import com.liker.android.Home.holder.TextMimHolder;
 import com.liker.android.Home.holder.VideoHolder;
 import com.liker.android.Home.model.PostItem;
+import com.liker.android.Home.model.PostTopComment;
 import com.liker.android.Home.service.HomeService;
 import com.liker.android.Home.service.TabClickListener;
 import com.liker.android.Home.service.VideoPlayerRecyclerView;
@@ -149,6 +150,11 @@ public class BreakingPost extends Fragment {
         IntentFilter permissionIntent = new IntentFilter();
         permissionIntent.addAction(AppConstants.PERMISSION_CHANGE_BROADCAST);
         Objects.requireNonNull(getActivity()).registerReceiver(permissionBroadcast, permissionIntent);
+
+
+        IntentFilter topCommentChangeIntent = new IntentFilter();
+        topCommentChangeIntent.addAction(AppConstants.TOP_POST_COMMENT_CHANGE_BROADCAST);
+        Objects.requireNonNull(getActivity()).registerReceiver(topCommentChangeBroadcast, topCommentChangeIntent);
 
         manager = new PrefManager(getActivity());
         deviceId = manager.getDeviceId();
@@ -627,27 +633,28 @@ public class BreakingPost extends Fragment {
             PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
             boolean isFooterChange = intent.getBooleanExtra("isFooterChange", true);
             int position = intent.getIntExtra("position", -1);
-            if (isFooterChange) {
-                if (position != -1) {
-                    if (postItemList.size() >= position + 1) {
-                        if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
-                            postItemList.get(position).getPostFooter().setPostTotalLike(postItem.getPostFooter().getPostTotalLike());
-                            postItemList.get(position).getPostFooter().setLikeUserStatus(postItem.getPostFooter().isLikeUserStatus());
-                            postItemList.get(position).setTotalComment(postItem.getTotalComment());
-                            adapter.notifyItemChanged(position);
+
+                if (isFooterChange) {
+                    if (position != -1) {
+                        if (postItemList.size() >= position + 1) {
+                            if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
+                                postItemList.get(position).getPostFooter().setPostTotalLike(postItem.getPostFooter().getPostTotalLike());
+                                postItemList.get(position).getPostFooter().setLikeUserStatus(postItem.getPostFooter().isLikeUserStatus());
+                                postItemList.get(position).setTotalComment(postItem.getTotalComment());
+                                adapter.notifyItemChanged(position);
+                            }
+                        }
+                    }
+                } else {
+                    if (position != -1) {
+                        if (postItemList.size() >= position + 1) {
+                            if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
+                                postItemList.set(position, postItem);
+                                adapter.notifyItemChanged(position);
+                            }
                         }
                     }
                 }
-            } else {
-                if (position != -1) {
-                    if (postItemList.size() >= position + 1) {
-                        if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
-                            postItemList.set(position, postItem);
-                            adapter.notifyItemChanged(position);
-                        }
-                    }
-                }
-            }
 
         }
     };
@@ -668,7 +675,6 @@ public class BreakingPost extends Fragment {
                         } else {
                             postItemList.remove(position);
                             adapter.notifyDataSetChanged();
-
                         }
 
                     }
@@ -679,6 +685,27 @@ public class BreakingPost extends Fragment {
 
 
 
+    BroadcastReceiver topCommentChangeBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
+            int position = intent.getIntExtra("position", -1);
+            if (position != -1) {
+                if (postItemList.size() >= position + 1) {
+                    if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
+
+                        postItemList.remove(position);
+                        postItemList.add(position, postItem);
+                        adapter.notifyItemChanged(position);
+
+
+                    }
+                }
+            }
+        }
+    };
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -687,6 +714,7 @@ public class BreakingPost extends Fragment {
         Objects.requireNonNull(getActivity()).unregisterReceiver(broadcastReceiver);
         Objects.requireNonNull(getActivity()).unregisterReceiver(postChangeBroadcast);
         Objects.requireNonNull(getActivity()).unregisterReceiver(permissionBroadcast);
+       Objects.requireNonNull(getActivity()).unregisterReceiver(topCommentChangeBroadcast);
       //  Objects.requireNonNull(getActivity()).unregisterReceiver(followStatusBroadcast);
     }
 

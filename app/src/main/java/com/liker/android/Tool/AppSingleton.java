@@ -1,17 +1,17 @@
 package com.liker.android.Tool;
 
+import com.liker.android.Home.model.PostItem;
+
 public class AppSingleton {
 
     private String mimColor;
     private int hasMim;
 
+
     private static final AppSingleton ourInstance = new AppSingleton();
 
     public static AppSingleton getInstance() {
         return ourInstance;
-    }
-
-    private AppSingleton() {
     }
 
     public String getMimColor() {

@@ -145,6 +145,10 @@ public class TrendingPost extends Fragment   {
         permissionIntent.addAction(AppConstants.PERMISSION_CHANGE_BROADCAST);
         Objects.requireNonNull(getActivity()).registerReceiver(permissionBroadcast, permissionIntent);
 
+        IntentFilter topCommentChangeIntent = new IntentFilter();
+        topCommentChangeIntent.addAction(AppConstants.TOP_POST_COMMENT_CHANGE_BROADCAST);
+        Objects.requireNonNull(getActivity()).registerReceiver(topCommentChangeBroadcast, topCommentChangeIntent);
+
  /*       IntentFilter statusIntent = new IntentFilter();
         statusIntent.addAction(AppConstants.FOLLOW_STATUS_BROADCAST);
         Objects.requireNonNull(getActivity()).registerReceiver(followStatusBroadcast, statusIntent);*/
@@ -614,6 +618,23 @@ public class TrendingPost extends Fragment   {
         }
     };
 
+    BroadcastReceiver topCommentChangeBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PostItem postItem = (PostItem) intent.getSerializableExtra("post_item");
+            int position = intent.getIntExtra("position", -1);
+            if (position != -1) {
+                if (postItemList.size() >= position + 1) {
+                    if (postItemList.get(position).getPostId().equals(postItem.getPostId())) {
+                        postItemList.remove(position);
+                        postItemList.add(position, postItem);
+                        adapter.notifyItemChanged(position);
+
+                    }
+                }
+            }
+        }
+    };
 
     @Override
     public void onDestroy() {
@@ -623,6 +644,7 @@ public class TrendingPost extends Fragment   {
         Objects.requireNonNull(getActivity()).unregisterReceiver(broadcastReceiver);
         Objects.requireNonNull(getActivity()).unregisterReceiver(postFooterChangeBroadcast);
         Objects.requireNonNull(getActivity()).unregisterReceiver(permissionBroadcast);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(topCommentChangeBroadcast);
     }
 
 

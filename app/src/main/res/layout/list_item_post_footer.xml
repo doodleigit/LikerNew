@@ -7,19 +7,20 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="vertical">
-<!--    <ProgressBar
-        android:id="@+id/ProgressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:maxHeight="2dip"
-        android:minHeight="2dip"
-        android:progress="50"
-        android:visibility="invisible"
-        android:progressDrawable="@drawable/greenprogress" />-->
+    <!--    <ProgressBar
+            android:id="@+id/ProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:maxHeight="2dip"
+            android:minHeight="2dip"
+            android:progress="50"
+            android:visibility="invisible"
+            android:progressDrawable="@drawable/greenprogress" />-->
 
-    <include layout="@layout/follow_status_footer"/>
+    <include layout="@layout/follow_status_footer" />
+
     <ProgressBar
         android:id="@+id/ProgressBar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -56,30 +57,36 @@
 
         <LinearLayout
             android:id="@+id/commentContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_toLeftOf="@id/imagePostShare"
+            android:layout_toRightOf="@id/imgLike"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/imagePostComment"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_comment"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:tint="#8596A3" />
+
+            <TextView
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:padding="@dimen/_5sdp"
-                android:src="@drawable/ic_comment_black_24dp" />
-
+                android:layout_marginLeft="@dimen/_2sdp"
+                android:text="Comment" />
 
             <TextView
                 android:id="@+id/tvCommentCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginRight="@dimen/_5sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:layout_toRightOf="@id/imagePostComment"
-                android:textAlignment="center"
-                tools:text="" />
+                android:layout_marginLeft="@dimen/_5sdp"
+                tools:text="5" />
 
 
         </LinearLayout>
