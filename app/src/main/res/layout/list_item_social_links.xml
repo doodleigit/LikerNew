@@ -9,14 +9,15 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_margin="10dp"
-        android:src="@drawable/profile" />
+        android:src="@drawable/web" />
 
     <TextView
         android:id="@+id/social_link_type"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_toEndOf="@+id/social_icon"
+        android:layout_toStartOf="@+id/edit"
         android:text="Facebook Profile"
         android:textColor="@color/colorPrimary"
         android:textSize="14sp"/>

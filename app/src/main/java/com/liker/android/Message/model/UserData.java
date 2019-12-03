@@ -62,6 +62,9 @@ public class UserData implements Serializable, Parcelable
     @SerializedName("online")
     @Expose
     private String online;
+    @SerializedName("chatbox_turn_on_off")
+    @Expose
+    private String chatboxTurnOnOff;
     public final static Creator<UserData> CREATOR = new Creator<UserData>() {
 
 
@@ -98,6 +101,7 @@ public class UserData implements Serializable, Parcelable
         this.isMaster = ((String) in.readValue((String.class.getClassLoader())));
         this.description = ((String) in.readValue((String.class.getClassLoader())));
         this.online = ((String) in.readValue((String.class.getClassLoader())));
+        this.chatboxTurnOnOff = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     public UserData() {
@@ -239,6 +243,14 @@ public class UserData implements Serializable, Parcelable
         this.online = online;
     }
 
+    public String getChatboxTurnOnOff() {
+        return chatboxTurnOnOff;
+    }
+
+    public void setChatboxTurnOnOff(String chatboxTurnOnOff) {
+        this.chatboxTurnOnOff = chatboxTurnOnOff;
+    }
+
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
         dest.writeValue(userId);
@@ -257,6 +269,7 @@ public class UserData implements Serializable, Parcelable
         dest.writeValue(isMaster);
         dest.writeValue(description);
         dest.writeValue(online);
+        dest.writeValue(chatboxTurnOnOff);
     }
 
     public int describeContents() {

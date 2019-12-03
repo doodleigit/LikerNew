@@ -460,6 +460,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/rectangle_corner_round_five"
                         android:layout_marginTop="5dp"
                         android:gravity="start|center"
                         android:orientation="horizontal">
@@ -468,18 +469,18 @@
                             android:id="@+id/phone_country_spinner"
                             android:layout_width="wrap_content"
                             android:layout_height="30dp"
-                            android:layout_marginEnd="10dp"
+                            android:layout_marginEnd="5dp"
                             android:background="@drawable/rectangle_corner_round_five" />
 
                         <EditText
                             android:id="@+id/new_phone"
                             android:layout_width="match_parent"
                             android:layout_height="30dp"
-                            android:background="@drawable/rectangle_corner_round_five"
+                            android:background="@android:color/transparent"
                             android:inputType="phone"
                             android:hint="New Phone"
-                            android:paddingStart="10dp"
-                            android:paddingEnd="10dp"
+                            android:paddingStart="5dp"
+                            android:paddingEnd="5dp"
                             android:textSize="14sp" />
 
                     </LinearLayout>
@@ -499,21 +500,31 @@
                             android:textAllCaps="false"
                             android:textSize="14sp" />
 
-                        <Spinner
-                            android:id="@+id/phone_type_spinner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35dp"
-                            android:layout_marginEnd="10dp"
-                            android:layout_toStartOf="@+id/phone_privacy_spinner"
-                            android:background="@drawable/rectangle_corner_round_five" />
-
-                        <Spinner
-                            android:id="@+id/phone_privacy_spinner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="35dp"
-                            android:layout_marginEnd="10dp"
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toEndOf="@+id/phone_cancel"
                             android:layout_toStartOf="@+id/phone_save"
-                            android:background="@drawable/rectangle_corner_round_five" />
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:orientation="horizontal">
+
+                            <Spinner
+                                android:id="@+id/phone_type_spinner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="35dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="5dp"
+                                android:background="@drawable/rectangle_corner_round_five" />
+
+                            <Spinner
+                                android:id="@+id/phone_privacy_spinner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="35dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rectangle_corner_round_five" />
+
+                        </LinearLayout>
 
                         <Button
                             android:id="@+id/phone_save"

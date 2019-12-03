@@ -1040,7 +1040,10 @@ public class Tools {
         int index;
         try {
             index = Integer.parseInt(month);
-            return new DateFormatSymbols().getMonths()[index - 1];
+            if (index == 0) {
+                return "";
+            }
+            return new DateFormatSymbols(Locale.ENGLISH).getMonths()[index - 1];
         } catch (NumberFormatException e) {
             return "";
         }
@@ -1412,6 +1415,23 @@ public class Tools {
 
         TransitionManager.beginDelayedTransition(parentView, transition);
         targetView.setVisibility(isFollowToggle ? View.VISIBLE : View.GONE);
+    }
+
+    public static String getFormattedLikerCount(String count) {
+        try {
+            String likeString;
+            double likeCount = Double.parseDouble(count);
+            if (Math.abs(likeCount / 1000000) >= 1) {
+                likeString = String.format(Locale.getDefault(), "%.1f", (likeCount / 1000000)) + "m";
+            } else if (Math.abs(likeCount / 1000) >= 1) {
+                likeString = String.format(Locale.getDefault(), "%.1f", (likeCount / 1000))+ "k";
+            } else {
+                likeString = String.format(Locale.getDefault(), "%.0f", (likeCount));
+            }
+            return likeString;
+        } catch (NumberFormatException e) {
+            return "0";
+        }
     }
 
 }

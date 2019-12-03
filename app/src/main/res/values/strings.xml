@@ -292,6 +292,7 @@
     <string name="continuing">Continue</string>
     <string name="i_did_not_receive_the_email">I did not receive an email</string>
     <string name="all_field_required">All field required</string>
+    <string name="field_is_empty">Field is empty</string>
     <string name="enter_a_few_word_to_search">Enter a few word to search</string>
     <string name="nothing_to_show">Nothing to Show</string>
     <string name="title_activity_main2">Main2Activity</string>

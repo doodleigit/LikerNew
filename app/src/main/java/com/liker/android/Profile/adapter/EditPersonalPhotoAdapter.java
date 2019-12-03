@@ -246,6 +246,9 @@ public class EditPersonalPhotoAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public void stopUploadingAnimation(String id, PersonalPhoto personalPhoto) {
+        if (getFeaturedCount() < 9) {
+            personalPhoto.setFeatured(true);
+        }
         for (int i = 0; i < arrayList.size(); i++) {
             if (id.equals(arrayList.get(i).getId())) {
                 arrayList.set(i, personalPhoto);

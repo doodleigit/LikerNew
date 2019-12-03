@@ -452,7 +452,7 @@ public class AboutFragment extends Fragment {
 //        for (int i = 1900; i <= thisYear; i++) {
 //            years.add(Integer.toString(i));
 //        }
-        for(int i=thisYear;i>=1900;i--){
+        for (int i = thisYear; i >= 1900; i--) {
             years.add(Integer.toString(i));
         }
         for (int i = 1; i <= totalDay; i++) {
@@ -469,7 +469,7 @@ public class AboutFragment extends Fragment {
         ImageView ivLivesInEdit, ivHomeStateEdit;
         EditText etFirstName, etLastName, etHeadline, etAddress, etNewEmail, etNewPhone, etStoryDetails;
         Spinner genderSpinner, birthYearSpinner, birthMonthSpinner, birthDaySpinner, birthYearPrivacySpinner, birthDayPrivacySpinner, emailPrivacySpinner, phoneCountrySpinner, phonePrivacySpinner, phoneTypeSpinner, livesCountrySpinner, livesStateSpinner, homeCountrySpinner,
-                homeStateSpinner, storyPrivacySpinner, addStorySpinner;
+                homeStateSpinner, storyPrivacySpinner;
         RecyclerView emailRecyclerView, phoneRecyclerView, storyRecycleView;
         Button btnEmailCancel, btnEmailSave, btnPhoneCancel, btnPhoneSave, btnLivesCancel, btnLivesSave, btnHomeStateCancel, btnHomeStateSave, btnStoryCancel, btnStorySave;
         FloatingActionButton fabDone;
@@ -517,7 +517,6 @@ public class AboutFragment extends Fragment {
         homeCountrySpinner = dialog.findViewById(R.id.home_country_spinner);
         homeStateSpinner = dialog.findViewById(R.id.home_state_spinner);
         storyPrivacySpinner = dialog.findViewById(R.id.story_privacy_spinner);
-        addStorySpinner = dialog.findViewById(R.id.add_story_spinner);
 
         emailRecyclerView = dialog.findViewById(R.id.email_recycler_view);
         emailRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -550,6 +549,7 @@ public class AboutFragment extends Fragment {
         ArrayAdapter<String> phoneCountryAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, phoneCountryCodes);
         phoneCountryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         phoneCountrySpinner.setAdapter(phoneCountryAdapter);
+        phoneCountrySpinner.setSelection(phoneCountries.size() > 0 ? 1 : 0);
 
         ArrayAdapter<String> phoneTypesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, phoneTypes);
         phoneTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -582,6 +582,7 @@ public class AboutFragment extends Fragment {
         birthDayPrivacySpinner.setAdapter(privacyAdapter);
         emailPrivacySpinner.setAdapter(privacyAdapter);
         phonePrivacySpinner.setAdapter(privacyAdapter);
+        storyPrivacySpinner.setAdapter(privacyAdapter);
 
         EmailModificationListener emailModificationListener = new EmailModificationListener() {
             @Override
@@ -893,16 +894,36 @@ public class AboutFragment extends Fragment {
             public void onClick(View view) {
                 types.clear();
                 for (int i = 0; i < storyTypes.size(); i++) {
+                    boolean hasAlready = false;
                     for (Story story : profileInfo.getStories()) {
-                        if (!story.getType().equals(String.valueOf(i + 1))) {
-                            types.add(storyTypes.get(i));
+                        if (story.getType().equals(String.valueOf(i + 1))) {
+                            hasAlready = true;
+                            break;
                         }
                     }
+                    if (!hasAlready)
+                        types.add(storyTypes.get(i));
                 }
-                ArrayAdapter<String> storyTypeAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, types);
-                storyTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                addStorySpinner.setAdapter(storyTypeAdapter);
-                addStorySpinner.performClick();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                CharSequence[] items = new CharSequence[types.size()];
+                for (int i = 0; i < types.size(); i++) {
+                    items[i] = types.get(i);
+                }
+                builder.setTitle("Select Story");
+                builder.setNegativeButton("Cancel", null);
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int position) {
+                        for (int i = 0; i < storyTypes.size(); i++) {
+                            if (storyTypes.get(i).equals(types.get(position))) {
+                                storyType = String.valueOf(i + 1);
+                            }
+                        }
+                        tvStoryTitle.setText(types.get(position));
+                        addStoryLayout.setVisibility(View.VISIBLE);
+                    }
+                });
+                builder.show();
             }
         });
 
@@ -918,7 +939,9 @@ public class AboutFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String description = etStoryDetails.getText().toString();
-                setStoryRequest(storyType, storyPrivacyType, description, addStoryAdapter, etStoryDetails, addStoryLayout);
+                if (isEmptyCheck(etStoryDetails)) {
+                    setStoryRequest(storyType, storyPrivacyType, description, addStoryAdapter, etStoryDetails, addStoryLayout);
+                }
             }
         });
 
@@ -975,24 +998,6 @@ public class AboutFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 storyPrivacyType = String.valueOf(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        addStorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                for (int i = 0; i < storyTypes.size(); i++) {
-                    if (storyTypes.get(i).equals(types.get(position))) {
-                        storyType = String.valueOf(i + 1);
-                    }
-                }
-                tvStoryTitle.setText(types.get(position));
-                addStoryLayout.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -1071,7 +1076,7 @@ public class AboutFragment extends Fragment {
 //        for (int i = 1900; i <= thisYear; i++) {
 //            years.add(Integer.toString(i));
 //        }
-        for(int i=thisYear;i>=1900;i--){
+        for (int i = thisYear; i >= 1900; i--) {
             years.add(Integer.toString(i));
         }
         Toolbar toolbar = dialog.findViewById(R.id.toolbar);
@@ -1357,7 +1362,7 @@ public class AboutFragment extends Fragment {
 //            years.add(Integer.toString(i));
 //        }
 
-        for(int i=thisYear;i>=1900;i--){
+        for (int i = thisYear; i >= 1900; i--) {
             years.add(Integer.toString(i));
         }
 
@@ -1746,7 +1751,7 @@ public class AboutFragment extends Fragment {
 //            years.add(Integer.toString(i));
 //        }
 
-        for(int i=thisYear;i>=1900;i--){
+        for (int i = thisYear; i >= 1900; i--) {
             years.add(Integer.toString(i));
         }
 
@@ -2057,7 +2062,7 @@ public class AboutFragment extends Fragment {
 //        for (int i = 1900; i <= thisYear; i++) {
 //            years.add(Integer.toString(i));
 //        }
-        for(int i=thisYear;i>=1900;i--){
+        for (int i = thisYear; i >= 1900; i--) {
             years.add(Integer.toString(i));
         }
         Toolbar toolbar = dialog.findViewById(R.id.toolbar);
@@ -2199,7 +2204,6 @@ public class AboutFragment extends Fragment {
                 showAlert(message, call, dialog);
             }
         });
-
 
 
         fabDone.setOnClickListener(new View.OnClickListener() {
@@ -2790,7 +2794,7 @@ public class AboutFragment extends Fragment {
                         tvEmailVerificationMessage.setText(getString(R.string.a_verification_email_has_been_resent_to_your_email) + " " + email.getEmail() + ". " + getString(R.string.if_you_need_help_please_contact_with_liker_support));
                         Tools.toast(getContext(), getString(R.string.a_verification_email_has_been_resent_to_your_email), R.drawable.ic_check_black_24dp);
                     } else {
-                        Tools.toast(getContext(), getString(R.string.something_went_wrong), R.drawable.ic_info_outline_blue_24dp);
+                        Tools.toast(getContext(), obj.getString("message"), R.drawable.ic_info_outline_blue_24dp);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -2801,6 +2805,7 @@ public class AboutFragment extends Fragment {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
+                Tools.toast(getContext(), getString(R.string.something_went_wrong), R.drawable.ic_info_outline_blue_24dp);
                 progressDialog.hide();
             }
         });
@@ -2899,7 +2904,6 @@ public class AboutFragment extends Fragment {
             }
         });
     }
-
 
     private void sendPhoneCountryListRequest() {
         progressDialog.show();
@@ -3155,6 +3159,15 @@ public class AboutFragment extends Fragment {
             etNumber.setError(getString(R.string.invalid_phone_number));
             return false;
         }
+    }
+
+    private boolean isEmptyCheck(EditText editText) {
+        String text = editText.getText().toString();
+        if (text.isEmpty()) {
+            editText.setError(getString(R.string.field_is_empty));
+            return false;
+        }
+        return true;
     }
 
 }

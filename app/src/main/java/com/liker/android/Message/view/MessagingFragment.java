@@ -1,6 +1,7 @@
 package com.liker.android.Message.view;
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.LiveData;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -95,7 +96,7 @@ public class MessagingFragment extends Fragment {
     private FriendInfo friendInfo;
     private ArrayList<Messages> messages;
     private ArrayList<User> users;
-    private String deviceId, profileId, token, userName, likes, stars, userIds, toUserId, chatUserName, online;
+    private String deviceId, profileId, token, userName, likes, stars, userIds, toUserId, chatUserName, online, chatboxTurnOnOff;
     private boolean isBlock;
     int limit = 20;
     int offset = 0;
@@ -110,7 +111,6 @@ public class MessagingFragment extends Fragment {
         view = inflater.inflate(R.layout.messaging_fragment_layout, container, false);
 
         initialComponent();
-
         return view;
     }
 
@@ -134,6 +134,7 @@ public class MessagingFragment extends Fragment {
         likes = friendInfo.getLikes();
         stars = friendInfo.getStars();
         online = friendInfo.getOnline();
+        chatboxTurnOnOff = friendInfo.getChatboxTurnOnOff();
         networkOk = NetworkHelper.hasNetworkAccess(getContext());
         messageService = MessageService.mRetrofit.create(MessageService.class);
         messages = new ArrayList<>();
@@ -164,9 +165,14 @@ public class MessagingFragment extends Fragment {
 
         ((MessageActivity) getActivity()).messagingUserOnlineListener = new OnlineStatusChangeListener() {
             @Override
-            public void onOnlineListener(String userId, String online) {
+            public void onOnlineListener(String userId, String online, String chatboxTurnOnOff) {
                 if (userId.equals(toUserId)) {
-                    ivOnline.setImageResource(online.equals("0") ? R.drawable.user_offline : R.drawable.user_online);
+                    ivOnline.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ivOnline.setImageResource(online.equals("1") && chatboxTurnOnOff.equals("1") ? R.drawable.user_online : R.drawable.user_offline);
+                        }
+                    });
                 }
             }
         };
@@ -313,7 +319,7 @@ public class MessagingFragment extends Fragment {
         tvUserName.setText(userName);
         tvLikes.setText(likes + " " + getString(R.string.likes));
         tvStars.setText(stars + " " + getString(R.string.stars));
-        ivOnline.setImageResource(online.equals("0") ? R.drawable.user_offline : R.drawable.user_online);
+        ivOnline.setImageResource(online.equals("1") && chatboxTurnOnOff.equals("1") ? R.drawable.user_online : R.drawable.user_offline);
     }
 
     private void getPagination() {
@@ -409,6 +415,14 @@ public class MessagingFragment extends Fragment {
     }
 
     private void changeView(boolean block) {
+        for (User user : users) {
+            if (toUserId.equals(user.getUserId())) {
+                if (user.getOnline() != null) {
+                    ivOnline.setImageResource(user.getOnline().equals("1") && user.getChatboxTurnOnOff().equals("1") ? R.drawable.user_online : R.drawable.user_offline);
+                    break;
+                }
+            }
+        }
         tvUnblock.setText(getString(R.string.unblock) + " " + friendInfo.getFullName());
         if (block) {
             bottomBar.setVisibility(View.GONE);

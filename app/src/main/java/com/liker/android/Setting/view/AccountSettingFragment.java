@@ -250,7 +250,7 @@ public class AccountSettingFragment extends Fragment {
         btnPasswordReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (passwordFieldValidation("Old", etOldPassword) && passwordFieldValidation("New", etNewPassword) && passwordFieldValidation("New", etRetypeNewPassword)) {
+                if (oldPasswordValidation("Old", etOldPassword) && passwordFieldValidation("New", etNewPassword) && passwordFieldValidation("New", etRetypeNewPassword)) {
                     if (passwordMatchValidation(etNewPassword, etRetypeNewPassword)) {
                         Call<String> call =  settingService.updatePassword(deviceId, token, userId, userId, etOldPassword.getText().toString(), etNewPassword.getText().toString(), etRetypeNewPassword.getText().toString());
                         updatePassword(call);
@@ -547,16 +547,18 @@ public class AccountSettingFragment extends Fragment {
         alert.show();
     }
 
+    private boolean oldPasswordValidation(String type, EditText editText) {
+        if (editText.getText().toString().trim().length() < 8) {
+            editText.setError(type + " " + getString(R.string.password_length_is_less_than_8));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private boolean passwordFieldValidation(String type, EditText editText) {
         ValidateTor validateTor = new ValidateTor();
         String password = editText.getText().toString();
-
-//        if (editText.getText().toString().trim().length() < 8) {
-//            editText.setError(type + " " + getString(R.string.password_length_is_less_than_8));
-//            return false;
-//        } else {
-//            return true;
-//        }
 
         // Check if password field is empty
         if (validateTor.isEmpty(password)) {
