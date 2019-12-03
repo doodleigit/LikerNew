@@ -16,6 +16,7 @@ import com.liker.android.Home.model.StarContributor;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.Tools;
 //import com.doodle.App;
 //import com.doodle.Home.model.StarContributor;
 //import com.doodle.Profile.view.ProfileActivity;
@@ -48,7 +49,7 @@ public class StarContributorsAdapter extends RecyclerView.Adapter<StarContributo
         viewHolder.tvRank.setText(arrayList.get(i).getRank());
         viewHolder.tvScore.setText(arrayList.get(i).getRankPercent() + "%");
         viewHolder.tvName.setText(arrayList.get(i).getFirstName() + " " + arrayList.get(i).getLastName());
-        viewHolder.tvLikes.setText(getFormattedLikerCount(arrayList.get(i).getLikesTotal()));
+        viewHolder.tvLikes.setText(Tools.getFormattedLikerCount(arrayList.get(i).getLikesTotal()));
 
         if (Integer.valueOf(arrayList.get(i).getRankPercent()) <= 5) {
             viewHolder.ivStarImage.setVisibility(View.VISIBLE);
@@ -74,23 +75,6 @@ public class StarContributorsAdapter extends RecyclerView.Adapter<StarContributo
                 context.startActivity(new Intent(context, ProfileActivity.class).putExtra("user_id", arrayList.get(i).getUserId()).putExtra("user_name", arrayList.get(i).getUserName()));
             }
         });
-    }
-
-    private String getFormattedLikerCount(String likes) {
-        try {
-            String likeString;
-            double likeCount = Double.parseDouble(likes);
-            if (Math.abs(likeCount / 1000000) >= 1) {
-                likeString = String.format(Locale.getDefault(), "%.1f", (likeCount / 1000000)) + "m";
-            } else if (Math.abs(likeCount / 1000) >= 1) {
-                likeString = String.format(Locale.getDefault(), "%.1f", (likeCount / 1000))+ "k";
-            } else {
-                likeString = String.format(Locale.getDefault(), "%.0f", (likeCount));
-            }
-            return likeString;
-        } catch (NumberFormatException e) {
-            return "0";
-        }
     }
 
     @Override

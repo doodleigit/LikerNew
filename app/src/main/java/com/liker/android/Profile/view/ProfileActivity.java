@@ -395,7 +395,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         fullName = userAllInfo.getFirstName() + " " + userAllInfo.getLastName();
         userImage = AppConstants.USER_UPLOADED_IMAGES + userAllInfo.getPhoto();
         coverImage = AppConstants.USER_UPLOADED_IMAGES + userAllInfo.getCoverImage();
-        allCountInfo = userAllInfo.getTotalLikes() + " Likes " + userAllInfo.getTotalFollowers() + " Followers " + userAllInfo.getTotalFollowings() + " Following";
+        allCountInfo = Tools.getFormattedLikerCount(userAllInfo.getTotalLikes()) + " Likes " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowers()) + " Followers " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowings()) + " Following";
 
         tvUserName.setText(fullName);
         tvTotalInfoCount.setText(allCountInfo);

@@ -43,17 +43,23 @@ public class ExperienceAdapter extends RecyclerView.Adapter<ExperienceAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        String designation, companyName, duration, summary;
+        String designation, companyName, duration, summary, fromYear, toYear;
         boolean currentlyWorking;
 
         designation = arrayList.get(i).getDesignationName();
         companyName = arrayList.get(i).getCompanyName();
         currentlyWorking = arrayList.get(i).getCurrentlyWorked();
         summary = arrayList.get(i).getDescription();
+        fromYear = "From " + arrayList.get(i).getFromYear();
+        toYear = "to " + arrayList.get(i).getToYear();
         if (currentlyWorking) {
-            duration = "From " + arrayList.get(i).getFromYear() + " to " + "present";
+            if (!arrayList.get(i).getFromYear().equals("0") && !arrayList.get(i).getFromYear().equals("")) {
+                duration = "From " + arrayList.get(i).getFromYear() + " to " + "present";
+            } else {
+                duration = "... to " + "present";
+            }
         } else {
-            duration = "From " + arrayList.get(i).getFromYear() + " to " + arrayList.get(i).getToYear();
+            duration = (arrayList.get(i).getFromYear().equals("") || arrayList.get(i).getFromYear().equals("0") ? "" : fromYear) + " " + (arrayList.get(i).getToYear().equals("") || arrayList.get(i).getToYear().equals("0") ? "" : toYear);
         }
 
         viewHolder.tvDesignation.setText(designation);

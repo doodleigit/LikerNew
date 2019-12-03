@@ -45,17 +45,22 @@ public class EducationAdapter extends RecyclerView.Adapter<EducationAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        String instituteName, instituteSite, degree, studyInfo, summary;
+        String instituteName, instituteSite, degree, gpa, fromYear, toYear, studyInfo, summary;
 
         instituteName = arrayList.get(i).getInstituteName();
         instituteSite = arrayList.get(i).getWebsiteUrl();
         degree = arrayList.get(i).getDegreeName();
-        studyInfo = arrayList.get(i).getFieldStudyName() + " " + context.getString(R.string.gpa_) + arrayList.get(i).getGrade() + " From " + arrayList.get(i).getStartYear() + " to " + arrayList.get(i).getEndYear();
+        gpa = context.getString(R.string.gpa_) + arrayList.get(i).getGrade();
+        fromYear = "From " + arrayList.get(i).getStartYear();
+        toYear = "to " + arrayList.get(i).getEndYear();
+        studyInfo = arrayList.get(i).getFieldStudyName() + " " + (arrayList.get(i).getGrade().equals("") ? "" : gpa) + " " + (arrayList.get(i).getStartYear().equals("") || arrayList.get(i).getStartYear().equals("0") ? "" : fromYear) + " " +
+                (arrayList.get(i).getEndYear().equals("") || arrayList.get(i).getEndYear().equals("0") ? "" : toYear);
+//        studyInfo = arrayList.get(i).getFieldStudyName() + " " + context.getString(R.string.gpa_) + arrayList.get(i).getGrade() + " From " + arrayList.get(i).getStartYear() + " to " + arrayList.get(i).getEndYear();
         summary = arrayList.get(i).getDescription();
 
         viewHolder.tvInstituteName.setText(instituteName);
         viewHolder.tvDegree.setText(degree);
-        viewHolder.tvStudyInfo.setText(studyInfo);
+        viewHolder.tvStudyInfo.setText(studyInfo.trim());
         viewHolder.tvSummary.setText(summary);
 
         if (!instituteSite.isEmpty()) {
