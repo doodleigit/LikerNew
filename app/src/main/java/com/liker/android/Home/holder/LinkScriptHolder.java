@@ -185,7 +185,7 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
     String linkImage;
 
     //Comment
-    Comment commentItem;
+
     private List<Comment_> comments = new ArrayList<Comment_>();
     private String commentPostId;
     RelativeLayout commentHold;
@@ -252,6 +252,7 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
     private RecyclerView rvPopularComment;
     private CommentAdapter adapter;
     private List<Comment_> comment_list;
+    private Comment_ commentItem;
 
     @Override
     public void onTitleClicked(Comment_ commentItem, int commentPosition, Reply reply) {
@@ -782,7 +783,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
             tvPostLikeCount.setText(content);
         }
 
-
         String userImageUrl = AppConstants.PROFILE_IMAGE + item.getUesrProfileImg();
         Glide.with(App.getAppContext())
                 .load(userImageUrl)
@@ -818,11 +818,9 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
                         .centerCrop()
                         .dontAnimate()
                         .into(imgLinkScript);
-
             }
 
         }
-
 
         imgLike.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -859,7 +857,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
                 }
             }
         });
-
 
         tvPostLinkTitle.setText(item.getPostLinkTitle());
         tvPostLinkDescription.setText(item.getPostLinkDesc());
@@ -930,7 +927,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
             }
         });
 
-
         imagePostShare.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
             @Override
@@ -961,7 +957,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
                           //  Call<PostShareItem> call = webService.getPostDetails(deviceId, profileId, token, userIds, postId);
                             Call<PostItem> call = webService.getPostDetail(deviceId, profileId, token, userIds, postId);
                             sendShareItemRequest(call);
-
                         }
 
                         if (id == R.id.shareFacebook) {
@@ -988,7 +983,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
                                         .setQuote("")
                                         .build();
                                 if (ShareDialog.canShow(ShareLinkContent.class)) {
-
                                     shareDialog.show(linkContent);
                                 }
                             }
@@ -1030,7 +1024,7 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View v) {
-
+                App.setCommentItem(commentItem);
                 activity = (AppCompatActivity) v.getContext();
                 PostPermissionSheet reportReasonSheet = PostPermissionSheet.newInstance(item,position);
                 reportReasonSheet.show(activity.getSupportFragmentManager(), "ReportReasonSheet");
@@ -1188,7 +1182,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
             }
         });
 
-
         commentContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1212,7 +1205,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
             }
         });
 
-
         layoutFollowUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1231,10 +1223,10 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
             }
         });
 
-
         //ADD MOST POPULAR COMMENT
         if (item.getPostTopComment().size() > 0) {
             comment_list.clear();
+            commentItem=item.getPostTopComment().get(0).getComment().get(0);
             comment_list.addAll(item.getPostTopComment().get(0).getComment());
             adapter = new CommentAdapter(mContext, comment_list, item, this, this, this, this, true);
             rvPopularComment.setAdapter(adapter);

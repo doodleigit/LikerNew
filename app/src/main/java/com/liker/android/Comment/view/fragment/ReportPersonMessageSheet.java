@@ -116,13 +116,11 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
         item = new PostItem();
         item = App.getItem();
 
-
         if (argument != null) {
             reasonId = argument.getString(MESSAGE_key);
             commentItem = argument.getParcelable(COMMENT_key);
             replyItem = argument.getParcelable(REPLY_key);
             if (!isEmpty(commentItem)) {
-
                 personName = commentItem.getUserFirstName() + " " + commentItem.getUserLastName();
             } else if (!isEmpty(item)) {
                 personName = item.getUserFirstName() + " " + item.getUserLastName();
@@ -222,19 +220,15 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
                         try {
                             JSONObject object = new JSONObject(response.body());
                             boolean status = object.getBoolean("status");
-
                             if (status) {
                                 // adapter.notifyDataSetChanged();
                                 Tools.toast(getActivity(), "your message was successfully sent", R.drawable.icon_checked);
                                 dismiss();
-
                             }
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     } else {
 
                     }

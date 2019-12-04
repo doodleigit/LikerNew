@@ -103,6 +103,9 @@ import com.leocardz.link.preview.library.LinkPreviewCallback;
 import com.leocardz.link.preview.library.SourceContent;
 import com.leocardz.link.preview.library.TextCrawler;
 import com.liker.android.App;
+import com.liker.android.DirectShare.Contact;
+import com.liker.android.DirectShare.ContactViewBinder;
+import com.liker.android.DirectShare.SelectContactActivity;
 import com.liker.android.Home.holder.mediaHolder.ImageViewHolder;
 import com.liker.android.Home.holder.mediaHolder.VideoViewHolder;
 import com.liker.android.Home.model.Headers;
@@ -367,6 +370,21 @@ public class PostNew extends AppCompatActivity implements
 
     private Socket socket;
     private boolean isMimSelected;
+    /**
+     * The request code for {@link SelectContactActivity}. This is used when the user doesn't select
+     * any of Direct Share icons.
+     */
+    private static final int REQUEST_SELECT_CONTACT = 1;
+
+    /**
+     * The text to share.
+     */
+    private String mBody;
+
+    /**
+     * The ID of the contact to share the text with.
+     */
+    private int mContactId;
 
 
     @Override
@@ -719,7 +737,7 @@ public class PostNew extends AppCompatActivity implements
         if (getIntent().getExtras() != null) {
             String shareVia = (String) getIntent().getExtras().get(Intent.EXTRA_TEXT);
             if (shareVia != null) {
-                editText.setText(shareVia);
+                editPostMessage.setText(shareVia);
             }
         }
         if (getIntent().getAction() == Intent.ACTION_VIEW) {
@@ -745,9 +763,7 @@ public class PostNew extends AppCompatActivity implements
         }
         /** --- */
 
-
         rvLinkScript = findViewById(R.id.rvLinkScript);
-
 
         postAreaTitle = (TextView) findViewById(R.id.post_area);
 
@@ -903,6 +919,50 @@ public class PostNew extends AppCompatActivity implements
         //   progressDialog.setCancelable(false);
 
 
+        boolean resolved = resolveIntent(getIntent());
+        if (!resolved) {
+            finish();
+            return;
+        }
+
+        // Set up the UI.
+        prepareUi();
+        // The contact ID will not be passed on when the user clicks on the app icon rather than any
+        // of the Direct Share icons. In this case, we show another dialog for selecting a contact.
+//        if (mContactId == Contact.INVALID_ID) {
+//            selectContact();
+//        }
+
+    }
+
+    /**
+     * Sets up the UI.
+     */
+    private void prepareUi() {
+//        if (mContactId != Contact.INVALID_ID) {
+//            Contact contact = Contact.byId(mContactId);
+//            ContactViewBinder.bind(contact, editPostMessage);
+//        }
+        editPostMessage.setText(mBody);
+    }
+
+    /**
+     * Delegates selection of a {@Contact} to {@link SelectContactActivity}.
+     */
+    private void selectContact() {
+        Intent intent = new Intent(this, SelectContactActivity.class);
+        intent.setAction(SelectContactActivity.ACTION_SELECT_CONTACT);
+        startActivityForResult(intent, REQUEST_SELECT_CONTACT);
+    }
+
+    private boolean resolveIntent(Intent intent) {
+        if (Intent.ACTION_SEND.equals(intent.getAction()) &&
+                "text/plain".equals(intent.getType())) {
+            mBody = intent.getStringExtra(Intent.EXTRA_TEXT);
+          //  mContactId = intent.getIntExtra(Contact.ID, Contact.INVALID_ID);
+            return true;
+        }
+        return false;
     }
 
     private void setPermissionData(String permissionData) {

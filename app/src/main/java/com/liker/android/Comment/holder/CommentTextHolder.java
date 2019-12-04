@@ -909,7 +909,6 @@ public class CommentTextHolder extends RecyclerView.ViewHolder {
                                 listener.onTitleClicked(commentItem, position, replyItem);
                             }
 
-
                             //  Tools.showNetworkDialog(activity.getSupportFragmentManager());
                         }
 

@@ -231,9 +231,6 @@ public class ReportReasonSheet extends BottomSheetDialogFragment implements View
             }
         });
 
-
-
-
         dialog.setContentView(view);
         mBehavior = BottomSheetBehavior.from((View) view.getParent());
         return dialog;

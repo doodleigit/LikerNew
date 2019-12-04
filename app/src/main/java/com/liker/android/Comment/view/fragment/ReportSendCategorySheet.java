@@ -168,14 +168,11 @@ public class ReportSendCategorySheet extends BottomSheetDialogFragment implement
                     dismiss();
                 }
 
-
                 break;
             case R.id.imgCloseSendCategory:
                 dismiss();
                 break;
         }
-
-
     }
 
     public interface BottomSheetListener {

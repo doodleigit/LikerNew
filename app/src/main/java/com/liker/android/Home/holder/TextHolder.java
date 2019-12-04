@@ -273,7 +273,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
     private RecyclerView rvPopularComment;
     private CommentAdapter adapter;
     private List<Comment_> comment_list;
-
+    private Comment_ commentItem;
     @Override
     public void onTitleClicked(Comment_ commentItem, int CommentPosition, Reply reply) {
 
@@ -1164,7 +1164,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
             @Override
             public void onClick(View v) {
 
-
+                App.setCommentItem(commentItem);
                 activity = (AppCompatActivity) v.getContext();
                 PostPermissionSheet reportReasonSheet = PostPermissionSheet.newInstance(postItem, position);
                 reportReasonSheet.show(activity.getSupportFragmentManager(), "ReportReasonSheet");
@@ -1367,6 +1367,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         //ADD MOST POPULAR COMMENT
         if (postItem.getPostTopComment().size() > 0) {
             comment_list.clear();
+            commentItem=postItem.getPostTopComment().get(0).getComment().get(0);
             comment_list.addAll(postItem.getPostTopComment().get(0).getComment());
             adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, true);
             rvPopularComment.setAdapter(adapter);

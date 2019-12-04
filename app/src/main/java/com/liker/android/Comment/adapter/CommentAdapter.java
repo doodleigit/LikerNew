@@ -1,6 +1,7 @@
 package com.liker.android.Comment.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,6 +72,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         View view;
         if (viewType == VIEW_TYPE_TEXT) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_comment_text, parent, false);
+        //    view.setBackgroundColor(Color.GRAY);
             return new CommentTextHolder(view, mContext, commentListener, isCommentMode);
         }
 
@@ -100,6 +102,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (viewHolder instanceof CommentTextHolder) {
             CommentTextHolder vh = (CommentTextHolder) viewHolder;
             vh.setItem(comment_list.get(position), postItem, position);
+
         }
 
 

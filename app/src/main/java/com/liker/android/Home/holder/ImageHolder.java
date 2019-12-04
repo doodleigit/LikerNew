@@ -184,7 +184,6 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
     ShareDialog shareDialog;
 
     //Comment
-    Comment commentItem;
     private List<Comment_> comments = new ArrayList<Comment_>();
     private String commentPostId;
     RelativeLayout commentHold;
@@ -217,7 +216,6 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
     public static final String COMMENT_KEY = "comment_item_key";
     private String postPermissions;
     private boolean notificationOff;
-
     //Delete post
     public PostItemListener listener;
 
@@ -226,8 +224,6 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
     private int postLikeNumeric;
     private String postLike;
     private int postTotalShare;
-
-
     //SHARE-POST-HEADER
     private String sharedFirstName;
     private String sharedLastName;
@@ -259,10 +255,10 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
     private boolean contentFollowShow;
     private String mOrientation;
 
-
     private RecyclerView rvPopularComment;
     private CommentAdapter adapter;
     private List<Comment_> comment_list;
+    private Comment_ commentItem;
 
 
     @Override
@@ -1144,6 +1140,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
             @Override
             public void onClick(View v) {
 
+                App.setCommentItem(commentItem);
                 activity = (AppCompatActivity) v.getContext();
                 PostPermissionSheet reportReasonSheet = PostPermissionSheet.newInstance(item, position);
                 reportReasonSheet.show(activity.getSupportFragmentManager(), "ReportReasonSheet");
@@ -1323,6 +1320,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
         //ADD MOST POPULAR COMMENT
         if (item.getPostTopComment().size() > 0) {
             comment_list.clear();
+            commentItem=item.getPostTopComment().get(0).getComment().get(0);
             comment_list.addAll(item.getPostTopComment().get(0).getComment());
             adapter = new CommentAdapter(mContext, comment_list, item, this, this, this, this, true);
             rvPopularComment.setAdapter(adapter);

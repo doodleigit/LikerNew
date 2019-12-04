@@ -1715,8 +1715,7 @@ public class Home extends AppCompatActivity implements
     @Override
     public void onReportLikerClicked(int image, String text) {
         String message = text;
-        Comment_ commentChild = new Comment_();
-        commentChild = App.getCommentItem();
+        Comment_ commentChild = App.getCommentItem();
         ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild);
         reportLikerMessageSheet.show(getSupportFragmentManager(), "ReportLikerMessageSheet");
     }
@@ -1724,8 +1723,8 @@ public class Home extends AppCompatActivity implements
     @Override
     public void onPersonLikerClicked(int image, String text) {
         String message = text;
-        Comment_ commentChild = new Comment_();
-        commentChild = null;
+        Comment_ commentChild =App.getCommentItem();
+      //  commentChild = null;
         Reply reply = new Reply();
         reply = null;
         ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply);
@@ -1751,20 +1750,28 @@ public class Home extends AppCompatActivity implements
     public void onBlockResult(DialogFragment dlg) {
 
 
-        PostItem item = new PostItem();
-        item = App.getItem();
+        PostItem item = App.getItem();
+        Comment_ comment_=App.getCommentItem();
         if (!isEmpty(item)) {
-
             blockUserId = item.getPostUserid();
+            if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
+                Call<String> call = commentService.blockedUser(deviceId, profileId, token, blockUserId, userId);
+                sendBlockUserRequest(call);
+            } else {
+                Tools.showNetworkDialog(getSupportFragmentManager());
+            }
+        }else if(!isEmpty(comment_)){
+
+            blockUserId = comment_.getUserId();
+            if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
+                Call<String> call = commentService.blockedUser(deviceId, profileId, token, blockUserId, userId);
+                sendBlockUserRequest(call);
+            } else {
+                Tools.showNetworkDialog(getSupportFragmentManager());
+            }
         }
 
 
-        if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
-            Call<String> call = commentService.blockedUser(deviceId, profileId, token, blockUserId, userId);
-            sendBlockUserRequest(call);
-        } else {
-            Tools.showNetworkDialog(getSupportFragmentManager());
-        }
 
     }
 

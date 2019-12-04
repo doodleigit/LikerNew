@@ -124,8 +124,6 @@ public class ReportLikerMessageSheet extends BottomSheetDialogFragment implement
         switch (id) {
             case R.id.btnReasonContinue:
                 if (networkOk) {
-
-
                     if(!isEmpty(commentItem)){
                         commentId = commentItem.getId();
                         postId = commentItem.getPostId();

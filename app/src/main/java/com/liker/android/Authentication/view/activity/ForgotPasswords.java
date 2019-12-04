@@ -630,7 +630,7 @@ public class ForgotPasswords extends AppCompatActivity implements View.OnClickLi
 
         AuthService webService =
                 AuthService.retrofitBase.create(AuthService.class);
-        Call<ForgotPassword> call = webService.forgotPassword(forgotEmail);
+        Call<ForgotPassword> call = webService.forgotPassword(forgotEmail,true);
         resendForgotPasswordRequest(call);
 
 
@@ -928,7 +928,7 @@ public class ForgotPasswords extends AppCompatActivity implements View.OnClickLi
     private void requestForgotPassword() {
         AuthService webService =
                 AuthService.retrofitBase.create(AuthService.class);
-        Call<ForgotPassword> call = webService.forgotPassword(forgotEmail);
+        Call<ForgotPassword> call = webService.forgotPassword(forgotEmail,true);
         sendForgotPasswordRequest(call);
     }
 

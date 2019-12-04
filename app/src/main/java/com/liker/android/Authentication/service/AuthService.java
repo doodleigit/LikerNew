@@ -91,7 +91,8 @@ public interface AuthService {
     @POST(AppConstants.FORGOT_PASSWORD_NEW)
     @FormUrlEncoded
     Call<ForgotPassword> forgotPassword(
-            @Field("email") String email
+            @Field("email") String email,
+            @Field("is_app") boolean isApp
     );
 
 
