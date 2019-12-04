@@ -147,6 +147,7 @@ public class AppConstants {
     public static final String NOTIFICATION_SEEN = "notification_seen";
 
 
+    public static final String NEW_MESSAGE_SEEN_BROADCAST = "new_message_seen_broadcast";
     public static final String NEW_MESSAGE_BROADCAST = "new_message_broadcast";
     public static final String NEW_MESSAGE_BROADCAST_FROM_HOME = "new_message_broadcast_from_home";
     public static final String NEW_POST_BROADCAST_FROM_HOME = "new_post_broadcast_from_home";

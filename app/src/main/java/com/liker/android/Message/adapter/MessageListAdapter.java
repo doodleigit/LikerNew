@@ -34,11 +34,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
     private Context context;
     private ArrayList<ChatUser> arrayList;
+    private String userId;
     private ListClickResponseService listClickResponseService;
 
-    public MessageListAdapter(Context context, ArrayList<ChatUser> arrayList, ListClickResponseService listClickResponseService) {
+    public MessageListAdapter(Context context, ArrayList<ChatUser> arrayList, String userId, ListClickResponseService listClickResponseService) {
         this.context = context;
         this.arrayList = arrayList;
+        this.userId = userId;
         this.listClickResponseService = listClickResponseService;
     }
 
@@ -66,19 +68,23 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
                 .dontAnimate()
                 .into(viewHolder.ivUserImage);
 
-        if (arrayList.get(i).getMessageData().getSeen().equals("1")) {
-//            viewHolder.tvMessage.setTypeface(null, Typeface.NORMAL);
+        if (arrayList.get(i).getMessageData().getToUserId().equals(userId)) {
             viewHolder.tvMessage.setTextColor(Color.parseColor("#aaaaaa"));
         } else {
+            if (arrayList.get(i).getMessageData().getSeen().equals("1")) {
+//            viewHolder.tvMessage.setTypeface(null, Typeface.NORMAL);
+                viewHolder.tvMessage.setTextColor(Color.parseColor("#aaaaaa"));
+            } else {
 //            viewHolder.tvMessage.setTypeface(viewHolder.tvMessage.getTypeface(), Typeface.BOLD);
-            viewHolder.tvMessage.setTextColor(Color.parseColor("#000000"));
+                viewHolder.tvMessage.setTextColor(Color.parseColor("#000000"));
+            }
         }
 
         viewHolder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                arrayList.get(i).getMessageData().setSeen("0");
-                viewHolder.tvMessage.setTypeface(null, Typeface.NORMAL);
+                arrayList.get(i).getMessageData().setSeen("1");
+                viewHolder.tvMessage.setTextColor(Color.parseColor("#aaaaaa"));
                 listClickResponseService.onMessageClick(arrayList.get(i));
             }
         });

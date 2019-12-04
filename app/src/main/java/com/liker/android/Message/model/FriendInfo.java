@@ -4,12 +4,13 @@ import java.io.Serializable;
 
 public class FriendInfo implements Serializable {
 
-    private String userName, toUserId, fullName, likes, stars, online, chatboxTurnOnOff;
+    private String userName, toUserId, fullName, photo, likes, stars, online, chatboxTurnOnOff;
 
-    public FriendInfo(String userName, String toUserId, String fullName, String likes, String stars, String online, String chatboxTurnOnOff) {
+    public FriendInfo(String userName, String toUserId, String fullName, String photo, String likes, String stars, String online, String chatboxTurnOnOff) {
         this.userName = userName;
         this.toUserId = toUserId;
         this.fullName = fullName;
+        this.photo = photo;
         this.likes = likes;
         this.stars = stars;
         this.online = online;
@@ -38,6 +39,14 @@ public class FriendInfo implements Serializable {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public String getLikes() {

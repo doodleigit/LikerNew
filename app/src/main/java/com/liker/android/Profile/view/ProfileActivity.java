@@ -306,7 +306,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                             } catch (NumberFormatException e) {
                                 stars = "0";
                             }
-                            FriendInfo friendInfo = new FriendInfo(userAllInfo.getUserName(), userAllInfo.getUserId(), fullName, userAllInfo.getTotalLikes(), stars, "0", "0");
+                            FriendInfo friendInfo = new FriendInfo(userAllInfo.getUserName(), userAllInfo.getUserId(), fullName, userAllInfo.getPhoto(), userAllInfo.getTotalLikes(), stars, "0", "0");
 
                             Intent intent = new Intent(getApplicationContext(), MessageActivity.class);
                             intent.putExtra("messageFromProfile", true);

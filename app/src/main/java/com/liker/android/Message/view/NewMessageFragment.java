@@ -163,7 +163,7 @@ public class NewMessageFragment extends Fragment {
         suggestedListClickResponseService = new SuggestedListClickResponseService() {
             @Override
             public void onListItemClick(Friend friend) {
-                FriendInfo friendInfo = new FriendInfo(friend.getUserName(), friend.getUserId(), (friend.getFirstName() + " " + friend.getLastName()),
+                FriendInfo friendInfo = new FriendInfo(friend.getUserName(), friend.getUserId(), (friend.getFirstName() + " " + friend.getLastName()), friend.getPhoto(),
                         friend.getTotalLikes(), friend.getGoldStars(), "0", "0");
                 initiateFragment(friendInfo);
             }

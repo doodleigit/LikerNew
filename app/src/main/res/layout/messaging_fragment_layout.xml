@@ -112,13 +112,18 @@
             android:layout_centerInParent="true"
             android:visibility="gone" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/progress_bar"
-            android:layout_above="@+id/bottom_bar"
-            />
+            android:layout_above="@+id/bottom_bar">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/unblock_text"

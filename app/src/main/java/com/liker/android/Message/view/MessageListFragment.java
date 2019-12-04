@@ -130,13 +130,13 @@ public class MessageListFragment extends Fragment {
             @Override
             public void onMessageClick(ChatUser chatUser) {
                 FriendInfo friendInfo = new FriendInfo(chatUser.getUserData().getUserName(), chatUser.getUserData().getUserId(),
-                        (chatUser.getUserData().getFirstName() + " " + chatUser.getUserData().getLastName()), chatUser.getUserData().getTotalLikes(),
+                        (chatUser.getUserData().getFirstName() + " " + chatUser.getUserData().getLastName()), chatUser.getUserData().getPhoto(), chatUser.getUserData().getTotalLikes(),
                         chatUser.getUserData().getGoldStars(), chatUser.getUserData().getOnline(), chatUser.getUserData().getChatboxTurnOnOff());
                 initiateFragment(friendInfo);
             }
         };
 
-        messageListAdapter = new MessageListAdapter(getActivity(), chatUsers, listClickResponseService);
+        messageListAdapter = new MessageListAdapter(getActivity(), chatUsers, profileId, listClickResponseService);
         recyclerView.setAdapter(messageListAdapter);
 
         getData();

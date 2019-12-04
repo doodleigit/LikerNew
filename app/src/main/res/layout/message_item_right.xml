@@ -43,6 +43,28 @@
         android:visibility="gone"/>
 
     <TextView
+        android:id="@+id/seen_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/layout"
+        android:layout_marginEnd="25dp"
+        android:text="@string/sent"
+        android:textColor="@color/soft_grey_choose"
+        android:textSize="12sp"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/seen"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginEnd="4dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/layout"
+        android:src="@drawable/ic_sent_24dp"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/message_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

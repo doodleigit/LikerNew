@@ -1026,6 +1026,8 @@ public class Home extends AppCompatActivity implements
                     clearSubCategories(multipleSubCategories, subCategoryAdapter);
                     addedFilters("", "1", true);
                 }
+                commonCategories.clear();
+                categoryTitleAdapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
         });
