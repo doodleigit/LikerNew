@@ -614,7 +614,18 @@ public class AboutFragment extends Fragment {
         StoryModificationListener storyModificationListener = new StoryModificationListener() {
             @Override
             public void onStoryEdit(Story story) {
-
+                int type;
+                try {
+                    type = (Integer.parseInt(story.getType()) - 1)  <= 0 ? 0 : (Integer.parseInt(story.getType()) - 1);
+                    storyType = String.valueOf(story.getType());
+                } catch (NumberFormatException e) {
+                    type = 0;
+                    storyType = String.valueOf(type);
+                }
+                tvAddStory.setVisibility(View.GONE);
+                tvStoryTitle.setText(storyTypes.get(type));
+                etStoryDetails.setText(story.getDescription());
+                addStoryLayout.setVisibility(View.VISIBLE);
             }
         };
 
@@ -930,8 +941,10 @@ public class AboutFragment extends Fragment {
         btnStoryCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                tvAddStory.setVisibility(View.VISIBLE);
                 addStoryLayout.setVisibility(View.GONE);
                 etStoryDetails.setText("");
+                addStoryAdapter.storyEditCancel();
             }
         });
 

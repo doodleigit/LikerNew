@@ -27,6 +27,7 @@ public class AddStoryAdapter extends RecyclerView.Adapter<AddStoryAdapter.ViewHo
     private ArrayList<Story> arrayList;
     private List<String> storyList;
     private StoryModificationListener storyModificationListener;
+    private Story story = null;
 
     public AddStoryAdapter(Context context, ArrayList<Story> arrayList, StoryModificationListener storyModificationListener) {
         this.context = context;
@@ -53,7 +54,9 @@ public class AddStoryAdapter extends RecyclerView.Adapter<AddStoryAdapter.ViewHo
         viewHolder.tvChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                storyModificationListener.onStoryEdit(arrayList.get(i));
+                storyEdit(i);
+//                notifyItemRemoved(i);
+//                storyModificationListener.onStoryEdit(arrayList.get(i));
             }
         });
     }
@@ -75,6 +78,21 @@ public class AddStoryAdapter extends RecyclerView.Adapter<AddStoryAdapter.ViewHo
             tvChange = itemView.findViewById(R.id.change);
             tvStory = itemView.findViewById(R.id.story);
             storyPrivacySpinner = itemView.findViewById(R.id.story_privacy_spinner);
+        }
+    }
+
+    private void storyEdit(int position) {
+        story = arrayList.get(position);
+        storyModificationListener.onStoryEdit(story);
+        arrayList.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public void storyEditCancel() {
+        if (story != null) {
+            arrayList.add(story);
+            notifyDataSetChanged();
+            story = null;
         }
     }
 

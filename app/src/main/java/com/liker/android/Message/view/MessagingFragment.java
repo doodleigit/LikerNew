@@ -43,7 +43,9 @@ import android.widget.TextView;
 //import com.doodle.Tool.NetworkHelper;
 //import com.doodle.Tool.PrefManager;
 //import com.doodle.Tool.Tools;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.liker.android.App;
 import com.liker.android.Home.model.Headers;
 import com.liker.android.Home.service.SocketIOManager;
 import com.liker.android.Message.adapter.MessagingAdapter;
@@ -84,7 +86,7 @@ public class MessagingFragment extends Fragment {
     private LinearLayoutManager layoutManager;
     private TextView tvUserName, tvLikes, tvStars, tvUnblock;
     private EditText etReply;
-    private ImageView tvSend, ivSetting, ivOnline;
+    private ImageView tvSend, ivSetting, ivOnline, ivSeen;
     private ProgressBar progressBar;
     private ProgressDialog progressDialog;
 
@@ -96,7 +98,7 @@ public class MessagingFragment extends Fragment {
     private FriendInfo friendInfo;
     private ArrayList<Messages> messages;
     private ArrayList<User> users;
-    private String deviceId, profileId, token, userName, likes, stars, userIds, toUserId, chatUserName, online, chatboxTurnOnOff;
+    private String deviceId, profileId, token, userName, likes, stars, userIds, toUserId, chatUserName, photo, online, chatboxTurnOnOff;
     private boolean isBlock;
     int limit = 20;
     int offset = 0;
@@ -118,6 +120,10 @@ public class MessagingFragment extends Fragment {
         IntentFilter filter = new IntentFilter();
         filter.addAction(AppConstants.NEW_MESSAGE_BROADCAST);
         Objects.requireNonNull(getActivity()).registerReceiver(broadcastReceiver, filter);
+        IntentFilter seenFilter = new IntentFilter();
+        seenFilter.addAction(AppConstants.NEW_MESSAGE_SEEN_BROADCAST);
+        Objects.requireNonNull(getActivity()).registerReceiver(messageSeenBroadcast, seenFilter);
+
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getString(R.string.loading));
 
@@ -131,6 +137,7 @@ public class MessagingFragment extends Fragment {
         chatUserName = friendInfo.getUserName();
         toUserId = friendInfo.getToUserId();
         userName = friendInfo.getFullName();
+        photo = friendInfo.getPhoto();
         likes = friendInfo.getLikes();
         stars = friendInfo.getStars();
         online = friendInfo.getOnline();
@@ -146,6 +153,7 @@ public class MessagingFragment extends Fragment {
         tvUnblock = view.findViewById(R.id.unblock_text);
         ivSetting = view.findViewById(R.id.setting);
         ivOnline = view.findViewById(R.id.online);
+        ivSeen = view.findViewById(R.id.seen);
         tvSend = view.findViewById(R.id.send);
         etReply = view.findViewById(R.id.reply);
         layoutManager = new LinearLayoutManager(getContext());
@@ -446,7 +454,7 @@ public class MessagingFragment extends Fragment {
                     msg.setToUserId(newMessage.getToUserId());
                     msg.setContent(newMessage.getMessage());
                     msg.setTimePosted(newMessage.getTimePosted());
-                    msg.setSeen(String.valueOf(isOwnMessage));
+                    msg.setSeen(String.valueOf(isOwnMessage)); //Change
                     msg.setReportId("0");
                     msg.setReportStatus("0");
                     msg.setDeletedBy("0");
@@ -467,9 +475,30 @@ public class MessagingFragment extends Fragment {
         }
     };
 
+    BroadcastReceiver messageSeenBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String toId = intent.getStringExtra("to_user_id");
+            if (toUserId.equals(toId)) {
+                for (int i = 0; i < messages.size(); i++) {
+                    messages.get(i).setSeen("1");
+                }
+//                Glide.with(App.getAppContext())
+//                        .load(photo)
+//                        .placeholder(R.drawable.ic_sent_24dp)
+//                        .error(R.drawable.profile)
+//                        .centerCrop()
+//                        .dontAnimate()
+//                        .into(ivSeen);
+                messagingAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         Objects.requireNonNull(getActivity()).unregisterReceiver(broadcastReceiver);
+        Objects.requireNonNull(getActivity()).unregisterReceiver(messageSeenBroadcast);
     }
 }

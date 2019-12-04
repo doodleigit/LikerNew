@@ -351,6 +351,8 @@
     <string name="sure">Rate Now</string>
     <string name="saving">Saving…</string>
     <string name="unblock">Unblock</string>
+    <string name="sent">Sent</string>
+    <string name="seen">Seen</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

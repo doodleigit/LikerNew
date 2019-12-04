@@ -8,6 +8,7 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,7 +36,7 @@ public class MessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private ArrayList<Messages> arrayList;
     private ArrayList<User> users;
     private String userId;
-    private int LEFT_CHAT = 0, RIGHT_CHAT = 1;
+    private int LEFT_CHAT = 0, RIGHT_CHAT = 1, seenPosition = -1;
 
     public MessagingAdapter(Context context, ArrayList<Messages> arrayList, ArrayList<User> users, String userId) {
         this.context = context;
@@ -61,7 +62,7 @@ public class MessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
         String userId, userImage = "", message, messageTime, seen;
         userId = arrayList.get(i).getFromUserId();
-        message = arrayList.get(i).getContent();
+        message = arrayList.get(i).getContent().trim();
         messageTime = arrayList.get(i).getTimePosted();
         seen = arrayList.get(i).getSeen();
 
@@ -87,12 +88,39 @@ public class MessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .dontAnimate()
                     .into(viewHolder.ivProfileImage);
 
-//            if (seen.equals("1")) {
-//                viewHolder.tvMessage.setBackgroundResource(R.color.colorWhite);
-//            } else {
-//                viewHolder.tvMessage.setBackgroundResource(R.color.colorNotSeen);
-//            }
+            if (seenPosition == i) {
+                viewHolder.tvSeenStatus.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.tvSeenStatus.setVisibility(View.GONE);
+            }
 
+            viewHolder.tvMessage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = seenPosition;
+                    if (seenPosition == i) {
+                        seenPosition = -1;
+                    } else {
+                        seenPosition = i;
+                    }
+                    notifyItemChanged(pos);
+                    notifyItemChanged(seenPosition);
+                }
+            });
+
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = seenPosition;
+                    if (seenPosition == i) {
+                        seenPosition = -1;
+                    } else {
+                        seenPosition = i;
+                    }
+                    notifyItemChanged(pos);
+                    notifyItemChanged(seenPosition);
+                }
+            });
         } else {
             RightChatViewHolder viewHolder = (RightChatViewHolder) holder;
 
@@ -108,11 +136,56 @@ public class MessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .dontAnimate()
                     .into(viewHolder.ivProfileImage);
 
-//            if (seen.equals("1")) {
-//                viewHolder.tvMessage.setBackgroundResource(R.color.colorWhite);
-//            } else {
-//                viewHolder.tvMessage.setBackgroundResource(R.color.colorNotSeen);
-//            }
+            if ((arrayList.size() - 1) == i) {
+                viewHolder.ivSeen.setVisibility(View.VISIBLE);
+                if (seen.equals("1")) {
+                    Glide.with(App.getAppContext())
+                            .load(AppConstants.PROFILE_IMAGE + userImage)
+                            .placeholder(R.drawable.ic_sent_24dp)
+                            .error(R.drawable.profile)
+                            .centerCrop()
+                            .dontAnimate()
+                            .into(viewHolder.ivSeen);
+                } else {
+                    viewHolder.ivSeen.setImageResource(R.drawable.ic_sent_24dp);
+                }
+            } else {
+                viewHolder.ivSeen.setVisibility(View.GONE);
+            }
+
+            if (seenPosition == i) {
+                viewHolder.tvSeenStatus.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.tvSeenStatus.setVisibility(View.GONE);
+            }
+
+            viewHolder.tvMessage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = seenPosition;
+                    if (seenPosition == i) {
+                        seenPosition = -1;
+                    } else {
+                        seenPosition = i;
+                    }
+                    notifyItemChanged(pos);
+                    notifyItemChanged(seenPosition);
+                }
+            });
+
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = seenPosition;
+                    if (seenPosition == i) {
+                        seenPosition = -1;
+                    } else {
+                        seenPosition = i;
+                    }
+                    notifyItemChanged(pos);
+                    notifyItemChanged(seenPosition);
+                }
+            });
         }
 
     }
@@ -140,34 +213,65 @@ public class MessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public class RightChatViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView ivProfileImage;
-        TextView tvMessage, tvMessageTime;
+        FrameLayout layout;
+        ImageView ivProfileImage, ivSeen;
+        TextView tvMessage, tvMessageTime, tvSeenStatus;
 
         public RightChatViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            layout = itemView.findViewById(R.id.layout);
             ivProfileImage = itemView.findViewById(R.id.profile_image);
+            ivSeen = itemView.findViewById(R.id.seen);
             tvMessage = itemView.findViewById(R.id.message);
             tvMessageTime = itemView.findViewById(R.id.message_time);
+            tvSeenStatus = itemView.findViewById(R.id.seen_status);
         }
     }
 
     public class LeftChatViewHolder extends RecyclerView.ViewHolder {
 
+        FrameLayout layout;
         ImageView ivProfileImage;
-        TextView tvMessage, tvMessageTime;
+        TextView tvMessage, tvMessageTime, tvSeenStatus;
 
         public LeftChatViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            layout = itemView.findViewById(R.id.layout);
             ivProfileImage = itemView.findViewById(R.id.profile_image);
             tvMessage = itemView.findViewById(R.id.message);
             tvMessageTime = itemView.findViewById(R.id.message_time);
+            tvSeenStatus = itemView.findViewById(R.id.seen_status);
         }
     }
 
     public void addPagingData(ArrayList<Messages> messages) {
         arrayList.addAll(messages);
+        notifyDataSetChanged();
+    }
+
+    public void seenStatusChange(ImageView ivSeen, String photo) {
+        if (arrayList.size() > 0) {
+            if (arrayList.get(arrayList.size() - 1).getFromUserId().equals(userId)) {
+                ivSeen.setVisibility(View.VISIBLE);
+                if (arrayList.get(arrayList.size() - 1).getSeen().equals("1")) {
+                    Glide.with(App.getAppContext())
+                            .load(photo)
+                            .placeholder(R.drawable.ic_sent_24dp)
+                            .error(R.drawable.profile)
+                            .centerCrop()
+                            .dontAnimate()
+                            .into(ivSeen);
+                } else {
+                    ivSeen.setImageResource(R.drawable.ic_sent_24dp);
+                }
+            } else {
+                ivSeen.setVisibility(View.GONE);
+            }
+        } else {
+            ivSeen.setVisibility(View.GONE);
+        }
         notifyDataSetChanged();
     }
 
