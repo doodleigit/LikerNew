@@ -863,7 +863,7 @@ public class ForgotPasswords extends AppCompatActivity implements View.OnClickLi
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 } else {
-                    String msg = getString(R.string.username_and_password_miss_match);
+                    String msg = getString(R.string.username_and_password_mismatched);
                     showStatus(msg);
 
                     if (loginUser.getIsVerified() != null && loginUser.getBounceData() != null) {

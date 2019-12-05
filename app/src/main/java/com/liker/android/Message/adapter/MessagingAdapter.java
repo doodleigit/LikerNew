@@ -89,6 +89,7 @@ public class MessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .into(viewHolder.ivProfileImage);
 
             if (seenPosition == i) {
+                viewHolder.tvSeenStatus.setText(seen.endsWith("1") ? context.getString(R.string.seen) : context.getString(R.string.sent));
                 viewHolder.tvSeenStatus.setVisibility(View.VISIBLE);
             } else {
                 viewHolder.tvSeenStatus.setVisibility(View.GONE);
@@ -136,7 +137,24 @@ public class MessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .dontAnimate()
                     .into(viewHolder.ivProfileImage);
 
-            if ((arrayList.size() - 1) == i) {
+            if (i != 0) {
+                if (arrayList.get(i).getSeen().equals("1")) {
+                    if (arrayList.get(i - 1).getSeen().equals("1")) {
+                        viewHolder.ivSeen.setVisibility(View.GONE);
+                    } else {
+                        viewHolder.ivSeen.setVisibility(View.VISIBLE);
+                        Glide.with(App.getAppContext())
+                                .load(AppConstants.PROFILE_IMAGE + userImage)
+                                .placeholder(R.drawable.ic_sent_24dp)
+                                .error(R.drawable.profile)
+                                .centerCrop()
+                                .dontAnimate()
+                                .into(viewHolder.ivSeen);
+                    }
+                } else {
+                    viewHolder.ivSeen.setVisibility(View.GONE);
+                }
+            } else {
                 viewHolder.ivSeen.setVisibility(View.VISIBLE);
                 if (seen.equals("1")) {
                     Glide.with(App.getAppContext())
@@ -149,11 +167,10 @@ public class MessagingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 } else {
                     viewHolder.ivSeen.setImageResource(R.drawable.ic_sent_24dp);
                 }
-            } else {
-                viewHolder.ivSeen.setVisibility(View.GONE);
             }
 
             if (seenPosition == i) {
+                viewHolder.tvSeenStatus.setText(seen.endsWith("1") ? context.getString(R.string.seen) : context.getString(R.string.sent));
                 viewHolder.tvSeenStatus.setVisibility(View.VISIBLE);
             } else {
                 viewHolder.tvSeenStatus.setVisibility(View.GONE);

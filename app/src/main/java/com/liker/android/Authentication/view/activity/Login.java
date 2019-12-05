@@ -582,8 +582,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     } else {
-                        String msg = getString(R.string.username_and_password_miss_match);
-                        showStatus(msg);
+                        String msg = getString(R.string.username_and_password_mismatched);
 
                         if (loginUser.getIsVerified() != null && loginUser.getBounceData() != null) {
                             if (loginUser.getIsVerified().equalsIgnoreCase("0") && loginUser.getBounceData().equalsIgnoreCase("0")) {
@@ -598,8 +597,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
                                 Toast.makeText(Login.this, getString(R.string.email_is_invalid), Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(Login.this, getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, msg, Toast.LENGTH_SHORT).show();
+//                            showStatus();
                         }
+
                     }
                 } else {
                     Toast.makeText(Login.this, getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
@@ -635,6 +636,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
 // Changing action button text color
         View sbView = snackbar.getView();
         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+
         textView.setTextColor(Color.YELLOW);
         snackbar.show();
     }

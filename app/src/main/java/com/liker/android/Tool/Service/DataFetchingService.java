@@ -71,6 +71,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.liker.android.Home.service.SocketIOManager.mSocket;
 import static com.liker.android.Tool.AppConstants.IN_CHAT_MODE;
 
 public class DataFetchingService extends Service {
@@ -121,7 +122,7 @@ public class DataFetchingService extends Service {
         }
         setBroadcast();
         getNotificationData();
-        setUserStatus();
+        setUserStatus(true);
         getMessagesData();
         getNewPostData();
     }
@@ -236,7 +237,7 @@ public class DataFetchingService extends Service {
         });
     }
 
-    private void setUserStatus() {
+    private void setUserStatus(boolean status) {
         OnlineNotify onlineNotify = new OnlineNotify();
         Headers headers = new Headers();
         headers.setDeviceId(deviceId);
@@ -246,7 +247,11 @@ public class DataFetchingService extends Service {
         onlineNotify.setHeaders(headers);
         Gson gson = new Gson();
         String json = gson.toJson(onlineNotify);
-        mSocket.emit("online_users", json);
+        if (status) {
+            mSocket.emit("online_users", json);
+        } else {
+            mSocket.emit("current_offline_user", json);
+        }
     }
 
     private void getMessagesData() {
@@ -493,6 +498,7 @@ public class DataFetchingService extends Service {
     public void onDestroy() {
         super.onDestroy();
         try {
+            setUserStatus(false);
             socket.off("web_notification");
             mSocket.off("message");
             mSocket.off("message_own");
@@ -506,6 +512,7 @@ public class DataFetchingService extends Service {
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         try {
+            setUserStatus(false);
             socket.off("web_notification");
             mSocket.off("message");
             mSocket.off("message_own");

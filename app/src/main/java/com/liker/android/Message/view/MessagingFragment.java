@@ -454,7 +454,7 @@ public class MessagingFragment extends Fragment {
                     msg.setToUserId(newMessage.getToUserId());
                     msg.setContent(newMessage.getMessage());
                     msg.setTimePosted(newMessage.getTimePosted());
-                    msg.setSeen(String.valueOf(isOwnMessage)); //Change
+                    msg.setSeen("0"); //Change
                     msg.setReportId("0");
                     msg.setReportStatus("0");
                     msg.setDeletedBy("0");

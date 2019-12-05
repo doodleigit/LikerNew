@@ -1,6 +1,10 @@
 package com.liker.android;
 
 import android.app.Application;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
+import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.StrictMode;
@@ -23,10 +27,13 @@ import com.danikula.videocache.HttpProxyCacheServer;
 //import com.doodle.Post.model.Subcatg;
 //import com.doodle.Tool.Operation;
 //import com.doodle.Tool.PrefManager;
+import com.google.gson.Gson;
 import com.liker.android.Comment.model.CommentPersistData;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reply;
+import com.liker.android.Home.model.Headers;
 import com.liker.android.Home.model.PostItem;
+import com.liker.android.Message.model.OnlineNotify;
 import com.liker.android.Post.model.Category;
 import com.liker.android.Post.model.Subcatg;
 import com.liker.android.Reply.model.ReplyPersistData;
@@ -44,8 +51,9 @@ import io.fabric.sdk.android.Fabric;
 import java.util.List;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_AUTO;
+import static com.liker.android.Home.service.SocketIOManager.mSocket;
 
-public class App extends Application {
+public class App extends Application implements LifecycleObserver {
 
 
     private static boolean isValidate;
@@ -374,10 +382,9 @@ public class App extends Application {
                 .twitterAuthConfig(new TwitterAuthConfig(getResources().getString(R.string.com_twitter_sdk_android_CONSUMER_KEY), getResources().getString(R.string.com_twitter_sdk_android_CONSUMER_SECRET)))//pass the created app Consumer KEY and Secret also called API Key and Secret
                 .debug(true)//enable debug mode
                 .build();
-
-
         //finally initialize twitter with created configs
         Twitter.initialize(config);
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         MultiDex.install(this);
     }
 
@@ -460,6 +467,37 @@ public class App extends Application {
             toggle.setHomeAsUpIndicator(R.drawable.ic_sentiment_satisfied_black_24dp);
 
         }
+    }
+
+    private void setUserStatus(boolean status) {
+        if (mSocket != null && mSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+            OnlineNotify onlineNotify = new OnlineNotify();
+            Headers headers = new Headers();
+            headers.setDeviceId(manager.getDeviceId());
+            headers.setIsApps(true);
+            headers.setSecurityToken(manager.getToken());
+            onlineNotify.setUserId(manager.getProfileId());
+            onlineNotify.setHeaders(headers);
+            Gson gson = new Gson();
+            String json = gson.toJson(onlineNotify);
+            if (status) {
+                mSocket.emit("online_users", json);
+            } else {
+                mSocket.emit("current_offline_user", json);
+            }
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    public void onAppBackgrounded() {
+        setUserStatus(false);
+        Log.d("app_background_state", "APP BACKGROUNDED");
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    public void onAppForegrounded() {
+        setUserStatus(true);
+        Log.d("app_background_state", "APP FOREGROUNDED");
     }
 
 }
