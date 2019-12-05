@@ -74,7 +74,7 @@ public interface PostService {
             @Header("Device-Id") String deviceId,
             @Header("User-Id") String userId,
             @Header("Security-Token") String token,
-            @Field("user_id") int userIds,
+            @Field("user_id") String userIds,
             @Field("to_user_id") String toUserId,
             @Field("post_type") String postType,
             @Field("status") int status,

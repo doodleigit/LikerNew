@@ -681,8 +681,6 @@ public class PostNew extends AppCompatActivity implements
 
         chatAdapter = new ChatAdapter();
 
-
-
         emojiButton = findViewById(R.id.main_activity_emoji);
         final ImageView sendButton = findViewById(R.id.main_activity_send);
         imgPostUser = findViewById(R.id.imgPostUser);
@@ -697,7 +695,6 @@ public class PostNew extends AppCompatActivity implements
                     .placeholder(R.drawable.profile)
                     .into(imgPostUser);
         }
-
 
 //        emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
 //        sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
@@ -733,7 +730,7 @@ public class PostNew extends AppCompatActivity implements
         editTextTitlePost = null;
         editTextDescriptionPost = null;
 
-        /** --- From ShareVia Intent */
+  /*      *//** --- From ShareVia Intent *//*
         if (getIntent().getExtras() != null) {
             String shareVia = (String) getIntent().getExtras().get(Intent.EXTRA_TEXT);
             if (shareVia != null) {
@@ -761,7 +758,7 @@ public class PostNew extends AppCompatActivity implements
             editText.setText(builded);
 
         }
-        /** --- */
+        *//** --- */
 
         rvLinkScript = findViewById(R.id.rvLinkScript);
 
@@ -773,9 +770,7 @@ public class PostNew extends AppCompatActivity implements
         /** Where the previews will be dropped */
         dropPost = (ViewGroup) findViewById(R.id.drop_post);
 
-
         initPostButton();
-
 
         editPostMessage.addTextChangedListener(new TextWatcher() {
             @Override
@@ -915,18 +910,15 @@ public class PostNew extends AppCompatActivity implements
             }
 
         });
-
         //   progressDialog.setCancelable(false);
-
-
-        boolean resolved = resolveIntent(getIntent());
-        if (!resolved) {
-            finish();
-            return;
-        }
+//        boolean resolved = resolveIntent(getIntent());
+//        if (!resolved) {
+//            finish();
+//            return;
+//        }
 
         // Set up the UI.
-        prepareUi();
+ //       prepareUi();
         // The contact ID will not be passed on when the user clicks on the app icon rather than any
         // of the Direct Share icons. In this case, we show another dialog for selecting a contact.
 //        if (mContactId == Contact.INVALID_ID) {
@@ -943,7 +935,7 @@ public class PostNew extends AppCompatActivity implements
 //            Contact contact = Contact.byId(mContactId);
 //            ContactViewBinder.bind(contact, editPostMessage);
 //        }
-        editPostMessage.setText(mBody);
+        editPostMessage.append(mBody);
     }
 
     /**
@@ -1576,7 +1568,7 @@ public class PostNew extends AppCompatActivity implements
                     deviceId,//"8b64708fa409da20341b1a555d1ddee526444",
                     profileId,//"26444",
                     token,// "5d199fc8529c2$2y$10$C9mvDyOEhJ2Nc/e4Ji4gVOivCvaO4OBobPW2ky4oftvVniCZ8hKzuJhxEGIHYSCprmWSJ1rd4hGHDEqUNRAwAR4fxMWwEyV6VSZEU",
-                    Integer.parseInt(userIds),//"26444",
+                    userIds,//"26444",
                     toUserId,//"26444",
                     postType,//"status",
                     status,//0,
