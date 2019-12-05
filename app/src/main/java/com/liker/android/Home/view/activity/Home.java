@@ -483,12 +483,11 @@ public class Home extends AppCompatActivity implements
                 Intent loginAgain = new Intent(Home.this, LoginAgain.class);
                 loginAgain.putExtra("login_info", loginInfo);
                 manager.pref.edit().clear().apply();
+                Call<String> call = webService.setLogout(deviceId, token, userId, userId);
+                sendLogoutRequest(call);
                 stopService(new Intent(Home.this, DataFetchingService.class));
                 startActivity(loginAgain);
                 finish();
-
-//                Call<String> call = webService.setLogout(deviceId, token, userId, userId);
-//                sendLogoutRequest(call);
             }
         });
 
@@ -2014,41 +2013,41 @@ public class Home extends AppCompatActivity implements
     }
 
     private void sendLogoutRequest(Call<String> call) {
-        showProgressBar(getString(R.string.logging_out));
+//        showProgressBar(getString(R.string.logging_out));
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        try {
-                            JSONObject object = new JSONObject(response.body());
-                            boolean status = object.getBoolean("status");
-                            if (status) {
-                                LoginInfo loginInfo = new LoginInfo(manager.getUserInfo(), manager.getToken(), manager.getProfileName(), manager.getProfileImage(), manager.getProfileId(), manager.getUserName(), manager.getDeviceId());
-                                Intent loginAgain = new Intent(Home.this, LoginAgain.class);
-                                loginAgain.putExtra("login_info", loginInfo);
-                                manager.pref.edit().clear().apply();
-                                stopService(new Intent(Home.this, DataFetchingService.class));
-                                startActivity(loginAgain);
-                                finish();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Tools.toast(Home.this, "Logout failed!", R.drawable.icon_unchecked);
-                    }
-                } else {
-                    Tools.toast(Home.this, "Logout failed!", R.drawable.icon_unchecked);
-                }
-                hideProgressBar();
+//                if (response.isSuccessful()) {
+//                    if (response.body() != null) {
+//                        try {
+//                            JSONObject object = new JSONObject(response.body());
+//                            boolean status = object.getBoolean("status");
+//                            if (status) {
+//                                LoginInfo loginInfo = new LoginInfo(manager.getUserInfo(), manager.getToken(), manager.getProfileName(), manager.getProfileImage(), manager.getProfileId(), manager.getUserName(), manager.getDeviceId());
+//                                Intent loginAgain = new Intent(Home.this, LoginAgain.class);
+//                                loginAgain.putExtra("login_info", loginInfo);
+//                                manager.pref.edit().clear().apply();
+//                                stopService(new Intent(Home.this, DataFetchingService.class));
+//                                startActivity(loginAgain);
+//                                finish();
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    } else {
+//                        Tools.toast(Home.this, "Logout failed!", R.drawable.icon_unchecked);
+//                    }
+//                } else {
+//                    Tools.toast(Home.this, "Logout failed!", R.drawable.icon_unchecked);
+//                }
+//                hideProgressBar();
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("message", t.getMessage());
-                Tools.toast(Home.this, "Logout failed!", R.drawable.icon_unchecked);
-                hideProgressBar();
+//                Log.d("message", t.getMessage());
+//                Tools.toast(Home.this, "Logout failed!", R.drawable.icon_unchecked);
+//                hideProgressBar();
             }
         });
     }
