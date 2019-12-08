@@ -953,7 +953,7 @@ public class AboutFragment extends Fragment {
             public void onClick(View view) {
                 String description = etStoryDetails.getText().toString();
                 if (isEmptyCheck(etStoryDetails)) {
-                    setStoryRequest(storyType, storyPrivacyType, description, addStoryAdapter, etStoryDetails, addStoryLayout);
+                    setStoryRequest(storyType, storyPrivacyType, description, addStoryAdapter, etStoryDetails, addStoryLayout, tvAddStory);
                 }
             }
         });
@@ -2648,7 +2648,7 @@ public class AboutFragment extends Fragment {
         });
     }
 
-    private void setStoryRequest(String storyType, String storyPrivacyType, String description, AddStoryAdapter addStoryAdapter, EditText etNewStory, LinearLayout addStoryLayout) {
+    private void setStoryRequest(String storyType, String storyPrivacyType, String description, AddStoryAdapter addStoryAdapter, EditText etNewStory, LinearLayout addStoryLayout, TextView tvAddStory) {
         Call<String> call = profileService.setStory(deviceId, token, userId, userId, storyType, storyPrivacyType, description);
         call.enqueue(new Callback<String>() {
             @Override
@@ -2658,6 +2658,7 @@ public class AboutFragment extends Fragment {
                 addStoryAdapter.notifyDataSetChanged();
                 etNewStory.setText("");
                 addStoryLayout.setVisibility(View.GONE);
+                tvAddStory.setVisibility(View.VISIBLE);
             }
 
             @Override
