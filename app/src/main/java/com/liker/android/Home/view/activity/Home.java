@@ -118,6 +118,7 @@ import com.liker.android.Comment.view.fragment.ReportLikerMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
+import com.liker.android.Group.GroupContentActivity;
 import com.liker.android.Home.adapter.CategoryTitleAdapter;
 import com.liker.android.Home.adapter.SubCategoryAdapter;
 import com.liker.android.Home.adapter.ViewPagerAdapter;
@@ -1724,8 +1725,8 @@ public class Home extends AppCompatActivity implements
     @Override
     public void onPersonLikerClicked(int image, String text) {
         String message = text;
-        Comment_ commentChild =App.getCommentItem();
-      //  commentChild = null;
+        Comment_ commentChild = App.getCommentItem();
+        //  commentChild = null;
         Reply reply = new Reply();
         reply = null;
         ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply);
@@ -1752,7 +1753,7 @@ public class Home extends AppCompatActivity implements
 
 
         PostItem item = App.getItem();
-        Comment_ comment_=App.getCommentItem();
+        Comment_ comment_ = App.getCommentItem();
         if (!isEmpty(item)) {
             blockUserId = item.getPostUserid();
             if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
@@ -1761,7 +1762,7 @@ public class Home extends AppCompatActivity implements
             } else {
                 Tools.showNetworkDialog(getSupportFragmentManager());
             }
-        }else if(!isEmpty(comment_)){
+        } else if (!isEmpty(comment_)) {
 
             blockUserId = comment_.getUserId();
             if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
@@ -1771,7 +1772,6 @@ public class Home extends AppCompatActivity implements
                 Tools.showNetworkDialog(getSupportFragmentManager());
             }
         }
-
 
 
     }
@@ -2103,6 +2103,11 @@ public class Home extends AppCompatActivity implements
                 intent.putExtra("link", getString(R.string.how_to_use_liker_link));
                 startActivity(intent);
                 break;
+
+            case R.id.action_create_group:
+                Intent groupIntent = new Intent(this, GroupContentActivity.class);
+                startActivity(groupIntent);
+                break;
         }
 
         drawer.closeDrawer(GravityCompat.END);
@@ -2233,7 +2238,7 @@ public class Home extends AppCompatActivity implements
 
     private void sendUserRatingStatus(int ratingStatus) {
 
-        Call<String> call = webService.setUserAppRate(deviceId, token,userId, userId, ratingStatus);
+        Call<String> call = webService.setUserAppRate(deviceId, token, userId, userId, ratingStatus);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -2248,12 +2253,12 @@ public class Home extends AppCompatActivity implements
 
     private void recieveSingleUserRatingStatus() {
 
-        Call<String> call = webService.setSingleUserAppRate(deviceId,token, userId, userId);
+        Call<String> call = webService.setSingleUserAppRate(deviceId, token, userId, userId);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 
-                if(response.body()!=null){
+                if (response.body() != null) {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body());
                         boolean status = jsonObject.getBoolean("status");
@@ -2275,6 +2280,7 @@ public class Home extends AppCompatActivity implements
                 }
 
             }
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Log.d("Error", t.getMessage());

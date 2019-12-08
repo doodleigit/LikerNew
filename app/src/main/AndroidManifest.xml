@@ -27,7 +27,14 @@
         android:usesCleartextTraffic="true"
         android:vmSafeMode="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".DirectShare.DirectShareActivity"
+        <activity android:name=".Group.CreateGroupActivity"></activity>
+        <activity
+            android:name=".Group.GroupContentActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:parentActivityName=".Home.view.activity.Home"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DirectShare.DirectShareActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">

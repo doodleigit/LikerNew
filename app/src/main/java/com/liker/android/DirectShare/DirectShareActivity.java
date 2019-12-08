@@ -355,7 +355,7 @@ public class DirectShareActivity extends AppCompatActivity implements
         scriptItemList = new ArrayList<>();
         mediaFile = new MultipleMediaFile();
         mediaFiles = new ArrayList<>();
-        socket = SocketIOManager.nSocket;
+        //socket = SocketIOManager.nSocket;
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.checking));
         multipleMediaFiles = new ArrayList<>();
@@ -1732,7 +1732,8 @@ public class DirectShareActivity extends AppCompatActivity implements
                                 contributorStatus.setHeaders(headers);
                                 Gson gson = new Gson();
                                 String json = gson.toJson(contributorStatus);
-                                socket = SocketIOManager.nSocket;
+                                //socket = SocketIOManager.nSocket;
+                                socket =new  SocketIOManager().getNewPostSocketInstance();
                                 socket.emit("new_post", json, new Ack() {
                                     @Override
                                     public void call(Object... args) {

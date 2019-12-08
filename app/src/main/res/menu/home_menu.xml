@@ -30,4 +30,8 @@
             android:id="@+id/action_contributor_settings"
             android:title="@string/action_contributor_settings"
             android:icon="@drawable/ic_contributor_setting_black_24dp"/>
+        <item
+            android:id="@+id/action_create_group"
+            android:title="@string/action_create_group"
+            android:icon="@drawable/ic_group_black_24dp"/>
 </menu>

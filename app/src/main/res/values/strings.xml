@@ -14,7 +14,7 @@
     <string name="app_name">Liker</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="copyright">Copyright \u00A9 %1$d Likeopedia, LLC</string>
-    <string name="otp_string">A verification code has been sent to the email address associated with your account.Please type the code to reset your password</string>
+    <string name="otp_string">A verification code has been sent to the email address associated with your account. Please type the code to reset your password</string>
     <string name="no_internet">No Internet</string>
     <string name="facebook_app_id">1470061779929464</string>
     <string name="fb_login_protocol_scheme">fb1470061779929464</string>
@@ -34,6 +34,7 @@
 
     //Expandale list
     <string name="action_contributor_settings">Contributor Settings</string>
+    <string name="action_create_group">Group</string>
     <string name="action_log_out">Log Out</string>
     <string name="text_alcohol">Alcohol</string>
     <string name="text_coffee">Coffee</string>
@@ -194,6 +195,7 @@
     <string name="privacy_updated">Privacy Updated</string>
     <string name="network_error">Network Error</string>
     <string name="advance_search">Advance Search</string>
+    <string name="group_content">Groups</string>
     <string name="search_item">Search…</string>
     <string name="write_minimum_three_characters">Write at least 3 characters</string>
     <string name="we_could_not_find_anything_for">We could not find anything for</string>
@@ -353,6 +355,9 @@
     <string name="unblock">Unblock</string>
     <string name="sent">Sent</string>
     <string name="seen">Seen</string>
+    <string name="create_group_heading">Groups are great for getting things done and styling in touch with just the people you want. Share photos and videos,have conversations,make plans and more.</string>
+    <string name="group_category">Category</string>
+    <string name="group_add_people">Add people</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>
