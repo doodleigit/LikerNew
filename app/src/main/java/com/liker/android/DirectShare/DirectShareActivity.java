@@ -1,4 +1,4 @@
-package com.liker.android.Post.view.activity;
+package com.liker.android.DirectShare;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -55,36 +55,8 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
-/*import com.doodle.App;
-import com.doodle.Home.holder.mediaHolder.ImageViewHolder;
-import com.doodle.Home.holder.mediaHolder.VideoViewHolder;
-import com.doodle.Post.adapter.ChatAdapter;
-import com.doodle.Post.adapter.ImageAdapter;
-import com.doodle.Post.adapter.LinkScriptAdapter;
-import com.doodle.Post.adapter.MediaAdapter;
-import com.doodle.Post.adapter.MentionUserAdapter;
-import com.doodle.Post.adapter.MimAdapter;
-import com.doodle.Post.model.Category;
-import com.doodle.Post.model.CategoryItem;
-import com.doodle.Post.model.LinkScriptItem;
-import com.doodle.Post.model.MentionUser;
-import com.doodle.Post.model.Mim;
-import com.doodle.Post.model.MultipleMediaFile;
-import com.doodle.Post.model.PostImage;
-import com.doodle.Post.model.PostVideo;
-import com.doodle.Post.model.Subcatg;
-import com.doodle.Post.service.DataProvider;
-import com.doodle.Post.service.PostService;
-import com.doodle.Post.view.fragment.Audience;
-import com.doodle.Post.view.fragment.ContributorStatus;
-import com.doodle.Post.view.fragment.PostPermission;
-import com.doodle.R;
-import com.doodle.Tool.AppConstants;
-import com.doodle.Tool.NetworkHelper;
-import com.doodle.Tool.PageTransformer;
-import com.doodle.Tool.PrefManager;
-import com.doodle.Tool.Tools;*/
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.google.gson.Gson;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewCallback;
@@ -106,6 +78,8 @@ import com.liker.android.Post.adapter.MentionUserAdapter;
 import com.liker.android.Post.adapter.MimAdapter;
 import com.liker.android.Post.model.Category;
 import com.liker.android.Post.model.CategoryItem;
+import com.liker.android.Post.model.ImageItem;
+import com.liker.android.Post.model.LinkScrapItem;
 import com.liker.android.Post.model.LinkScriptItem;
 import com.liker.android.Post.model.MentionUser;
 import com.liker.android.Post.model.Mim;
@@ -115,6 +89,8 @@ import com.liker.android.Post.model.PostVideo;
 import com.liker.android.Post.model.Subcatg;
 import com.liker.android.Post.service.DataProvider;
 import com.liker.android.Post.service.PostService;
+import com.liker.android.Post.view.activity.PostCategory;
+import com.liker.android.Post.view.fragment.AttachmentBottomSheet;
 import com.liker.android.Post.view.fragment.Audience;
 import com.liker.android.Post.view.fragment.ContributorStatus;
 import com.liker.android.Post.view.fragment.PostPermission;
@@ -157,6 +133,7 @@ import io.socket.client.Socket;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import pub.devrel.easypermissions.EasyPermissions;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -167,13 +144,15 @@ import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
 import static com.liker.android.Tool.Tools.getMD5EncryptedString;
 import static com.liker.android.Tool.Tools.isNullOrEmpty;
-//import static com.doodle.Tool.Tools.getMD5EncryptedString;
-//import static com.doodle.Tool.Tools.isNullOrEmpty;
+import static com.liker.android.Tool.Tools.toast;
 
-public class WallPost extends AppCompatActivity implements View.OnClickListener,
+public class DirectShareActivity extends AppCompatActivity implements
+        View.OnClickListener,
         PostPermission.BottomSheetListener,
         Audience.BottomSheetListener,
-        ContributorStatus.ContributorStatusListener {
+        ContributorStatus.ContributorStatusListener,
+        AttachmentBottomSheet.BottomSheetListener,
+        EasyPermissions.PermissionCallbacks {
 
     // data to populate the RecyclerView with
 
@@ -184,11 +163,12 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     private ImageView imgPermission;
     private PrefManager manager;
     private PostService webService, videoServices;
-    private final String TAG = "WallPost";
+    private final String TAG = "PostNew";
     private boolean networkOk;
     private CircularProgressView progressView;
     boolean isGrantGallery = false;
     boolean isGrantCamera = false;
+
 
     private String profileId;
     private String deviceId;
@@ -224,6 +204,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     private static final int REQUEST_TAKE_CAMERA = 101;
     private static final int REQUEST_TAKE_GALLERY_IMAGE = 102;
     private static final int REQUEST_TAKE_GALLERY_VIDEO = 103;
+    private static final int REQUEST_VIDEO_CAPTURE = 104;//CAMERA_REQUEST_CODE_VEDIO
     private RecyclerView mediaRecyclerView;
     boolean rvMediaShow;
     private ProgressBar mediaProgress;
@@ -250,6 +231,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     private int countBigImages = 0;
     private boolean noThumb;
     private TextCrawler textCrawler;
+    //    TextCrawler textCrawler = new TextCrawler();
     boolean isLinkScript;
     List<String> extractedUrls = new ArrayList<>();
     private LinearLayout linkScriptContainer;
@@ -326,13 +308,40 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     List<String> videoList;
     List<LinkScriptItem> scriptItemList;
     private Context mContext;
-    private boolean isMimSelected;
+
+
+    private static final int READ_REQUEST_CODE = 200;
+    private Uri uri;
+    private String pathToStoredVideo;
+    private VideoView displayRecordedVideo;
+    private static final String SERVER_PATH = "";
+    private String newUrl;
+
+
     private Socket socket;
+    private boolean isMimSelected;
+    /**
+     * The request code for {@link SelectContactActivity}. This is used when the user doesn't select
+     * any of Direct Share icons.
+     */
+    private static final int REQUEST_SELECT_CONTACT = 1;
+
+    /**
+     * The text to share.
+     */
+    private String mBody;
+
+    /**
+     * The ID of the contact to share the text with.
+     */
+    private int mContactId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wall_post);
+
+        setContentView(R.layout.direrct_share);
         mContext = this;
 
         manager = new PrefManager(this);
@@ -341,12 +350,12 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         networkOk = NetworkHelper.hasNetworkAccess(this);
         progressView = (CircularProgressView) findViewById(R.id.progress_view);
         mView = new View(this);
-        socket = SocketIOManager.nSocket;
         mediaList = new HashSet<>();
         videoList = new ArrayList<>();
         scriptItemList = new ArrayList<>();
         mediaFile = new MultipleMediaFile();
         mediaFiles = new ArrayList<>();
+        socket = SocketIOManager.nSocket;
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.checking));
         multipleMediaFiles = new ArrayList<>();
@@ -360,12 +369,12 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
         contentPost = findViewById(R.id.contentPost);
         linkScriptContainer = findViewById(R.id.linkScriptContainer);
-        rootView = findViewById(R.id.main_activity_root_view);
+
         findViewById(R.id.btnAttachment).setOnClickListener(this);
         intro = findViewById(R.id.intro);
         tvSubmitPost = findViewById(R.id.tvSubmitPost);
         postButton = (FloatingActionButton) findViewById(R.id.post);
-
+        rootView = findViewById(R.id.main_activity_root_view);
         tvSubmitPost.setOnClickListener(this);
         findViewById(R.id.contentCategory).setOnClickListener(this);
         findViewById(R.id.imageCamera).setOnClickListener(this);
@@ -373,20 +382,19 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         findViewById(R.id.imageVideo).setOnClickListener(this);
         findViewById(R.id.imageCancelPost).setOnClickListener(this);
         tvPermission = findViewById(R.id.tvPermission);
-
-//        tvPermission.setText(manager.getPostPermission());
         imgPermission = findViewById(R.id.imgPermission);
         String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
+
         tvAudience = findViewById(R.id.tvAudience);
         tvAudience.setText(manager.getPostAudience().isEmpty() ? getString(R.string.audience) : manager.getPostAudience());
-        //  imgPermission = findViewById(R.id.imgPermission);
         contentPostPermission = findViewById(R.id.contentPostPermission);
         contentPostPermission.setOnClickListener(this);
         contentPostView = findViewById(R.id.contentPostView);
         messageContainer = findViewById(R.id.messageContainer);
         messageContainer.setOnClickListener(this);
+
         deleteMediaFiles = new ArrayList<>();
         mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
         imageListener = new ImageViewHolder.ImageListener() {
@@ -407,13 +415,11 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         if (base64md5.equalsIgnoreCase(mdFiveFile)) {
                             mediaFiles.remove(i);
                         }
-                        Log.d("base64md5 ", base64md5 + "");
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-
-
                 if (isMimSelected) {
                     if (postImages.isEmpty() && postVideos.isEmpty()) {
                         String mimColor = AppSingleton.getInstance().getMimColor();
@@ -436,7 +442,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         } else {
                             editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
                             String imageUrl = AppConstants.MIM_IMAGE + mimColor;
-                            Picasso.with(WallPost.this).load(imageUrl).into(target);
+                            Picasso.with(DirectShareActivity.this).load(imageUrl).into(target);
                             messageContainer.setBackground(mDrawable);
                             editPostMessage.setHeight(200);
                             messageContainer.setGravity(Gravity.CENTER);
@@ -463,7 +469,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         }
                     }
                 }
-
             }
         };
         videoListen = new VideoViewHolder.VideoListen() {
@@ -473,6 +478,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 mediaAdapter.deleteItem(position);
                 mediaRecyclerView.scrollToPosition(position);
                 String mdFiveFile = postVideo.getMdFive();
+
 
                 for (int i = 0; i < mediaFiles.size(); i++) {
 
@@ -510,12 +516,13 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         } else {
                             editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 4));
                             String imageUrl = AppConstants.MIM_IMAGE + mimColor;
-                            Picasso.with(WallPost.this).load(imageUrl).into(target);
+                            Picasso.with(DirectShareActivity.this).load(imageUrl).into(target);
                             messageContainer.setBackground(mDrawable);
                             editPostMessage.setHeight(200);
                             messageContainer.setGravity(Gravity.CENTER);
                             editPostMessage.setGravity(Gravity.CENTER);
                             editPostMessage.setTextSize(22f);
+
                             switch (mimColor) {
                                 case "img_bg_birthday.png":
                                     editPostMessage.setTextColor(Color.parseColor("#000000"));
@@ -537,7 +544,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         }
                     }
                 }
-
             }
         };
 
@@ -589,7 +595,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 editPostMessage.setTextSize(22f);
                 messageContainer.setGravity(Gravity.CENTER);
                 editPostMessage.setGravity(Gravity.CENTER);
-                //  editPostMessage.setTextAppearance(PostNew.this, android.R.style.TextAppearance_Large);
+                //  editPostMessage.setTextAppearance(DirectShareActivity.this, android.R.style.TextAppearance_Large);
                 switch (mimColor) {
                     case "img_bg_birthday.png":
                         editPostMessage.setTextColor(Color.parseColor("#000000"));
@@ -617,13 +623,14 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         rvMimShow = true;
         rvMimToggle();
 
-        toUserId = getIntent().getStringExtra("wall_user_id");
         profileId = manager.getProfileId();
         userIds = manager.getProfileId();
+        toUserId = manager.getProfileId();
         deviceId = manager.getDeviceId();
         token = manager.getToken();
 
         chatAdapter = new ChatAdapter();
+
         emojiButton = findViewById(R.id.main_activity_emoji);
         final ImageView sendButton = findViewById(R.id.main_activity_send);
         imgPostUser = findViewById(R.id.imgPostUser);
@@ -638,8 +645,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                     .placeholder(R.drawable.profile)
                     .into(imgPostUser);
         }
-
-        checkIsOwnProfile();
 
 //        emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
 //        sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
@@ -675,39 +680,34 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         editTextTitlePost = null;
         editTextDescriptionPost = null;
 
-        /** --- From ShareVia Intent */
-        if (getIntent().getExtras() != null) {
-            String shareVia = (String) getIntent().getExtras().get(Intent.EXTRA_TEXT);
-            if (shareVia != null) {
-                editText.setText(shareVia);
-            }
-        }
-        if (getIntent().getAction() == Intent.ACTION_VIEW) {
-            Uri data = getIntent().getData();
-            String scheme = data.getScheme();
-            String host = data.getHost();
-            List<String> params = data.getPathSegments();
-            String builded = scheme + "://" + host + "/";
+             //** --- From ShareVia Intent *//*
 
-            for (String string : params) {
-                builded += string + "/";
-            }
+//        if (getIntent().getAction() == Intent.ACTION_MEDIA_SHARED) {
+//            Uri data = getIntent().getData();
+//            makeText(DirectShareActivity.this, "Uri: "+data, LENGTH_SHORT).show();
+//            String scheme = data.getScheme();
+//            String host = data.getHost();
+//            List<String> params = data.getPathSegments();
+//            String builded = scheme + "://" + host + "/";
+//            makeText(DirectShareActivity.this, "builded: "+builded, LENGTH_SHORT).show();
+//            for (String string : params) {
+//                builded += string + "/";
+//            }
+//
+//            if (data.getQuery() != null && !data.getQuery().equals("")) {
+//                builded = builded.substring(0, builded.length() - 1);
+//                builded += "?" + data.getQuery();
+//            }
+//
+//            System.out.println(builded);
+//
+//            editPostMessage.setText(builded);
+//
+//        }
 
-            if (data.getQuery() != null && !data.getQuery().equals("")) {
-                builded = builded.substring(0, builded.length() - 1);
-                builded += "?" + data.getQuery();
-            }
-
-            System.out.println(builded);
-
-            editText.setText(builded);
-
-        }
         /** --- */
 
-
         rvLinkScript = findViewById(R.id.rvLinkScript);
-
 
         postAreaTitle = (TextView) findViewById(R.id.post_area);
 
@@ -717,20 +717,18 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         /** Where the previews will be dropped */
         dropPost = (ViewGroup) findViewById(R.id.drop_post);
 
-
         initPostButton();
-
 
         editPostMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                //  makeText(WallPost.this, "beforeTextChanged " + s, LENGTH_SHORT).show();
+                //  makeText(DirectShareActivity.this, "beforeTextChanged " + s, LENGTH_SHORT).show();
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                //   makeText(WallPost.this, "onTextChanged " + s, LENGTH_SHORT).show();
+                //   makeText(DirectShareActivity.this, "onTextChanged " + s, LENGTH_SHORT).show();
                 extractedUrls = Tools.extractUrls(s.toString());
                 /// if(uploadImageName.)
                 contentTitle = s.toString().trim();
@@ -766,12 +764,12 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
                 if (extractedUrls.size() == 0) {
                     isLinkScript = false;
-                  /*  releasePreviewArea();ext
+                  /*  releasePreviewArea();
                     rvLinkScriptShow = false;
                     linkScriptToggle();*/
-
+                    myUrl = "";
                     if (!isNullOrEmpty(contentTitle)) {
-                        //  makeText(WallPost.this, "Button Enable-1!", LENGTH_SHORT).show();
+                        //  makeText(DirectShareActivity.this, "Button Enable-1!", LENGTH_SHORT).show();
                     }
                 }
                 if (extractedUrls.size() > 0) {
@@ -794,7 +792,21 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 }
                 if (!isLinkScript && extractedUrls.size() == 1) {
                     for (String url : extractedUrls) {
-                        textCrawler.makePreview(callback, url);
+
+                        newUrl = url;
+                        if (NetworkHelper.hasNetworkAccess(DirectShareActivity.this)) {
+                            progressDialog.show();
+                            Call<String> call = webService.isDuplicateLink(deviceId, profileId, token, userIds, "3", url);
+                            sendIsDuplicateUrl(call, url);
+                        } else {
+                            Tools.showNetworkDialog(getSupportFragmentManager());
+                            progressDialog.dismiss();
+
+                        }
+
+//                        try {
+//                            textCrawler.makePreview(callback, url);
+//                        } catch (Exception e) {}
                         isLinkScript = true;
                         String pattern = "https?:\\/\\/(?:[0-9A-Z-]+\\.)?(?:youtu\\.be\\/|youtube\\.com\\S*[^\\w\\-\\s])([\\w\\-]{11})(?=[^\\w\\-]|$)(?![?=&+%\\w]*(?:['\"][^<>]*>|<\\/a>))[?=&+%\\w]*";
                         if (!url.isEmpty() && url.matches(pattern)) {
@@ -817,12 +829,15 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 } else if (/*myUrl.isEmpty() */isNullOrEmpty(myUrl) && !isNullOrEmpty(contentTitle) && contentTitle.length() > 0) {
                     isAddContentTitle = true;
                     tvSubmitPost.setVisibility(View.VISIBLE);
+                }/* else if (*//*myUrl.isEmpty() *//*myUrl.equalsIgnoreCase("https://w") && !isNullOrEmpty(contentTitle) && contentTitle.length() > 0) {
+                    isAddContentTitle = true;
+                    tvSubmitPost.setVisibility(View.VISIBLE);
                 }
-
+*/
                 if (s.length() == 1) {
                     if (manager.getNewPostIntro().equals("0")) {
                         manager.setNewPostIntro("1");
-                        hideKeyboard(WallPost.this);
+                        hideKeyboard(DirectShareActivity.this);
                         showIntroTooltip();
                     }
                 }
@@ -833,7 +848,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             public void afterTextChanged(Editable s) {
                 if (!isNullOrEmpty(mentionMessage)) {
                     //mentionMessage += s;
-//                    makeText(WallPost.this, "mention-data: " + mentionMessage, LENGTH_SHORT).show();
+//                    makeText(DirectShareActivity.this, "mention-data: " + mentionMessage, LENGTH_SHORT).show();
                 }
 
                 //  List<String> extractedUrls = extractUrls("ForgotPasswords to https://stackoverflow.com/ and here is another link http://www.google.com/ \n which is a great search engine");
@@ -842,10 +857,187 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             }
 
         });
+        //   progressDialog.setCancelable(false);
+//        boolean resolved = resolveIntent(getIntent());
+//        if (!resolved) {
+//            finish();
+//            return;
+//        }
 
-        progressDialog.setCancelable(false);
+        // Set up the UI.
+      //  prepareUi();
+        // The contact ID will not be passed on when the user clicks on the app icon rather than any
+        // of the Direct Share icons. In this case, we show another dialog for selecting a contact.
+//        if (mContactId == Contact.INVALID_ID) {
+//            selectContact();
+//        }
 
 
+
+        if (getIntent().getExtras() != null) {
+            String shareVia = (String) getIntent().getExtras().get(Intent.EXTRA_TEXT);
+            if (shareVia != null) {
+                editPostMessage.append(shareVia);
+
+            }else {
+
+                Uri uri=(Uri) getIntent().getExtras().get(Intent.EXTRA_STREAM);
+                imageFilePath = getPath(this, uri);
+                String imagePath = "file://" + imageFilePath;
+                String strMD5 = getMD5EncryptedString(imagePath);
+                fileEncoded = strMD5;
+
+                if (mediaList.size() == 0) {
+                    Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
+                    sendIsDuplicateImageRequest(call, imagePath, fileEncoded, imageFilePath);
+                    mediaList.add(imagePath);
+                } else {
+                    for (String temp : mediaList) {
+                        if (temp.equalsIgnoreCase(imagePath)) {
+                            // Tools.toast(PostNew.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
+                        } else {
+
+                            Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
+                            sendIsDuplicateImageRequest(call, imagePath, fileEncoded, imageFilePath);
+                        }
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    /**
+     * Sets up the UI.
+     */
+    private void prepareUi() {
+//        if (mContactId != Contact.INVALID_ID) {
+//            Contact contact = Contact.byId(mContactId);
+//            ContactViewBinder.bind(contact, editPostMessage);
+//        }
+        editPostMessage.append(mBody);
+    }
+
+    /**
+     * Delegates selection of a {@Contact} to {@link SelectContactActivity}.
+     */
+    private void selectContact() {
+        Intent intent = new Intent(this, SelectContactActivity.class);
+        intent.setAction(SelectContactActivity.ACTION_SELECT_CONTACT);
+        startActivityForResult(intent, REQUEST_SELECT_CONTACT);
+    }
+
+    private boolean resolveIntent(Intent intent) {
+        if (Intent.ACTION_SEND.equals(intent.getAction()) &&
+                "text/plain".equals(intent.getType())) {
+            mBody = intent.getStringExtra(Intent.EXTRA_TEXT);
+            //  mContactId = intent.getIntExtra(Contact.ID, Contact.INVALID_ID);
+            return true;
+        }else if(Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) &&
+                "image/*".equals(intent.getType())){
+           // mBody = intent.getStringExtra(Intent.EXTRA_TEXT);
+//            mBody = intent.getStringExtra(Intent.EXTRA_STREAM);
+//            Intent shareIntent = new Intent();
+//            shareIntent.setAction(Intent.ACTION_SEND);
+//            shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+//            shareIntent.setType("image/*");
+//            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
+//            01915872497
+           // ArrayList<Uri> imageUris = new ArrayList<Uri>();
+//            imageUris.add(imageUri1); // Add your image URIs here
+//            imageUris.add(imageUri2);
+//
+//            Intent shareIntent = new Intent();
+//            shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+//            shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+//            shareIntent.setType("image/*");
+//            startActivity(Intent.createChooser(shareIntent, "Share images to.."));
+            return true;
+        }
+        return false;
+    }
+
+    private void setPermissionData(String permissionData) {
+        switch (permissionData) {
+            case "Public":
+                imgPermission.setImageResource(R.drawable.ic_public_black_12dp);
+                postPermission = 0;
+                break;
+            case "Only me":
+                imgPermission.setImageResource(R.drawable.ic_lock_outline_black_12dp);
+                postPermission = 1;
+                break;
+            case "Followers Only":
+                imgPermission.setImageResource(R.drawable.ic_people_outline_black_12dp);
+                postPermission = 2;
+                break;
+        }
+    }
+
+    private void sendIsDuplicateUrl(Call<String> call, String url) {
+
+        call.enqueue(new Callback<String>() {
+
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+
+                        try {
+                            JSONObject object = new JSONObject(response.body());
+                            boolean status = object.getBoolean("status");
+                            if (status) {
+                                toast(DirectShareActivity.this, "Sorry! You have already shared this link. Please try a different link.", R.drawable.ic_warning_black_24dp);
+                            } else {
+                                Call<LinkScrapItem> callLink = webService.linkScrapUrl(deviceId, profileId, token, url);
+                                sendLinkScrapRequest(callLink);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+                progressDialog.dismiss();
+            }
+        });
+
+
+    }
+
+    private void sendLinkScrapRequest(Call<LinkScrapItem> callLink) {
+
+        callLink.enqueue(new Callback<LinkScrapItem>() {
+
+
+            @Override
+            public void onResponse(Call<LinkScrapItem> call, Response<LinkScrapItem> response) {
+
+                LinkScrapItem linkScrapItem = response.body();
+                contentType = linkScrapItem.getContentType();
+                if (contentType == 3) {
+                    status = 3;
+                } else if (contentType == 4) {
+                    status = 4;
+                }
+                urlscrapting(linkScrapItem);
+                progressDialog.dismiss();
+
+            }
+
+            @Override
+            public void onFailure(Call<LinkScrapItem> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+                progressDialog.dismiss();
+            }
+        });
     }
 
     public void hideKeyboard(Activity activity) {
@@ -862,7 +1054,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     private void showIntroTooltip() {
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(500); // half second between each showcase view
-
+        config.setDismissTextStyle(Typeface.DEFAULT_BOLD);
         MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "4");
 
         sequence.setConfig(config);
@@ -1018,7 +1210,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                     rvMimToggle();
 
                 };
-                MentionUserAdapter mentionUserAdapter = new MentionUserAdapter(WallPost.this, mentionUsers, listener);
+                MentionUserAdapter mentionUserAdapter = new MentionUserAdapter(DirectShareActivity.this, mentionUsers, listener);
                 recyclerViewSearchMention.setAdapter(mentionUserAdapter);
 
 
@@ -1045,7 +1237,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             rvMimShow = true;
         }
     }
-
 
     public static List<String> extractUrls(String text) {
         List<String> containedUrls = new ArrayList<String>();
@@ -1152,7 +1343,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     protected void onRestart() {
         super.onRestart();
 //        tvPermission.setText(manager.getPostPermission());
-        imgPermission = findViewById(R.id.imgPermission);
         String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
@@ -1162,7 +1352,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     protected void onPause() {
         super.onPause();
 //        tvPermission.setText(manager.getPostPermission());
-        imgPermission = findViewById(R.id.imgPermission);
         String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
@@ -1200,7 +1389,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     protected void onResume() {
         super.onResume();
 //        tvPermission.setText(manager.getPostPermission());
-        imgPermission = findViewById(R.id.imgPermission);
         String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
@@ -1231,6 +1419,19 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 //            manager.setPostAudience(audience);
 //            tvAudience.setText(audience);
 //        }
+
+        editPostMessage.requestFocus();
+
+        editPostMessage.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                InputMethodManager keyboard = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.showSoftInput(editPostMessage, 0);
+            }
+        }, 200);
     }
 
 
@@ -1248,6 +1449,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             case R.id.imageCancelPost:
                 finish();
                 break;
+
             case R.id.messageContainer:
 //                editPostMessage.setEnabled(true);
 //                if (postVideos.isEmpty() && postImages.isEmpty()) {
@@ -1296,61 +1498,65 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.tvSubmitPost:
-                checkContentType();
-                if(toUserId.equalsIgnoreCase(profileId)){
-                    if (contentTitle.isEmpty()) {
-                        Tools.showCustomToast(WallPost.this, mView, "Please add a post description", Gravity.TOP);
-                    } else if (categoryId.isEmpty() && subCategoryId.isEmpty()) {
-                        Tools.showCustomToast(WallPost.this, mView, "Please select your post’s audience.", Gravity.TOP);
-                    } else if (!isAddContentTitle) {
-                        Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
-                    } else if (contentTitle.length() < 8) {
-                        Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
-                    }  else {
-                        createNewPost();
-                    }
-
-                }else {
-                    if (contentTitle.isEmpty()) {
-                        Tools.showCustomToast(WallPost.this, mView, "Please add a post description", Gravity.TOP);
-                    }  else if (!isAddContentTitle) {
-                        Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
-                    } else if (contentTitle.length() < 8) {
-                        Tools.showCustomToast(WallPost.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
-                    } else{
-                        categoryId = "26";
-                        createNewPost();
-                    }
+                if (contentType == 0) {
+                    checkContentType();
                 }
+                if (contentTitle.isEmpty()) {
+                    Tools.showCustomToast(DirectShareActivity.this, mView, "Please add a post description", Gravity.TOP);
+                } else if (categoryId.isEmpty() && subCategoryId.isEmpty()) {
+                    Tools.showCustomToast(DirectShareActivity.this, mView, "Please select your post’s audience.", Gravity.TOP);
+                } else if (!isAddContentTitle) {
+                    Tools.showCustomToast(DirectShareActivity.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
+                } else if (contentTitle.length() < 8) {
+                    Tools.showCustomToast(DirectShareActivity.this, mView, "Cat’s got your tongue? Please write at least 8 characters in your post description.", Gravity.TOP);
+                } else {
+                    createNewPost();
+                }
+                // Tools.showCustomToast(LikerSearch.this, mView, " Write Minimum Three Characters !", Gravity.TOP);
 
+
+//                String linkText = editPostMessage.getText().toString();
+//                textCrawler.makePreview(callback, linkText);
+//                if (linkText.startsWith("http")) {
+//                }
                 break;
             case R.id.contentCategory:
-                Intent intent = new Intent(WallPost.this, PostCategory.class);
+
+                Intent intent = new Intent(DirectShareActivity.this, PostCategory.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.bottom_up, R.anim.nothing);
                 break;
             case R.id.imageCamera:
-                rvMimShow = false;
-                rvMimToggle();
-                if (isGrantCamera) {
-                    sendImageFromCamera();
-                } else {
-                    checkCameraPermission();
-                }
+                List<String> reasonList = new ArrayList<>();
+                reasonList.add("azhar");
+                AttachmentBottomSheet attachmentBottomSheet = AttachmentBottomSheet.newInstance(reasonList);
+                attachmentBottomSheet.show(getSupportFragmentManager(), "AttachmentBottomSheet");
+//                rvMimShow = false;
+//                rvMimToggle();
+//                if (isGrantCamera) {
+//                    sendImageFromCamera();
+//                } else {
+//                    checkCameraPermission();
+//                }
+
                 break;
             case R.id.imageGallery:
+
                 rvMimShow = false;
                 rvMimToggle();
                 if (isGrantGallery) {
+
                     sendImageFromGallery();
                 } else {
                     checkGalleryPermission();
                 }
+                //
                 break;
             case R.id.imageVideo:
                 rvMimShow = false;
                 rvMimToggle();
                 checkVideoPermission();
+
                 break;
         }
     }
@@ -1391,6 +1597,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             Tools.showNetworkDialog(getSupportFragmentManager());
             progressView.setVisibility(View.GONE);
             progressView.stopAnimation();
+
         }
     }
 
@@ -1403,15 +1610,18 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             if (contentTitle.length() > 0 && postImages.size() > 0) {
                 contentType = 2;
                 status = 2;
-            } else if (contentTitle.length() > 0 && extractedUrls.size() > 0) {
+
+
+            }/* else if (contentTitle.length() > 0 && extractedUrls.size() > 0) {
                 contentType = 3;
                 status = 3;
             } else if (contentTitle.length() > 0 && isYoutubeURL) {
                 contentType = 4;
                 status = 4;
-            } else if (contentTitle.length() > 0 && postVideos.size() > 0) {
+            } */ else if (contentTitle.length() > 0 && postVideos.size() > 0) {
                 contentType = 2;
                 status = 2;
+
             } else {
                 contentType = 1;
                 status = 1;
@@ -1426,7 +1636,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         mentionMessage += lastPlainText;
                         contentTitle = mentionMessage;
                     }
-
 
                 }
             }
@@ -1473,7 +1682,8 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-
+                Log.i("Response", response.body().toString());
+                //Toast.makeText()
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
 
@@ -1504,11 +1714,10 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                 } else {
 
                                 }*/
-//                                    startActivity(new Intent(WallPost.this, Home.class));
+//                                    startActivity(new Intent(DirectShareActivity.this, Home.class));
                                     finish();
                                     sendBroadcast((new Intent()).setAction(AppConstants.NEW_POST_ADD_BROADCAST));
                                 }
-
                                 TopContributorStatus contributorStatus = new TopContributorStatus();
                                 Headers headers = new Headers();
                                 //   String categoryId = App.getCategoryId();
@@ -1523,7 +1732,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                 contributorStatus.setHeaders(headers);
                                 Gson gson = new Gson();
                                 String json = gson.toJson(contributorStatus);
-
+                                socket = SocketIOManager.nSocket;
                                 socket.emit("new_post", json, new Ack() {
                                     @Override
                                     public void call(Object... args) {
@@ -1536,7 +1745,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                             JSONObject errorObject = object.getJSONObject("errors");
                             if (errorObject.length() > 0) {
                                 String post_duplicate = errorObject.getString("post_duplicate");
-                                Tools.toast(WallPost.this, post_duplicate, R.drawable.ic_warning_black_24dp);
+                                Tools.toast(DirectShareActivity.this, post_duplicate, R.drawable.ic_warning_black_24dp);
                             }
 
 
@@ -1573,7 +1782,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             case "Only me":
                 postPermission = 1;
                 break;
-            case "Friends":
+            case "Followers Only":
                 postPermission = 2;
                 break;
 
@@ -1606,6 +1815,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         App.setmSubcatg(null);
         manager.setPostAudience("");
         super.onDestroy();
+        textCrawler.cancel();
     }
 
     private void setUpEmojiPopup() {
@@ -1625,12 +1835,13 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
     public void sendImageFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Intent takePictureIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
         imageUri = getImageUri();
-        if (imageUri == null)
-            throw new IllegalArgumentException("The filename cannot be null!");
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_TAKE_CAMERA);
+            //  startActivityForResult(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA), REQUEST_TAKE_CAMERA);
+
         }
 
     }
@@ -1676,12 +1887,12 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         if ((ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-            if ((ActivityCompat.shouldShowRequestPermissionRationale(WallPost.this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) && (ActivityCompat.shouldShowRequestPermissionRationale(WallPost.this,
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(DirectShareActivity.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) && (ActivityCompat.shouldShowRequestPermissionRationale(DirectShareActivity.this,
                     Manifest.permission.READ_EXTERNAL_STORAGE))) {
 
             } else {
-                ActivityCompat.requestPermissions(WallPost.this,
+                ActivityCompat.requestPermissions(DirectShareActivity.this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_TAKE_GALLERY_VIDEO);
             }
@@ -1721,16 +1932,16 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
             isGrantCamera = false;
 
         } else {
-
             sendImageFromCamera();
-            //  makeText(this, R.string.grant, LENGTH_SHORT).show();
             isGrantCamera = true;
         }
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, DirectShareActivity.this);
         switch (requestCode) {
             case REQUEST_TAKE_GALLERY_IMAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -1765,15 +1976,12 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_TAKE_GALLERY_IMAGE) {
-
             if (resultCode == RESULT_OK) {
-
                 try {
                     getSelectedImagesPath(requestCode, data);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-
 
             } else {
                 Toast.makeText(this, "Cancel Gallery", Toast.LENGTH_SHORT).show();
@@ -1817,11 +2025,58 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 params.height = (int) getResources().getDimension(R.dimen._150sdp);
                 messageContainer.setLayoutParams(params);
 
-
             } else {
                 Toast.makeText(this, "Cancel Camera Capture", Toast.LENGTH_SHORT).show();
             }
         }
+
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_VIDEO_CAPTURE) {
+            uri = data.getData();
+            if (EasyPermissions.hasPermissions(DirectShareActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // imageUri = getVideoUri();
+                if (uri == null)
+                    return;
+                pathToStoredVideo = getRealPathFromURIPath(uri, DirectShareActivity.this);
+                //imageUri = getImageUri();
+
+                File file = new File(pathToStoredVideo);
+                //Parsing any Media type file
+                RequestBody requestFile = RequestBody.create(MediaType.parse("video/*"), file);
+                MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("video", file.getName(), requestFile);
+                Call<String> mediaCall = videoServices.uploadVideo(deviceId, profileId, token, fileToUpload, postId, true);
+                sendUploadVideoRequest(mediaCall);
+
+                progressDialog.show();
+
+                String videoPath = "file://" + pathToStoredVideo;
+                PostVideo postVideo = new PostVideo();
+                postVideo.setVideoPath(videoPath);
+                postVideo.setMdFive(fileEncoded);
+                postVideo.setDuplicate(false);
+                postVideos.add(postVideo);
+                if (postVideos.size() > 0)
+                    rvMediaShow = true;
+                mediaRecyclerViewToggle();
+                mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
+                mediaRecyclerView.setAdapter(mediaAdapter);
+
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                int mColor = Color.parseColor("#FFFFFF");
+                messageContainer.setBackgroundColor(mColor);
+                messageContainer.setGravity(Gravity.START);
+                editPostMessage.setGravity(Gravity.START);
+                editPostMessage.setTextSize(12f);
+                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                messageContainer.setLayoutParams(params);
+
+
+            } else {
+                EasyPermissions.requestPermissions(DirectShareActivity.this, getString(R.string.read_file), READ_REQUEST_CODE, Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+        }
+
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_TAKE_GALLERY_VIDEO) {
 
@@ -1838,6 +2093,62 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
     }
 
+    private void uploadVideoToServer(String pathToVideoFile) {
+        File videoFile = new File(pathToVideoFile);
+        RequestBody videoBody = RequestBody.create(MediaType.parse("video/*"), videoFile);
+        MultipartBody.Part vFile = MultipartBody.Part.createFormData("video", videoFile.getName(), videoBody);
+
+        Log.d("videoPath: ", vFile + "");
+
+     /*     Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(SERVER_PATH)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+      VideoInterface vInterface = retrofit.create(VideoInterface.class);
+        Call<ResultObject>  serverCom = vInterface.uploadVideoToServer(vFile);
+        serverCom.enqueue(new Callback<ResultObject>() {
+            @Override
+            public void onResponse(Call<ResultObject> call, Response<ResultObject> response) {
+                ResultObject result = response.body();
+                if(!TextUtils.isEmpty(result.getSuccess())){
+                    Toast.makeText(DirectShareActivity.this, "Result " + result.getSuccess(), Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Result " + result.getSuccess());
+                }
+            }
+            @Override
+            public void onFailure(Call<ResultObject> call, Throwable t) {
+                Log.d(TAG, "Error message " + t.getMessage());
+            }
+        });*/
+    }
+
+    private String getRealPathFromURIPath(Uri contentURI, Activity activity) {
+        Cursor cursor = activity.getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) {
+            SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            String m_curentDateandTime = m_sdf.format(new Date());
+            return contentURI.getPath() + m_curentDateandTime;
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            String result = cursor.getString(idx);
+            cursor.close();
+            return result;
+        }
+    }
+
+    private String getFileDestinationPath() {
+        String generatedFilename = String.valueOf(System.currentTimeMillis());
+        String filePathEnvironment = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        File directoryFolder = new File(filePathEnvironment + "/video/");
+        if (!directoryFolder.exists()) {
+            directoryFolder.mkdir();
+        }
+        Log.d(TAG, "Full path " + filePathEnvironment + "/video/" + generatedFilename + ".mp4");
+        return filePathEnvironment + "/video/" + generatedFilename + ".mp4";
+    }
+
+
     private void sendVideoRequest(Call<String> call) {
         call.enqueue(new Callback<String>() {
 
@@ -1849,7 +2160,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         try {
                             JSONObject object = new JSONObject(response.body());
 
-//                            startActivity(new Intent(WallPost.this, Home.class));
+//                            startActivity(new Intent(DirectShareActivity.this, Home.class));
                             finish();
                             sendBroadcast((new Intent()).setAction(AppConstants.NEW_POST_ADD_BROADCAST));
                         } catch (JSONException e) {
@@ -1941,6 +2252,20 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         return m_imgUri;
     }
 
+    private Uri getVideoUri() {
+        Uri m_imgUri = null;
+        File m_file;
+        try {
+            SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            String m_curentDateandTime = m_sdf.format(new Date());
+            String m_imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + m_curentDateandTime + ".mp4";
+            m_file = new File(m_imagePath);
+            m_imgUri = Uri.fromFile(m_file);
+        } catch (Exception p_e) {
+        }
+        return m_imgUri;
+    }
+
     public String getPath(Uri uri) {
         int column_index;
         String imagePath;
@@ -2005,7 +2330,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         if (temp.equalsIgnoreCase(videoPath)) {
                             hasAlready = true;
 
-                            //    Tools.toast(WallPost.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
+                            //    Tools.toast(DirectShareActivity.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
                             break;
                         }
                     }
@@ -2052,7 +2377,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 for (String temp : videoList) {
                     if (temp.equalsIgnoreCase(videoPath)) {
 
-                        //  Tools.toast(WallPost.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
+                        //  Tools.toast(DirectShareActivity.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
                     } else {
 
                         Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "2", strMD5);
@@ -2090,12 +2415,9 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                             if (status) {
 
                                 // String message = "You have already posted it .";
-                                //Tools.showCustomToast(WallPost.this, mView, message, Gravity.CENTER);
-
-
+                                //Tools.showCustomToast(DirectShareActivity.this, mView, message, Gravity.CENTER);
                                 progressDialog.show();
                                 progressDialog.dismiss();
-
                                 // String videoPath = "file://" + filePath;
                                 PostVideo postVideo = new PostVideo();
                                 postVideo.setVideoPath(videoPath);
@@ -2108,7 +2430,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                 mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                                 mediaRecyclerView.setAdapter(mediaAdapter);
 
-
                             } else {
 
                                 if (!isNullOrEmpty(filePath)) {
@@ -2120,7 +2441,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                     sendUploadVideoRequest(mediaCall);
 
                                     progressDialog.show();
-
                                     // String videoPath = "file://" + filePath;
                                     PostVideo postVideo = new PostVideo();
                                     postVideo.setVideoPath(videoPath);
@@ -2133,7 +2453,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                     mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                                     mediaRecyclerView.setAdapter(mediaAdapter);
 
-
                                     editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
                                     int mColor = Color.parseColor("#FFFFFF");
                                     messageContainer.setBackgroundColor(mColor);
@@ -2145,12 +2464,10 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                     params.height = (int) getResources().getDimension(R.dimen._150sdp);
                                     messageContainer.setLayoutParams(params);
 
-
                                 }
 
-
                                 //     String message = "Add gallery successfully!";
-                                //     Tools.showCustomToast(WallPost.this, mView, message, Gravity.CENTER);
+                                //     Tools.showCustomToast(DirectShareActivity.this, mView, message, Gravity.CENTER);
 
                             }
 
@@ -2214,7 +2531,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                         if (temp.equalsIgnoreCase(imagePath)) {
                             hasAlready = true;
 
-                            //  Tools.toast(WallPost.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
+                            //  Tools.toast(DirectShareActivity.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
                             break;
                         }
                     }
@@ -2247,7 +2564,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 for (String temp : mediaList) {
                     if (temp.equalsIgnoreCase(imagePath)) {
 
-                        // Tools.toast(WallPost.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
+                        // Tools.toast(DirectShareActivity.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
                     } else {
 
                         Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
@@ -2295,7 +2612,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     private void sendIsDuplicateImageRequest(Call<String> call, String imagePath, String fileEncoded, String imageFilePath) {
         call.enqueue(new Callback<String>() {
 
-
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.i("Response", response.body().toString());
@@ -2308,9 +2624,8 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                             boolean status = object.getBoolean("status");
                             if (status) {
 
-
                                 // String message = "You have already posted it .";
-                                //Tools.showCustomToast(WallPost.this, mView, message, Gravity.CENTER);
+                                //Tools.showCustomToast(DirectShareActivity.this, mView, message, Gravity.CENTER);
 
                                 postImages.add(new PostImage(imagePath, "", fileEncoded, true));
                                 rvMediaShow = true;
@@ -2319,7 +2634,6 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                 mediaRecyclerView.setAdapter(mediaAdapter);
                                 progressView.setVisibility(View.GONE);
                                 progressView.stopAnimation();
-
 
                             } else {
 
@@ -2330,21 +2644,16 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                     MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
                                     Call<String> mediaCall = webService.addPhoto(deviceId, profileId, token, fileToUpload);
                                     addPhotoRequest(mediaCall, fileEncoded);
-
                                     progressDialog.show();
-                                    progressDialog.setCancelable(false);
-
+                                    //  progressDialog.setCancelable(false);
                                     postImages.add(new PostImage(imagePath, "", fileEncoded, false));
-
                                     if (postImages.size() > 0)
-
                                         rvMediaShow = true;
                                     mediaRecyclerViewToggle();
                                     mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
                                     mediaRecyclerView.setAdapter(mediaAdapter);
                                     progressView.setVisibility(View.GONE);
                                     progressView.stopAnimation();
-
 
                                     editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
                                     int mColor = Color.parseColor("#FFFFFF");
@@ -2357,12 +2666,10 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                     params.height = (int) getResources().getDimension(R.dimen._150sdp);
                                     messageContainer.setLayoutParams(params);
 
-
                                 }
 
-
 //                                String message = "Add gallery successfully!";
-//                                Tools.showCustomToast(WallPost.this, mView, message, Gravity.CENTER);
+//                                Tools.showCustomToast(DirectShareActivity.this, mView, message, Gravity.CENTER);
 
                             }
 
@@ -2483,7 +2790,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 final String[] selectionArgs = new String[]{
                         split[1]
                 };
-                if (contentUri == null)
+                if (uri == null)
                     throw new IllegalArgumentException("The filename cannot be null!");
 
                 return getDataColumn(context, contentUri, selection, selectionArgs);
@@ -2563,17 +2870,20 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
+    private View mainView;
+    private LinearLayout linearLayout;
+    private View loading;
+    private ImageView imageView;
 
     private LinkPreviewCallback callback = new LinkPreviewCallback() {
         /**
          * This view is used to be updated or added in the layout after getting
          * the result
          */
-        private View mainView;
-        private LinearLayout linearLayout;
-        private View loading;
-        private ImageView imageView;
-
+//        private View mainView;
+//        private LinearLayout linearLayout;
+//        private View loading;
+//        private ImageView imageView;
         @Override
         public void onPre() {
             hideSoftKeyboard();
@@ -2634,201 +2944,7 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                 });
 
             } else {
-                //  postButton.setVisibility(View.VISIBLE);
-                postButton.setVisibility(View.GONE);
-                //  tvSubmitPost.setVisibility(View.VISIBLE);
-                currentImageSet = new Bitmap[sourceContent.getImages().size()];
-
-                /**
-                 * Inflating the content layout into Main View LinearLayout
-                 */
-                final View content = getLayoutInflater().inflate(
-                        R.layout.preview_content, linearLayout);
-
-                /** Fullfilling the content layout */
-                final LinearLayout infoWrap = (LinearLayout) content
-                        .findViewById(R.id.info_wrap);
-                final LinearLayout titleWrap = (LinearLayout) infoWrap
-                        .findViewById(R.id.title_wrap);
-                final LinearLayout thumbnailOptions = (LinearLayout) content
-                        .findViewById(R.id.thumbnail_options);
-
-
-                final ImageView imageSet = (ImageView) content
-                        .findViewById(R.id.image_post_set);
-
-                // final TextView close = (TextView) titleWrap.findViewById(R.id.close);
-                final FloatingActionButton close = (FloatingActionButton) findViewById(R.id.close);
-                final TextView titleTextView = (TextView) titleWrap
-                        .findViewById(R.id.title);
-                final EditText titleEditText = (EditText) titleWrap
-                        .findViewById(R.id.input_title);
-                final TextView urlTextView = (TextView) content
-                        .findViewById(R.id.url);
-                final TextView descriptionTextView = (TextView) content
-                        .findViewById(R.id.description);
-                final EditText descriptionEditText = (EditText) content
-                        .findViewById(R.id.input_description);
-                final TextView countTextView = (TextView) thumbnailOptions
-                        .findViewById(R.id.count);
-
-                final Button previousButton = (Button) thumbnailOptions
-                        .findViewById(R.id.post_previous);
-                final Button forwardButton = (Button) thumbnailOptions
-                        .findViewById(R.id.post_forward);
-
-                editTextTitlePost = titleEditText;
-                editTextDescriptionPost = descriptionEditText;
-
-                titleTextView.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View arg0) {
-                        titleTextView.setVisibility(View.GONE);
-
-                        titleEditText.setText(TextCrawler
-                                .extendedTrim(titleTextView.getText()
-                                        .toString()));
-                        titleEditText.setVisibility(View.VISIBLE);
-                    }
-                });
-                titleEditText
-                        .setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-                            @Override
-                            public boolean onEditorAction(TextView arg0,
-                                                          int arg1, KeyEvent arg2) {
-
-                                if (arg2.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                                    titleEditText.setVisibility(View.GONE);
-
-                                    currentTitle = TextCrawler
-                                            .extendedTrim(titleEditText
-                                                    .getText().toString());
-
-                                    titleTextView.setText(currentTitle);
-                                    titleTextView.setVisibility(View.VISIBLE);
-
-                                    hideSoftKeyboard();
-                                }
-
-                                return false;
-                            }
-                        });
-                descriptionTextView.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View arg0) {
-                        descriptionTextView.setVisibility(View.GONE);
-
-                        descriptionEditText.setText(TextCrawler
-                                .extendedTrim(descriptionTextView.getText()
-                                        .toString()));
-                        descriptionEditText.setVisibility(View.VISIBLE);
-                    }
-                });
-                descriptionEditText
-                        .setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-                            @Override
-                            public boolean onEditorAction(TextView arg0,
-                                                          int arg1, KeyEvent arg2) {
-
-                                if (arg2.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                                    descriptionEditText
-                                            .setVisibility(View.GONE);
-
-                                    currentDescription = TextCrawler
-                                            .extendedTrim(descriptionEditText
-                                                    .getText().toString());
-
-                                    descriptionTextView
-                                            .setText(currentDescription);
-                                    descriptionTextView
-                                            .setVisibility(View.VISIBLE);
-
-                                    hideSoftKeyboard();
-                                }
-
-                                return false;
-                            }
-                        });
-
-                close.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View arg0) {
-                        releasePreviewArea();
-                    }
-                });
-
-
-                previousButton.setEnabled(false);
-                previousButton.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View arg0) {
-                        if (currentItem > 0)
-                            changeImage(previousButton, forwardButton,
-                                    currentItem - 1, sourceContent,
-                                    countTextView, imageSet, sourceContent
-                                            .getImages().get(currentItem - 1),
-                                    currentItem);
-                    }
-                });
-                forwardButton.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View arg0) {
-                        if (currentItem < sourceContent.getImages().size() - 1)
-                            changeImage(previousButton, forwardButton,
-                                    currentItem + 1, sourceContent,
-                                    countTextView, imageSet, sourceContent
-                                            .getImages().get(currentItem + 1),
-                                    currentItem);
-                    }
-                });
-
-                if (sourceContent.getImages().size() > 0) {
-
-                    if (sourceContent.getImages().size() > 1) {
-                        countTextView.setText("1 " + getString(R.string.of)
-                                + " " + sourceContent.getImages().size());
-
-                        thumbnailOptions.setVisibility(View.VISIBLE);
-                    }
-
-
-                    UrlImageViewHelper.setUrlDrawable(imageSet, sourceContent
-                            .getImages().get(0), new UrlImageViewCallback() {
-
-                        @Override
-                        public void onLoaded(ImageView imageView,
-                                             Bitmap loadedBitmap, String url,
-                                             boolean loadedFromCache) {
-                            if (loadedBitmap != null) {
-                                currentImage = loadedBitmap;
-                                currentImageSet[0] = loadedBitmap;
-                            }
-                        }
-                    });
-
-                } else {
-
-                }
-
-                if (sourceContent.getTitle().equals(""))
-                    sourceContent.setTitle(getString(R.string.enter_title));
-                if (sourceContent.getDescription().equals(""))
-                    sourceContent
-                            .setDescription(getString(R.string.enter_description));
-
-                titleTextView.setText(sourceContent.getTitle());
-                urlTextView.setText(sourceContent.getCannonicalUrl());
-                descriptionTextView.setText(sourceContent.getDescription());
-
-                //   postButton.setVisibility(View.VISIBLE);
-                postButton.setVisibility(View.GONE);
+                linkscrapting(sourceContent);
             }
 
             currentTitle = sourceContent.getTitle();
@@ -2847,10 +2963,461 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
 
             LinkScriptItem scriptItem = new LinkScriptItem(currentImage, currentTitle, currentDescription, currentUrl);
             scriptItemList.add(scriptItem);
-            LinkScriptAdapter linkScriptAdapter = new LinkScriptAdapter(WallPost.this, scriptItemList);
+            LinkScriptAdapter linkScriptAdapter = new LinkScriptAdapter(DirectShareActivity.this, scriptItemList);
             rvLinkScript.setAdapter(linkScriptAdapter);
         }
+
+        private void linkscrapting(SourceContent sourceContent) {
+            //  postButton.setVisibility(View.VISIBLE);
+            postButton.setVisibility(View.GONE);
+            //  tvSubmitPost.setVisibility(View.VISIBLE);
+            currentImageSet = new Bitmap[sourceContent.getImages().size()];
+
+            /**
+             * Inflating the content layout into Main View LinearLayout
+             */
+            final View content = getLayoutInflater().inflate(
+                    R.layout.preview_content, linearLayout);
+
+            /** Fullfilling the content layout */
+            final LinearLayout infoWrap = (LinearLayout) content
+                    .findViewById(R.id.info_wrap);
+            final LinearLayout titleWrap = (LinearLayout) infoWrap
+                    .findViewById(R.id.title_wrap);
+            final LinearLayout thumbnailOptions = (LinearLayout) content
+                    .findViewById(R.id.thumbnail_options);
+
+
+            final ImageView imageSet = (ImageView) content
+                    .findViewById(R.id.image_post_set);
+
+            // final TextView close = (TextView) titleWrap.findViewById(R.id.close);
+            final FloatingActionButton close = (FloatingActionButton) findViewById(R.id.close);
+            final TextView titleTextView = (TextView) titleWrap
+                    .findViewById(R.id.title);
+            final EditText titleEditText = (EditText) titleWrap
+                    .findViewById(R.id.input_title);
+            final TextView urlTextView = (TextView) content
+                    .findViewById(R.id.url);
+            final TextView descriptionTextView = (TextView) content
+                    .findViewById(R.id.description);
+            final EditText descriptionEditText = (EditText) content
+                    .findViewById(R.id.input_description);
+            final TextView countTextView = (TextView) thumbnailOptions
+                    .findViewById(R.id.count);
+
+            final Button previousButton = (Button) thumbnailOptions
+                    .findViewById(R.id.post_previous);
+            final Button forwardButton = (Button) thumbnailOptions
+                    .findViewById(R.id.post_forward);
+
+            editTextTitlePost = titleEditText;
+            editTextDescriptionPost = descriptionEditText;
+
+            titleTextView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    titleTextView.setVisibility(View.GONE);
+
+                    titleEditText.setText(TextCrawler
+                            .extendedTrim(titleTextView.getText()
+                                    .toString()));
+                    titleEditText.setVisibility(View.VISIBLE);
+                }
+            });
+            titleEditText
+                    .setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+                        @Override
+                        public boolean onEditorAction(TextView arg0,
+                                                      int arg1, KeyEvent arg2) {
+
+                            if (arg2.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                                titleEditText.setVisibility(View.GONE);
+
+                                currentTitle = TextCrawler
+                                        .extendedTrim(titleEditText
+                                                .getText().toString());
+
+                                titleTextView.setText(currentTitle);
+                                titleTextView.setVisibility(View.VISIBLE);
+
+                                hideSoftKeyboard();
+                            }
+
+                            return false;
+                        }
+                    });
+            descriptionTextView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    descriptionTextView.setVisibility(View.GONE);
+
+                    descriptionEditText.setText(TextCrawler
+                            .extendedTrim(descriptionTextView.getText()
+                                    .toString()));
+                    descriptionEditText.setVisibility(View.VISIBLE);
+                }
+            });
+            descriptionEditText
+                    .setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+                        @Override
+                        public boolean onEditorAction(TextView arg0,
+                                                      int arg1, KeyEvent arg2) {
+
+                            if (arg2.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                                descriptionEditText
+                                        .setVisibility(View.GONE);
+
+                                currentDescription = TextCrawler
+                                        .extendedTrim(descriptionEditText
+                                                .getText().toString());
+
+                                descriptionTextView
+                                        .setText(currentDescription);
+                                descriptionTextView
+                                        .setVisibility(View.VISIBLE);
+
+                                hideSoftKeyboard();
+                            }
+
+                            return false;
+                        }
+                    });
+
+            close.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    releasePreviewArea();
+                }
+            });
+
+
+            previousButton.setEnabled(false);
+            previousButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    if (currentItem > 0)
+                        changeImage(previousButton, forwardButton,
+                                currentItem - 1, sourceContent,
+                                countTextView, imageSet, sourceContent
+                                        .getImages().get(currentItem - 1),
+                                currentItem);
+                }
+            });
+            forwardButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View arg0) {
+                    if (currentItem < sourceContent.getImages().size() - 1)
+                        changeImage(previousButton, forwardButton,
+                                currentItem + 1, sourceContent,
+                                countTextView, imageSet, sourceContent
+                                        .getImages().get(currentItem + 1),
+                                currentItem);
+                }
+            });
+
+            if (sourceContent.getImages().size() > 0) {
+
+                if (sourceContent.getImages().size() > 1) {
+                    countTextView.setText("1 " + getString(R.string.of)
+                            + " " + sourceContent.getImages().size());
+
+                    thumbnailOptions.setVisibility(View.VISIBLE);
+                }
+
+
+                UrlImageViewHelper.setUrlDrawable(imageSet, sourceContent
+                        .getImages().get(0), new UrlImageViewCallback() {
+
+                    @Override
+                    public void onLoaded(ImageView imageView,
+                                         Bitmap loadedBitmap, String url,
+                                         boolean loadedFromCache) {
+                        if (loadedBitmap != null) {
+                            currentImage = loadedBitmap;
+                            currentImageSet[0] = loadedBitmap;
+                        }
+                    }
+                });
+
+            } else {
+
+            }
+
+            if (sourceContent.getTitle().equals(""))
+                sourceContent.setTitle(getString(R.string.enter_title));
+            if (sourceContent.getDescription().equals(""))
+                sourceContent
+                        .setDescription(getString(R.string.enter_description));
+
+            titleTextView.setText(sourceContent.getTitle());
+            urlTextView.setText(sourceContent.getCannonicalUrl());
+            descriptionTextView.setText(sourceContent.getDescription());
+
+            //   postButton.setVisibility(View.VISIBLE);
+            postButton.setVisibility(View.GONE);
+        }
+
+
     };
+
+    private void urlscrapting(LinkScrapItem sourceContent) {
+
+        hideSoftKeyboard();
+
+        currentImageSet = null;
+        currentItem = 0;
+
+//            tvSubmitPost.setVisibility(View.GONE);
+
+
+        currentImage = null;
+        noThumb = false;
+        currentTitle = currentDescription = currentUrl = currentCannonicalUrl = "";
+
+//            tvSubmitPost.setEnabled(false);
+//            tvSubmitPost.setEnabled(true);
+
+        /** Inflating the preview layout */
+        mainView = getLayoutInflater().inflate(R.layout.main_view, null);
+
+        linearLayout = (LinearLayout) mainView.findViewById(R.id.external);
+
+        /**
+         * Inflating a loading layout into Main View LinearLayout
+         */
+        loading = getLayoutInflater().inflate(R.layout.loading,
+                linearLayout);
+
+        dropPreview.addView(mainView);
+        linearLayout.removeAllViews();
+
+
+        //  postButton.setVisibility(View.VISIBLE);
+        postButton.setVisibility(View.GONE);
+        //  tvSubmitPost.setVisibility(View.VISIBLE);
+        currentImageSet = new Bitmap[sourceContent.getImages().size()];
+
+        /**
+         * Inflating the content layout into Main View LinearLayout
+         */
+        final View content = getLayoutInflater().inflate(
+                R.layout.preview_content, linearLayout);
+
+        /** Fullfilling the content layout */
+        final LinearLayout infoWrap = (LinearLayout) content
+                .findViewById(R.id.info_wrap);
+        final LinearLayout titleWrap = (LinearLayout) infoWrap
+                .findViewById(R.id.title_wrap);
+        final LinearLayout thumbnailOptions = (LinearLayout) content
+                .findViewById(R.id.thumbnail_options);
+
+
+        final ImageView imageSet = (ImageView) content
+                .findViewById(R.id.image_post_set);
+
+        // final TextView close = (TextView) titleWrap.findViewById(R.id.close);
+        final FloatingActionButton close = (FloatingActionButton) findViewById(R.id.close);
+        final TextView titleTextView = (TextView) titleWrap
+                .findViewById(R.id.title);
+        final EditText titleEditText = (EditText) titleWrap
+                .findViewById(R.id.input_title);
+        final TextView urlTextView = (TextView) content
+                .findViewById(R.id.url);
+        final TextView descriptionTextView = (TextView) content
+                .findViewById(R.id.description);
+        final EditText descriptionEditText = (EditText) content
+                .findViewById(R.id.input_description);
+        final TextView countTextView = (TextView) thumbnailOptions
+                .findViewById(R.id.count);
+
+        final Button previousButton = (Button) thumbnailOptions
+                .findViewById(R.id.post_previous);
+        final Button forwardButton = (Button) thumbnailOptions
+                .findViewById(R.id.post_forward);
+
+        editTextTitlePost = titleEditText;
+        editTextDescriptionPost = descriptionEditText;
+
+        titleTextView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                titleTextView.setVisibility(View.GONE);
+
+                titleEditText.setText(TextCrawler
+                        .extendedTrim(titleTextView.getText()
+                                .toString()));
+                titleEditText.setVisibility(View.VISIBLE);
+            }
+        });
+        titleEditText
+                .setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+                    @Override
+                    public boolean onEditorAction(TextView arg0,
+                                                  int arg1, KeyEvent arg2) {
+
+                        if (arg2.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                            titleEditText.setVisibility(View.GONE);
+
+                            currentTitle = TextCrawler
+                                    .extendedTrim(titleEditText
+                                            .getText().toString());
+
+                            titleTextView.setText(currentTitle);
+                            titleTextView.setVisibility(View.VISIBLE);
+
+                            hideSoftKeyboard();
+                        }
+
+                        return false;
+                    }
+                });
+        descriptionTextView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                descriptionTextView.setVisibility(View.GONE);
+
+                descriptionEditText.setText(TextCrawler
+                        .extendedTrim(descriptionTextView.getText()
+                                .toString()));
+                descriptionEditText.setVisibility(View.VISIBLE);
+            }
+        });
+        descriptionEditText
+                .setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+                    @Override
+                    public boolean onEditorAction(TextView arg0,
+                                                  int arg1, KeyEvent arg2) {
+
+                        if (arg2.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                            descriptionEditText
+                                    .setVisibility(View.GONE);
+
+                            currentDescription = TextCrawler
+                                    .extendedTrim(descriptionEditText
+                                            .getText().toString());
+
+                            descriptionTextView
+                                    .setText(currentDescription);
+                            descriptionTextView
+                                    .setVisibility(View.VISIBLE);
+
+                            hideSoftKeyboard();
+                        }
+
+                        return false;
+                    }
+                });
+
+        close.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                releasePreviewArea();
+                contentType = 1;
+                status = 1;
+
+            }
+        });
+
+
+        previousButton.setEnabled(false);
+        previousButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                if (currentItem > 0)
+                    changeUrlImage(previousButton, forwardButton,
+                            currentItem - 1, sourceContent,
+                            countTextView, imageSet, sourceContent
+                                    .getImages().get(currentItem - 1),
+                            currentItem);
+            }
+        });
+        forwardButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                if (currentItem < sourceContent.getImages().size() - 1)
+                    changeUrlImage(previousButton, forwardButton,
+                            currentItem + 1, sourceContent,
+                            countTextView, imageSet, sourceContent
+                                    .getImages().get(currentItem + 1),
+                            currentItem);
+            }
+        });
+
+        if (sourceContent.getImages().size() > 0) {
+
+            if (sourceContent.getImages().size() > 1) {
+                countTextView.setText("1 " + getString(R.string.of)
+                        + " " + sourceContent.getImages().size());
+
+                thumbnailOptions.setVisibility(View.VISIBLE);
+            }
+
+
+            UrlImageViewHelper.setUrlDrawable(imageSet, sourceContent
+                    .getImages().get(0).getImg(), new UrlImageViewCallback() {
+
+                @Override
+                public void onLoaded(ImageView imageView,
+                                     Bitmap loadedBitmap, String url,
+                                     boolean loadedFromCache) {
+                    if (loadedBitmap != null) {
+                        currentImage = loadedBitmap;
+                        currentImageSet[0] = loadedBitmap;
+                    }
+                }
+            });
+
+        } else {
+
+        }
+
+        if (sourceContent.getTitle().equals(""))
+            sourceContent.setTitle(getString(R.string.enter_title));
+        if (sourceContent.getDescription().equals(""))
+            sourceContent
+                    .setDescription(getString(R.string.enter_description));
+
+        titleTextView.setText(sourceContent.getTitle());
+//            urlTextView.setText(sourceContent.getCannonicalUrl());
+        urlTextView.setText(sourceContent.getHost());
+        descriptionTextView.setText(sourceContent.getDescription());
+
+        //   postButton.setVisibility(View.VISIBLE);
+        postButton.setVisibility(View.GONE);
+
+        currentTitle = sourceContent.getTitle();
+        contentLinkTitle = currentTitle;
+        currentDescription = sourceContent.getDescription();
+        contentLinkDesc = currentDescription;
+        currentUrl = sourceContent.getUrl();
+        contentLinkUrl = currentUrl;
+        currentCannonicalUrl = sourceContent.getHost();
+        contentHost = currentCannonicalUrl;
+
+        for (ImageItem temp : sourceContent.getImages()) {
+            contentLinkImage = temp.getImg();
+        }
+
+        LinkScriptItem scriptItem = new LinkScriptItem(currentImage, currentTitle, currentDescription, currentUrl);
+        scriptItemList.add(scriptItem);
+        LinkScriptAdapter linkScriptAdapter = new LinkScriptAdapter(DirectShareActivity.this, scriptItemList);
+        rvLinkScript.setAdapter(linkScriptAdapter);
+    }
 
     /**
      * Hide keyboard
@@ -2886,6 +3453,52 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                              TextView countTextView, ImageView imageSet, String url,
                              final int current) {
 
+        if (currentImageSet[index] != null) {
+            currentImage = currentImageSet[index];
+            imageSet.setImageBitmap(currentImage);
+        } else {
+            UrlImageViewHelper.setUrlDrawable(imageSet, url,
+                    new UrlImageViewCallback() {
+
+                        @Override
+                        public void onLoaded(ImageView imageView,
+                                             Bitmap loadedBitmap, String url,
+                                             boolean loadedFromCache) {
+                            if (loadedBitmap != null) {
+                                currentImage = loadedBitmap;
+                                currentImageSet[index] = loadedBitmap;
+                            }
+                        }
+                    });
+
+        }
+
+        currentItem = index;
+
+        if (index == 0)
+            previousButton.setEnabled(false);
+        else
+            previousButton.setEnabled(true);
+
+        if (index == sourceContent.getImages().size() - 1)
+            forwardButton.setEnabled(false);
+        else
+            forwardButton.setEnabled(true);
+
+        countTextView.setText((index + 1) + " " + getString(R.string.of) + " "
+                + sourceContent.getImages().size());
+    }
+
+
+    /**
+     * Change the current image in image set
+     */
+    private void changeUrlImage(Button previousButton, Button forwardButton,
+                                final int index, LinkScrapItem sourceContent,
+                                TextView countTextView, ImageView imageSet, ImageItem imageItem,
+                                final int current) {
+
+        String url = imageItem.getImg();
         if (currentImageSet[index] != null) {
             currentImage = currentImageSet[index];
             imageSet.setImageBitmap(currentImage);
@@ -2965,17 +3578,17 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                                     Call<String> mediaCall = videoServices.uploadVideo(deviceId, profileId, token, fileToUpload, postId, true);
                                     sendVideoRequest(mediaCall);
                                 } else {
-//                                    Intent intent = new Intent(WallPost.this, Home.class);
+//                                    Intent intent = new Intent(DirectShareActivity.this, Home.class);
 //                                    intent.putExtra("STATUS", status);
 //                                    startActivity(intent);
                                     finish();
                                     sendBroadcast((new Intent()).setAction(AppConstants.NEW_POST_ADD_BROADCAST));
                                     String message = "You are now a contributor to the Hobby & Leisure - Airplanes category and your post has been added to your profile.";
-                                    //  Tools.showCustomToast(WallPost.this, mView, message, Gravity.CENTER);
+                                    //  Tools.showCustomToast(DirectShareActivity.this, mView, message, Gravity.CENTER);
                                 }
 
                             } else {
-                                Tools.showCustomToast(WallPost.this, mView, status, Gravity.CENTER);
+                                Tools.showCustomToast(DirectShareActivity.this, mView, status, Gravity.CENTER);
                             }
 
 
@@ -3019,31 +3632,116 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
     }
 
 
-    private void setPermissionData(String permissionData) {
-        switch (permissionData) {
-            case "Public":
-                imgPermission.setImageResource(R.drawable.ic_public_black_12dp);
-                postPermission = 0;
-                break;
-            case "Only me":
-                imgPermission.setImageResource(R.drawable.ic_lock_outline_black_12dp);
-                postPermission = 1;
-                break;
-            case "Followers Only":
-                imgPermission.setImageResource(R.drawable.ic_people_outline_black_12dp);
-                postPermission = 2;
-                break;
+    @Override
+    public void onCameraClicked() {
+
+        rvMimShow = false;
+        rvMimToggle();
+        if (isGrantCamera) {
+            sendImageFromCamera();
+        } else {
+            checkCameraPermission();
         }
     }
 
-    private void checkIsOwnProfile() {
-        if (toUserId.equalsIgnoreCase(profileId)) {
-            findViewById(R.id.contentCategoryDisable).setVisibility(View.GONE);
-            findViewById(R.id.contentCategory).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.contentCategoryDisable).setVisibility(View.VISIBLE);
-            findViewById(R.id.contentCategory).setVisibility(View.GONE);
+    @Override
+    public void onVideoLibraryClicked() {
+
+        rvMimShow = false;
+        rvMimToggle();
+        checkVideoPermission();
+    }
+
+    @Override
+    public void onVideoRecordClicked() {
+
+
+        Intent videoCaptureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        //  Uri videoUri=getVideoUri();
+        // videoCaptureIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
+        if (videoCaptureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(videoCaptureIntent, REQUEST_VIDEO_CAPTURE);
         }
+
+//        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+//        if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(takeVideoIntent,
+//                    REQUEST_VIDEO_CAPTURE);
+//        }
+
+    }
+
+    @Override
+    public void onPhotoClicked() {
+
+        rvMimShow = false;
+        rvMimToggle();
+        if (isGrantGallery) {
+
+            sendImageFromGallery();
+        } else {
+            checkGalleryPermission();
+        }
+
+    }
+
+    @Override
+    public void onEmojiClicked() {
+
+    }
+
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        if (uri != null) {
+            if (EasyPermissions.hasPermissions(DirectShareActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//                displayRecordedVideo.setVideoURI(uri);
+//                displayRecordedVideo.start();
+
+                pathToStoredVideo = getRealPathFromURIPath(uri, DirectShareActivity.this);
+                //    Log.d(TAG, "Recorded Video Path " + pathToStoredVideo);
+                //Store the video to your server
+                //  uploadVideoToServer(pathToStoredVideo);
+
+                File file = new File(pathToStoredVideo);
+                //Parsing any Media type file
+                RequestBody requestFile = RequestBody.create(MediaType.parse("video/*"), file);
+                MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("video", file.getName(), requestFile);
+                Call<String> mediaCall = videoServices.uploadVideo(deviceId, profileId, token, fileToUpload, postId, true);
+                sendUploadVideoRequest(mediaCall);
+
+                progressDialog.show();
+
+                String videoPath = "file://" + pathToStoredVideo;
+                PostVideo postVideo = new PostVideo();
+                postVideo.setVideoPath(videoPath);
+                postVideo.setMdFive(fileEncoded);
+                postVideo.setDuplicate(false);
+                postVideos.add(postVideo);
+                if (postVideos.size() > 0)
+                    rvMediaShow = true;
+                mediaRecyclerViewToggle();
+                mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
+                mediaRecyclerView.setAdapter(mediaAdapter);
+
+
+                editPostMessage.addTextChangedListener(new EditTextLinesLimiter(editPostMessage, 100));
+                int mColor = Color.parseColor("#FFFFFF");
+                messageContainer.setBackgroundColor(mColor);
+                messageContainer.setGravity(Gravity.START);
+                editPostMessage.setGravity(Gravity.START);
+                editPostMessage.setTextSize(12f);
+                editPostMessage.setTextColor(Color.parseColor("#000000"));
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._150sdp);
+                messageContainer.setLayoutParams(params);
+            }
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        Log.d(TAG, "User has denied requested permission");
     }
 
 

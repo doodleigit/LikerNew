@@ -9,11 +9,6 @@ import android.service.chooser.ChooserTarget;
 import android.service.chooser.ChooserTargetService;
 import android.support.annotation.RequiresApi;
 
-import com.liker.android.App;
-import com.liker.android.Post.view.activity.PostNew;
-import com.liker.android.R;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +18,7 @@ public class SampleChooserTargetService extends ChooserTargetService {
     public List<ChooserTarget> onGetChooserTargets(ComponentName targetActivityName,
                                                    IntentFilter matchedFilter) {
         ComponentName componentName = new ComponentName(getPackageName(),
-                PostNew.class.getCanonicalName());
+                DirectShareActivity.class.getCanonicalName());
         // The list of Direct Share items. The system will show the items the way they are sorted
         // in this list.
         ArrayList<ChooserTarget> targets = new ArrayList<>();
