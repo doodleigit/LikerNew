@@ -391,7 +391,7 @@ public class PrivacyAndSecurityFragment extends Fragment {
             @Override
             public void onResponse(Call<PrivacyInfo> call, Response<PrivacyInfo> response) {
                 privacyInfo = response.body();
-                if (privacyInfo != null) {
+                if (privacyInfo != null && privacyInfo.getBlockUsers() != null) {
                     blockUsers.addAll(privacyInfo.getBlockUsers());
                     setData();
                 }

@@ -75,6 +75,7 @@ public class AppConstants {
     public static final String MIM_IMAGE = BASE_URL_MEDIA + "assets/nimg/";
     public static final String Link_IMAGE_PATH = BASE_URL_MEDIA + "uploads/link_images/";
     public static final String YOUTUBE_IMAGE_PATH = BASE_URL_MEDIA + "uploads/youtube/main_img/";
+    public static final String YOUTUBE_IMAGE_PATH_NEW = BASE_URL_MEDIA + "uploads/youtube/thumb/";
 
     //https://www.cdn-liker.com/stg-static/uploads/post_images/5d2dafdfe9487.jpg
     //https://www.cdn-liker.com/stg-static/uploads/post_videos/thumb/1ovh2hg2jy5qwenx.png

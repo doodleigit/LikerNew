@@ -52,18 +52,26 @@ public class SearchUsersAd extends ArrayAdapter<SearchUser> {
         TextView mStar = (TextView) convertView.findViewById(R.id.tvStar);
 
         SearchUser item = mSearchUsers.get(position);
+        int likes, totalStar;
+        try {
+            likes = Integer.parseInt(item.totalLikes);
+            totalStar = Integer.parseInt(item.goldStars) + Integer.parseInt(item.sliverStars);
+        } catch (NumberFormatException e) {
+            likes = 0;
+            totalStar = 0;
+        }
 
-        String totalaStar = item.goldStars + item.sliverStars;
         String image_url = POST_IMAGES + item.photo;
         mName.setText(item.fullname);
 
-        mLike.setText(item.totalLikes);
-        mStar.setText(totalaStar + " " + context.getString(R.string.stars));
+        mLike.setText(likes > 1 ? likes + " " + context.getString(R.string.likes) : likes + " " + context.getString(R.string.like));
+        mStar.setText(totalStar > 1 ? totalStar + " " + context.getString(R.string.stars) : totalStar + " " + context.getString(R.string.star));
 
         if (image_url.length() > 0) {
             Picasso.with(App.getAppContext())
                     .load(image_url)
                     .placeholder(R.drawable.profile)
+                    .error(R.drawable.profile)
                     .into(mImage);
 
         }
