@@ -90,7 +90,9 @@
     <string name="star_contributors">Star Contributors</string>
     <string name="loading">Loading…</string>
     <string name="likes">Likes</string>
+    <string name="like">Like</string>
     <string name="stars">Stars</string>
+    <string name="star">Star</string>
     <string name="search_messages">Search Messages</string>
     <string name="search_category_">Search Category…</string>
     <string name="search_categories_">Search Categories…</string>
@@ -283,6 +285,7 @@
     <string name="login_in_with_twitter">Log in with <b>twitter</b></string>
     <string name="login_in">Log in</string>
     <string name="sign_up">Sign up</string>
+    <string name="logging_in">Logging in…</string>
     <string name="logging_out">Logging out</string>
     <string name="sign_up_account">Sign up Account</string>
     <string name="forgot_password">Forgot Password</string>

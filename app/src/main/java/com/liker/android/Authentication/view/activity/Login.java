@@ -554,7 +554,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
 
     }
 
-    private void   sendRequest(Call<LoginUser> call) {
+    private void sendRequest(Call<LoginUser> call) {
         call.enqueue(new Callback<LoginUser>() {
             @Override
             public void onResponse(Call<LoginUser> call, Response<LoginUser> response) {

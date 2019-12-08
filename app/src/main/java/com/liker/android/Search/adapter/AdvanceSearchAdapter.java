@@ -65,17 +65,26 @@ public class AdvanceSearchAdapter extends RecyclerView.Adapter<AdvanceSearchAdap
         }
 
         public void populate(User user) {
+            int likes, totalStar;
+            try {
+                likes = Integer.parseInt(user.getTotalLikes());
+                totalStar = Integer.parseInt(user.getGoldStars()) + Integer.parseInt(user.getSliverStars());
+            } catch (NumberFormatException e) {
+                likes = 0;
+                totalStar = 0;
+            }
+
             tvUserName.setText(user.getFullname());
-            tvLike.setText(user.getTotalLikes() + " " + context.getString(R.string.likes));
-            int totalStar = Integer.parseInt(user.getSliverStars()) + Integer.parseInt(user.getGoldStars());
-            tvStar.setText(String.valueOf(totalStar) + " " + context.getString(R.string.stars));
+            tvLike.setText(likes > 1 ? likes + " " + context.getString(R.string.likes) : likes + " " + context.getString(R.string.like));
+            tvStar.setText(totalStar > 1 ? totalStar + " " + context.getString(R.string.stars) : totalStar + " " + context.getString(R.string.star));
             tvUserName.setText(user.getFullname());
             String imagePhoto = POST_IMAGES + user.getPhoto();
 
             if (imagePhoto.length() > 0) {
                 Picasso.with(App.getAppContext())
                         .load(imagePhoto)
-                        .placeholder(R.drawable.drawable_comment)
+                        .placeholder(R.drawable.profile)
+                        .error(R.drawable.profile)
                         .into(imgUser);
             }
             itemView.setOnClickListener(new View.OnClickListener() {

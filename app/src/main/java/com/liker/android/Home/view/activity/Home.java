@@ -160,6 +160,7 @@ import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.RateTimerUtil;
 import com.liker.android.Tool.Service.DataFetchingService;
 import com.liker.android.Tool.Tools;
+import com.onesignal.OneSignal;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -483,8 +484,9 @@ public class Home extends AppCompatActivity implements
                 Intent loginAgain = new Intent(Home.this, LoginAgain.class);
                 loginAgain.putExtra("login_info", loginInfo);
                 manager.pref.edit().clear().apply();
-                Call<String> call = webService.setLogout(deviceId, token, userId, userId);
-                sendLogoutRequest(call);
+//                Call<String> call = webService.setLogout(deviceId, token, userId, userId);
+//                sendLogoutRequest(call);
+                OneSignal.setSubscription(false);
                 stopService(new Intent(Home.this, DataFetchingService.class));
                 startActivity(loginAgain);
                 finish();

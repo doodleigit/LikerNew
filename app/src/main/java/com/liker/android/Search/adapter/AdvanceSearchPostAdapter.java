@@ -23,8 +23,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import static com.liker.android.Tool.AppConstants.Link_IMAGE_PATH;
 import static com.liker.android.Tool.AppConstants.POST_IMAGES;
 import static com.liker.android.Tool.AppConstants.PROFILE_IMAGE;
+import static com.liker.android.Tool.AppConstants.YOUTUBE_IMAGE_PATH;
+import static com.liker.android.Tool.AppConstants.YOUTUBE_IMAGE_PATH_NEW;
 
 //import static com.doodle.Tool.AppConstants.POST_IMAGES;
 //import static com.doodle.Tool.AppConstants.PROFILE_IMAGE;
@@ -78,20 +81,33 @@ public class AdvanceSearchPostAdapter extends RecyclerView.Adapter<AdvanceSearch
 
         public void populate(Post post) {
 
-            tvPostUserName.setText(post.getFirstName() + " " + post.getLastName());
             //   String postDate = Operation.getDurationBreakdown(Long.parseLong(post.getPostDate()));
             //  String postDate = Operation.getDate(Long.parseLong(post.getPostDate()), "dd/MM/yyyy hh:mm:ss.SSS");
             long myMillis = Long.parseLong(post.getPostDate()) * 1000;
             String postDate = Operation.postDateCompare(context, myMillis);
+            int likes, totalStar;
+            try {
+                likes = Integer.parseInt(post.getTotalLikes());
+                totalStar = Integer.parseInt(post.getGoldStars()) + Integer.parseInt(post.getSliverStars());
+            } catch (NumberFormatException e) {
+                likes = 0;
+                totalStar = 0;
+            }
+            tvPostUserName.setText(post.getFirstName() + " " + post.getLastName());
             tvPostDuration.setText(postDate);
-            tvPostLike.setText(post.getTotalLike() + " " + context.getString(R.string.likes));
-            int totalStar = Integer.parseInt(post.getSliverStars()) + Integer.parseInt(post.getGoldStars());
-            tvPostStar.setText(String.valueOf(totalStar) + " " + context.getString(R.string.stars));
+            tvPostLike.setText(likes > 1 ? likes + " " + context.getString(R.string.likes) : likes + " " + context.getString(R.string.like));
+            tvPostStar.setText(totalStar > 1 ? totalStar + " " + context.getString(R.string.stars) : totalStar + " " + context.getString(R.string.star));
             postCategory.setText(post.getCategoryName());
             tvPostText.setText(post.getPostText());
             String imagePhoto = PROFILE_IMAGE + post.getPhoto();
-            String imagePost = POST_IMAGES + post.getPostImage();
-
+            String imagePost;
+            if (post.getPostType().equals("3")) {
+                imagePost = Link_IMAGE_PATH + post.getPostImage();
+            } else if (post.getPostType().equals("4")) {
+                imagePost = YOUTUBE_IMAGE_PATH_NEW + post.getPostImage();
+            } else {
+                imagePost = POST_IMAGES + post.getPostImage();
+            }
             Glide.with(App.getAppContext())
                     .load(imagePhoto)
                     .placeholder(R.drawable.profile)
@@ -105,7 +121,7 @@ public class AdvanceSearchPostAdapter extends RecyclerView.Adapter<AdvanceSearch
                     .centerCrop()
                     .into(imgPostImage);
 
-            if (post.getPostType().equals("1") || post.getPostType().equals("6")) {
+            if (post.getPostType().equals("1") || post.getPostType().equals("6") || post.getPostImage() == null) {
                 imgPostImage.setVisibility(View.GONE);
             } else {
                 imgPostImage.setVisibility(View.VISIBLE);
