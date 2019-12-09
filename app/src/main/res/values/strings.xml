@@ -252,6 +252,7 @@
     <string name="please_input">Please input at least two character</string>
     <string name="password_length_is_less_than_8">password length is less than 8</string>
     <string name="new_password_confirm_password_does_not_match">New password and confirm password does not match !</string>
+    <string name="matched">Matched</string>
     <string name="password_has_been_updated">Password has been updated</string>
     <string name="security_question_has_been_updated">Security Question has been updated</string>
     <string name="account_has_been_deactivated">Account has been deactivated</string>
@@ -361,6 +362,8 @@
     <string name="create_group_heading">Groups are great for getting things done and styling in touch with just the people you want. Share photos and videos,have conversations,make plans and more.</string>
     <string name="group_category">Category</string>
     <string name="group_add_people">Add people</string>
+    <string name="select_story">Select Story</string>
+    <string name="there_is_no_story_left">There is no story left to be added</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

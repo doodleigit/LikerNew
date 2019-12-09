@@ -28,6 +28,7 @@ public class AddStoryAdapter extends RecyclerView.Adapter<AddStoryAdapter.ViewHo
     private List<String> storyList;
     private StoryModificationListener storyModificationListener;
     private Story story = null;
+    private int editPosition = -1;
 
     public AddStoryAdapter(Context context, ArrayList<Story> arrayList, StoryModificationListener storyModificationListener) {
         this.context = context;
@@ -83,16 +84,22 @@ public class AddStoryAdapter extends RecyclerView.Adapter<AddStoryAdapter.ViewHo
 
     private void storyEdit(int position) {
         story = arrayList.get(position);
-        storyModificationListener.onStoryEdit(story);
+        editPosition = position;
+        storyModificationListener.onStoryEdit(story, position);
         arrayList.remove(position);
         notifyDataSetChanged();
     }
 
     public void storyEditCancel() {
-        if (story != null) {
-            arrayList.add(story);
+        if (story != null && editPosition != -1) {
+            if (arrayList.size() >= editPosition) {
+                arrayList.add(editPosition, story);
+            } else {
+                arrayList.add(story);
+            }
             notifyDataSetChanged();
             story = null;
+            editPosition = -1;
         }
     }
 

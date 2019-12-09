@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 //import com.doodle.Profile.model.Story;
@@ -38,12 +39,20 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        String title, summary;
+        String title, summary, permissionType;
         title = arrayList.get(i).getType();
         summary = arrayList.get(i).getDescription();
+        permissionType = arrayList.get(i).getPermissionType();
 
         viewHolder.tvTitle.setText(Tools.getStoryType(title));
         viewHolder.tvSummary.setText(summary);
+        if (permissionType.equals("1")) {
+            viewHolder.ivPermissionIcon.setImageResource(R.drawable.ic_only_me_12dp);
+        } else if (permissionType.equals("2")) {
+            viewHolder.ivPermissionIcon.setImageResource(R.drawable.ic_friends_12dp);
+        } else {
+            viewHolder.ivPermissionIcon.setImageResource(R.drawable.ic_public_black_24dp);
+        }
     }
 
     @Override
@@ -54,12 +63,14 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvTitle, tvSummary;
+        ImageView ivPermissionIcon;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvTitle = itemView.findViewById(R.id.title);
             tvSummary = itemView.findViewById(R.id.summary);
+            ivPermissionIcon = itemView.findViewById(R.id.permission_icon);
         }
     }
 

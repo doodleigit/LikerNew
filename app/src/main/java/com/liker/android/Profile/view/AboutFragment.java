@@ -418,6 +418,7 @@ public class AboutFragment extends Fragment {
         Dialog dialog = new Dialog(getActivity(), R.style.Theme_Dialog);
         dialog.setContentView(R.layout.edit_user_info_layout);
 
+        final int[] storyEditPosition = {-1};
         final String[] year = {""};
         final String[] month = {""};
         final String[] day = {""};
@@ -613,7 +614,7 @@ public class AboutFragment extends Fragment {
 
         StoryModificationListener storyModificationListener = new StoryModificationListener() {
             @Override
-            public void onStoryEdit(Story story) {
+            public void onStoryEdit(Story story, int position) {
                 int type;
                 try {
                     type = (Integer.parseInt(story.getType()) - 1)  <= 0 ? 0 : (Integer.parseInt(story.getType()) - 1);
@@ -622,6 +623,7 @@ public class AboutFragment extends Fragment {
                     type = 0;
                     storyType = String.valueOf(type);
                 }
+                storyEditPosition[0] = position;
                 tvAddStory.setVisibility(View.GONE);
                 tvStoryTitle.setText(storyTypes.get(type));
                 etStoryDetails.setText(story.getDescription());
@@ -915,25 +917,31 @@ public class AboutFragment extends Fragment {
                     if (!hasAlready)
                         types.add(storyTypes.get(i));
                 }
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                CharSequence[] items = new CharSequence[types.size()];
-                for (int i = 0; i < types.size(); i++) {
-                    items[i] = types.get(i);
-                }
-                builder.setTitle("Select Story");
-                builder.setNegativeButton("Cancel", null);
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int position) {
-                        for (int i = 0; i < storyTypes.size(); i++) {
-                            if (storyTypes.get(i).equals(types.get(position))) {
-                                storyType = String.valueOf(i + 1);
-                            }
-                        }
-                        tvStoryTitle.setText(types.get(position));
-                        addStoryLayout.setVisibility(View.VISIBLE);
+                if (types.size() != 0) {
+                    CharSequence[] items = new CharSequence[types.size()];
+                    for (int i = 0; i < types.size(); i++) {
+                        items[i] = types.get(i);
                     }
-                });
+                    builder.setTitle(getString(R.string.select_story));
+                    builder.setNegativeButton("Cancel", null);
+                    builder.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int position) {
+                            for (int i = 0; i < storyTypes.size(); i++) {
+                                if (storyTypes.get(i).equals(types.get(position))) {
+                                    storyType = String.valueOf(i + 1);
+                                }
+                            }
+                            tvStoryTitle.setText(types.get(position));
+                            addStoryLayout.setVisibility(View.VISIBLE);
+                        }
+                    });
+                } else {
+                    builder.setMessage(getString(R.string.there_is_no_story_left));
+                    builder.setNegativeButton("ok", null);
+                }
                 builder.show();
             }
         });
@@ -941,6 +949,7 @@ public class AboutFragment extends Fragment {
         btnStoryCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                storyEditPosition[0] = -1;
                 tvAddStory.setVisibility(View.VISIBLE);
                 addStoryLayout.setVisibility(View.GONE);
                 etStoryDetails.setText("");
@@ -953,7 +962,7 @@ public class AboutFragment extends Fragment {
             public void onClick(View view) {
                 String description = etStoryDetails.getText().toString();
                 if (isEmptyCheck(etStoryDetails)) {
-                    setStoryRequest(storyType, storyPrivacyType, description, addStoryAdapter, etStoryDetails, addStoryLayout, tvAddStory);
+                    setStoryRequest(storyType, storyPrivacyType, description, addStoryAdapter, etStoryDetails, addStoryLayout, tvAddStory, storyEditPosition);
                 }
             }
         });
@@ -2648,17 +2657,23 @@ public class AboutFragment extends Fragment {
         });
     }
 
-    private void setStoryRequest(String storyType, String storyPrivacyType, String description, AddStoryAdapter addStoryAdapter, EditText etNewStory, LinearLayout addStoryLayout, TextView tvAddStory) {
+    private void setStoryRequest(String storyType, String storyPrivacyType, String description, AddStoryAdapter addStoryAdapter, EditText etNewStory, LinearLayout addStoryLayout,
+                                 TextView tvAddStory, int[] storyEditPosition) {
         Call<String> call = profileService.setStory(deviceId, token, userId, userId, storyType, storyPrivacyType, description);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                profileInfo.getStories().add(new Story(description, storyType, storyPrivacyType));
+                if (storyEditPosition[0] != -1 && profileInfo.getStories().size() >= storyEditPosition[0]) {
+                    profileInfo.getStories().add(storyEditPosition[0], new Story(description, storyType, storyPrivacyType));
+                } else {
+                    profileInfo.getStories().add(new Story(description, storyType, storyPrivacyType));
+                }
                 storyAdapter.notifyDataSetChanged();
                 addStoryAdapter.notifyDataSetChanged();
                 etNewStory.setText("");
                 addStoryLayout.setVisibility(View.GONE);
                 tvAddStory.setVisibility(View.VISIBLE);
+                storyEditPosition[0] = -1;
             }
 
             @Override
