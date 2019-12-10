@@ -629,6 +629,11 @@ public class AboutFragment extends Fragment {
                 etStoryDetails.setText(story.getDescription());
                 addStoryLayout.setVisibility(View.VISIBLE);
             }
+
+            @Override
+            public void onStoryDelete(Story story, int position) {
+                deleteStoryRequest(story.getType());
+            }
         };
 
         AddEmailAdapter addEmailAdapter = new AddEmailAdapter(getActivity(), profileInfo.getEmails(), emailModificationListener);
@@ -2679,6 +2684,19 @@ public class AboutFragment extends Fragment {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void deleteStoryRequest(String storyType) {
+        Call<String> call = profileService.deleteStory(deviceId, token, userId, userId, storyType);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
             }
         });
     }

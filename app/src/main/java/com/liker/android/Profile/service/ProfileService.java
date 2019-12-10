@@ -553,6 +553,16 @@ public interface ProfileService {
             @Field("description") String description
     );
 
+    @POST(AppConstants.DELETE_STORY)
+    @FormUrlEncoded
+    Call<String> deleteStory(
+            @Header("Device-Id") String deviceId,
+            @Header("Security-Token") String token,
+            @Header("User-Id") String userId,
+            @Field("user_id") String id,
+            @Field("type") String type
+    );
+
     @POST(AppConstants.SET_LIVE_PLACE)
     @FormUrlEncoded
     Call<String> setLivePlace(

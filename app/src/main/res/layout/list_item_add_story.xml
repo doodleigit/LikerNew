@@ -35,17 +35,24 @@
 
         </LinearLayout>
 
-        <TextView
+        <ImageView
             android:id="@+id/change"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true"
+            android:layout_toStartOf="@+id/delete"
+            android:padding="5dp"
+            android:src="@drawable/edit_blue"
+            android:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_centerInParent="true"
             android:layout_alignParentEnd="true"
-            android:padding="5dp"
-            android:text="Change"
-            android:textSize="12sp"
-            android:textColor="@color/colorPrimary"
+            android:padding="4dp"
+            android:src="@drawable/delete"
             android:visibility="visible"/>
 
     </RelativeLayout>

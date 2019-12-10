@@ -486,13 +486,6 @@ public class MessagingFragment extends Fragment {
                     }
                     messages.get(i).setSeen("1");
                 }
-//                Glide.with(App.getAppContext())
-//                        .load(photo)
-//                        .placeholder(R.drawable.ic_sent_24dp)
-//                        .error(R.drawable.profile)
-//                        .centerCrop()
-//                        .dontAnimate()
-//                        .into(ivSeen);
                 messagingAdapter.notifyDataSetChanged();
             }
         }

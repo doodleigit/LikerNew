@@ -1,11 +1,14 @@
 package com.liker.android.Profile.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -52,12 +55,19 @@ public class AddStoryAdapter extends RecyclerView.Adapter<AddStoryAdapter.ViewHo
         viewHolder.tvStoryTitle.setText(title);
         viewHolder.tvStory.setText(arrayList.get(i).getDescription());
 
-        viewHolder.tvChange.setOnClickListener(new View.OnClickListener() {
+        viewHolder.ivChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 storyEdit(i);
 //                notifyItemRemoved(i);
 //                storyModificationListener.onStoryEdit(arrayList.get(i));
+            }
+        });
+
+        viewHolder.ivDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                storyDelete(i);
             }
         });
     }
@@ -69,14 +79,16 @@ public class AddStoryAdapter extends RecyclerView.Adapter<AddStoryAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvStoryTitle, tvChange, tvStory;
+        TextView tvStoryTitle, tvStory;
+        ImageView ivChange, ivDelete;
         Spinner storyPrivacySpinner;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvStoryTitle = itemView.findViewById(R.id.story_title);
-            tvChange = itemView.findViewById(R.id.change);
+            ivChange = itemView.findViewById(R.id.change);
+            ivDelete = itemView.findViewById(R.id.delete);
             tvStory = itemView.findViewById(R.id.story);
             storyPrivacySpinner = itemView.findViewById(R.id.story_privacy_spinner);
         }
@@ -88,6 +100,21 @@ public class AddStoryAdapter extends RecyclerView.Adapter<AddStoryAdapter.ViewHo
         storyModificationListener.onStoryEdit(story, position);
         arrayList.remove(position);
         notifyDataSetChanged();
+    }
+
+    private void storyDelete(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(context.getString(R.string.are_u_sure_you_want_to_delete_the_story));
+        builder.setNegativeButton("Cancel", null);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                storyModificationListener.onStoryDelete(arrayList.get(position), position);
+                arrayList.remove(position);
+                notifyDataSetChanged();
+            }
+        });
+        builder.show();
     }
 
     public void storyEditCancel() {

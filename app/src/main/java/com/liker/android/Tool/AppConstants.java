@@ -206,6 +206,7 @@ public class AppConstants {
     public static final String EMAIL_ADD = "email_add";
     public static final String PHONE_ADD = "phone_add";
     public static final String SET_STORY = "set_story";
+    public static final String DELETE_STORY = "delete_story";
     public static final String SET_LIVE_PLACE = "set_live_place";
     public static final String GET_CITY_LIST = "get_city_list";
     public static final String GET_COUNTRY_PHONE_CODES = "get_country_phone_codes";
