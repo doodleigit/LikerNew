@@ -725,7 +725,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             alertLayout.setVisibility(View.GONE);
             initialFragment(new PostFragment());
         } else {
-            contentHolderLayout.setVisibility(View.GONE);
+            contentHolderLayout.setVisibility(View.INVISIBLE);
             alertLayout.setVisibility(View.VISIBLE);
         }
     }

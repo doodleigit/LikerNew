@@ -481,6 +481,9 @@ public class MessagingFragment extends Fragment {
             String toId = intent.getStringExtra("to_user_id");
             if (toUserId.equals(toId)) {
                 for (int i = 0; i < messages.size(); i++) {
+                    if (messages.get(i).getSeen().equals("1")) {
+                        break;
+                    }
                     messages.get(i).setSeen("1");
                 }
 //                Glide.with(App.getAppContext())

@@ -39,7 +39,8 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.tvPhone.setText(arrayList.get(i).getCountryPhoneCode() + arrayList.get(i).getPhoneNumber());
+        String phoneNumber = arrayList.get(i).getCountryPhoneCode().isEmpty() ? arrayList.get(i).getPhoneNumber() : "(" + arrayList.get(i).getCountryPhoneCode() + ")" + arrayList.get(i).getPhoneNumber();
+        viewHolder.tvPhone.setText(phoneNumber);
 
         if (arrayList.get(i).getPermissionType().equals("1")) {
             viewHolder.tvPermissionIcon.setImageResource(R.drawable.ic_only_me_12dp);

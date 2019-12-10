@@ -6,6 +6,6 @@ import com.liker.android.Profile.model.Story;
 
 public interface StoryModificationListener {
 
-    void onStoryEdit(Story story);
+    void onStoryEdit(Story story, int position);
 
 }

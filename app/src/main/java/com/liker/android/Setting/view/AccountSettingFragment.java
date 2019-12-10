@@ -2,6 +2,8 @@ package com.liker.android.Setting.view;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +12,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -162,6 +166,27 @@ public class AccountSettingFragment extends Fragment {
         ArrayAdapter<String> privacyAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, privacyList);
         privacyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         emailPrivacySpinner.setAdapter(privacyAdapter);
+
+        etRetypeNewPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (confirmPasswordMatchCheck(etNewPassword, etRetypeNewPassword)) {
+                    etRetypeNewPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_check_black_24dp, 0);
+                } else {
+                    etRetypeNewPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                }
+            }
+        });
 
         securityQuestionChangeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -583,8 +608,27 @@ public class AccountSettingFragment extends Fragment {
         if (newPassword.getText().toString().equals(reNewPassword.getText().toString())) {
             return true;
         } else {
+            etRetypeNewPassword.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             reNewPassword.setError(getString(R.string.new_password_confirm_password_does_not_match));
             return false;
+        }
+    }
+
+    private boolean confirmPasswordMatchCheck(EditText newPassword, EditText reNewPassword) {
+        String password = reNewPassword.getText().toString();
+        if (password.isEmpty()) {
+            return false;
+        } else {
+            if (newPassword.getText().toString().equals(reNewPassword.getText().toString())) {
+                ValidateTor validateTor = new ValidateTor();
+                return validateTor.isAtleastLength(password, 8)
+                        && validateTor.isAtMostLength(password, 20)
+                        && validateTor.hasAtleastOneDigit(password)
+                        && validateTor.hasAtleastOneLetter(password)
+                        && !validateTor.containsSubstring(password, " ");
+            } else {
+                return false;
+            }
         }
     }
 

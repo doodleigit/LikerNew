@@ -45,7 +45,8 @@ public class AddPhoneAdapter extends RecyclerView.Adapter<AddPhoneAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.tvPhoneNumber.setText(arrayList.get(i).getPhoneNumber());
+        String phoneNumber = arrayList.get(i).getCountryPhoneCode().isEmpty() ? arrayList.get(i).getPhoneNumber() : "(" + arrayList.get(i).getCountryPhoneCode() + ")" + arrayList.get(i).getPhoneNumber();
+        viewHolder.tvPhoneNumber.setText(phoneNumber);
         viewHolder.tvNumberType.setText(numberTypes.get(Integer.valueOf(arrayList.get(i).getType()) - 1));
 
         viewHolder.tvEdit.setOnClickListener(new View.OnClickListener() {
