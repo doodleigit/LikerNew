@@ -4,32 +4,32 @@ public class AppConstants {
 
     //===============LOCAL SERVER==================
 //
-//    public static final String BASE_URL = "http://192.168.0.12:8040/sites/likerapp/";
-//    public static final String BASE_URL_MEDIA = "http://192.168.0.12:8040/sites/likeropt/";
-//    public static final String BASE_URL_IMAGES = "http://192.168.0.12:8040/sites/likeropt/";
-//    public static final String LINK_IMAGES = "http://192.168.0.12:8040/sites/likeropt/uploads/link_images";
-//    public static final String SOCKET_WEB = "http://192.168.0.12:4001";
-//    public static final String SOCKET_NEW_POST = "http://192.168.0.12:7902";
-//    public static final String SOCKET_MESSAGE = "http://192.168.0.12:4002";
-//    public static final String SOCKET_VIDEO = "http://192.168.0.12:4004";
-//    public static final String FACEBOOK_SHARE = "http://192.168.0.12:8040/sites/likerapp/public/posts/";
-//    public static final String FACEBOOK_INVITATION = "http://192.168.0.12:8040/sites/likerapp/settings/fbinvite/";
-//    public static final String BASE_URL_LOCATION = "http://192.168.0.12:8040/sites/likerapp/";
+    public static final String BASE_URL = "http://192.168.0.77:8040/sites/likerapp/";
+    public static final String BASE_URL_MEDIA = "http://192.168.0.77:8040/sites/likeropt/";
+    public static final String BASE_URL_IMAGES = "http://192.168.0.77:8040/sites/likeropt/";
+    public static final String LINK_IMAGES = "http://192.168.0.77:8040/sites/likeropt/uploads/link_images";
+    public static final String SOCKET_WEB = "http://192.168.0.77:4001";
+    public static final String SOCKET_NEW_POST = "http://192.168.0.77:7902";
+    public static final String SOCKET_MESSAGE = "http://192.168.0.77:4002";
+    public static final String SOCKET_VIDEO = "http://192.168.0.77:4004";
+    public static final String FACEBOOK_SHARE = "http://192.168.0.77:8040/sites/likerapp/public/posts/";
+    public static final String FACEBOOK_INVITATION = "http://192.168.0.77:8040/sites/likerapp/settings/fbinvite/";
+    public static final String BASE_URL_LOCATION = "http://192.168.0.77:8040/sites/likerapp/";
 
     //==========================STG SERVER=====================
 
 //
-    public static final String BASE_URL = "https://www.stg.liker.com/";
-    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
-    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
-    public static final String SOCKET_WEB = "https://node.liker.com:7803";
-    public static final String SOCKET_MESSAGE = "https://node.liker.com:7804";
-    public static final String SOCKET_NEW_POST = "http://192.168.0.12:7902";
-    public static final String SOCKET_VIDEO = "https://node.liker.com:7807";
-    public static final String FACEBOOK_SHARE = "https://www.stg.liker.com/public/posts/";
-    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
-    public static final String FACEBOOK_INVITATION = "https://www.d.liker.com/settings/fbinvite/";
-    public static final String BASE_URL_LOCATION = "https://www.stg.liker.com/";
+//    public static final String BASE_URL = "https://www.stg.liker.com/";
+//    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
+//    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
+//    public static final String SOCKET_WEB = "https://node.liker.com:7803";
+//    public static final String SOCKET_MESSAGE = "https://node.liker.com:7804";
+//    public static final String SOCKET_NEW_POST = "http://192.168.0.12:7902";
+//    public static final String SOCKET_VIDEO = "https://node.liker.com:7807";
+//    public static final String FACEBOOK_SHARE = "https://www.stg.liker.com/public/posts/";
+//    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
+//    public static final String FACEBOOK_INVITATION = "https://www.d.liker.com/settings/fbinvite/";
+//    public static final String BASE_URL_LOCATION = "https://www.stg.liker.com/";
 
     /*http://192.168.0.7:8040/sites/likerapp/user_apprate,
      parameter: user_id, status*/
@@ -244,5 +244,8 @@ public class AppConstants {
     public static final String WALL = "wall";
     public static final String USER_APP_RATE = "user_apprate";
     public static final String SINGLE_USER_APP_RATE = "single_user_apprate";
+
+    //GROUP
+    public static final String CREATE_GROUP="createGroup";
 
 }

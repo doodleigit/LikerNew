@@ -190,10 +190,8 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             countryInfos = intent.getParcelableArrayListExtra(MyService.MY_SERVICE_PAYLOAD);
             displayData();
-
         }
     };
     private String isApps = "true";

@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Group.GroupContentActivity">
+    tools:context=".Group.view.GroupContentActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -40,22 +41,22 @@
 
                 <ImageView
                     android:id="@+id/image_search_group"
-                    android:background="@drawable/create_new_group_selector"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="end|center"
                     android:layout_weight="1"
+                    android:background="@drawable/create_new_group_selector"
                     android:src="@drawable/ic_search_black_24dp"
                     android:tint="#E0E0E0" />
 
 
                 <TextView
-                    android:background="@drawable/create_new_group_selector"
                     android:id="@+id/tvCreateNewGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center"
                     android:layout_marginEnd="@dimen/_10sdp"
+                    android:background="@drawable/create_new_group_selector"
                     android:drawableLeft="@drawable/ic_add_group_24dp"
                     android:drawablePadding="@dimen/_5sdp"
                     android:padding="@dimen/_5sdp"
@@ -68,18 +69,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
-    <com.liker.android.Group.adapter.RecyclerViewWithNavigationArrows
-       android:id="@+id/recycler_view_one"
-        android:layout_alignParentBottom="true"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvItems"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/appBar" />
 
     <com.liker.android.Group.adapter.RecyclerViewWithNavigationArrows
-        android:id="@+id/recycler_view_two"
+        android:id="@+id/recycler_view_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_above="@id/recycler_view_one"
-       />
+        android:layout_alignParentBottom="true" />
+
 </RelativeLayout>

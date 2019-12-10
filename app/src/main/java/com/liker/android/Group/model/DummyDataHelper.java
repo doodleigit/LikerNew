@@ -27,7 +27,6 @@ public class DummyDataHelper {
         appList.add(new App("Email", R.drawable.ic_email));
         appList.add(new App("Gallery", R.drawable.ic_gallery));
 
-
         return appList;
     }
 }
