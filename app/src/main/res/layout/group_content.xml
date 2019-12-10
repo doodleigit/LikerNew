@@ -37,19 +37,21 @@
                     android:text="@string/group_content"
                     android:textColor="#E0E0E0" />
 
-             
+
                 <ImageView
+                    android:id="@+id/image_search_group"
+                    android:background="@drawable/create_new_group_selector"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="end|center"
-                    android:layout_marginLeft="@dimen/_10sdp"
-                    android:layout_marginRight="@dimen/_10sdp"
                     android:layout_weight="1"
                     android:src="@drawable/ic_search_black_24dp"
                     android:tint="#E0E0E0" />
 
 
                 <TextView
+                    android:background="@drawable/create_new_group_selector"
+                    android:id="@+id/tvCreateNewGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center"
@@ -66,4 +68,18 @@
 
     </android.support.design.widget.AppBarLayout>
 
+
+    <com.liker.android.Group.adapter.RecyclerViewWithNavigationArrows
+       android:id="@+id/recycler_view_one"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.liker.android.Group.adapter.RecyclerViewWithNavigationArrows
+        android:id="@+id/recycler_view_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_above="@id/recycler_view_one"
+       />
 </RelativeLayout>

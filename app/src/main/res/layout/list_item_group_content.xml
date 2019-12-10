@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="@dimen/_20sdp"
+    android:layout_width="@dimen/_120sdp"
+    android:layout_height="@dimen/_140sdp">
+
+    <ImageView
+        android:id="@+id/imageGroupItem"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp"
+        android:src="@drawable/splashanimation"
+        android:scaleType="centerCrop"
+        />
+    <TextView
+        android:id="@+id/tvGroupItemName"
+        android:layout_below="@id/imageGroupItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorBlack"
+        android:layout_margin="@dimen/_5sdp"
+        android:text="National global logistics united state"
+        />
+
+    <TextView
+        android:id="@+id/tvGroupItemInfo"
+        android:layout_below="@id/tvGroupItemName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Members: 550 | Posts: 301"
+        android:layout_marginLeft="@dimen/_5sdp"
+        android:layout_marginRight="@dimen/_5sdp"
+        />
+    <TextView
+        android:layout_below="@id/tvGroupItemInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="JOIN"
+        android:padding="@dimen/_5sdp"
+        android:drawableLeft="@drawable/ic_add_group_24dp"
+        android:drawableTint="@color/colorPrimary"
+        android:textColor="@color/colorPrimary"
+        />
+</RelativeLayout>

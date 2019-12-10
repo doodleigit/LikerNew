@@ -26,8 +26,8 @@ android {
         applicationId "com.liker.android"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 34
-        versionName "3.0.3"
+        versionCode 35
+        versionName "3.0.4"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
@@ -36,6 +36,11 @@ android {
                 onesignal_google_project_number: 'REMOTE'
         ]
     }
+
+    dataBinding {
+        enabled = true
+    }
+
     buildTypes {
         release {
             //          debuggable true

@@ -7,13 +7,10 @@
     <item
         android:id="@+id/blockUser"
         android:title="@string/block_user" />
-
     <item
         android:id="@+id/editComment"
         android:title="@string/edit" />
-
     <item
         android:id="@+id/deleteComment"
         android:title="@string/delete" />
-
 </menu>

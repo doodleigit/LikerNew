@@ -6,70 +6,58 @@
     android:layout_height="match_parent"
     tools:context=".Group.CreateGroupActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
+    <RelativeLayout
+        android:id="@+id/contentPostView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@android:color/white">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <ImageView
+            android:id="@+id/imageCancelCreateGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:padding="@dimen/_10sdp"
+            android:background="@drawable/cancel_page_selector"
+            android:src="@drawable/ic_close_white_24dp"
+            android:tint="@color/colorBlack" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp"
-            app:contentInsetStartWithNavigation="0dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="0dp"
+            android:orientation="vertical"
+            android:padding="@dimen/_10sdp">
 
+            <TextView
+                android:id="@+id/tvSubmitPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create New Group"
+                android:textColor="@android:color/black" />
 
-            <RelativeLayout
-                android:id="@+id/contentPostView"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white">
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text="@string/create_group_heading" />
+        </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/imageCancelPost"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:padding="@dimen/_10sdp"
-                    android:src="@drawable/ic_close_white_24dp"
-                    android:tint="@color/colorBlack" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    android:orientation="vertical"
-                    android:padding="@dimen/_10sdp">
-
-                    <TextView
-                        android:id="@+id/tvSubmitPost"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Create New Group"
-                        android:textColor="@android:color/black" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:text="@string/create_group_heading" />
-                </LinearLayout>
-
-            </RelativeLayout>
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
-
+    </RelativeLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_below="@id/contentPostView"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_height="1dp"
+        android:background="#EDF0F1" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/app_bar">
+        android:layout_below="@id/divider">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,6 +65,13 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:text="@string/group_name"
+                android:textColor="@color/colorBlack" />
 
             <android.support.design.widget.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -89,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_cancel_black_24dp"
                     android:drawableRight="@drawable/ic_cancel_black_24dp"
-                    android:hint="Your group name"
+                    android:hint="Name"
                     android:imeOptions="actionGo"
                     android:inputType="text"
                     android:textSize="14sp" />
@@ -171,9 +166,88 @@
                 android:layout_height="1dp"
                 android:background="#EDF0F1" />
 
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:text="@string/group_privacy"
+                android:textColor="@color/colorBlack" />
+
+            <LinearLayout
+                android:id="@+id/contentPostPermission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/drawable_comment">
+
+
+                <ImageView
+                    android:id="@+id/imgPermission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:src="@drawable/ic_public_black_12dp"
+                    android:tint="@color/colorBlack" />
+
+                <TextView
+                    android:id="@+id/tvPermission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:text="Public"
+
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:src="@drawable/ic_arrow_drop_down_blue_24dp"
+                    android:tint="@color/colorBlack"  />
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_height="1dp"
+                android:background="#EDF0F1" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true">
+
+
+                <TextView
+                    android:id="@+id/tvSignIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:background="@drawable/btn_create_group_outline_disable"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="@string/group_create"
+                    android:textSize="@dimen/_15sdp"
+                    android:textAllCaps="false"
+                    android:textColor="#94979E"
+                    android:visibility="visible"/>
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
         </LinearLayout>
 
     </ScrollView>
-
-
 </RelativeLayout>

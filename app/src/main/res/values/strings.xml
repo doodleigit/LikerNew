@@ -361,6 +361,11 @@
     <string name="create_group_heading">Groups are great for getting things done and styling in touch with just the people you want. Share photos and videos,have conversations,make plans and more.</string>
     <string name="group_category">Category</string>
     <string name="group_add_people">Add people</string>
+    <string name="group_privacy">Select privacy</string>
+    <string name="group_create">Create</string>
+    <string name="group_name">Your group name</string>
+    <string name="group_header_name">Group you\'re in</string>
+    <string name="group_header_see_all">See All</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

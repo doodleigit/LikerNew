@@ -27,7 +27,11 @@
         android:usesCleartextTraffic="true"
         android:vmSafeMode="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Group.CreateGroupActivity"></activity>
+        <activity android:name=".Group.CreateGroupActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:parentActivityName=".Group.GroupContentActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".Group.GroupContentActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

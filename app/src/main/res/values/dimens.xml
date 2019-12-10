@@ -12,5 +12,5 @@
     <dimen name="emoji_size_single_emoji">60sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="tab_label">14sp</dimen>
-
+<dimen name="recyclerview_item_offset">5dp</dimen>
 </resources>
