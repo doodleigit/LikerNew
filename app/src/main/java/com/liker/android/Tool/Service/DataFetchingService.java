@@ -353,7 +353,14 @@ public class DataFetchingService extends Service {
         mSocket.on("seen_by_user", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                sendBroadcast((new Intent().putExtra("is_own", 1)).setAction(AppConstants.NEW_MESSAGE_BROADCAST));
+                try {
+                    JSONObject jsonObject = new JSONObject(args[0].toString());
+                    String userId = jsonObject.getString("user_id");
+                    sendBroadcast((new Intent().putExtra("to_user_id", userId)).setAction(AppConstants.NEW_MESSAGE_SEEN_BROADCAST));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
             }
         });
     }

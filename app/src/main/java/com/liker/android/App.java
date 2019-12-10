@@ -481,7 +481,7 @@ public class App extends Application implements LifecycleObserver {
             Gson gson = new Gson();
             String json = gson.toJson(onlineNotify);
             if (status) {
-                mSocket.emit("online_users", json);
+                mSocket.emit("current_online_user", json);
             } else {
                 mSocket.emit("current_offline_user", json);
             }
