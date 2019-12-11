@@ -27,11 +27,19 @@
         android:usesCleartextTraffic="true"
         android:vmSafeMode="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Group.view.CreateGroupActivity"
+        <activity android:name=".Group.view.GroupNewPostActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:parentActivityName=".Group.view.GroupContentActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />
+        <activity
+            android:name=".Group.view.GroupPageActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Group.view.CreateGroupActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:parentActivityName=".Group.view.GroupContentActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Group.view.GroupContentActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"

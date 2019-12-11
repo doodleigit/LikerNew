@@ -6,12 +6,30 @@ public class AppSingleton {
 
     private String mimColor;
     private int hasMim;
+    String groupId;
+    String groupMemberId;
 
 
     private static final AppSingleton ourInstance = new AppSingleton();
 
     public static AppSingleton getInstance() {
         return ourInstance;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getGroupMemberId() {
+        return groupMemberId;
+    }
+
+    public void setGroupMemberId(String groupMemberId) {
+        this.groupMemberId = groupMemberId;
     }
 
     public String getMimColor() {

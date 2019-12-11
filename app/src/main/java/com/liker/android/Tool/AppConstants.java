@@ -248,5 +248,8 @@ public class AppConstants {
 
     //GROUP
     public static final String CREATE_GROUP="createGroup";
+    public static final String GET_GROUP_ABOUT="getGroupabout";
+    public static final String GROUP_MEMBERS="groupMembers";
+    public static final String UPDATE_GROUP_MEDIA="updateGroupMedia";
 
 }
