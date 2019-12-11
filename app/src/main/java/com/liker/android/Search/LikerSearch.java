@@ -123,7 +123,6 @@ public class LikerSearch extends AppCompatActivity implements View.OnClickListen
 
         }
 
-
     }
 
     @Override

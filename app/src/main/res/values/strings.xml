@@ -370,6 +370,7 @@
     <string name="select_story">Select Story</string>
     <string name="there_is_no_story_left">There is no story left to be added</string>
     <string name="are_u_sure_you_want_to_delete_the_story">Are you sure you want to remove this story?</string>
+    <string name="all">All</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -55,6 +56,7 @@ import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.ScreenOnOffBroadcast;
 import com.liker.android.Tool.Tools;
+import com.liker.android.Tool.model.AddTraffic;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,7 +73,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.liker.android.Home.service.SocketIOManager.mSocket;
 import static com.liker.android.Tool.AppConstants.IN_CHAT_MODE;
 
 public class DataFetchingService extends Service {
@@ -84,6 +85,8 @@ public class DataFetchingService extends Service {
     private NotificationService webService;
     private String deviceId, profileId, token, userIds;
     private PrefManager manager;
+    private Handler handler;
+    private int DELAY_TIME = 20 * 1000;
 
     @Override
     public void onCreate() {
@@ -95,6 +98,7 @@ public class DataFetchingService extends Service {
         token = manager.getToken();
         userIds = manager.getProfileId();
         webService = NotificationService.mRetrofit.create(NotificationService.class);
+        handler = new Handler();
 
         if (socket != null) {
             if (!socket.connected()) {
@@ -128,8 +132,6 @@ public class DataFetchingService extends Service {
     }
 
     private void getNewPostData() {
-
-
         nSocket.on("new_post_result", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -235,6 +237,34 @@ public class DataFetchingService extends Service {
 //                }
             }
         });
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //call function
+                addTraffic();
+                handler.postDelayed(this, DELAY_TIME);
+            }
+        }, DELAY_TIME);
+
+    }
+
+    private void addTraffic() {
+        AddTraffic addTraffic = new AddTraffic();
+        Headers headers = new Headers();
+        headers.setDeviceId(deviceId);
+        headers.setIsApps(true);
+        headers.setSecurityToken(token);
+        addTraffic.setHeaders(headers);
+        addTraffic.setUserId(userIds);
+        addTraffic.setPathName("");
+        addTraffic.setPathNameNew("");
+        addTraffic.setDeviceType("App");
+        addTraffic.setStayTime(DELAY_TIME);
+        addTraffic.setNotify(true);
+        Gson gson = new Gson();
+        String json = gson.toJson(addTraffic);
+        socket.emit("add_traffic_new", json);
     }
 
     private void setUserStatus(boolean status) {
@@ -518,6 +548,7 @@ public class DataFetchingService extends Service {
             mSocket.off("message_own");
             nSocket.off("new_post_result");
             unregisterReceiver(mReceiver);
+            handler.removeCallbacksAndMessages(null);
         } catch (IllegalArgumentException ignored) {
         }
     }
@@ -532,6 +563,7 @@ public class DataFetchingService extends Service {
             mSocket.off("message_own");
             nSocket.off("new_post_result");
             unregisterReceiver(mReceiver);
+            handler.removeCallbacksAndMessages(null);
         } catch (IllegalArgumentException ignored) {
         }
     }
