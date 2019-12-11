@@ -146,7 +146,7 @@
         <activity
             android:name=".Search.view.SearchActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:parentActivityName=".Home.view.activity.Home"
+            android:parentActivityName=".Search.LikerSearch"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Authentication.view.activity.LoginAgain"
@@ -155,7 +155,6 @@
         <activity
             android:name=".Search.LikerSearch"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:parentActivityName=".Home.view.activity.Home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Home.view.CheckedActivity"
