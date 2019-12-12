@@ -26,13 +26,16 @@ import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Home.model.Headers;
 import com.liker.android.Home.model.TopContributorStatus;
 import com.liker.android.Home.service.SocketIOManager;
+import com.liker.android.Home.view.activity.Home;
 import com.liker.android.Post.model.Category;
 import com.liker.android.Post.model.Subcatg;
 import com.liker.android.Post.view.activity.PostCategory;
 import com.liker.android.Post.view.activity.PostNew;
 import com.liker.android.Post.view.fragment.ContributorStatus;
+import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.ClearableEditText;
 import com.liker.android.Tool.EditTextLinesLimiter;
 import com.liker.android.Tool.NetworkHelper;
@@ -64,20 +67,20 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
     private boolean networkOk;
     private ClearableEditText etGroupName;
     private ViewGroup contentCategory;
-    private TextView tvAudience,tvCreateGroup;
+    private TextView tvAudience, tvCreateGroup;
     private RadioButton rbPublic, rbPrivate;
-    private String TAG="CreateGroupActivity";
+    private String TAG = "CreateGroupActivity";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_group);
-        initView();
+        initComponent();
 
     }
 
-    private void initView() {
+    private void initComponent() {
         imageCancelCreateGroup = findViewById(R.id.imageCancelCreateGroup);
         etGroupName = findViewById(R.id.etGroupName);
         contentCategory = findViewById(R.id.contentCategory);
@@ -91,7 +94,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
         imageCancelCreateGroup.setOnClickListener(this);
         tvCreateGroup.setOnClickListener(this);
         manager = new PrefManager(this);
-        groupWebservice=GroupWebservice.retrofitBase.create(GroupWebservice.class);
+        groupWebservice = GroupWebservice.retrofitBase.create(GroupWebservice.class);
         networkOk = NetworkHelper.hasNetworkAccess(this);
 
         tvAudience.setText(manager.getPostAudience().isEmpty() ? getString(R.string.audience) : manager.getPostAudience());
@@ -104,7 +107,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                groupName=s.toString();
+                groupName = s.toString();
 
             }
 
@@ -155,29 +158,29 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
 
             case R.id.tvCreateGroup:
 
-                String deviceId=manager.getDeviceId();
-                String token=manager.getToken();
-                String userId=manager.getProfileId();
-                if(!isNullOrEmpty(deviceId)&&!isNullOrEmpty(token)&&!isNullOrEmpty(userId)){
-                    if(!isNullOrEmpty(groupName)){
-                        if(!isNullOrEmpty(categoryId)){
-                            if(!isNullOrEmpty(permission)){
+                String deviceId = manager.getDeviceId();
+                String token = manager.getToken();
+                String userId = manager.getProfileId();
+                if (!isNullOrEmpty(deviceId) && !isNullOrEmpty(token) && !isNullOrEmpty(userId)) {
+                    if (!isNullOrEmpty(groupName)) {
+                        if (!isNullOrEmpty(categoryId)) {
+                            if (!isNullOrEmpty(permission)) {
 
-                                if(networkOk){
+                                if (networkOk) {
 
-                                    Call<String> call=groupWebservice.createGroup(deviceId,userId,token,userId,categoryId,groupName,permission);
+                                    Call<String> call = groupWebservice.createGroup(deviceId, userId, token, userId, categoryId, groupName, permission);
                                     createGroupRequest(call);
-                                }else {
+                                } else {
                                     Toast.makeText(this, "no internet", Toast.LENGTH_SHORT).show();
                                 }
 
-                            }else {
+                            } else {
                                 Toast.makeText(this, "set privacy!", Toast.LENGTH_SHORT).show();
                             }
-                        }else {
+                        } else {
                             Toast.makeText(this, "Select category!", Toast.LENGTH_SHORT).show();
                         }
-                    }else {
+                    } else {
                         Toast.makeText(this, "Insert Group name!", Toast.LENGTH_SHORT).show();
                     }
 
@@ -200,12 +203,27 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
 
                         try {
                             JSONObject object = new JSONObject(response.body());
-                            JSONObject successObject = object.getJSONObject("success");
-                            Toast.makeText(CreateGroupActivity.this, "Create successfully", Toast.LENGTH_SHORT).show();
-                            if (successObject.length() > 0) {
-
-
+                            boolean status = object.getBoolean("status");
+                            if (status) {
+                                JSONObject dataObject = object.getJSONObject("data");
+                              if(dataObject.length()>0){
+                                  String groupId=dataObject.getString("group_id");
+                                  String groupMemberId=dataObject.getString("group_member_id");
+                                  AppSingleton.getInstance().setGroupId(groupId);
+                                  AppSingleton.getInstance().setGroupMemberId(groupMemberId);
+                              }
+                                JSONObject messageObject = object.getJSONObject("message");
+                                JSONObject successObject = messageObject.getJSONObject("success");
+                                if (successObject.length() > 0) {
+                                    String successMessage = successObject.getString("message");
+                                    Toast.makeText(CreateGroupActivity.this, successMessage, Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(CreateGroupActivity.this, GroupPageActivity.class));
+                                }
+                            }else {
+                                String message=object.getString("message");
+                                Toast.makeText(CreateGroupActivity.this, message, Toast.LENGTH_SHORT).show();
                             }
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -288,7 +306,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
             audience = mSubcatg.getSubCategoryName();
             manager.setPostAudience(audience);
             tvAudience.setText(audience);
-            categoryId=subCategoryId;
+            categoryId = subCategoryId;
         }
 
 
