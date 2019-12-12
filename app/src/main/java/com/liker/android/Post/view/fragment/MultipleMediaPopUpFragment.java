@@ -133,8 +133,10 @@ import retrofit2.Response;
 //import static com.doodle.Tool.Tools.sendNotificationRequest;
 //import static com.doodle.Tool.Tools.showBlockUser;
 import static com.liker.android.Tool.AppConstants.COMMENT_KEY;
+import static com.liker.android.Tool.AppConstants.COMMENT_TYPE_KEY;
 import static com.liker.android.Tool.AppConstants.FACEBOOK_SHARE;
 import static com.liker.android.Tool.AppConstants.ITEM_KEY;
+import static com.liker.android.Tool.AppConstants.POST_ITEM_POSITION;
 import static com.liker.android.Tool.Tools.containsIllegalCharacters;
 import static com.liker.android.Tool.Tools.delayLoadComment;
 import static com.liker.android.Tool.Tools.dismissDialog;
@@ -151,13 +153,13 @@ public class MultipleMediaPopUpFragment extends Fragment {
     View view;
     private AppBarLayout appBarLayout;
     private RelativeLayout commentHold;
-    private LinearLayout linkScriptContainer, postBodyLayer;
+    private LinearLayout linkScriptContainer, postBodyLayer, commentContainer;
     private EmojiTextView tvCommentMessage;
     private TextView tvHeaderInfo, tvPostTime, tvPostUserName, tvPostLinkTitle, tvPostLinkDescription, tvPostLinkHost, tvImgShareCount, tvPostLikeCount, tvCommentCount, tvCommentUserName, tvCommentTime, tvCommentLike, tvCommentReply, tvCountCommentLike;
     private CircleImageView imagePostUser, imageCommentUser;
     private TextView tvPostContent;
     private EmojiTextView tvPostEmojiContent;
-    private ImageView imgLinkScript, imagePostPermission, imagePostShare, imagePermission, imgLike, imageCommentLikeThumb, imagePostComment, star1, star2, star3, star4, star5, star6, star7, star8,
+    private ImageView imgLinkScript, imagePostPermission, imagePostShare, imagePermission, imgLike, imageCommentLikeThumb, star1, star2, star3, star4, star5, star6, star7, star8,
             star9, star10, star11, star12, star13, star14, star15, star16;
     private ProgressBar mProgressBar;
     private SingleVideoPlayerRecyclerView singleImgRecyclerView;
@@ -273,7 +275,7 @@ public class MultipleMediaPopUpFragment extends Fragment {
         commentService = CommentService.mRetrofit.create(CommentService.class);
         networkOk = NetworkHelper.hasNetworkAccess(getActivity());
         mProgressBar = view.findViewById(R.id.ProgressBar);
-        imagePostComment = view.findViewById(R.id.imagePostComment);
+        commentContainer = view.findViewById(R.id.commentContainer);
         singleImgRecyclerView = view.findViewById(R.id.recyclerView);
         linearLayoutManager = new LinearLayoutManager(getContext());
         singleImgRecyclerView.setLayoutManager(linearLayoutManager);
@@ -309,16 +311,21 @@ public class MultipleMediaPopUpFragment extends Fragment {
 
         switch (postPermission) {
             case "0":
+                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_public_black_24dp);
                 break;
             case "1":
+                imagePostShare.setVisibility(View.INVISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_only_me_12dp);
                 break;
             case "2":
+                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_friends_12dp);
                 break;
+            default:
+                imagePostShare.setVisibility(View.INVISIBLE);
+                break;
         }
-
 
         tvCommentLike.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -803,7 +810,7 @@ public class MultipleMediaPopUpFragment extends Fragment {
             }
         });
 
-        imagePostComment.setOnClickListener(new View.OnClickListener() {
+        commentContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openCommentSection();
@@ -1078,6 +1085,8 @@ public class MultipleMediaPopUpFragment extends Fragment {
                     Intent intent = new Intent(getContext(), CommentPost.class);
                     intent.putExtra(COMMENT_KEY, (Parcelable) commentItem);
                     intent.putExtra(ITEM_KEY, (Parcelable) item);
+                    intent.putExtra(POST_ITEM_POSITION, position);
+                    intent.putExtra(COMMENT_TYPE_KEY, "AllComment");
                     startActivity(intent);
                 }
             }

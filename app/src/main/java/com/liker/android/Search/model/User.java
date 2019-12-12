@@ -21,9 +21,9 @@ public class User implements Serializable, Parcelable
     @SerializedName("last_name")
     @Expose
     private String lastName;
-    @SerializedName("fullname")
+    @SerializedName("is_followed")
     @Expose
-    private String fullname;
+    private boolean isFollowed;
     @SerializedName("user_name")
     @Expose
     private String userName;
@@ -71,7 +71,7 @@ public class User implements Serializable, Parcelable
         this.userId = ((String) in.readValue((String.class.getClassLoader())));
         this.firstName = ((String) in.readValue((String.class.getClassLoader())));
         this.lastName = ((String) in.readValue((String.class.getClassLoader())));
-        this.fullname = ((String) in.readValue((String.class.getClassLoader())));
+        this.isFollowed = ((boolean) in.readValue((String.class.getClassLoader())));
         this.userName = ((String) in.readValue((String.class.getClassLoader())));
         this.totalBadge = ((String) in.readValue((String.class.getClassLoader())));
         this.photo = ((String) in.readValue((String.class.getClassLoader())));
@@ -109,12 +109,12 @@ public class User implements Serializable, Parcelable
         this.lastName = lastName;
     }
 
-    public String getFullname() {
-        return fullname;
+    public boolean isFollowed() {
+        return isFollowed;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setFollowed(boolean followed) {
+        isFollowed = followed;
     }
 
     public String getUserName() {
@@ -178,7 +178,7 @@ public class User implements Serializable, Parcelable
         dest.writeValue(userId);
         dest.writeValue(firstName);
         dest.writeValue(lastName);
-        dest.writeValue(fullname);
+        dest.writeValue(isFollowed);
         dest.writeValue(userName);
         dest.writeValue(totalBadge);
         dest.writeValue(photo);

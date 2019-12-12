@@ -35,6 +35,7 @@ import android.text.TextWatcher;
 import android.transition.Fade;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -239,6 +240,12 @@ public class Home extends AppCompatActivity implements
     private boolean isNewPostToggle = true;
     private boolean isRateusDialog;
     private boolean isCheckFistTimeRating;
+
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        Log.i("onEmptyResponse", "Returned empty response");
+        return super.onCreateView(parent, name, context, attrs);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

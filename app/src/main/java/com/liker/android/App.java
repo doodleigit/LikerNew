@@ -39,6 +39,7 @@ import com.liker.android.Post.model.Subcatg;
 import com.liker.android.Reply.model.ReplyPersistData;
 import com.liker.android.Tool.Operation;
 import com.liker.android.Tool.PrefManager;
+import com.liker.android.Tool.model.SessionOnline;
 import com.onesignal.OneSignal;
 import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Twitter;
@@ -52,6 +53,7 @@ import java.util.List;
 
 import static android.support.v7.app.AppCompatDelegate.MODE_NIGHT_AUTO;
 import static com.liker.android.Home.service.SocketIOManager.mSocket;
+import static com.liker.android.Home.service.SocketIOManager.wSocket;
 
 public class App extends Application implements LifecycleObserver {
 
@@ -488,15 +490,38 @@ public class App extends Application implements LifecycleObserver {
         }
     }
 
+    private void setSessionUser(boolean status) {
+        if (wSocket != null && wSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+            SessionOnline sessionOnline = new SessionOnline();
+            Headers headers = new Headers();
+            headers.setDeviceId(manager.getDeviceId());
+            headers.setIsApps(true);
+            headers.setSecurityToken(manager.getToken());
+            sessionOnline.setUserId(manager.getProfileId());
+            sessionOnline.setUrl("");
+            sessionOnline.setDeviceType("App");
+            sessionOnline.setHeaders(headers);
+            Gson gson = new Gson();
+            String json = gson.toJson(sessionOnline);
+            if (status) {
+                wSocket.emit("session_online_user", json);
+            } else {
+                wSocket.emit("remove_online_user", json);
+            }
+        }
+    }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onAppBackgrounded() {
         setUserStatus(false);
+        setSessionUser(false);
         Log.d("app_background_state", "APP BACKGROUNDED");
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onAppForegrounded() {
         setUserStatus(true);
+        setSessionUser(true);
         Log.d("app_background_state", "APP FOREGROUNDED");
     }
 

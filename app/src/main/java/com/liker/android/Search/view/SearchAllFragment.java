@@ -1,5 +1,6 @@
 package com.liker.android.Search.view;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -16,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.liker.android.App;
 import com.liker.android.Home.model.PostItem;
@@ -26,12 +28,16 @@ import com.liker.android.Search.adapter.AdvanceSearchPostAdapter;
 import com.liker.android.Search.model.AdvanceSearches;
 import com.liker.android.Search.model.Post;
 import com.liker.android.Search.model.User;
+import com.liker.android.Search.service.FollowUnfollowClickListener;
 import com.liker.android.Search.service.PostClickListener;
 import com.liker.android.Search.service.SearchService;
 import com.liker.android.Setting.view.SettingActivity;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Tools;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +57,7 @@ public class SearchAllFragment extends Fragment {
     private AdvanceSearchPostAdapter searchPostAdapter;
     private SearchService webService;
     private PrefManager manager;
+    private ProgressDialog progressDialog;
 
     private String profileId;
     private String deviceId;
@@ -81,6 +88,9 @@ public class SearchAllFragment extends Fragment {
         mPostList = new ArrayList<>();
         webService = SearchService.mRetrofit.create(SearchService.class);
         manager = new PrefManager(getContext());
+
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage(getString(R.string.loading));
 
         userLoadMoreLayout = view.findViewById(R.id.user_load_more_layout);
         postLoadMoreLayout = view.findViewById(R.id.post_load_more_layout);
@@ -113,7 +123,19 @@ public class SearchAllFragment extends Fragment {
             }
         };
 
-        mAdapter = new AdvanceSearchAdapter(getActivity(), mUserList);
+        FollowUnfollowClickListener followUnfollowClickListener = new FollowUnfollowClickListener() {
+            @Override
+            public void onFollowClick(String followUserId, int position) {
+                setFollow(followUserId, position);
+            }
+
+            @Override
+            public void onUnFollowClick(String followUserId, int position) {
+                setUnFollow(followUserId, position);
+            }
+        };
+
+        mAdapter = new AdvanceSearchAdapter(getActivity(), mUserList, followUnfollowClickListener);
         searchPostAdapter = new AdvanceSearchPostAdapter(getActivity(), mPostList, postClickListener);
 
         userRecyclerView.setAdapter(mAdapter);
@@ -219,6 +241,79 @@ public class SearchAllFragment extends Fragment {
             @Override
             public void onFailure(Call<PostItem> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
+            }
+        });
+    }
+
+    private void setFollow(String followUserId, int position) {
+        progressDialog.show();
+        Call<String> call = webService.setFollow(deviceId, token, profileId, profileId, followUserId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+                        mUserList.get(position).setFollowed(true);
+                        mAdapter.notifyItemChanged(position);
+                        sendBrowserNotification(followUserId);
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.hide();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressDialog.hide();
+            }
+        });
+    }
+
+    private void setUnFollow(String followUserId, int position) {
+        progressDialog.show();
+        Call<String> call = webService.setUnFollow(deviceId, token, profileId, profileId, followUserId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+                        mUserList.get(position).setFollowed(false);
+                        mAdapter.notifyItemChanged(position);
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.hide();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressDialog.hide();
+            }
+        });
+    }
+
+    private void sendBrowserNotification(String followUserId) {
+        Call<String> call = webService.sendBrowserNotification(deviceId, token, profileId, profileId, followUserId, "0", "follow");
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
             }
         });
     }

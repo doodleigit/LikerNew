@@ -3,18 +3,9 @@ package com.liker.android.Notification.adapter;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.format.DateFormat;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,9 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
-import com.liker.android.Home.model.PostFooter;
 import com.liker.android.Home.service.HomeService;
-import com.liker.android.Home.view.activity.Home;
 import com.liker.android.Home.view.activity.StarContributorActivity;
 import com.liker.android.Notification.model.Data;
 import com.liker.android.Notification.model.NotificationItem;
@@ -262,7 +251,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         progressDialog.setMessage(title);
         progressDialog.show();
     }
-
 
     private void hideProgressBar() {
         progressDialog.dismiss();

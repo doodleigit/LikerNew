@@ -274,6 +274,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
     private CommentAdapter adapter;
     private List<Comment_> comment_list;
     private Comment_ commentItem;
+
     @Override
     public void onTitleClicked(Comment_ commentItem, int CommentPosition, Reply reply) {
 
@@ -486,13 +487,19 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         String postPermission = item.getPermission();
         switch (postPermission) {
             case "0":
+                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_public_black_24dp);
                 break;
             case "1":
+                imagePostShare.setVisibility(View.INVISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_only_me_12dp);
                 break;
             case "2":
+                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_friends_12dp);
+                break;
+            default:
+                imagePostShare.setVisibility(View.INVISIBLE);
                 break;
         }
         isShared = item.getIsShared();
@@ -1367,7 +1374,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         //ADD MOST POPULAR COMMENT
         if (postItem.getPostTopComment().size() > 0) {
             comment_list.clear();
-            commentItem=postItem.getPostTopComment().get(0).getComment().get(0);
+            commentItem = postItem.getPostTopComment().get(0).getComment().get(0);
             comment_list.addAll(postItem.getPostTopComment().get(0).getComment());
             adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, true);
             rvPopularComment.setAdapter(adapter);

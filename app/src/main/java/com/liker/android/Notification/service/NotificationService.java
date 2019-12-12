@@ -43,7 +43,7 @@ public interface NotificationService {
 
     @POST(AppConstants.GET_POST_DETAILS)
     @FormUrlEncoded
-    Call<PostItem> getPostDetails(
+    Call<String> getPostDetails(
             @Header("Device-Id") String deviceId,
             @Header("User-Id") String userId,
             @Header("Security-Token") String token,

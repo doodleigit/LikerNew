@@ -460,13 +460,19 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
 
         switch (postPermission) {
             case "0":
+                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_public_black_24dp);
                 break;
             case "1":
+                imagePostShare.setVisibility(View.INVISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_only_me_12dp);
                 break;
             case "2":
+                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_friends_12dp);
+                break;
+            default:
+                imagePostShare.setVisibility(View.INVISIBLE);
                 break;
         }
 

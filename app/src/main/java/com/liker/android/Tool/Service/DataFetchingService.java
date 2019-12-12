@@ -57,6 +57,7 @@ import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.ScreenOnOffBroadcast;
 import com.liker.android.Tool.Tools;
 import com.liker.android.Tool.model.AddTraffic;
+import com.liker.android.Tool.model.SessionOnline;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -127,6 +128,7 @@ public class DataFetchingService extends Service {
         setBroadcast();
         getNotificationData();
         setUserStatus(true);
+        setSessionUser(true);
         getMessagesData();
         getNewPostData();
     }
@@ -281,6 +283,27 @@ public class DataFetchingService extends Service {
             mSocket.emit("online_users", json);
         } else {
             mSocket.emit("current_offline_user", json);
+        }
+    }
+
+    private void setSessionUser(boolean status) {
+        if (socket != null && socket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+            SessionOnline sessionOnline = new SessionOnline();
+            Headers headers = new Headers();
+            headers.setDeviceId(manager.getDeviceId());
+            headers.setIsApps(true);
+            headers.setSecurityToken(manager.getToken());
+            sessionOnline.setUserId(manager.getProfileId());
+            sessionOnline.setUrl("");
+            sessionOnline.setDeviceType("App");
+            sessionOnline.setHeaders(headers);
+            Gson gson = new Gson();
+            String json = gson.toJson(sessionOnline);
+            if (status) {
+                socket.emit("session_online_user", json);
+            } else {
+                socket.emit("remove_online_user", json);
+            }
         }
     }
 
@@ -510,26 +533,26 @@ public class DataFetchingService extends Service {
     }
 
     private void sendPostItemRequest(String postId, boolean isCommentAction, NotificationItem notificationItem, Bitmap bitmap, Context context) {
-        Call<PostItem> call = webService.getPostDetails(deviceId, profileId, token, profileId, postId);
-        call.enqueue(new Callback<PostItem>() {
-            @Override
-            public void onResponse(Call<PostItem> call, Response<PostItem> response) {
-                PostItem postItem = response.body();
-                if (postItem != null) {
-                    Intent intent = new Intent(context, PostPopup.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                    intent.putExtra(AppConstants.ITEM_KEY, (Parcelable) postItem);
-                    intent.putExtra("has_footer", false);
-                    intent.putExtra("is_comment_action", isCommentAction);
-                    pushNotification(notificationItem, bitmap, intent, context);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PostItem> call, Throwable t) {
-                Log.d("MESSAGE: ", t.getMessage());
-            }
-        });
+//        Call<PostItem> call = webService.getPostDetails(deviceId, profileId, token, profileId, postId);
+//        call.enqueue(new Callback<PostItem>() {
+//            @Override
+//            public void onResponse(Call<PostItem> call, Response<PostItem> response) {
+//                PostItem postItem = response.body();
+//                if (postItem != null) {
+//                    Intent intent = new Intent(context, PostPopup.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+//                    intent.putExtra(AppConstants.ITEM_KEY, (Parcelable) postItem);
+//                    intent.putExtra("has_footer", false);
+//                    intent.putExtra("is_comment_action", isCommentAction);
+//                    pushNotification(notificationItem, bitmap, intent, context);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<PostItem> call, Throwable t) {
+//                Log.d("MESSAGE: ", t.getMessage());
+//            }
+//        });
     }
 
     @Nullable
@@ -543,6 +566,7 @@ public class DataFetchingService extends Service {
         super.onDestroy();
         try {
             setUserStatus(false);
+            setSessionUser(false);
             socket.off("web_notification");
             mSocket.off("message");
             mSocket.off("message_own");
@@ -558,6 +582,7 @@ public class DataFetchingService extends Service {
         super.onTaskRemoved(rootIntent);
         try {
             setUserStatus(false);
+            setSessionUser(false);
             socket.off("web_notification");
             mSocket.off("message");
             mSocket.off("message_own");

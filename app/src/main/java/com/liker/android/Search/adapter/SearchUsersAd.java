@@ -34,7 +34,7 @@ public class SearchUsersAd extends ArrayAdapter<SearchUser> {
     private LayoutInflater mInflater;
 
     public SearchUsersAd(@NonNull Context context, @NonNull List<SearchUser> objects) {
-        super(context, R.layout.advance_search_user_item, objects);
+        super(context, R.layout.search_user_item, objects);
         this.context = context;
         mSearchUsers = objects;
         mInflater = LayoutInflater.from(context);
@@ -44,7 +44,7 @@ public class SearchUsersAd extends ArrayAdapter<SearchUser> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.advance_search_user_item, parent, false);
+            convertView = mInflater.inflate(R.layout.search_user_item, parent, false);
         }
         ImageView mImage = (ImageView) convertView.findViewById(R.id.imgUser);
         TextView mName = (TextView) convertView.findViewById(R.id.tvUserName);
