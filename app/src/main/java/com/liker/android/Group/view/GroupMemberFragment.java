@@ -17,12 +17,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.liker.android.App;
+import com.liker.android.Group.adapter.GroupMemberAdapter;
+import com.liker.android.Group.model.GroupMember;
+import com.liker.android.Group.model.MyGroupMember;
+import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Profile.adapter.FollowersAdapter;
 import com.liker.android.Profile.model.Followers;
 import com.liker.android.Profile.model.FollowersResult;
 import com.liker.android.Profile.service.FollowUnfollowClickListener;
 import com.liker.android.Profile.service.ProfileService;
 import com.liker.android.R;
+import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.PrefManager;
 
 import org.json.JSONException;
@@ -42,7 +51,7 @@ import retrofit2.Response;
 //import com.doodle.R;
 //import com.doodle.Tool.PrefManager;
 
-public class MembersFragment extends Fragment {
+public class GroupMemberFragment extends Fragment {
 
     View view;
     private SwipeRefreshLayout refreshLayout;
@@ -56,7 +65,9 @@ public class MembersFragment extends Fragment {
     private ProfileService profileService;
     private PrefManager manager;
     private FollowersAdapter followersAdapter;
+    private GroupMemberAdapter groupMemberAdapter;
     private ArrayList<FollowersResult> followers;
+    private ArrayList<GroupMember> groupMembers;
     private String deviceId, profileUserId, token, userId;
     int limit = 10;
     int offset = 0;
@@ -65,13 +76,17 @@ public class MembersFragment extends Fragment {
     private int scrollOutItems;
     private int currentItems;
 
+
+    //GROUP-MEMBER===
+   private GroupWebservice groupWebservice;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.members_fragment_layout, container, false);
 
         initialComponent();
-        sendFriendListRequest();
+        sendGroupMemberListRequest();
         return view;
     }
 
@@ -81,8 +96,10 @@ public class MembersFragment extends Fragment {
        // progressDialog.show();
         progressDialog.hide();
         profileService = ProfileService.mRetrofit.create(ProfileService.class);
+        groupWebservice = GroupWebservice.retrofitBase.create(GroupWebservice.class);
         manager = new PrefManager(getContext());
-        followers = new ArrayList<>();
+        //followers = new ArrayList<>();
+        groupMembers = new ArrayList<>();
         deviceId = manager.getDeviceId();
         token = manager.getToken();
         userId = manager.getProfileId();
@@ -108,15 +125,17 @@ public class MembersFragment extends Fragment {
             }
         };
 
-        followersAdapter = new FollowersAdapter(getActivity(), followers, followUnfollowClickListener);
+       // followersAdapter = new FollowersAdapter(getActivity(), followers, followUnfollowClickListener);
+        groupMemberAdapter = new GroupMemberAdapter(getActivity(), groupMembers, followUnfollowClickListener);
 
-        recyclerView.setAdapter(followersAdapter);
+       // recyclerView.setAdapter(followersAdapter);
+        recyclerView.setAdapter(groupMemberAdapter);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 offset = 0;
-                sendFriendListRequest();
+                sendGroupMemberListRequest();
             }
         });
 
@@ -144,32 +163,46 @@ public class MembersFragment extends Fragment {
         });
     }
 
-    private void sendFriendListRequest() {
-        Call<Followers> call = profileService.getFollowers(deviceId, token, userId, userId, profileUserId, limit, offset, false);
-        call.enqueue(new Callback<Followers>() {
+    private void sendGroupMemberListRequest() {
+        Call<String> call = groupWebservice.groupMembers(deviceId, token, userId, userId, AppSingleton.getInstance().getGroupId());
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<Followers> call, Response<Followers> response) {
-                followers.clear();
+            public void onResponse(Call<String> call, Response<String> response) {
+               // followers.clear();
+             //   MyGroupMember myGroupMember=response.body();
+                Log.d("MyGroupMember",response.body());
+
+                String mJsonString = response.body();
+                JsonParser parser = new JsonParser();
+                JsonElement mJson =  parser.parse(mJsonString);
+                Gson gson = new Gson();
+                GroupMember object = gson.fromJson(mJson, GroupMember.class);
+
+           /*     groupMembers.clear();
                 Followers follower = response.body();
                 if (follower != null) {
-                    followers.addAll(follower.getFollowersResult());
+                  //  followers.addAll(follower.getFollowersResult());
+                    groupMembers.addAll(follower.getFollowersResult());
                     offset += 10;
                 }
-                if (followers.size() == 0) {
+                if (groupMembers.size() == 0) {
                     tvAlertText.setVisibility(View.VISIBLE);
                 } else {
                     tvAlertText.setVisibility(View.GONE);
-                }
-                followersAdapter.notifyDataSetChanged();
+                }*/
+               // followersAdapter.notifyDataSetChanged();
+                groupMemberAdapter.notifyDataSetChanged();
                 progressDialog.hide();
                 refreshLayout.setRefreshing(false);
             }
 
             @Override
-            public void onFailure(Call<Followers> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
-                followers.clear();
-                followersAdapter.notifyDataSetChanged();
+             //   followers.clear();
+                groupMembers.clear();
+              //  followersAdapter.notifyDataSetChanged();
+                groupMemberAdapter.notifyDataSetChanged();
                 progressDialog.hide();
                 refreshLayout.setRefreshing(false);
             }
@@ -179,25 +212,28 @@ public class MembersFragment extends Fragment {
 
     private void sendFriendListPaginationRequest() {
         progressBar.setVisibility(View.VISIBLE);
-        Call<Followers> call = profileService.getFollowers(deviceId, token, userId, userId, profileUserId, limit, offset, false);
-        call.enqueue(new Callback<Followers>() {
+        Call<String> call = groupWebservice.groupMembers(deviceId, token, userId, userId, AppSingleton.getInstance().getGroupId());
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<Followers> call, Response<Followers> response) {
-                Followers follower = response.body();
-                if (follower != null) {
-                    followers.addAll(follower.getFollowersResult());
-                    followersAdapter.notifyDataSetChanged();
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.d("MyGroupMember",response.body());
+              /*  if (follower != null) {
+                    groupMembers.addAll(follower.getFollowersResult());
+                    //followersAdapter.notifyDataSetChanged();
+                    groupMemberAdapter.notifyDataSetChanged();
                     offset += 10;
-                }
+                }*/
                 progressDialog.hide();
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
-            public void onFailure(Call<Followers> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
-                followers.clear();
-                followersAdapter.notifyDataSetChanged();
+             //   followers.clear();
+                groupMembers.clear();
+              //  followersAdapter.notifyDataSetChanged();
+                groupMemberAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -215,8 +251,10 @@ public class MembersFragment extends Fragment {
                     JSONObject obj = new JSONObject(jsonResponse);
                     boolean status = obj.getBoolean("status");
                     if (status) {
-                        followers.get(position).setIsFollowed(true);
-                        followersAdapter.notifyItemChanged(position);
+                     //   followers.get(position).setIsFollowed(true);
+                        groupMembers.get(position).setIsFollowed(true);
+                      //  followersAdapter.notifyItemChanged(position);
+                        groupMemberAdapter.notifyItemChanged(position);
                         sendBrowserNotification(followUserId);
                     } else {
                         Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
@@ -245,8 +283,10 @@ public class MembersFragment extends Fragment {
                     JSONObject obj = new JSONObject(jsonResponse);
                     boolean status = obj.getBoolean("status");
                     if (status) {
-                        followers.get(position).setIsFollowed(false);
-                        followersAdapter.notifyItemChanged(position);
+                     //   followers.get(position).setIsFollowed(false);
+                        groupMembers.get(position).setIsFollowed(false);
+                      //  followersAdapter.notifyItemChanged(position);
+                        groupMemberAdapter.notifyItemChanged(position);
                     } else {
                         Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
                     }

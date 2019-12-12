@@ -34,6 +34,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reason;
@@ -50,18 +53,14 @@ import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.HomeService;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
-import com.liker.android.Message.model.FriendInfo;
-import com.liker.android.Message.view.MessageActivity;
 import com.liker.android.Profile.adapter.ViewPagerAdapter;
 import com.liker.android.Profile.model.UserAllInfo;
 import com.liker.android.Profile.service.ProfileDataFetchCompleteListener;
 import com.liker.android.Profile.service.ProfileService;
 import com.liker.android.Profile.view.AboutFragment;
 import com.liker.android.Profile.view.FollowersFragment;
-import com.liker.android.Profile.view.FollowingFragment;
 import com.liker.android.Profile.view.PhotosFragment;
 
-import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.Profile.view.StarFragment;
 import com.liker.android.R;
 import com.liker.android.Search.LikerSearch;
@@ -72,7 +71,6 @@ import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Tools;
 import com.theartofdev.edmodo.cropper.CropImage;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -131,7 +129,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     private String groupId;
     private final int REQUEST_TAKE_CAMERA = 101;
     private final int REQUEST_TAKE_GALLERY_IMAGE = 102;
-    private int uploadContentType = 0;
+  //  private int uploadContentType = 0;
     private String deviceId, userId, token, profileUserName, fullName, userImage, coverImage, allCountInfo;
     private boolean isOwnProfile, isFollow;
     private android.support.v7.widget.PopupMenu popup;
@@ -209,7 +207,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             @Override
             public void onClick(View view) {
                 if (isOwnProfile) {
-                    uploadContentType = 0;
+                    //uploadContentType = 0;
                     selectImageSource(ivChangeProfileImage);
                 }
             }
@@ -219,7 +217,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             @Override
             public void onClick(View view) {
 
-                uploadContentType = 1;
+            //    uploadContentType = 1;
                 selectImageSource(ivChangeCoverImage);
 
 //                if (isOwnProfile) {
@@ -368,10 +366,11 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             moreLayout.setVisibility(View.VISIBLE);
             //  moreLayout.setVisibility(View.GONE);
         }
+
     }
 
     private void getData() {
-        Call<String> call = groupWebservice.getGroupAbout(deviceId, userId, token, groupId);
+        Call<String> call = groupWebservice.getGroupAbout(deviceId, userId, token,userId, groupId);
         getGroupAbout(call);
     }
 
@@ -422,11 +421,14 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     private void selectImageSource(View view) {
         PopupMenu popup = new PopupMenu(this, view);
         //Inflating the Popup using xml file
-        if (uploadContentType == 0) {
+
+        popup.getMenuInflater().inflate(R.menu.cover_image_source_menu, popup.getMenu());
+
+       /* if (uploadContentType == 0) {
             popup.getMenuInflater().inflate(R.menu.image_source_menu, popup.getMenu());
         } else {
             popup.getMenuInflater().inflate(R.menu.cover_image_source_menu, popup.getMenu());
-        }
+        }*/
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
@@ -485,11 +487,11 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
         MultipartBody.Part fileToUpload = MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
         Call<String> mediaCall;
-        if (uploadContentType == 0) {
+     /*   if (uploadContentType == 0) {
             mediaCall = profileService.uploadProfileImage(deviceId, userId, token, fileToUpload);
         } else {
-            mediaCall = groupWebservice.uploadCoverImage(deviceId, userId, token, fileToUpload,userId,groupId);
-        }
+        }*/
+        mediaCall = groupWebservice.uploadCoverImage(deviceId, userId, token, fileToUpload,userId,groupId);
         progressDialog.setMessage(getString(R.string.uploading));
         progressDialog.show();
         sendImageRequest(mediaCall);
@@ -579,7 +581,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     }
 
     private void cropImage(Uri uri) {
-        if (uploadContentType == 0) {
+       /* if (uploadContentType == 0) {
             CropImage.activity(uri)
                     .setRequestedSize(300, 300)
                     .setAspectRatio(1, 1)
@@ -591,8 +593,13 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                     .setAspectRatio(4, 1)
                     .setMinCropResultSize(1150, 235)
                     .start(this);
-        }
+        }*/
 
+        CropImage.activity(uri)
+                .setRequestedSize(1150, 235)
+                .setAspectRatio(4, 1)
+                .setMinCropResultSize(1150, 235)
+                .start(this);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -628,7 +635,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                 } else if (tab.getPosition() == 1) {
                     initialFragment(new GroupAboutFragment());
                 } else if (tab.getPosition() == 2) {
-                    initialFragment(new MembersFragment());
+                    initialFragment(new GroupMemberFragment());
                 } else if (tab.getPosition() == 3) {
                     initialFragment(new GroupPhotosFragment());
                 } /*else if (tab.getPosition() == 4) {
@@ -702,8 +709,9 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                                     groupTotalPost = groupInfoObject.getString("total_post");
                                     groupImageName = groupInfoObject.getString("image_name");
                                     groupDescription = groupInfoObject.getString("description");
+                                    boolean isMember=dataObject.getBoolean("is_member");
                                     //isFriendStatus();
-                                    setData();
+                                     setData();
                                     viewHandler(true);
                                 }
                                 JSONObject messageObject = object.getJSONObject("message");
@@ -820,7 +828,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                     if (status) {
                         String image = object.getString("file_name");
                         String message;
-                        if (uploadContentType == 0) {
+                     /*   if (uploadContentType == 0) {
                             userImage = AppConstants.USER_UPLOADED_IMAGES + image;
                             manager.setProfileImage(AppConstants.PROFILE_IMAGE + image);
                             loadProfileImage();
@@ -829,7 +837,10 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                             coverImage = AppConstants.USER_UPLOADED_IMAGES + image;
                             loadCoverImage();
                             message = getString(R.string.cover_photo_has_been_updated);
-                        }
+                        }*/
+                        coverImage = AppConstants.USER_UPLOADED_IMAGES + image;
+                        loadCoverImage();
+                        message = getString(R.string.cover_photo_has_been_updated);
                         Toast.makeText(getApplicationContext(), message, LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), LENGTH_SHORT).show();
@@ -842,6 +853,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
+                Log.d("TAG",t.getMessage());
                 Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }

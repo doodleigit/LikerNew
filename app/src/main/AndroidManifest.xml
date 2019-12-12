@@ -202,6 +202,32 @@
 
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
+
+            <intent-filter android:label="@string/like">
+                <action  android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="http"
+                    android:host="www.m.liker.com"
+                    />
+            </intent-filter>
+            <intent-filter android:label="@string/like">
+                <action  android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="https"
+                    android:host="www.m.liker.com"
+                    />
+            </intent-filter>
+            <intent-filter android:label="@string/like">
+                <action  android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="app"
+                    android:host="www.m.liker.com"
+                    />
+            </intent-filter>
+
         </activity>
         <activity
             android:name=".Authentication.view.activity.Splash"
