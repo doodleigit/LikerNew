@@ -1,5 +1,6 @@
 package com.liker.android.Search.view;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,14 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.liker.android.App;
 import com.liker.android.R;
 import com.liker.android.Search.adapter.AdvanceSearchAdapter;
 import com.liker.android.Search.model.AdvanceSearches;
 import com.liker.android.Search.model.User;
+import com.liker.android.Search.service.FollowUnfollowClickListener;
 import com.liker.android.Search.service.SearchService;
 import com.liker.android.Tool.PrefManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +41,7 @@ public class PeopleSearchFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProgressBar initialProgress,progressBar;
     private LinearLayoutManager layoutManager;
+    private ProgressDialog progressDialog;
 
     private AdvanceSearchAdapter advanceSearchAdapter;
     private List<User> mUserList;
@@ -73,6 +80,8 @@ public class PeopleSearchFragment extends Fragment {
     }
 
     private void initialComponent() {
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage(getString(R.string.loading));
         refreshLayout = view.findViewById(R.id.refreshLayout);
         recyclerView = view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(getContext());
@@ -80,7 +89,19 @@ public class PeopleSearchFragment extends Fragment {
         initialProgress = view.findViewById(R.id.initial_progress);
         progressBar = view.findViewById(R.id.progress_bar);
 
-        advanceSearchAdapter = new AdvanceSearchAdapter(getActivity(), mUserList);
+        FollowUnfollowClickListener followUnfollowClickListener = new FollowUnfollowClickListener() {
+            @Override
+            public void onFollowClick(String followUserId, int position) {
+                setFollow(followUserId, position);
+            }
+
+            @Override
+            public void onUnFollowClick(String followUserId, int position) {
+                setUnFollow(followUserId, position);
+            }
+        };
+
+        advanceSearchAdapter = new AdvanceSearchAdapter(getActivity(), mUserList, followUnfollowClickListener);
         recyclerView.setAdapter(advanceSearchAdapter);
 
         getData();
@@ -177,6 +198,79 @@ public class PeopleSearchFragment extends Fragment {
             public void onFailure(Call<AdvanceSearches> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 isPagination = true;
+            }
+        });
+    }
+
+    private void setFollow(String followUserId, int position) {
+        progressDialog.show();
+        Call<String> call = webService.setFollow(deviceId, token, profileId, profileId, followUserId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+//                        mUserList.get(position).setIsFollowed(true);
+                        advanceSearchAdapter.notifyItemChanged(position);
+                        sendBrowserNotification(followUserId);
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.hide();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressDialog.hide();
+            }
+        });
+    }
+
+    private void setUnFollow(String followUserId, int position) {
+        progressDialog.show();
+        Call<String> call = webService.setUnFollow(deviceId, token, profileId, profileId, followUserId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+//                        mUserList.get(position).setIsFollowed(false);
+                        advanceSearchAdapter.notifyItemChanged(position);
+                    } else {
+                        Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.hide();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressDialog.hide();
+            }
+        });
+    }
+
+    private void sendBrowserNotification(String followUserId) {
+        Call<String> call = webService.sendBrowserNotification(deviceId, token, profileId, profileId, followUserId, "0", "follow");
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
             }
         });
     }
