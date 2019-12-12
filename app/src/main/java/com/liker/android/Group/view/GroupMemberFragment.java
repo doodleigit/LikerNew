@@ -22,6 +22,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.liker.android.App;
 import com.liker.android.Group.adapter.GroupMemberAdapter;
+import com.liker.android.Group.model.Data;
 import com.liker.android.Group.model.GroupMember;
 import com.liker.android.Group.model.MyGroupMember;
 import com.liker.android.Group.service.GroupWebservice;
@@ -38,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -67,7 +69,7 @@ public class GroupMemberFragment extends Fragment {
     private FollowersAdapter followersAdapter;
     private GroupMemberAdapter groupMemberAdapter;
     private ArrayList<FollowersResult> followers;
-    private ArrayList<GroupMember> groupMembers;
+    private List<GroupMember> groupMembers;
     private String deviceId, profileUserId, token, userId;
     int limit = 10;
     int offset = 0;
@@ -164,40 +166,32 @@ public class GroupMemberFragment extends Fragment {
     }
 
     private void sendGroupMemberListRequest() {
-        Call<String> call = groupWebservice.groupMembers(deviceId, token, userId, userId, AppSingleton.getInstance().getGroupId());
-        call.enqueue(new Callback<String>() {
+        Call<MyGroupMember> call = groupWebservice.groupMembers(deviceId, userId, token, userId, AppSingleton.getInstance().getGroupId());
+        call.enqueue(new Callback<MyGroupMember>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<MyGroupMember> call, Response<MyGroupMember> response) {
                // followers.clear();
-             //   MyGroupMember myGroupMember=response.body();
-                Log.d("MyGroupMember",response.body());
+//                groupMembers.clear();
+                MyGroupMember myGroupMember=response.body();
+                Data data=myGroupMember.getData();
+                groupMembers=data.getGroupMembers();
 
-                String mJsonString = response.body();
-                JsonParser parser = new JsonParser();
-                JsonElement mJson =  parser.parse(mJsonString);
-                Gson gson = new Gson();
-                GroupMember object = gson.fromJson(mJson, GroupMember.class);
-
-           /*     groupMembers.clear();
-                Followers follower = response.body();
-                if (follower != null) {
-                  //  followers.addAll(follower.getFollowersResult());
-                    groupMembers.addAll(follower.getFollowersResult());
+                if (groupMembers.size() > 0) {
                     offset += 10;
                 }
                 if (groupMembers.size() == 0) {
                     tvAlertText.setVisibility(View.VISIBLE);
                 } else {
                     tvAlertText.setVisibility(View.GONE);
-                }*/
-               // followersAdapter.notifyDataSetChanged();
+                }
+
                 groupMemberAdapter.notifyDataSetChanged();
                 progressDialog.hide();
                 refreshLayout.setRefreshing(false);
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<MyGroupMember> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
              //   followers.clear();
                 groupMembers.clear();
@@ -212,23 +206,24 @@ public class GroupMemberFragment extends Fragment {
 
     private void sendFriendListPaginationRequest() {
         progressBar.setVisibility(View.VISIBLE);
-        Call<String> call = groupWebservice.groupMembers(deviceId, token, userId, userId, AppSingleton.getInstance().getGroupId());
-        call.enqueue(new Callback<String>() {
+        Call<MyGroupMember> call = groupWebservice.groupMembers(deviceId,userId, token,  userId, AppSingleton.getInstance().getGroupId());
+        call.enqueue(new Callback<MyGroupMember>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.d("MyGroupMember",response.body());
-              /*  if (follower != null) {
-                    groupMembers.addAll(follower.getFollowersResult());
-                    //followersAdapter.notifyDataSetChanged();
+            public void onResponse(Call<MyGroupMember> call, Response<MyGroupMember> response) {
+                Log.d("MyGroupMember",response.body().toString());
+                MyGroupMember myGroupMember=response.body();
+                Data data=myGroupMember.getData();
+                groupMembers=data.getGroupMembers();
+                if (groupMembers.size()> 0) {
                     groupMemberAdapter.notifyDataSetChanged();
                     offset += 10;
-                }*/
+                }
                 progressDialog.hide();
                 progressBar.setVisibility(View.GONE);
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<MyGroupMember> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
              //   followers.clear();
                 groupMembers.clear();

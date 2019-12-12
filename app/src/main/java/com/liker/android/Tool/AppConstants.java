@@ -19,17 +19,17 @@ public class AppConstants {
     //==========================STG SERVER=====================
 
 //
-    public static final String BASE_URL = "https://www.stg.liker.com/";
-    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
-    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
-    public static final String SOCKET_WEB = "https://node.liker.com:7803";
-    public static final String SOCKET_MESSAGE = "https://node.liker.com:7804";
-    public static final String SOCKET_NEW_POST = "http://192.168.0.12:7902";
-    public static final String SOCKET_VIDEO = "https://node.liker.com:7807";
-    public static final String FACEBOOK_SHARE = "https://www.stg.liker.com/public/posts/";
-    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
-    public static final String FACEBOOK_INVITATION = "https://www.d.liker.com/settings/fbinvite/";
-    public static final String BASE_URL_LOCATION = "https://www.stg.liker.com/";
+//    public static final String BASE_URL = "https://www.stg.liker.com/";
+//    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
+//    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
+//    public static final String SOCKET_WEB = "https://node.liker.com:7803";
+//    public static final String SOCKET_MESSAGE = "https://node.liker.com:7804";
+//    public static final String SOCKET_NEW_POST = "http://192.168.0.12:7902";
+//    public static final String SOCKET_VIDEO = "https://node.liker.com:7807";
+//    public static final String FACEBOOK_SHARE = "https://www.stg.liker.com/public/posts/";
+//    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
+//    public static final String FACEBOOK_INVITATION = "https://www.d.liker.com/settings/fbinvite/";
+//    public static final String BASE_URL_LOCATION = "https://www.stg.liker.com/";
 
     /*http://192.168.0.7:8040/sites/likerapp/user_apprate,
      parameter: user_id, status*/

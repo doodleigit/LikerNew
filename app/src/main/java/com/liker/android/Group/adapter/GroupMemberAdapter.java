@@ -21,6 +21,7 @@ import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 
 import java.util.ArrayList;
+import java.util.List;
 
 //import com.doodle.App;
 //import com.doodle.Profile.model.FollowersResult;
@@ -32,10 +33,10 @@ import java.util.ArrayList;
 public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<GroupMember> groupMembers;
+    private List<GroupMember> groupMembers;
     private FollowUnfollowClickListener followUnfollowClickListener;
 
-    public GroupMemberAdapter(Context context, ArrayList<GroupMember> groupMembers, FollowUnfollowClickListener followUnfollowClickListener) {
+    public GroupMemberAdapter(Context context, List<GroupMember> groupMembers, FollowUnfollowClickListener followUnfollowClickListener) {
         this.context = context;
         this.groupMembers = groupMembers;
         this.followUnfollowClickListener = followUnfollowClickListener;

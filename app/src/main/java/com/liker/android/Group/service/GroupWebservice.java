@@ -71,7 +71,7 @@ group_id:*/
 
     @POST(AppConstants.GROUP_MEMBERS)
     @FormUrlEncoded
-    Call<String> groupMembers(
+    Call<MyGroupMember> groupMembers(
             @Header("Device-Id") String deviceId,
             @Header("User-Id") String userId,
             @Header("Security-Token") String token,
