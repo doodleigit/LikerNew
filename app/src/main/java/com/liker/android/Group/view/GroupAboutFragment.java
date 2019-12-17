@@ -168,7 +168,6 @@ public class GroupAboutFragment extends Fragment {
         initialComponent();
         initialAllClickListener();
         getData();
-
         return view;
     }
 

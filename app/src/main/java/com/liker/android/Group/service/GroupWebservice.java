@@ -5,6 +5,7 @@ import com.liker.android.Authentication.model.Country;
 import com.liker.android.Authentication.model.ForgotPassword;
 import com.liker.android.Authentication.model.LoginUser;
 import com.liker.android.Authentication.model.ResendStatus;
+import com.liker.android.Group.model.MyGroupMember;
 import com.liker.android.Tool.AppConstants;
 
 import okhttp3.MultipartBody;
@@ -48,6 +49,7 @@ public interface GroupWebservice {
             @Header("Device-Id") String deviceId,
             @Header("User-Id") String userId,
             @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
             @Field("group_id") String groupId
             );
 
@@ -69,7 +71,7 @@ group_id:*/
 
     @POST(AppConstants.GROUP_MEMBERS)
     @FormUrlEncoded
-    Call<String> groupMembers(
+    Call<MyGroupMember> groupMembers(
             @Header("Device-Id") String deviceId,
             @Header("User-Id") String userId,
             @Header("Security-Token") String token,
