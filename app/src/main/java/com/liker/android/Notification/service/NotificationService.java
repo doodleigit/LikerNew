@@ -28,6 +28,12 @@ public interface NotificationService {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
+    Retrofit wRetrofit = new Retrofit.Builder()
+            .baseUrl(AppConstants.SOCKET_WEB)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
 
     @POST(AppConstants.NOTIFICATION)
     @FormUrlEncoded
@@ -49,6 +55,30 @@ public interface NotificationService {
             @Header("Security-Token") String token,
             @Field("user_id") String userIds,
             @Field("post_id") String postId
+    );
+
+    @POST(AppConstants.ADD_TRAFFIC_NEW)
+    @FormUrlEncoded
+    Call<String> addTrafficNew(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("device_type") String deviceType,
+            @Field("pathname") String pathname,
+            @Field("stay_time") int stay_time,
+            @Field("pathname_new") String pathname_new
+    );
+
+    @POST(AppConstants.ADD_PAGE_TRAFFIC_NEW)
+    @FormUrlEncoded
+    Call<String> addPageTrafficNew(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("device_type") String deviceType,
+            @Field("pathname") String pathname
     );
 
 }

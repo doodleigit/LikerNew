@@ -287,16 +287,18 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                 break;
             case R.id.tvSignIn:
-                if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    mDeviceId = manager.getDeviceId();
-                    loginDisable(true);
-                    requestData(email, password, mDeviceId);
+                if (viewModel.validateLoginEmailField(etEmail)) {
+                    if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        mDeviceId = manager.getDeviceId();
+                        loginDisable(true);
+                        requestData(email, password, mDeviceId);
 
-                } else {
-                    Tools.showNetworkDialog(getSupportFragmentManager());
-                    progressBar.setVisibility(View.GONE);
+                    } else {
+                        Tools.showNetworkDialog(getSupportFragmentManager());
+                        progressBar.setVisibility(View.GONE);
 
+                    }
                 }
                 break;
 
@@ -440,16 +442,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
                     viewModel.validateLoginEmailField(etEmail);
                     break;
                 case EditorInfo.IME_ACTION_SEND:
-                    if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
-                        progressBar.setVisibility(View.VISIBLE);
-                        mDeviceId = manager.getDeviceId();
-                        loginDisable(true);
-                        requestData(email, password, mDeviceId);
-
-                    } else {
-                        Tools.showNetworkDialog(getSupportFragmentManager());
-                        progressBar.setVisibility(View.GONE);
-
+                    if (viewModel.validateLoginEmailField(etEmail)) {
+                        if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
+                            progressBar.setVisibility(View.VISIBLE);
+                            mDeviceId = manager.getDeviceId();
+                            loginDisable(true);
+                            requestData(email, password, mDeviceId);
+                        } else {
+                            Tools.showNetworkDialog(getSupportFragmentManager());
+                            progressBar.setVisibility(View.GONE);
+                        }
                     }
                     break;
             }

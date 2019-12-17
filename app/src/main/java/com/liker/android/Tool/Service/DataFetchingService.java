@@ -41,7 +41,6 @@ import android.widget.RemoteViews;
 
 import com.google.gson.Gson;
 import com.liker.android.Home.model.Headers;
-import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.SocketIOManager;
 import com.liker.android.Home.view.activity.StarContributorActivity;
 import com.liker.android.Message.model.NewMessage;
@@ -49,14 +48,12 @@ import com.liker.android.Message.model.OnlineNotify;
 import com.liker.android.Message.model.SenderData;
 import com.liker.android.Notification.model.NotificationItem;
 import com.liker.android.Notification.service.NotificationService;
-import com.liker.android.Post.view.activity.PostPopup;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.ScreenOnOffBroadcast;
 import com.liker.android.Tool.Tools;
-import com.liker.android.Tool.model.AddTraffic;
 import com.liker.android.Tool.model.SessionOnline;
 
 import org.json.JSONArray;
@@ -83,7 +80,7 @@ public class DataFetchingService extends Service {
     private BroadcastReceiver mReceiver;
     String KEY_NOTIFICATION_GROUP = "LIKER_PUSH_NOTIFICATION";
 
-    private NotificationService webService;
+    private NotificationService webService, socketWebService;
     private String deviceId, profileId, token, userIds;
     private PrefManager manager;
     private Handler handler;
@@ -99,7 +96,11 @@ public class DataFetchingService extends Service {
         token = manager.getToken();
         userIds = manager.getProfileId();
         webService = NotificationService.mRetrofit.create(NotificationService.class);
+        socketWebService = NotificationService.wRetrofit.create(NotificationService.class);
         handler = new Handler();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(AppConstants.ADD_TRAFFIC_BROADCAST);
+        registerReceiver(broadcastReceiver, filter);
 
         if (socket != null) {
             if (!socket.connected()) {
@@ -128,7 +129,7 @@ public class DataFetchingService extends Service {
         setBroadcast();
         getNotificationData();
         setUserStatus(true);
-        setSessionUser(true);
+        setSessionUser(true, "");
         getMessagesData();
         getNewPostData();
     }
@@ -244,30 +245,30 @@ public class DataFetchingService extends Service {
             @Override
             public void run() {
                 //call function
-                addTraffic();
+                addTrafficRequest(false, "");
                 handler.postDelayed(this, DELAY_TIME);
             }
         }, DELAY_TIME);
 
     }
 
-    private void addTraffic() {
-        AddTraffic addTraffic = new AddTraffic();
-        Headers headers = new Headers();
-        headers.setDeviceId(deviceId);
-        headers.setIsApps(true);
-        headers.setSecurityToken(token);
-        addTraffic.setHeaders(headers);
-        addTraffic.setUserId(userIds);
-        addTraffic.setPathName("");
-        addTraffic.setPathNameNew("");
-        addTraffic.setDeviceType("App");
-        addTraffic.setStayTime(DELAY_TIME);
-        addTraffic.setNotify(true);
-        Gson gson = new Gson();
-        String json = gson.toJson(addTraffic);
-        socket.emit("add_traffic_new", json);
-    }
+//    private void addTraffic() {
+//        AddTraffic addTraffic = new AddTraffic();
+//        Headers headers = new Headers();
+//        headers.setDeviceId(deviceId);
+//        headers.setIsApps(true);
+//        headers.setSecurityToken(token);
+//        addTraffic.setHeaders(headers);
+//        addTraffic.setUserId(userIds);
+//        addTraffic.setPathName("");
+//        addTraffic.setPathNameNew("");
+//        addTraffic.setDeviceType("App");
+//        addTraffic.setStayTime(DELAY_TIME);
+//        addTraffic.setNotify(true);
+//        Gson gson = new Gson();
+//        String json = gson.toJson(addTraffic);
+//        socket.emit("add_traffic_new", json);
+//    }
 
     private void setUserStatus(boolean status) {
         OnlineNotify onlineNotify = new OnlineNotify();
@@ -286,7 +287,7 @@ public class DataFetchingService extends Service {
         }
     }
 
-    private void setSessionUser(boolean status) {
+    private void setSessionUser(boolean status, String pathName) {
         if (socket != null && socket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
             SessionOnline sessionOnline = new SessionOnline();
             Headers headers = new Headers();
@@ -294,7 +295,7 @@ public class DataFetchingService extends Service {
             headers.setIsApps(true);
             headers.setSecurityToken(manager.getToken());
             sessionOnline.setUserId(manager.getProfileId());
-            sessionOnline.setUrl("");
+            sessionOnline.setUrl(pathName);
             sessionOnline.setDeviceType("App");
             sessionOnline.setHeaders(headers);
             Gson gson = new Gson();
@@ -532,6 +533,27 @@ public class DataFetchingService extends Service {
         return date;
     }
 
+    private void addTrafficRequest(boolean isPageTraffic, String pathName) {
+        setSessionUser(true, pathName);
+        Call<String> call;
+        if (isPageTraffic) {
+            call = socketWebService.addPageTrafficNew(deviceId, userIds, token, userIds, "App", pathName);
+        } else {
+            call = socketWebService.addTrafficNew(deviceId, userIds, token, userIds, "App", pathName, DELAY_TIME/1000, "");
+        }
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
+    }
+
     private void sendPostItemRequest(String postId, boolean isCommentAction, NotificationItem notificationItem, Bitmap bitmap, Context context) {
 //        Call<PostItem> call = webService.getPostDetails(deviceId, profileId, token, profileId, postId);
 //        call.enqueue(new Callback<PostItem>() {
@@ -555,6 +577,39 @@ public class DataFetchingService extends Service {
 //        });
     }
 
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int pageNumber = intent.getIntExtra("page_number", -1);
+            switch (pageNumber) {
+                case AppConstants.HOME_PAGE_NUMBER:
+                    addTrafficRequest(true, "Home");
+                    break;
+                case AppConstants.MESSAGE_PAGE_NUMBER:
+                    addTrafficRequest(true, "Message");
+                    break;
+                case AppConstants.NOTIFICATION_PAGE_NUMBER:
+                    addTrafficRequest(true, "notification");
+                    break;
+                case AppConstants.POST_PAGE_NUMBER:
+                    addTrafficRequest(true, "post");
+                    break;
+                case AppConstants.PROFILE_PAGE_NUMBER:
+                    addTrafficRequest(true, "profile");
+                    break;
+                case AppConstants.SEARCH_PAGE_NUMBER:
+                    addTrafficRequest(true, "search");
+                    break;
+                case AppConstants.ADVANCE_SEARCH_PAGE_NUMBER:
+                    addTrafficRequest(true, "advance_search");
+                    break;
+                case AppConstants.SETTING_PAGE_NUMBER:
+                    addTrafficRequest(true, "setting");
+                    break;
+            }
+        }
+    };
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -566,11 +621,12 @@ public class DataFetchingService extends Service {
         super.onDestroy();
         try {
             setUserStatus(false);
-            setSessionUser(false);
+            setSessionUser(false, "");
             socket.off("web_notification");
             mSocket.off("message");
             mSocket.off("message_own");
             nSocket.off("new_post_result");
+            unregisterReceiver(broadcastReceiver);
             unregisterReceiver(mReceiver);
             handler.removeCallbacksAndMessages(null);
         } catch (IllegalArgumentException ignored) {
@@ -582,11 +638,12 @@ public class DataFetchingService extends Service {
         super.onTaskRemoved(rootIntent);
         try {
             setUserStatus(false);
-            setSessionUser(false);
+            setSessionUser(false, "");
             socket.off("web_notification");
             mSocket.off("message");
             mSocket.off("message_own");
             nSocket.off("new_post_result");
+            unregisterReceiver(broadcastReceiver);
             unregisterReceiver(mReceiver);
             handler.removeCallbacksAndMessages(null);
         } catch (IllegalArgumentException ignored) {

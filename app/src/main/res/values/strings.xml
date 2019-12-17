@@ -375,6 +375,8 @@
     <string name="groupJoin">JOINED</string>
     <string name="invite_people">Invite People</string>
     <string name="report_group">Report</string>
+    <string name="forgot_your_password">Forgot your password?</string>
+    <string name="no_result_found_for">No result found for</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

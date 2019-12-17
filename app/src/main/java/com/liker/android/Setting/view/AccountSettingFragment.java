@@ -454,7 +454,7 @@ public class AccountSettingFragment extends Fragment {
                         passwordEditLayout.setVisibility(View.GONE);
                         Tools.toast(getContext(), getString(R.string.password_has_been_updated), R.drawable.ic_check_black_24dp);
                     } else {
-                        Tools.toast(getContext(), getString(R.string.something_went_wrong), R.drawable.ic_info_outline_blue_24dp);
+                        Tools.toast(getContext(), obj.getString("message"), R.drawable.ic_info_outline_blue_24dp);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

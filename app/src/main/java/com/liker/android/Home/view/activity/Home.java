@@ -1077,8 +1077,8 @@ public class Home extends AppCompatActivity implements
         int newNotificationCount = manager.getNotificationCount();
         setNotificationCount(newNotificationCount);
         int newPostCount = manager.getPostCount();
-        setPostCount(newPostCount);
-        // code to update the UI in the fragment
+        setPostCount(newPostCount);// code to update the UI in the fragment
+        Tools.setPageTraffic(this, AppConstants.HOME_PAGE_NUMBER); //For page traffic analytics
     }
 
     private void setupToolbar() {

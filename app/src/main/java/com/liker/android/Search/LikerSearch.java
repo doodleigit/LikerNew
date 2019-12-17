@@ -41,6 +41,7 @@ import com.liker.android.Search.model.SearchHistory;
 import com.liker.android.Search.model.SearchUser;
 import com.liker.android.Search.service.SearchService;
 import com.liker.android.Search.view.SearchActivity;
+import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
 import com.liker.android.Tool.Tools;
@@ -209,6 +210,12 @@ public class LikerSearch extends AppCompatActivity implements View.OnClickListen
         }
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Tools.setPageTraffic(this, AppConstants.SEARCH_PAGE_NUMBER); //For page traffic analytics
     }
 
     private void sendHistoryRequest(Call<List<SearchHistory>> call) {
