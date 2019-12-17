@@ -19,34 +19,34 @@ public class AppConstants {
     //==========================STG SERVER=====================
 
 //
-    public static final String BASE_URL = "https://www.stg.liker.com/";
-    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
-    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
-    public static final String SOCKET_WEB = "https://node.liker.com:7803";
-    public static final String SOCKET_MESSAGE = "https://node.liker.com:7804";
-    public static final String SOCKET_NEW_POST = "http://192.168.0.12:7902";
-    public static final String SOCKET_VIDEO = "https://node.liker.com:7807";
-    public static final String FACEBOOK_SHARE = "https://www.stg.liker.com/public/posts/";
-    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
-    public static final String FACEBOOK_INVITATION = "https://www.d.liker.com/settings/fbinvite/";
-    public static final String BASE_URL_LOCATION = "https://www.stg.liker.com/";
+//    public static final String BASE_URL = "https://www.stg.liker.com/";
+//    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
+//    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
+//    public static final String SOCKET_WEB = "https://node.liker.com:7803";
+//    public static final String SOCKET_MESSAGE = "https://node.liker.com:7804";
+//    public static final String SOCKET_NEW_POST = "http://192.168.0.12:7902";
+//    public static final String SOCKET_VIDEO = "https://node.liker.com:7807";
+//    public static final String FACEBOOK_SHARE = "https://www.stg.liker.com/public/posts/";
+//    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
+//    public static final String FACEBOOK_INVITATION = "https://www.d.liker.com/settings/fbinvite/";
+//    public static final String BASE_URL_LOCATION = "https://www.stg.liker.com/";
 
     /*http://192.168.0.7:8040/sites/likerapp/user_apprate,
      parameter: user_id, status*/
 
 
     //=======================LIVE SERVER=============================
-//    public static final String BASE_URL = "https://www.api.liker.com/";
-//    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
-//    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
-//    public static final String SOCKET_WEB = "https://node.liker.com:7800";
-//    public static final String SOCKET_NEW_POST = "https://node.liker.com:7902";
-//    public static final String SOCKET_MESSAGE = "https://node.liker.com:7801";
-//    public static final String SOCKET_VIDEO = "https://node.liker.com:7806";
-//    public static final String FACEBOOK_SHARE = "https://www.liker.com/public/posts/";
-//    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
-//    public static final String FACEBOOK_INVITATION = "https://www.liker.com/settings/fbinvite/";
-//    public static final String BASE_URL_LOCATION = "https://www.api.liker.com/";
+    public static final String BASE_URL = "https://www.api.liker.com/";
+    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
+    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
+    public static final String SOCKET_WEB = "https://node.liker.com:7800";
+    public static final String SOCKET_NEW_POST = "https://node.liker.com:7902";
+    public static final String SOCKET_MESSAGE = "https://node.liker.com:7801";
+    public static final String SOCKET_VIDEO = "https://node.liker.com:7806";
+    public static final String FACEBOOK_SHARE = "https://www.liker.com/public/posts/";
+    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
+    public static final String FACEBOOK_INVITATION = "https://www.liker.com/settings/fbinvite/";
+    public static final String BASE_URL_LOCATION = "https://www.api.liker.com/";
 
     public static final String API_KEY = "cd662c2e9b2e49fc9d4d763089597ea8";
     public static final String NEWS_FEED = "top-headlines?country=us&apiKey=" + API_KEY;
