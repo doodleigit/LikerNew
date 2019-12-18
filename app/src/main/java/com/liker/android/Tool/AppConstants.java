@@ -3,7 +3,7 @@ package com.liker.android.Tool;
 public class AppConstants {
 
     //===============LOCAL SERVER==================
-
+//
     public static final String BASE_URL = "http://192.168.0.77:8040/sites/likerapp/";
     public static final String BASE_URL_MEDIA = "http://192.168.0.77:8040/sites/likeropt/";
     public static final String BASE_URL_IMAGES = "http://192.168.0.77:8040/sites/likeropt/";
@@ -251,7 +251,10 @@ public class AppConstants {
     //GROUP
     public static final String CREATE_GROUP="createGroup";
     public static final String GET_GROUP_ABOUT="getGroupabout";
-    public static final String GROUP_MEMBERS="groupMembers";
     public static final String UPDATE_GROUP_MEDIA="updateGroupMedia";
+    public static final String GROUP_MEMBERS="groupMembers";
+    public static final String LEAVE_MEMBERS="leaveMember";
+    public static final String JOIN_MEMBERS="joinMember";
+    public static final String INVITE_MEMBERS="inviteMember";
 
 }

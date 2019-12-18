@@ -59,6 +59,9 @@ public class FollowersResult implements Serializable, Parcelable
     @SerializedName("is_followed")
     @Expose
     private Boolean isFollowed;
+
+    private boolean isGroupMemberInvite;
+
     public final static Creator<FollowersResult> CREATOR = new Creator<FollowersResult>() {
 
 
@@ -97,6 +100,14 @@ public class FollowersResult implements Serializable, Parcelable
     }
 
     public FollowersResult() {
+    }
+
+    public boolean getGroupMemberInvite() {
+        return isGroupMemberInvite;
+    }
+
+    public void setGroupMemberInvite(boolean groupMemberInvite) {
+        isGroupMemberInvite = groupMemberInvite;
     }
 
     public String getId() {

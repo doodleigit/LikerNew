@@ -33,7 +33,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
         if (uri != null) {
             List<String > params=uri.getPathSegments();
             String id=params.get(params.size()-1);
-            Toast.makeText(this, "Id: "+id, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "Id: "+id, Toast.LENGTH_SHORT).show();
         }
     }
 

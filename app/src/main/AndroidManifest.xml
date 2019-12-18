@@ -27,10 +27,13 @@
         android:usesCleartextTraffic="true"
         android:vmSafeMode="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Group.view.GroupNewPostActivity"
+        <activity android:name=".Group.view.GroupInviteActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Group.view.GroupNewPostActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Group.view.GroupPageActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -204,30 +207,35 @@
             <!-- </intent-filter> -->
 
             <intent-filter android:label="@string/like">
-                <action  android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:scheme="http"
-                    android:host="www.m.liker.com"
-                    />
-            </intent-filter>
-            <intent-filter android:label="@string/like">
-                <action  android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:scheme="https"
-                    android:host="www.m.liker.com"
-                    />
-            </intent-filter>
-            <intent-filter android:label="@string/like">
-                <action  android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:scheme="app"
-                    android:host="www.m.liker.com"
-                    />
-            </intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="www.m.liker.com"
+                    android:scheme="http" />
+            </intent-filter>
+            <intent-filter android:label="@string/like">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="www.m.liker.com"
+                    android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:label="@string/like">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="www.m.liker.com"
+                    android:scheme="app" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".Authentication.view.activity.Splash"

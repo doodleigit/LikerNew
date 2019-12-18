@@ -1,31 +1,23 @@
 package com.liker.android.Group.view;
 
 import android.app.ProgressDialog;
-import android.os.Bundle;
+import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.liker.android.App;
-import com.liker.android.Group.adapter.GroupMemberAdapter;
-import com.liker.android.Group.model.Data;
-import com.liker.android.Group.model.GroupMember;
-import com.liker.android.Group.model.MyGroupMember;
+import com.liker.android.Group.adapter.GroupInviteAdapter;
 import com.liker.android.Group.service.GroupWebservice;
+import com.liker.android.Group.service.InviteClickListener;
 import com.liker.android.Profile.adapter.FollowersAdapter;
 import com.liker.android.Profile.model.Followers;
 import com.liker.android.Profile.model.FollowersResult;
@@ -39,21 +31,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//import com.doodle.Profile.adapter.FollowersAdapter;
-//import com.doodle.Profile.model.Followers;
-//import com.doodle.Profile.model.FollowersResult;
-//import com.doodle.Profile.service.FollowUnfollowClickListener;
-//import com.doodle.Profile.service.ProfileService;
-//import com.doodle.R;
-//import com.doodle.Tool.PrefManager;
-
-public class GroupMemberFragment extends Fragment {
+public class GroupInviteActivity extends AppCompatActivity implements View.OnClickListener {
 
     View view;
     private SwipeRefreshLayout refreshLayout;
@@ -65,11 +48,10 @@ public class GroupMemberFragment extends Fragment {
     private LinearLayoutManager layoutManager;
 
     private ProfileService profileService;
+    private GroupWebservice groupWebservice;
     private PrefManager manager;
-  //  private FollowersAdapter followersAdapter;
-    private GroupMemberAdapter groupMemberAdapter;
+    private GroupInviteAdapter followersAdapter;
     private ArrayList<FollowersResult> followers;
-    private List<GroupMember> groupMembers;
     private String deviceId, profileUserId, token, userId;
     int limit = 10;
     int offset = 0;
@@ -77,64 +59,73 @@ public class GroupMemberFragment extends Fragment {
     private int totalItems;
     private int scrollOutItems;
     private int currentItems;
+    private TextView tvBackGroupPage;
 
-
-    //GROUP-MEMBER===
-   private GroupWebservice groupWebservice;
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.members_fragment_layout, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.group_invite);
 
         initialComponent();
-        sendGroupMemberListRequest();
-        return view;
+        sendFriendListRequest();
+
+        recyclerView=findViewById(R.id.recyclerView);
+        tvBackGroupPage=findViewById(R.id.tvBackGroupPage);
+        tvBackGroupPage.setOnClickListener(this);
     }
 
     private void initialComponent() {
-        progressDialog = new ProgressDialog(getContext());
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.loading));
-       // progressDialog.show();
-        progressDialog.hide();
+        progressDialog.show();
+
         profileService = ProfileService.mRetrofit.create(ProfileService.class);
         groupWebservice = GroupWebservice.retrofitBase.create(GroupWebservice.class);
-        manager = new PrefManager(getContext());
-        //followers = new ArrayList<>();
-        groupMembers = new ArrayList<>();
+        manager = new PrefManager(this);
+        followers = new ArrayList<>();
         deviceId = manager.getDeviceId();
         token = manager.getToken();
         userId = manager.getProfileId();
-       // profileUserId = getArguments().getString("user_id");
+//        profileUserId = getArguments().getString("user_id");
         profileUserId = manager.getProfileId();
-        progressBar = view.findViewById(R.id.progress_bar);
-        tvAlertText = view.findViewById(R.id.alertText);
-        refreshLayout = view.findViewById(R.id.refreshLayout);
-        recyclerView = view.findViewById(R.id.recyclerView);
-        layoutManager = new LinearLayoutManager(getContext());
+        progressBar = findViewById(R.id.progress_bar);
+        tvAlertText = findViewById(R.id.alertText);
+        refreshLayout = findViewById(R.id.refreshLayout);
+        recyclerView = findViewById(R.id.recyclerView);
+        layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
 
-        FollowUnfollowClickListener followUnfollowClickListener = new FollowUnfollowClickListener() {
-            @Override
-            public void onFollowClick(String followUserId, int position) {
-                setFollow(followUserId, position);
-            }
+        InviteClickListener inviteClickListener = new InviteClickListener() {
 
             @Override
-            public void onUnFollowClick(String followUserId, int position) {
-                setUnFollow(followUserId, position);
+            public void onInviteClick(String followUserId, int position) {
+
+                  setInviteGroupMember(followUserId, position);
+
+             /*   @Override
+                public void onFollowClick(String followUserId, int position) {
+                    setFollow(followUserId, position);
+                }
+
+                @Override
+                public void onUnFollowClick(String followUserId, int position) {
+                    setUnFollow(followUserId, position);
+                }
+*/
             }
+
         };
 
-        groupMemberAdapter = new GroupMemberAdapter(getActivity(), groupMembers, followUnfollowClickListener);
-        recyclerView.setAdapter(groupMemberAdapter);
+        followersAdapter = new GroupInviteAdapter(this, followers, inviteClickListener);
+
+        recyclerView.setAdapter(followersAdapter);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 offset = 0;
-                sendGroupMemberListRequest();
+                sendFriendListRequest();
             }
         });
 
@@ -162,36 +153,79 @@ public class GroupMemberFragment extends Fragment {
         });
     }
 
-    private void sendGroupMemberListRequest() {
-        Call<MyGroupMember> call = groupWebservice.groupMembers(deviceId, userId, token, userId, AppSingleton.getInstance().getGroupId());
-        call.enqueue(new Callback<MyGroupMember>() {
+    private void setInviteGroupMember(String followUserId, int position) {
+        String[] inviteUsers = new String[] {followUserId};
+     //   String[] inviteUsers={followUserId};
+        progressDialog.show();
+        Call<String> call = groupWebservice.inviteMembers(deviceId, userId,token, userId, AppSingleton.getInstance().getGroupId(),inviteUsers);
+        call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<MyGroupMember> call, Response<MyGroupMember> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+              /*{"status":true,
+"data":{
+"id":26},
+"message":{
+"errors":{},
+"success":{
+"message":"Members invited successfully!"
+}
+}}*/
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+                        followers.get(position).setGroupMemberInvite(true);
+                        followersAdapter.notifyItemChanged(position);
+                        sendBrowserNotification(followUserId);
+                    } else {
+                        Toast.makeText(GroupInviteActivity.this, getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                    }
+                    JSONObject dataObject=obj.getJSONObject("data");
+                    JSONObject messageObject=obj.getJSONObject("message");
+                    JSONObject successObject=messageObject.getJSONObject("success");
+                    String message=successObject.getString("message");
+                    Toast.makeText(GroupInviteActivity.this, message, Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.hide();
+            }
 
-                groupMembers.clear();
-                MyGroupMember myGroupMember=response.body();
-                Data data=myGroupMember.getData();
-                groupMembers.addAll(data.getGroupMembers());
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressDialog.hide();
+            }
+        });
 
-                if (groupMembers.size() > 0) {
+    }
+
+    private void sendFriendListRequest() {
+        Call<Followers> call = profileService.getFollowers(deviceId, token, userId, userId, profileUserId, limit, offset, false);
+        call.enqueue(new Callback<Followers>() {
+            @Override
+            public void onResponse(Call<Followers> call, Response<Followers> response) {
+                followers.clear();
+                Followers follower = response.body();
+                if (follower != null) {
+                    followers.addAll(follower.getFollowersResult());
                     offset += 10;
                 }
-                if (groupMembers.size() == 0) {
+                if (followers.size() == 0) {
                     tvAlertText.setVisibility(View.VISIBLE);
                 } else {
                     tvAlertText.setVisibility(View.GONE);
                 }
-
-                groupMemberAdapter.notifyDataSetChanged();
+                followersAdapter.notifyDataSetChanged();
                 progressDialog.hide();
                 refreshLayout.setRefreshing(false);
             }
 
             @Override
-            public void onFailure(Call<MyGroupMember> call, Throwable t) {
+            public void onFailure(Call<Followers> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
-                groupMembers.clear();
-                groupMemberAdapter.notifyDataSetChanged();
+                followers.clear();
+                followersAdapter.notifyDataSetChanged();
                 progressDialog.hide();
                 refreshLayout.setRefreshing(false);
             }
@@ -201,16 +235,14 @@ public class GroupMemberFragment extends Fragment {
 
     private void sendFriendListPaginationRequest() {
         progressBar.setVisibility(View.VISIBLE);
-        Call<MyGroupMember> call = groupWebservice.groupMembers(deviceId,userId, token,  userId, AppSingleton.getInstance().getGroupId());
-        call.enqueue(new Callback<MyGroupMember>() {
+        Call<Followers> call = profileService.getFollowers(deviceId, token, userId, userId, profileUserId, limit, offset, false);
+        call.enqueue(new Callback<Followers>() {
             @Override
-            public void onResponse(Call<MyGroupMember> call, Response<MyGroupMember> response) {
-                Log.d("MyGroupMember",response.body().toString());
-                MyGroupMember myGroupMember=response.body();
-                Data data=myGroupMember.getData();
-                groupMembers=data.getGroupMembers();
-                if (groupMembers.size()> 0) {
-                    groupMemberAdapter.notifyDataSetChanged();
+            public void onResponse(Call<Followers> call, Response<Followers> response) {
+                Followers follower = response.body();
+                if (follower != null) {
+                    followers.addAll(follower.getFollowersResult());
+                    followersAdapter.notifyDataSetChanged();
                     offset += 10;
                 }
                 progressDialog.hide();
@@ -218,10 +250,10 @@ public class GroupMemberFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<MyGroupMember> call, Throwable t) {
+            public void onFailure(Call<Followers> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
-                groupMembers.clear();
-                groupMemberAdapter.notifyDataSetChanged();
+                followers.clear();
+                followersAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -239,11 +271,11 @@ public class GroupMemberFragment extends Fragment {
                     JSONObject obj = new JSONObject(jsonResponse);
                     boolean status = obj.getBoolean("status");
                     if (status) {
-                        groupMembers.get(position).setIsFollowed(true);
-                        groupMemberAdapter.notifyItemChanged(position);
+                        followers.get(position).setIsFollowed(true);
+                        followersAdapter.notifyItemChanged(position);
                         sendBrowserNotification(followUserId);
                     } else {
-                        Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                        Toast.makeText(GroupInviteActivity.this, getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -269,11 +301,10 @@ public class GroupMemberFragment extends Fragment {
                     JSONObject obj = new JSONObject(jsonResponse);
                     boolean status = obj.getBoolean("status");
                     if (status) {
-
-                        groupMembers.get(position).setIsFollowed(false);
-                        groupMemberAdapter.notifyItemChanged(position);
+                        followers.get(position).setIsFollowed(false);
+                        followersAdapter.notifyItemChanged(position);
                     } else {
-                        Toast.makeText(getContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                        Toast.makeText(GroupInviteActivity.this, getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -302,4 +333,16 @@ public class GroupMemberFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onClick(View v) {
+
+        int id=v.getId();
+        switch (id){
+            case R.id.tvBackGroupPage:
+                startActivity(new Intent(this,GroupPageActivity.class));
+                finish();
+                break;
+        }
+
+    }
 }

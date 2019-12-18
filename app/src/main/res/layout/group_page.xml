@@ -157,15 +157,14 @@
                                             android:id="@+id/imageGroupJoin"
                                             android:layout_width="12dp"
                                             android:layout_height="12dp"
-                                            android:tint="@color/colorWhite"
-                                            android:src="@drawable/ic_check_black_24dp" />
+                                            android:src="@drawable/ic_group_joined_24dp" />
 
                                         <TextView
                                             android:id="@+id/tvGroupJoin"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_marginStart="5dp"
-                                            android:text="@string/groupJoin"
+                                            android:text="@string/groupJoined"
                                             android:textColor="@color/colorWhite"
                                             android:textSize="10sp" />
 

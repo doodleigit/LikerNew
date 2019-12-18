@@ -10,10 +10,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
-import com.liker.android.Group.model.GroupMember;
+import com.liker.android.Group.service.InviteClickListener;
 import com.liker.android.Profile.model.FollowersResult;
 import com.liker.android.Profile.service.FollowUnfollowClickListener;
 import com.liker.android.Profile.view.ProfileActivity;
@@ -21,7 +22,6 @@ import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 
 import java.util.ArrayList;
-import java.util.List;
 
 //import com.doodle.App;
 //import com.doodle.Profile.model.FollowersResult;
@@ -30,22 +30,22 @@ import java.util.List;
 //import com.doodle.R;
 //import com.doodle.Tool.AppConstants;
 
-public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.ViewHolder> {
+public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.ViewHolder> {
 
     private Context context;
-    private List<GroupMember> groupMembers;
-    private FollowUnfollowClickListener followUnfollowClickListener;
+    private ArrayList<FollowersResult> arrayList;
+    private InviteClickListener inviteClickListener;
 
-    public GroupMemberAdapter(Context context, List<GroupMember> groupMembers, FollowUnfollowClickListener followUnfollowClickListener) {
+    public GroupInviteAdapter(Context context, ArrayList<FollowersResult> arrayList, InviteClickListener inviteClickListener) {
         this.context = context;
-        this.groupMembers = groupMembers;
-        this.followUnfollowClickListener = followUnfollowClickListener;
+        this.arrayList = arrayList;
+        this.inviteClickListener = inviteClickListener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_group_member, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_group_invite, viewGroup, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
@@ -53,18 +53,22 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         String fullName, photo, likes, stars;
-        fullName = groupMembers.get(i).getFirstName() + " " + groupMembers.get(i).getLastName();
-        photo = AppConstants.PROFILE_IMAGE + groupMembers.get(i).getPhoto();
-        likes = groupMembers.get(i).getTotalLikes();
-        stars = groupMembers.get(i).getGoldStars();
+        fullName = arrayList.get(i).getFirstName() + " " + arrayList.get(i).getLastName();
+        photo = AppConstants.PROFILE_IMAGE + arrayList.get(i).getPhoto();
+        likes = arrayList.get(i).getTotalLikes();
+        stars = arrayList.get(i).getGoldStars();
 
         viewHolder.userName.setText(fullName);
         viewHolder.likes.setText(likes + " " + context.getString(R.string.likes));
         viewHolder.stars.setText(stars + " " + context.getString(R.string.stars));
-        if (groupMembers.get(i).isIsFollowed()) {
-            viewHolder.follow.setText(context.getString(R.string.unfollow));
+
+
+        if (arrayList.get(i).getGroupMemberInvite()) {
+            viewHolder.btnInvite.setText(context.getString(R.string.group_invited));
+            viewHolder.btnInvite.setEnabled(false);
         } else {
-            viewHolder.follow.setText(context.getString(R.string.follow));
+            viewHolder.btnInvite.setText(context.getString(R.string.group_invite));
+
         }
 
         Glide.with(App.getAppContext())
@@ -75,21 +79,23 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
                 .dontAnimate()
                 .into(viewHolder.userImage);
 
-        viewHolder.follow.setOnClickListener(new View.OnClickListener() {
+        viewHolder.btnInvite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (groupMembers.get(i).isIsFollowed()) {
-                    followUnfollowClickListener.onUnFollowClick(groupMembers.get(i).getUserId(), i);
+                inviteClickListener.onInviteClick(arrayList.get(i).getUserId(), i);
+             //   Toast.makeText(context, "invite user", Toast.LENGTH_SHORT).show();
+                /*if (arrayList.get(i).getIsFollowed()) {
+                    followUnfollowClickListener.onUnFollowClick(arrayList.get(i).getUserId(), i);
                 } else {
-                    followUnfollowClickListener.onFollowClick(groupMembers.get(i).getUserId(), i);
-                }
+                    followUnfollowClickListener.onFollowClick(arrayList.get(i).getUserId(), i);
+                }*/
             }
         });
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.startActivity(new Intent(context, ProfileActivity.class).putExtra("user_id", groupMembers.get(i).getUserId()).putExtra("user_name", groupMembers.get(i).getUserName()));
+                context.startActivity(new Intent(context, ProfileActivity.class).putExtra("user_id", arrayList.get(i).getUserId()).putExtra("user_name", arrayList.get(i).getUserName()));
             }
         });
 
@@ -97,14 +103,14 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
 
     @Override
     public int getItemCount() {
-        return groupMembers.size();
+        return arrayList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView userImage;
         TextView userName, likes, stars;
-        Button follow;
+        Button btnInvite;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -113,7 +119,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
             userName = itemView.findViewById(R.id.userName);
             likes = itemView.findViewById(R.id.likes);
             stars = itemView.findViewById(R.id.stars);
-            follow = itemView.findViewById(R.id.follow);
+            btnInvite = itemView.findViewById(R.id.btnInvite);
         }
     }
 

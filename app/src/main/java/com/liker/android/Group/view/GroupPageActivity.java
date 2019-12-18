@@ -34,9 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reason;
@@ -115,7 +112,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     private LinearLayout contentHolderLayout, searchLayout, followLayout, moreLayout, alertLayout;
     private RelativeLayout coverImageLayout, profileImageLayout;
     private ImageView ivCoverImage, ivProfileImage, ivChangeCoverImage, ivChangeProfileImage;
-    private TextView tvGroupName, tvTotalInfoCount,  tvRetry;
+    private TextView tvGroupName, tvTotalInfoCount, tvRetry;
 
     private ProfileService profileService;
     private GroupWebservice groupWebservice;
@@ -129,7 +126,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     private String groupId;
     private final int REQUEST_TAKE_CAMERA = 101;
     private final int REQUEST_TAKE_GALLERY_IMAGE = 102;
-  //  private int uploadContentType = 0;
+    //  private int uploadContentType = 0;
     private String deviceId, userId, token, profileUserName, fullName, userImage, coverImage, allCountInfo;
     private boolean isOwnProfile, isFollow;
     private android.support.v7.widget.PopupMenu popup;
@@ -138,6 +135,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
     private ImageView imageGroupJoin;
     private TextView tvGroupJoin;
+    private boolean isMember;
 
 
     @Override
@@ -187,7 +185,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         progressDialog.setMessage(getString(R.string.loading));
         progressDialog.show();
 
-      //  ownProfileCheck();
+        //  ownProfileCheck();
 
         searchLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,7 +215,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             @Override
             public void onClick(View view) {
 
-            //    uploadContentType = 1;
+                //    uploadContentType = 1;
                 selectImageSource(ivChangeCoverImage);
 
 //                if (isOwnProfile) {
@@ -230,10 +228,12 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         followLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isFollow) {
-                    setUnFollow(profileUserId);
+                if (isMember) {
+          //          setUnFollow(profileUserId);
+                    setLeaveMember();
                 } else {
-                    setFollow(profileUserId);
+                 //   setFollow(profileUserId);
+                    setJoinMember();
                 }
             }
         });
@@ -257,6 +257,8 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                         int id = menuItem.getItemId();
 
                         if (id == R.id.invitePeople) {
+
+                            startActivity(new Intent(GroupPageActivity.this,GroupInviteActivity.class));
 
                             Toast.makeText(GroupPageActivity.this, "invite people", LENGTH_SHORT).show();
 
@@ -323,6 +325,76 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         });
     }
 
+    private void setJoinMember() {
+
+        progressDialog.setMessage(getString(R.string.updating));
+        progressDialog.show();
+        Call<String> call = groupWebservice.joinMembers(deviceId,userId, token, userId, groupId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+                      //  isFollow = false;
+                        isMember = true;
+                        imageGroupJoin.setImageResource(R.drawable.ic_group_joined_24dp);
+                        tvGroupJoin.setText(getString(R.string.groupJoined));
+                        //tvFollow.setText(getString(R.string.follow));
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    private void setLeaveMember() {
+
+        progressDialog.setMessage(getString(R.string.updating));
+        progressDialog.show();
+        Call<String> call = groupWebservice.leaveMembers(deviceId,userId, token, userId, groupId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+                       // isFollow = false;
+                        isMember = false;
+                        imageGroupJoin.setImageResource(R.drawable.ic_add_group_24dp);
+                        tvGroupJoin.setText(getString(R.string.groupJoin));
+                        //tvFollow.setText(getString(R.string.follow));
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressDialog.dismiss();
+            }
+        });
+
+
+    }
+
     private void sendReportReason(Call<ReportReason> call) {
         call.enqueue(new Callback<ReportReason>() {
 
@@ -370,7 +442,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     }
 
     private void getData() {
-        Call<String> call = groupWebservice.getGroupAbout(deviceId, userId, token,userId, groupId);
+        Call<String> call = groupWebservice.getGroupAbout(deviceId, userId, token, userId, groupId);
         getGroupAbout(call);
     }
 
@@ -379,15 +451,15 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         //   userImage = AppConstants.USER_UPLOADED_IMAGES + userAllInfo.getPhoto();
         userImage = AppConstants.USER_UPLOADED_IMAGES + "";
         coverImage = AppConstants.USER_UPLOADED_IMAGES + groupImageName;
-      //  allCountInfo = Tools.getFormattedLikerCount("Members: " + Tools.getFormattedLikerCount(groupTotalMember) + " | Posts: " + Tools.getFormattedLikerCount(groupTotalPost));
+        //  allCountInfo = Tools.getFormattedLikerCount("Members: " + Tools.getFormattedLikerCount(groupTotalMember) + " | Posts: " + Tools.getFormattedLikerCount(groupTotalPost));
 
-       // allCountInfo = Tools.getFormattedLikerCount(userAllInfo.getTotalLikes()) + " Likes " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowers()) + " Followers " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowings()) + " Following";
-        allCountInfo="Members: "+Tools.getFormattedLikerCount("1500")+" | Posts: "+Tools.getFormattedLikerCount("2000");
+        // allCountInfo = Tools.getFormattedLikerCount(userAllInfo.getTotalLikes()) + " Likes " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowers()) + " Followers " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowings()) + " Following";
+        allCountInfo = "Members: " + Tools.getFormattedLikerCount("1500") + " | Posts: " + Tools.getFormattedLikerCount("2000");
         //allCountInfo = Tools.getFormattedLikerCount("Members: " + Tools.getFormattedLikerCount("1500") + " | Posts: " + Tools.getFormattedLikerCount("2000"));
 
         tvGroupName.setText(groupName);
         tvTotalInfoCount.setText(allCountInfo);
-      //  loadProfileImage();
+        //  loadProfileImage();
         loadCoverImage();
     }
 
@@ -491,7 +563,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             mediaCall = profileService.uploadProfileImage(deviceId, userId, token, fileToUpload);
         } else {
         }*/
-        mediaCall = groupWebservice.uploadCoverImage(deviceId, userId, token, fileToUpload,userId,groupId);
+        mediaCall = groupWebservice.uploadCoverImage(deviceId, userId, token, fileToUpload, userId, groupId);
         progressDialog.setMessage(getString(R.string.uploading));
         progressDialog.show();
         sendImageRequest(mediaCall);
@@ -625,7 +697,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.members)));
 //        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.following)));
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.photos)));
-       // tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.stars)));
+        // tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.stars)));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -670,10 +742,10 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                     boolean follow = obj.getBoolean("follow");
                     if (follow) {
                         isFollow = true;
-                      //  tvFollow.setText(getString(R.string.following));
+                        //    tvFollow.setText(getString(R.string.following));
                     } else {
                         isFollow = false;
-                       // tvFollow.setText(getString(R.string.follow));
+                        // tvFollow.setText(getString(R.string.follow));
                     }
                     if (profileDataFetchCompleteListener != null) {
                         profileDataFetchCompleteListener.onComplete(userAllInfo.getPrivacy().getWallPermission(), isFollow);
@@ -709,9 +781,10 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                                     groupTotalPost = groupInfoObject.getString("total_post");
                                     groupImageName = groupInfoObject.getString("image_name");
                                     groupDescription = groupInfoObject.getString("description");
-                                    boolean isMember=dataObject.getBoolean("is_member");
-                                    //isFriendStatus();
-                                     setData();
+                                    boolean isMember = dataObject.getBoolean("is_member");
+                                    //  isFriendStatus();
+                                    isMemberStatus(isMember);
+                                    setData();
                                     viewHandler(true);
                                 }
                                 JSONObject messageObject = object.getJSONObject("message");
@@ -747,6 +820,25 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         });
     }
 
+    private void isMemberStatus(boolean isMembers) {
+
+        if (isMembers) {
+            isFollow = true;
+            isMember = true;
+            imageGroupJoin.setImageResource(R.drawable.ic_group_joined_24dp);
+            tvGroupJoin.setText(getString(R.string.groupJoined));
+            //    tvFollow.setText(getString(R.string.following));
+        } else {
+            isMember = false;
+            imageGroupJoin.setImageResource(R.drawable.ic_add_group_24dp);
+            tvGroupJoin.setText(getString(R.string.groupJoin));
+            // tvFollow.setText(getString(R.string.follow));
+        }
+//        if (profileDataFetchCompleteListener != null) {
+//            profileDataFetchCompleteListener.onComplete(userAllInfo.getPrivacy().getWallPermission(), isFollow);
+//        }
+    }
+
     private void viewHandler(boolean status) {
         if (status) {
             contentHolderLayout.setVisibility(View.VISIBLE);
@@ -771,7 +863,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         isFollow = true;
-                     //   tvFollow.setText(getString(R.string.following));
+                        //   tvFollow.setText(getString(R.string.following));
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
                     }
@@ -853,7 +945,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("TAG",t.getMessage());
+                Log.d("TAG", t.getMessage());
                 Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
