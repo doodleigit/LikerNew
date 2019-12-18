@@ -65,6 +65,7 @@ import com.leocardz.link.preview.library.LinkPreviewCallback;
 import com.leocardz.link.preview.library.SourceContent;
 import com.leocardz.link.preview.library.TextCrawler;
 import com.liker.android.App;
+import com.liker.android.Authentication.view.activity.Login;
 import com.liker.android.Home.holder.mediaHolder.ImageViewHolder;
 import com.liker.android.Home.holder.mediaHolder.VideoViewHolder;
 import com.liker.android.Home.model.Headers;
@@ -230,7 +231,7 @@ public class DirectShareActivity extends AppCompatActivity implements
     private int currentItem = 0;
     private int countBigImages = 0;
     private boolean noThumb;
-    private TextCrawler textCrawler;
+//    private TextCrawler textCrawler;
     //    TextCrawler textCrawler = new TextCrawler();
     boolean isLinkScript;
     List<String> extractedUrls = new ArrayList<>();
@@ -340,11 +341,19 @@ public class DirectShareActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.direrct_share);
-        mContext = this;
-
         manager = new PrefManager(this);
+        if (!isNullOrEmpty(manager.getProfileId())) {
+            initComponent();
+        } else {
+            startActivity(new Intent(this, Login.class));
+            finish();
+        }
+
+    }
+
+    private void initComponent() {
+        mContext = this;
         webService = PostService.mRetrofit.create(PostService.class);
         videoServices = PostService.videoRetrofit.create(PostService.class);
         networkOk = NetworkHelper.hasNetworkAccess(this);
@@ -675,12 +684,12 @@ public class DirectShareActivity extends AppCompatActivity implements
         recyclerViews.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         setUpEmojiPopup();
 
-        textCrawler = new TextCrawler();
+    //    textCrawler = new TextCrawler();
 
         editTextTitlePost = null;
         editTextDescriptionPost = null;
 
-             //** --- From ShareVia Intent *//*
+        //** --- From ShareVia Intent *//*
 
 //        if (getIntent().getAction() == Intent.ACTION_MEDIA_SHARED) {
 //            Uri data = getIntent().getData();
@@ -865,7 +874,7 @@ public class DirectShareActivity extends AppCompatActivity implements
 //        }
 
         // Set up the UI.
-      //  prepareUi();
+        //  prepareUi();
         // The contact ID will not be passed on when the user clicks on the app icon rather than any
         // of the Direct Share icons. In this case, we show another dialog for selecting a contact.
 //        if (mContactId == Contact.INVALID_ID) {
@@ -873,15 +882,14 @@ public class DirectShareActivity extends AppCompatActivity implements
 //        }
 
 
-
         if (getIntent().getExtras() != null) {
             String shareVia = (String) getIntent().getExtras().get(Intent.EXTRA_TEXT);
             if (shareVia != null) {
                 editPostMessage.append(shareVia);
 
-            }else {
+            } else {
 
-                Uri uri=(Uri) getIntent().getExtras().get(Intent.EXTRA_STREAM);
+                Uri uri = (Uri) getIntent().getExtras().get(Intent.EXTRA_STREAM);
                 imageFilePath = getPath(this, uri);
                 String imagePath = "file://" + imageFilePath;
                 String strMD5 = getMD5EncryptedString(imagePath);
@@ -905,7 +913,6 @@ public class DirectShareActivity extends AppCompatActivity implements
             }
 
         }
-
     }
 
     /**
@@ -934,9 +941,9 @@ public class DirectShareActivity extends AppCompatActivity implements
             mBody = intent.getStringExtra(Intent.EXTRA_TEXT);
             //  mContactId = intent.getIntExtra(Contact.ID, Contact.INVALID_ID);
             return true;
-        }else if(Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) &&
-                "image/*".equals(intent.getType())){
-           // mBody = intent.getStringExtra(Intent.EXTRA_TEXT);
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) &&
+                "image/*".equals(intent.getType())) {
+            // mBody = intent.getStringExtra(Intent.EXTRA_TEXT);
 //            mBody = intent.getStringExtra(Intent.EXTRA_STREAM);
 //            Intent shareIntent = new Intent();
 //            shareIntent.setAction(Intent.ACTION_SEND);
@@ -944,7 +951,7 @@ public class DirectShareActivity extends AppCompatActivity implements
 //            shareIntent.setType("image/*");
 //            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
 //            01915872497
-           // ArrayList<Uri> imageUris = new ArrayList<Uri>();
+            // ArrayList<Uri> imageUris = new ArrayList<Uri>();
 //            imageUris.add(imageUri1); // Add your image URIs here
 //            imageUris.add(imageUri2);
 //
@@ -1733,7 +1740,7 @@ public class DirectShareActivity extends AppCompatActivity implements
                                 Gson gson = new Gson();
                                 String json = gson.toJson(contributorStatus);
                                 //socket = SocketIOManager.nSocket;
-                                socket =new  SocketIOManager().getNewPostSocketInstance();
+                                socket = new SocketIOManager().getNewPostSocketInstance();
                                 socket.emit("new_post", json, new Ack() {
                                     @Override
                                     public void call(Object... args) {
@@ -1816,7 +1823,7 @@ public class DirectShareActivity extends AppCompatActivity implements
         App.setmSubcatg(null);
         manager.setPostAudience("");
         super.onDestroy();
-        textCrawler.cancel();
+     //   textCrawler.cancel();
     }
 
     private void setUpEmojiPopup() {

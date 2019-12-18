@@ -643,8 +643,9 @@ public class ForgotPasswords extends AppCompatActivity implements View.OnClickLi
                 forgotPassword = response.body();
                 boolean status = forgotPassword.isStatus();
                 if (status) {
-                    String message =getString(R.string.password_request_send_to_your_email);
-                    showStatus(message);
+                    Tools.toast(ForgotPasswords.this, getString(R.string.password_request_send_to_your_email), R.drawable.ic_check_black_24dp);
+                  //  String message =getString(R.string.password_request_send_to_your_email);
+                //    showStatus(message);
                 /*    flipperId++;
                     mViewFlipper.setInAnimation(slideLeftIn);
                     mViewFlipper.setOutAnimation(slideLeftOut);
@@ -914,7 +915,7 @@ public class ForgotPasswords extends AppCompatActivity implements View.OnClickLi
                 ResendStatus data = response.body();
                 String message = data.getMessage();
                 // Log.d("Message", message);
-                showStatus(message);
+              //  showStatus(message);
             }
 
             @Override
@@ -952,8 +953,10 @@ public class ForgotPasswords extends AppCompatActivity implements View.OnClickLi
                 forgotPassword = response.body();
                 boolean status = forgotPassword.isStatus();
                 if (status) {
-                    String message = getString(R.string.password_request_send_to_your_email);
-                    showStatus(message);
+                   // String message = getString(R.string.password_request_send_to_your_email);
+                    Tools.toast(ForgotPasswords.this, getString(R.string.password_request_send_to_your_email), R.drawable.ic_check_black_24dp);
+
+                  //  showStatus(message);
                     flipperId++;
                     mViewFlipper.setInAnimation(slideLeftIn);
                     mViewFlipper.setOutAnimation(slideLeftOut);

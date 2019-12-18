@@ -8,9 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,10 +22,8 @@ import android.widget.Toast;
 import com.liker.android.Group.adapter.GroupInviteAdapter;
 import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Group.service.InviteClickListener;
-import com.liker.android.Profile.adapter.FollowersAdapter;
 import com.liker.android.Profile.model.Followers;
 import com.liker.android.Profile.model.FollowersResult;
-import com.liker.android.Profile.service.FollowUnfollowClickListener;
 import com.liker.android.Profile.service.ProfileService;
 import com.liker.android.R;
 import com.liker.android.Tool.AppSingleton;
@@ -50,7 +52,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
     private ProfileService profileService;
     private GroupWebservice groupWebservice;
     private PrefManager manager;
-    private GroupInviteAdapter followersAdapter;
+    private GroupInviteAdapter groupInviteAdapter;
     private ArrayList<FollowersResult> followers;
     private String deviceId, profileUserId, token, userId;
     int limit = 10;
@@ -60,6 +62,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
     private int scrollOutItems;
     private int currentItems;
     private TextView tvBackGroupPage;
+    private ImageView imageCancelInviteGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +72,10 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
         initialComponent();
         sendFriendListRequest();
 
-        recyclerView=findViewById(R.id.recyclerView);
-        tvBackGroupPage=findViewById(R.id.tvBackGroupPage);
+        recyclerView = findViewById(R.id.recyclerView);
+        tvBackGroupPage = findViewById(R.id.tvBackGroupPage);
+        imageCancelInviteGroup = findViewById(R.id.imageCancelInviteGroup);
+        imageCancelInviteGroup.setOnClickListener(this);
         tvBackGroupPage.setOnClickListener(this);
     }
 
@@ -101,7 +106,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onInviteClick(String followUserId, int position) {
 
-                  setInviteGroupMember(followUserId, position);
+                setInviteGroupMember(followUserId, position);
 
              /*   @Override
                 public void onFollowClick(String followUserId, int position) {
@@ -117,9 +122,9 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
 
         };
 
-        followersAdapter = new GroupInviteAdapter(this, followers, inviteClickListener);
+        groupInviteAdapter = new GroupInviteAdapter(this, followers, inviteClickListener);
 
-        recyclerView.setAdapter(followersAdapter);
+        recyclerView.setAdapter(groupInviteAdapter);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -151,40 +156,64 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
                 }
             }
         });
+
+        EditText etSearchGroup = findViewById(R.id.etSearchGroup);
+
+        etSearchGroup.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
+    }
+
+    private void filter(String text) {
+        ArrayList<FollowersResult> filteredList = new ArrayList<>();
+
+        for (FollowersResult item : followers) {
+            String name = item.getFirstName() + " " + item.getLastName();
+            if (name.toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        groupInviteAdapter.filterList(filteredList);
+      //  followers.clear();
+        //followers.addAll(filteredList);
     }
 
     private void setInviteGroupMember(String followUserId, int position) {
-        String[] inviteUsers = new String[] {followUserId};
-     //   String[] inviteUsers={followUserId};
+        String[] inviteUsers = new String[]{followUserId};
+        //   String[] inviteUsers={followUserId};
         progressDialog.show();
-        Call<String> call = groupWebservice.inviteMembers(deviceId, userId,token, userId, AppSingleton.getInstance().getGroupId(),inviteUsers);
+        Call<String> call = groupWebservice.inviteMembers(deviceId, userId, token, userId, AppSingleton.getInstance().getGroupId(), inviteUsers);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String jsonResponse = response.body();
-              /*{"status":true,
-"data":{
-"id":26},
-"message":{
-"errors":{},
-"success":{
-"message":"Members invited successfully!"
-}
-}}*/
                 try {
                     JSONObject obj = new JSONObject(jsonResponse);
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         followers.get(position).setGroupMemberInvite(true);
-                        followersAdapter.notifyItemChanged(position);
+                        groupInviteAdapter.notifyItemChanged(position);
                         sendBrowserNotification(followUserId);
                     } else {
                         Toast.makeText(GroupInviteActivity.this, getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
                     }
-                    JSONObject dataObject=obj.getJSONObject("data");
-                    JSONObject messageObject=obj.getJSONObject("message");
-                    JSONObject successObject=messageObject.getJSONObject("success");
-                    String message=successObject.getString("message");
+                    JSONObject dataObject = obj.getJSONObject("data");
+                    JSONObject messageObject = obj.getJSONObject("message");
+                    JSONObject successObject = messageObject.getJSONObject("success");
+                    String message = successObject.getString("message");
                     Toast.makeText(GroupInviteActivity.this, message, Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -216,7 +245,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
                 } else {
                     tvAlertText.setVisibility(View.GONE);
                 }
-                followersAdapter.notifyDataSetChanged();
+                groupInviteAdapter.notifyDataSetChanged();
                 progressDialog.hide();
                 refreshLayout.setRefreshing(false);
             }
@@ -225,7 +254,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
             public void onFailure(Call<Followers> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
                 followers.clear();
-                followersAdapter.notifyDataSetChanged();
+                groupInviteAdapter.notifyDataSetChanged();
                 progressDialog.hide();
                 refreshLayout.setRefreshing(false);
             }
@@ -242,7 +271,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
                 Followers follower = response.body();
                 if (follower != null) {
                     followers.addAll(follower.getFollowersResult());
-                    followersAdapter.notifyDataSetChanged();
+                    groupInviteAdapter.notifyDataSetChanged();
                     offset += 10;
                 }
                 progressDialog.hide();
@@ -253,7 +282,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
             public void onFailure(Call<Followers> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
                 followers.clear();
-                followersAdapter.notifyDataSetChanged();
+                groupInviteAdapter.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -272,7 +301,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         followers.get(position).setIsFollowed(true);
-                        followersAdapter.notifyItemChanged(position);
+                        groupInviteAdapter.notifyItemChanged(position);
                         sendBrowserNotification(followUserId);
                     } else {
                         Toast.makeText(GroupInviteActivity.this, getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
@@ -302,7 +331,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         followers.get(position).setIsFollowed(false);
-                        followersAdapter.notifyItemChanged(position);
+                        groupInviteAdapter.notifyItemChanged(position);
                     } else {
                         Toast.makeText(GroupInviteActivity.this, getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
                     }
@@ -336,10 +365,14 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
 
-        int id=v.getId();
-        switch (id){
+        int id = v.getId();
+        switch (id) {
             case R.id.tvBackGroupPage:
-                startActivity(new Intent(this,GroupPageActivity.class));
+                startActivity(new Intent(this, GroupPageActivity.class));
+                finish();
+                break;
+            case R.id.imageCancelInviteGroup:
+                startActivity(new Intent(this, GroupPageActivity.class));
                 finish();
                 break;
         }

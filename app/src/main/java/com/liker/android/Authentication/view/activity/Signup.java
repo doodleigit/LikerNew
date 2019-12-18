@@ -91,6 +91,7 @@ import com.liker.android.Setting.view.SettingActivity;
 import com.liker.android.Tool.ClearableEditText;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
+import com.liker.android.Tool.Tools;
 import com.onesignal.OneSignal;
 import com.squareup.picasso.Picasso;
 
@@ -1079,13 +1080,12 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                                 mViewFlipper.setInAnimation(slideLeftIn);
                                 mViewFlipper.setOutAnimation(slideLeftOut);
                                 mViewFlipper.showNext();
-
                             }
 
                             if (isContain(object, "user_id")) {
                                 user.userId = object.getString("user_id");
                                 //manager.setProfileId(user.userId);
-                                String msg = "A verification email has been sent to your email address. Please confirm and complete your registration.";
+                                String msg = getString(R.string.verification_email_sent_successfully);
                                 ResendEmail resendEmail = ResendEmail.newInstance(msg);
                                 resendEmail.show(getSupportFragmentManager(), "ResendEmail");
                                 //startActivity(new Intent(Signup.this, Liker.class));
@@ -1254,9 +1254,11 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String data = response.body();
-                // String message = data.getMessage();
-                // Log.d("Message", message);
-                showStatus(data);
+                Tools.toast(Signup.this, getString(R.string.verification_email_sent_successfully), R.drawable.ic_check_black_24dp);
+
+               //  String message = data;
+               //  Log.d("Message", message);
+             //   showStatus(data);
 //                if (flipperId == 1) {
 //                    flipperId++;
 //                    mViewFlipper.setInAnimation(slideLeftIn);

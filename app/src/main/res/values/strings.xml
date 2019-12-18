@@ -381,6 +381,8 @@
     <string name="group_invited">INVITED</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="no_result_found_for">No result found for</string>
+    <string name="verification_email_sent_successfully">A verification email has been sent to your email address. Please confirm and complete your registration.</string>
+    <string name="tv_create_group_disable_color">#94979E</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

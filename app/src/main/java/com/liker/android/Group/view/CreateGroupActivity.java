@@ -2,9 +2,11 @@ package com.liker.android.Group.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -108,6 +110,18 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 groupName = s.toString();
+
+                if (!TextUtils.isEmpty(groupName) ) {
+                    tvCreateGroup.setTextColor(Color.WHITE);
+                    tvCreateGroup.setBackgroundResource(R.drawable.btn_round_outline);
+                    tvCreateGroup.setEnabled(true);
+
+                } else {
+                    tvCreateGroup.setBackgroundResource(R.drawable.btn_create_group_outline_disable);
+                    tvCreateGroup.setTextColor(Color.parseColor(getString(R.string.tv_create_group_disable_color)));
+                    tvCreateGroup.setEnabled(false);
+                }
+
 
             }
 

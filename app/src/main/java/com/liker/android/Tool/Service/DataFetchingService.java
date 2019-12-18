@@ -241,14 +241,14 @@ public class DataFetchingService extends Service {
             }
         });
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //call function
-                addTrafficRequest(false, "");
-                handler.postDelayed(this, DELAY_TIME);
-            }
-        }, DELAY_TIME);
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                //call function
+//                addTrafficRequest(false, "");
+//                handler.postDelayed(this, DELAY_TIME);
+//            }
+//        }, DELAY_TIME);
 
     }
 

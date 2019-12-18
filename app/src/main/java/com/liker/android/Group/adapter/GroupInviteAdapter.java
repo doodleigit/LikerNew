@@ -2,6 +2,7 @@ package com.liker.android.Group.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -66,8 +67,13 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
         if (arrayList.get(i).getGroupMemberInvite()) {
             viewHolder.btnInvite.setText(context.getString(R.string.group_invited));
             viewHolder.btnInvite.setEnabled(false);
+            viewHolder.btnInvite.setBackgroundResource(R.drawable.drawable_comment);
+            viewHolder.btnInvite.setTextColor(Color.BLACK);
         } else {
             viewHolder.btnInvite.setText(context.getString(R.string.group_invite));
+            viewHolder.btnInvite.setEnabled(true);
+            viewHolder.btnInvite.setBackgroundResource(R.drawable.rectangle_corner_round_thirteen);
+            viewHolder.btnInvite.setTextColor(Color.WHITE);
 
         }
 
@@ -121,6 +127,11 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
             stars = itemView.findViewById(R.id.stars);
             btnInvite = itemView.findViewById(R.id.btnInvite);
         }
+    }
+
+    public void filterList(ArrayList<FollowersResult> filteredList) {
+        arrayList = filteredList;
+        notifyDataSetChanged();
     }
 
 }
