@@ -1595,6 +1595,7 @@ public class Home extends AppCompatActivity implements
         unregisterReceiver(broadcastNewPost);
         unregisterReceiver(filterBroadcast);
         unregisterReceiver(newPostBroadcastReceiver);
+        stopService(new Intent(Home.this, DataFetchingService.class));
         Tools.dismissDialog();
         if (progressDialog != null) {
             progressDialog.dismiss();

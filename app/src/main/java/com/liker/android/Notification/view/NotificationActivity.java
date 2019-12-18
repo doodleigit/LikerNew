@@ -274,12 +274,11 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void sendPostItemRequest(String postId, boolean isCommentAction) {
-        Call<String> call = webService.getPostDetails(deviceId, profileId, token, profileId, postId);
-        call.enqueue(new Callback<String>() {
+        Call<PostItem> call = webService.getPostDetails(deviceId, profileId, token, profileId, postId);
+        call.enqueue(new Callback<PostItem>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-//                PostItem postItem = response.body();
-                PostItem postItem = new PostItem();
+            public void onResponse(Call<PostItem> call, Response<PostItem> response) {
+                PostItem postItem = response.body();
                 if (postItem != null) {
                     Intent intent = new Intent(NotificationActivity.this, PostPopup.class);
                     intent.putExtra(AppConstants.ITEM_KEY, (Parcelable) postItem);
@@ -291,7 +290,7 @@ public class NotificationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<PostItem> call, Throwable t) {
                 Log.d("MESSAGE: ", t.getMessage());
             }
         });

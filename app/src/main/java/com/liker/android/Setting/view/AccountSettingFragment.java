@@ -149,8 +149,18 @@ public class AccountSettingFragment extends Fragment {
         EmailModificationListener emailModificationListener = new EmailModificationListener() {
             @Override
             public void onEmailRemove(Email email, int position) {
-                Call<String> call = settingService.removeEmail(deviceId, token, userId, userId, email.getEmail());
-                removeEmail(call, position, emailRecyclerView);
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
+                alertBuilder.setCancelable(true);
+                alertBuilder.setMessage(getString(R.string.are_you_sure_you_want_to_remove_this_email));
+                alertBuilder.setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Call<String> call = settingService.removeEmail(deviceId, token, userId, userId, email.getEmail());
+                                removeEmail(call, position, emailRecyclerView);
+                            }
+                        });
+                alertBuilder.setNegativeButton(android.R.string.cancel, null);
+                alertBuilder.show();
             }
 
             @Override
@@ -275,7 +285,7 @@ public class AccountSettingFragment extends Fragment {
         btnPasswordReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (oldPasswordValidation("Old", etOldPassword) && passwordFieldValidation("New", etNewPassword) && passwordFieldValidation("New", etRetypeNewPassword)) {
+                if (oldPasswordValidation("Old", etOldPassword) && passwordFieldValidation("New", etNewPassword) && passwordFieldValidation("New", etRetypeNewPassword) && !isBothPasswordMatched(etOldPassword, etNewPassword)) {
                     if (passwordMatchValidation(etNewPassword, etRetypeNewPassword)) {
                         Call<String> call =  settingService.updatePassword(deviceId, token, userId, userId, etOldPassword.getText().toString(), etNewPassword.getText().toString(), etRetypeNewPassword.getText().toString());
                         updatePassword(call);
@@ -629,6 +639,15 @@ public class AccountSettingFragment extends Fragment {
             } else {
                 return false;
             }
+        }
+    }
+
+    private boolean isBothPasswordMatched(EditText oldPassword, EditText newPassword) {
+        if (oldPassword.getText().toString().equals(newPassword.getText().toString())) {
+            Toast.makeText(getContext(), getString(R.string.old_password_and_new_password_cannot_be_same), Toast.LENGTH_LONG).show();
+            return true;
+        } else {
+            return false;
         }
     }
 

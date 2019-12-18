@@ -137,6 +137,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             viewHolder.tvAddFollowBack.setVisibility(View.GONE);
         } else if(!data.getIsFollowed() && data.getNotifType().equalsIgnoreCase("7")) {
             viewHolder.tvAddFollowBack.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.tvAddFollowBack.setVisibility(View.GONE);
         }
 
         String firstName = data.getFirstName();
