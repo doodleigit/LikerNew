@@ -499,7 +499,7 @@ public class App extends Application implements LifecycleObserver {
             headers.setSecurityToken(manager.getToken());
             sessionOnline.setUserId(manager.getProfileId());
             sessionOnline.setUrl("");
-            sessionOnline.setDeviceType("App");
+            sessionOnline.setDeviceType("Android");
             sessionOnline.setHeaders(headers);
             Gson gson = new Gson();
             String json = gson.toJson(sessionOnline);

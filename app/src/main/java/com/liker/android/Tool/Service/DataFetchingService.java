@@ -1,16 +1,19 @@
 package com.liker.android.Tool.Service;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
@@ -62,6 +65,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -84,7 +88,9 @@ public class DataFetchingService extends Service {
     private String deviceId, profileId, token, userIds;
     private PrefManager manager;
     private Handler handler;
+    private Runnable runnable;
     private int DELAY_TIME = 20 * 1000;
+    private boolean stopRunnable = false;
 
     @Override
     public void onCreate() {
@@ -126,6 +132,21 @@ public class DataFetchingService extends Service {
         } else {
             mSocket = new SocketIOManager().getMSocketInstance();
         }
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                //call function
+                if (stopRunnable) {
+                    return;
+                }
+                if (!isAppIsInBackground(getApplicationContext())) {
+                    addTrafficRequest(false, "");
+                }
+                handler.postDelayed(runnable, DELAY_TIME);
+            }
+        };
+
         setBroadcast();
         getNotificationData();
         setUserStatus(true);
@@ -241,14 +262,7 @@ public class DataFetchingService extends Service {
             }
         });
 
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                //call function
-//                addTrafficRequest(false, "");
-//                handler.postDelayed(this, DELAY_TIME);
-//            }
-//        }, DELAY_TIME);
+        handler.postDelayed(runnable, DELAY_TIME);
 
     }
 
@@ -296,7 +310,7 @@ public class DataFetchingService extends Service {
             headers.setSecurityToken(manager.getToken());
             sessionOnline.setUserId(manager.getProfileId());
             sessionOnline.setUrl(pathName);
-            sessionOnline.setDeviceType("App");
+            sessionOnline.setDeviceType("Android");
             sessionOnline.setHeaders(headers);
             Gson gson = new Gson();
             String json = gson.toJson(sessionOnline);
@@ -534,12 +548,12 @@ public class DataFetchingService extends Service {
     }
 
     private void addTrafficRequest(boolean isPageTraffic, String pathName) {
-        setSessionUser(true, pathName);
+//        setSessionUser(true, pathName);
         Call<String> call;
         if (isPageTraffic) {
-            call = socketWebService.addPageTrafficNew(deviceId, userIds, token, userIds, "App", pathName);
+            call = socketWebService.addPageTrafficNew(deviceId, userIds, token, userIds, "Android", pathName);
         } else {
-            call = socketWebService.addTrafficNew(deviceId, userIds, token, userIds, "App", pathName, DELAY_TIME/1000, "");
+            call = socketWebService.addTrafficNew(deviceId, userIds, token, userIds, "Android", pathName, DELAY_TIME/1000, "");
         }
         call.enqueue(new Callback<String>() {
             @Override
@@ -610,6 +624,39 @@ public class DataFetchingService extends Service {
         }
     };
 
+    public boolean isAppIsInBackground(Context context) {
+        boolean isInBackground = true;
+        try {
+            Object service = context.getSystemService(Context.ACTIVITY_SERVICE);
+
+            if (service != null) {
+                ActivityManager am = (ActivityManager) service;
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+                    List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+                    for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+                        if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                            for (String activeProcess : processInfo.pkgList) {
+                                if (activeProcess.equals(context.getPackageName())) {
+                                    isInBackground = false;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+                    ComponentName componentInfo = taskInfo.get(0).topActivity;
+                    if (componentInfo.getPackageName().equals(context.getPackageName())) {
+                        isInBackground = false;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.d("Epic", "Notification > isAppIsInBackground: Exception: " + e.getMessage());
+        }
+
+        return isInBackground;
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -628,6 +675,7 @@ public class DataFetchingService extends Service {
             nSocket.off("new_post_result");
             unregisterReceiver(broadcastReceiver);
             unregisterReceiver(mReceiver);
+            stopRunnable = true;
             handler.removeCallbacksAndMessages(null);
         } catch (IllegalArgumentException ignored) {
         }
@@ -645,6 +693,7 @@ public class DataFetchingService extends Service {
             nSocket.off("new_post_result");
             unregisterReceiver(broadcastReceiver);
             unregisterReceiver(mReceiver);
+            stopRunnable = true;
             handler.removeCallbacksAndMessages(null);
         } catch (IllegalArgumentException ignored) {
         }

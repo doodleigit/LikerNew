@@ -1078,7 +1078,7 @@ public class Home extends AppCompatActivity implements
         setNotificationCount(newNotificationCount);
         int newPostCount = manager.getPostCount();
         setPostCount(newPostCount);// code to update the UI in the fragment
-        Tools.setPageTraffic(this, AppConstants.HOME_PAGE_NUMBER); //For page traffic analytics
+//        Tools.setPageTraffic(this, AppConstants.HOME_PAGE_NUMBER); //For page traffic analytics
     }
 
     private void setupToolbar() {
@@ -1595,6 +1595,7 @@ public class Home extends AppCompatActivity implements
         unregisterReceiver(broadcastNewPost);
         unregisterReceiver(filterBroadcast);
         unregisterReceiver(newPostBroadcastReceiver);
+        stopService(new Intent(Home.this, DataFetchingService.class));
         Tools.dismissDialog();
         if (progressDialog != null) {
             progressDialog.dismiss();

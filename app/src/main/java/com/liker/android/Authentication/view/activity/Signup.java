@@ -201,6 +201,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
     private void displayData() {
         //    countryNames.add("Select Country");
         countrySpinnerList.add(new CountrySpinner("0", "Select Country"));
+        citySpinnerList.add(new CitySpinner("0", "Select State"));
         if (countryInfos != null) {
 
             for (CountryInfo item : countryInfos
@@ -212,7 +213,8 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
             ArrayAdapter<CountrySpinner> countryAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, countrySpinnerList);
             spinnerCountry.setAdapter(countryAdapter);
-
+            ArrayAdapter<CitySpinner> stateAdapter = new ArrayAdapter<>(Signup.this, R.layout.spinner_item, citySpinnerList);
+            spinnerState.setAdapter(stateAdapter);
         }
     }
 
@@ -842,16 +844,17 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                 break;
 
             case R.id.btnFinish:
-                if (viewModel.validatePasswordField(etPassword) && viewModel.validateConfirmPasswordField(etConFirmPassword) && !mGender.isEmpty() && !mCountry.isEmpty() && !mDay.isEmpty() && !mMonth.isEmpty() &&
-                        !mYear.isEmpty() && !mCity.isEmpty()) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
-                        signUpDisable(true);
-                        requestData(mFirstName, mlastName, mEmail, mPassword, mRetypePassword, mGender, mCountry, mDay, mMonth, mYear, mCity, mProvider, mOauthId, mToken, mSecret, mSocialName, isApps, mImgUrl);
-                    } else {
-                        showSnackbar(getString(R.string.no_internet));
-                        progressBar.setVisibility(View.GONE);
-                        signUpDisable(false);
+                if (!mGender.isEmpty() && !mCountry.isEmpty() && !mDay.isEmpty() && !mMonth.isEmpty() && !mYear.isEmpty() && !mCity.isEmpty()) {
+                    if (viewModel.validatePasswordField(etPassword) && viewModel.validateConfirmPasswordField(etConFirmPassword)) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
+                            signUpDisable(true);
+                            requestData(mFirstName, mlastName, mEmail, mPassword, mRetypePassword, mGender, mCountry, mDay, mMonth, mYear, mCity, mProvider, mOauthId, mToken, mSecret, mSocialName, isApps, mImgUrl);
+                        } else {
+                            showSnackbar(getString(R.string.no_internet));
+                            progressBar.setVisibility(View.GONE);
+                            signUpDisable(false);
+                        }
                     }
                 } else {
                     showSnackbar(getString(R.string.all_field_required));
@@ -1178,7 +1181,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
 
     public void sendCityRequest(Call<City> call) {
-
+        citySpinnerList.clear();
         citySpinnerList.add(new CitySpinner("0", "Select State"));
         call.enqueue(new Callback<City>() {
             @Override

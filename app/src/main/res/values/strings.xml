@@ -260,6 +260,7 @@
     <string name="profile_photo_has_been_updated">Profile photo has been updated</string>
     <string name="cover_photo_has_been_updated">Cover photo has been updated</string>
     <string name="are_you_sure_you_want_to_deactivated_your_account">Are you sure you want to deactivated your account ?</string>
+    <string name="are_you_sure_you_want_to_remove_this_email">Are you sure you want to remove this email ?</string>
     <string name="a_verification_email_has_been_resent_to_your_email">A verification email has been resent to your email </string>
     <string name="if_you_need_help_please_contact_with_liker_support">If you need help please contact with Liker Support .</string>
     <string name="unverified">Unverified</string>
@@ -381,6 +382,7 @@
     <string name="group_invited">INVITED</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="no_result_found_for">No result found for</string>
+    <string name="old_password_and_new_password_cannot_be_same">Old Password and New Password cannot be same</string>
     <string name="verification_email_sent_successfully">A verification email has been sent to your email address. Please confirm and complete your registration.</string>
     <string name="tv_create_group_disable_color">#94979E</string>
     <string-array name="string_array_alcohol">

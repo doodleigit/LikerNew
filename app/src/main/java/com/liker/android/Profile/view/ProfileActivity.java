@@ -345,7 +345,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     @Override
     protected void onResume() {
         super.onResume();
-        Tools.setPageTraffic(this, AppConstants.PROFILE_PAGE_NUMBER); //For page traffic analytics
+//        Tools.setPageTraffic(this, AppConstants.PROFILE_PAGE_NUMBER); //For page traffic analytics
     }
 
     private void sendReportReason(Call<ReportReason> call) {

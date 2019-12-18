@@ -1430,7 +1430,7 @@ public class Tools {
     }
 
     public static void setPageTraffic(Context context, int pageNumber) {
-        context.sendBroadcast((new Intent().putExtra("page_number", pageNumber)).setAction(AppConstants.ADD_TRAFFIC_BROADCAST));
+//        context.sendBroadcast((new Intent().putExtra("page_number", pageNumber)).setAction(AppConstants.ADD_TRAFFIC_BROADCAST));
     }
 
 }

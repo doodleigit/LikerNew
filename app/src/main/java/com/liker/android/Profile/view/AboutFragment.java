@@ -588,8 +588,18 @@ public class AboutFragment extends Fragment {
         EmailModificationListener emailModificationListener = new EmailModificationListener() {
             @Override
             public void onEmailRemove(Email email, int position) {
-                Call<String> call = profileService.removeEmail(deviceId, token, userId, userId, email.getEmail());
-                removeEmail(call, position, emailRecyclerView);
+                android.support.v7.app.AlertDialog.Builder alertBuilder = new android.support.v7.app.AlertDialog.Builder(getContext());
+                alertBuilder.setCancelable(true);
+                alertBuilder.setMessage(getString(R.string.are_you_sure_you_want_to_remove_this_email));
+                alertBuilder.setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Call<String> call = profileService.removeEmail(deviceId, token, userId, userId, email.getEmail());
+                                removeEmail(call, position, emailRecyclerView);
+                            }
+                        });
+                alertBuilder.setNegativeButton(android.R.string.cancel, null);
+                alertBuilder.show();
             }
 
             @Override
