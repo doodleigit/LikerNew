@@ -534,7 +534,7 @@ public class DataFetchingService extends Service {
     }
 
     private void addTrafficRequest(boolean isPageTraffic, String pathName) {
-        setSessionUser(true, pathName);
+//        setSessionUser(true, pathName);
         Call<String> call;
         if (isPageTraffic) {
             call = socketWebService.addPageTrafficNew(deviceId, userIds, token, userIds, "App", pathName);

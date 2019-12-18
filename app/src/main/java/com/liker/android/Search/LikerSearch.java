@@ -215,7 +215,7 @@ public class LikerSearch extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
-        Tools.setPageTraffic(this, AppConstants.SEARCH_PAGE_NUMBER); //For page traffic analytics
+//        Tools.setPageTraffic(this, AppConstants.SEARCH_PAGE_NUMBER); //For page traffic analytics
     }
 
     private void sendHistoryRequest(Call<List<SearchHistory>> call) {

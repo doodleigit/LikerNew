@@ -172,7 +172,7 @@ public class NotificationActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Tools.setPageTraffic(this, AppConstants.NOTIFICATION_PAGE_NUMBER); //For page traffic analytics
+//        Tools.setPageTraffic(this, AppConstants.NOTIFICATION_PAGE_NUMBER); //For page traffic analytics
     }
 
     private void getData() {
