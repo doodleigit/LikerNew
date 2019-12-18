@@ -84,8 +84,8 @@ public class DataFetchingService extends Service {
     private BroadcastReceiver mReceiver;
     String KEY_NOTIFICATION_GROUP = "LIKER_PUSH_NOTIFICATION";
 
-    private NotificationService webService, socketWebService;
-    private String deviceId, profileId, token, userIds;
+    private NotificationService socketWebService;
+    private String deviceId, token, userIds;
     private PrefManager manager;
     private Handler handler;
     private Runnable runnable;
@@ -98,10 +98,8 @@ public class DataFetchingService extends Service {
 
         manager = new PrefManager(this);
         deviceId = manager.getDeviceId();
-        profileId = manager.getProfileId();
         token = manager.getToken();
         userIds = manager.getProfileId();
-        webService = NotificationService.mRetrofit.create(NotificationService.class);
         socketWebService = NotificationService.wRetrofit.create(NotificationService.class);
         handler = new Handler();
         IntentFilter filter = new IntentFilter();
@@ -147,12 +145,21 @@ public class DataFetchingService extends Service {
             }
         };
 
+        setStatus();
         setBroadcast();
         getNotificationData();
-        setUserStatus(true);
-        setSessionUser(true, "");
         getMessagesData();
         getNewPostData();
+    }
+
+    private void setStatus() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setUserStatus(true);
+                setSessionUser(true, "");
+            }
+        }, 5 * 1000);
     }
 
     private void getNewPostData() {

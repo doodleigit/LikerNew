@@ -371,7 +371,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
                 } else if (viewHolder instanceof LinkScriptYoutubeHolder) {
                     imageView = ((LinkScriptYoutubeHolder) viewHolder).imgLike;
                 }
-                showLikeTooltip(imageView);
+//                showLikeTooltip(imageView);
                 return;
             }
         }
