@@ -379,6 +379,8 @@
     <string name="search_followers">Search for followers</string>
     <string name="group_invite">INVITE</string>
     <string name="group_invited">INVITED</string>
+    <string name="forgot_your_password">Forgot your password?</string>
+    <string name="no_result_found_for">No result found for</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

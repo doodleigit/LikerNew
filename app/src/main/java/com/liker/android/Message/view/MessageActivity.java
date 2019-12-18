@@ -7,6 +7,8 @@ import com.liker.android.Home.service.SocketIOManager;
 import com.liker.android.Message.model.FriendInfo;
 import com.liker.android.Message.service.OnlineStatusChangeListener;
 import com.liker.android.R;
+import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.Tools;
 
 
 import org.json.JSONException;
@@ -92,6 +94,12 @@ public class MessageActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Tools.setPageTraffic(this, AppConstants.MESSAGE_PAGE_NUMBER); //For page traffic analytics
     }
 
     @Override

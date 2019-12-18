@@ -9,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import com.liker.android.R;
 import com.liker.android.Search.adapter.ViewPagerAdapter;
 import com.liker.android.Search.model.AdvanceSearches;
+import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.Tools;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -54,4 +56,9 @@ public class SearchActivity extends AppCompatActivity {
 //        viewPager.setOffscreenPageLimit(3);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Tools.setPageTraffic(this, AppConstants.ADVANCE_SEARCH_PAGE_NUMBER); //For page traffic analytics
+    }
 }

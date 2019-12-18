@@ -20,13 +20,10 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.os.Handler;
-import android.provider.Settings;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.Spannable;
@@ -86,8 +83,6 @@ import com.liker.android.Comment.view.fragment.DeletePostDialog;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.model.PostTextIndex;
 import com.liker.android.Home.model.postshare.PostShareItem;
-import com.liker.android.Notification.model.Data;
-import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.fragment.Network;
@@ -1432,6 +1427,10 @@ public class Tools {
         } catch (NumberFormatException e) {
             return "0";
         }
+    }
+
+    public static void setPageTraffic(Context context, int pageNumber) {
+        context.sendBroadcast((new Intent().putExtra("page_number", pageNumber)).setAction(AppConstants.ADD_TRAFFIC_BROADCAST));
     }
 
 }

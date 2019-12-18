@@ -357,6 +357,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
 
         if (targetPosition == 0) {
             if (manager.getPostLikeIntro().equals("0")) {
+                stopScroll();
                 ImageView imageView = null;
                 RecyclerView.ViewHolder viewHolder = findViewHolderForAdapterPosition(targetPosition);
                 if (viewHolder instanceof TextHolder) {
@@ -665,7 +666,7 @@ public class VideoPlayerRecyclerView extends RecyclerView {
     }
 
     private void showLikeTooltip(ImageView imageView) {
-//        scrollToPosition(1);
+        stopScroll();
         if (imageView != null) {
             new MaterialShowcaseView.Builder(activityContext)
                     .setTarget(imageView)

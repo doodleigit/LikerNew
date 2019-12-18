@@ -166,6 +166,7 @@ public class AppConstants {
     public static final String COMMON_CHANGE_BROADCAST = "common_change_broadcast";
     public static final String PERSONAL_PHOTO_BROADCAST = "personal_photo_broadcast";
     public static final String TOP_POST_COMMENT_CHANGE_BROADCAST = "top_post_comment_change_broadcast";
+    public static final String ADD_TRAFFIC_BROADCAST = "add_traffic_broadcast";
 
     public static final String NOTIFICATION = "newNotification";
     public static final String CHAT_USERS = "get_chat_users";
@@ -197,6 +198,8 @@ public class AppConstants {
     public static final String REMOVE_CERTIFICATION = "remove_certification";
     public static final String REMOVE_AWARDS = "remove_award";
     public static final String REMOVE_LINKS = "link_remove";
+    public static final String ADD_TRAFFIC_NEW = "add_traffic_new";
+    public static final String ADD_PAGE_TRAFFIC_NEW = "add_page_traffic_new";
 
     public static final String STAR_LIST = "wallbadgelist";
     public static final String GET_USER_INFO_BY_USER_NAME = "getUserinfoByUserName";
@@ -256,5 +259,15 @@ public class AppConstants {
     public static final String LEAVE_MEMBERS="leaveMember";
     public static final String JOIN_MEMBERS="joinMember";
     public static final String INVITE_MEMBERS="inviteMember";
+
+    public static final int HOME_PAGE_NUMBER = 1;
+    public static final int MESSAGE_PAGE_NUMBER = 2;
+    public static final int NOTIFICATION_PAGE_NUMBER = 3;
+    public static final int POST_PAGE_NUMBER = 4;
+    public static final int PROFILE_PAGE_NUMBER = 5;
+    public static final int SEARCH_PAGE_NUMBER = 6;
+    public static final int SETTING_PAGE_NUMBER = 7;
+
+    public static final int ADVANCE_SEARCH_PAGE_NUMBER = 8;
 
 }

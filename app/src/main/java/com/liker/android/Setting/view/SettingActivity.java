@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 
 
 import com.liker.android.R;
+import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.Tools;
 
 
 public class SettingActivity extends AppCompatActivity {
@@ -58,5 +60,11 @@ public class SettingActivity extends AppCompatActivity {
         fragment.setArguments(bundle);
         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment).commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Tools.setPageTraffic(this, AppConstants.SETTING_PAGE_NUMBER); //For page traffic analytics
     }
 }

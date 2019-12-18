@@ -31,11 +31,13 @@ public class AdvanceSearchAdapter extends RecyclerView.Adapter<AdvanceSearchAdap
 
     private Context context;
     private List<User> mUser;
+    private String userId;
     private FollowUnfollowClickListener followUnfollowClickListener;
 
-    public AdvanceSearchAdapter(Context context, List<User> mUser, FollowUnfollowClickListener followUnfollowClickListener) {
+    public AdvanceSearchAdapter(Context context, List<User> mUser, String userId, FollowUnfollowClickListener followUnfollowClickListener) {
         this.context = context;
         this.mUser = mUser;
+        this.userId = userId;
         this.followUnfollowClickListener = followUnfollowClickListener;
     }
 
@@ -85,10 +87,15 @@ public class AdvanceSearchAdapter extends RecyclerView.Adapter<AdvanceSearchAdap
             tvStar.setText(totalStar > 1 ? totalStar + " " + context.getString(R.string.stars) : totalStar + " " + context.getString(R.string.star));
             String imagePhoto = POST_IMAGES + user.getPhoto();
 
-            if (user.isFollowed()) {
-                btnFollow.setText(context.getString(R.string.unfollow));
+            if (userId.equals(user.getUserId())) {
+                btnFollow.setVisibility(View.GONE);
             } else {
-                btnFollow.setText(context.getString(R.string.follow));
+                btnFollow.setVisibility(View.VISIBLE);
+                if (user.isFollowed()) {
+                    btnFollow.setText(context.getString(R.string.unfollow));
+                } else {
+                    btnFollow.setText(context.getString(R.string.follow));
+                }
             }
 
             if (imagePhoto.length() > 0) {

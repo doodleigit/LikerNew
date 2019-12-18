@@ -63,15 +63,16 @@ public class SearchAllFragment extends Fragment {
     private String deviceId;
     private String mProfileId;
     private String token;
+    private String queryResult;
 
     int limit = 5;
     int postOffset = 5;
     boolean isPostLoadComplete = true;
-    LinearLayout userLoadMoreLayout, postLoadMoreLayout;
+    LinearLayout mainLayout, userLoadMoreLayout, postLoadMoreLayout;
     FrameLayout postLoadMore;
     ProgressBar postLoadMoreProgress;
     RecyclerView userRecyclerView, postRecyclerView;
-    TextView tvUserSeeAll;
+    TextView tvUserSeeAll, tvAlertText;
 
     @Nullable
     @Override
@@ -92,10 +93,12 @@ public class SearchAllFragment extends Fragment {
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getString(R.string.loading));
 
+        mainLayout = view.findViewById(R.id.main_layout);
         userLoadMoreLayout = view.findViewById(R.id.user_load_more_layout);
         postLoadMoreLayout = view.findViewById(R.id.post_load_more_layout);
         postLoadMore = view.findViewById(R.id.post_load_more);
-        tvUserSeeAll = view.findViewById(R.id.user_see_all);;
+        tvUserSeeAll = view.findViewById(R.id.user_see_all);
+        tvAlertText = view.findViewById(R.id.alertText);
 
         userRecyclerView = view.findViewById(R.id.userRecyclerView);
         userRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -105,6 +108,7 @@ public class SearchAllFragment extends Fragment {
         mProfileId = manager.getProfileId();
         deviceId = manager.getDeviceId();
         token = manager.getToken();
+        queryResult = App.getQueryResult();
         advanceSearches = getArguments().getParcelable("search_result");
         if (advanceSearches == null) {
             throw new AssertionError("Null data item received!");
@@ -135,11 +139,12 @@ public class SearchAllFragment extends Fragment {
             }
         };
 
-        mAdapter = new AdvanceSearchAdapter(getActivity(), mUserList, followUnfollowClickListener);
+        mAdapter = new AdvanceSearchAdapter(getActivity(), mUserList, profileId, followUnfollowClickListener);
         searchPostAdapter = new AdvanceSearchPostAdapter(getActivity(), mPostList, postClickListener);
 
         userRecyclerView.setAdapter(mAdapter);
         postRecyclerView.setAdapter(searchPostAdapter);
+        tvAlertText.setText(getString(R.string.no_result_found_for) + " " + queryResult);
 
         setLoadMoreView();
 
@@ -156,7 +161,6 @@ public class SearchAllFragment extends Fragment {
                 if (isPostLoadComplete) {
                     isPostLoadComplete = false;
                     postLoadMoreProgress.setVisibility(View.VISIBLE);
-                    String queryResult = App.getQueryResult();
                     Call<AdvanceSearches> call = webService.advanceSearchPaging(deviceId, profileId, token, mProfileId, queryResult, limit, postOffset, 1, 0);
                     sendPostAdvanceSearchRequest(call);
                 }
@@ -164,15 +168,24 @@ public class SearchAllFragment extends Fragment {
         });
     }
     private void setLoadMoreView() {
-        if (mUserList.size() == 0) {
+        if (mUserList.size() == 0 && mPostList.size() == 0) {
+            tvAlertText.setVisibility(View.VISIBLE);
+            mainLayout.setVisibility(View.GONE);
             userLoadMoreLayout.setVisibility(View.GONE);
-        } else {
-            userLoadMoreLayout.setVisibility(View.VISIBLE);
-        }
-        if (mPostList.size() == 0) {
             postLoadMoreLayout.setVisibility(View.GONE);
         } else {
-            postLoadMoreLayout.setVisibility(View.VISIBLE);
+            tvAlertText.setVisibility(View.GONE);
+            mainLayout.setVisibility(View.VISIBLE);
+            if (mUserList.size() == 0) {
+                userLoadMoreLayout.setVisibility(View.GONE);
+            } else {
+                userLoadMoreLayout.setVisibility(View.VISIBLE);
+            }
+            if (mPostList.size() == 0) {
+                postLoadMoreLayout.setVisibility(View.GONE);
+            } else {
+                postLoadMoreLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.liker.android.App;
@@ -38,6 +39,7 @@ public class PeopleSearchFragment extends Fragment {
 
     View view;
     private SwipeRefreshLayout refreshLayout;
+    private TextView tvAlertText;
     private RecyclerView recyclerView;
     private ProgressBar initialProgress,progressBar;
     private LinearLayoutManager layoutManager;
@@ -52,6 +54,7 @@ public class PeopleSearchFragment extends Fragment {
     private String deviceId;
     private String mProfileId;
     private String token;
+    private String queryResult;
 
     int limit = 15;
     int offset = 0;
@@ -67,6 +70,7 @@ public class PeopleSearchFragment extends Fragment {
         mProfileId = manager.getProfileId();
         deviceId = manager.getDeviceId();
         token = manager.getToken();
+        queryResult = App.getQueryResult();
     }
 
     @Nullable
@@ -83,6 +87,7 @@ public class PeopleSearchFragment extends Fragment {
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getString(R.string.loading));
         refreshLayout = view.findViewById(R.id.refreshLayout);
+        tvAlertText = view.findViewById(R.id.alertText);
         recyclerView = view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -101,8 +106,9 @@ public class PeopleSearchFragment extends Fragment {
             }
         };
 
-        advanceSearchAdapter = new AdvanceSearchAdapter(getActivity(), mUserList, followUnfollowClickListener);
+        advanceSearchAdapter = new AdvanceSearchAdapter(getActivity(), mUserList, profileId, followUnfollowClickListener);
         recyclerView.setAdapter(advanceSearchAdapter);
+        tvAlertText.setText(getString(R.string.no_result_found_for) + " " + queryResult);
 
         getData();
 
@@ -142,14 +148,12 @@ public class PeopleSearchFragment extends Fragment {
 
     private void getData() {
         offset = 0;
-        String queryResult = App.getQueryResult();
         Call<AdvanceSearches> call = webService.advanceSearchPaging(deviceId, profileId, token, mProfileId, queryResult, limit, offset, 0, 1);
         sendAdvanceSearchRequest(call);
     }
 
     private void getPagination() {
         progressBar.setVisibility(View.VISIBLE);
-        String queryResult = App.getQueryResult();
         Call<AdvanceSearches> call = webService.advanceSearchPaging(deviceId, profileId, token, mProfileId, queryResult, limit, offset, 0, 1);
         sendAdvanceSearchPaginationRequest(call);
     }
@@ -161,17 +165,20 @@ public class PeopleSearchFragment extends Fragment {
                 AdvanceSearches advanceSearches = response.body();
                 if (advanceSearches != null) {
                     if (advanceSearches.getUser() != null) {
+                        mUserList.clear();
                         mUserList.addAll(advanceSearches.getUser());
                         offset += limit;
                         advanceSearchAdapter.notifyDataSetChanged();
                     }
                 }
+                tvAlertText.setVisibility(mUserList.size() == 0 ? View.VISIBLE : View.GONE);
                 refreshLayout.setRefreshing(false);
                 initialProgress.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<AdvanceSearches> call, Throwable t) {
+                tvAlertText.setVisibility(mUserList.size() == 0 ? View.VISIBLE : View.GONE);
                 refreshLayout.setRefreshing(false);
                 initialProgress.setVisibility(View.GONE);
             }
