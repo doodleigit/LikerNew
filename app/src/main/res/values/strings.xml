@@ -373,9 +373,13 @@
     <string name="are_u_sure_you_want_to_delete_the_story">Are you sure you want to remove this story?</string>
     <string name="all">All</string>
     <string name="members">Members</string>
-    <string name="groupJoin">JOINED</string>
+    <string name="groupJoined">JOINED</string>
+    <string name="groupJoin">JOIN</string>
     <string name="invite_people">Invite People</string>
     <string name="report_group">Report</string>
+    <string name="search_followers">Search for followers</string>
+    <string name="group_invite">INVITE</string>
+    <string name="group_invited">INVITED</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="no_result_found_for">No result found for</string>
     <string name="old_password_and_new_password_cannot_be_same">Old Password and New Password cannot be same</string>

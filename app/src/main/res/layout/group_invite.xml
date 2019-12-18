@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Group.view.CreateGroupActivity">
+
+    <RelativeLayout
+        android:id="@+id/contentPostView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/imageCancelInviteGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/cancel_page_selector"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/ic_close_white_24dp"
+            android:tint="@color/colorBlack" />
+
+            <TextView
+                android:id="@+id/tvBackGroupPage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Invite members"
+                android:padding="@dimen/_10sdp"
+                android:drawablePadding="@dimen/_10sdp"
+                android:drawableLeft="@drawable/ic_keyboard_backspace_black_24dp"
+                android:textColor="@android:color/black" />
+            <View
+                android:id="@+id/dividers"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_below="@id/tvBackGroupPage"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="#D3D8D9" />
+
+            <EditText
+                android:id="@+id/etSearchGroup"
+                android:layout_below="@id/dividers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_search_black_24dp"
+                android:drawableTint="@color/colorIconText"
+                android:drawablePadding="@dimen/_5sdp"
+                android:backgroundTint="@color/colorWhite"
+                android:hint="@string/search_followers" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@id/etSearchGroup"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="#D3D8D9" />
+    </RelativeLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_below="@id/contentPostView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/alertText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/there_is_no_followers"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"/>
+</RelativeLayout>

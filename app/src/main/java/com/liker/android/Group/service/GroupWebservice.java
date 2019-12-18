@@ -41,9 +41,9 @@ public interface GroupWebservice {
             @Field("category_id") String categoryId,
             @Field("group_name") String groupName,
             @Field("permission") String permission
-            );
+    );
 
-   @POST(AppConstants.GET_GROUP_ABOUT)
+    @POST(AppConstants.GET_GROUP_ABOUT)
     @FormUrlEncoded
     Call<String> getGroupAbout(
             @Header("Device-Id") String deviceId,
@@ -51,7 +51,7 @@ public interface GroupWebservice {
             @Header("Security-Token") String token,
             @Field("user_id") String userIds,
             @Field("group_id") String groupId
-            );
+    );
 
     @Multipart
     @POST(AppConstants.UPDATE_GROUP_MEDIA)
@@ -65,9 +65,6 @@ public interface GroupWebservice {
 
     );
 
-    /*All Group members API - http://192.168.0.77:8040/sites/likerapp/groupMembers
-Form Data: user_id:
-group_id:*/
 
     @POST(AppConstants.GROUP_MEMBERS)
     @FormUrlEncoded
@@ -77,6 +74,38 @@ group_id:*/
             @Header("Security-Token") String token,
             @Field("user_id") String userIds,
             @Field("group_id") String groupId
+    );
+
+
+    @POST(AppConstants.LEAVE_MEMBERS)
+    @FormUrlEncoded
+    Call<String> leaveMembers(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("group_id") String groupId
+    );
+
+    @POST(AppConstants.JOIN_MEMBERS)
+    @FormUrlEncoded
+    Call<String> joinMembers(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("group_id") String groupId
+    );
+
+    @POST(AppConstants.INVITE_MEMBERS)
+    @FormUrlEncoded
+    Call<String> inviteMembers(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("group_id") String groupId,
+            @Field("invite_users[]") String[] inviteUsers
     );
 
 }
