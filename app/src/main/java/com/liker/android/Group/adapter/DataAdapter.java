@@ -6,9 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.liker.android.Group.model.SuggestedGroup;
 import com.liker.android.Group.model.Header;
 import com.liker.android.Group.model.ListItem;
-import com.liker.android.Group.model.Person;
 import com.liker.android.R;
 
 import java.util.ArrayList;
@@ -40,10 +40,14 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             VHHeader VHheader = (VHHeader)holder;
             VHheader.tvName.setText(header.getName());
         } else if(holder instanceof VHItem) {
-            Person person = (Person) items.get(position);
+
+            SuggestedGroup suggestedGroup = (SuggestedGroup) items.get(position);
             VHItem VHitem = (VHItem)holder;
-            VHitem.tvItem.setText(person.getName());
+            VHitem.tvItem.setText(suggestedGroup.getName());
+
         }
+
+
     }
 
     @Override

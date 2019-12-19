@@ -27,7 +27,8 @@
         android:usesCleartextTraffic="true"
         android:vmSafeMode="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Group.view.GroupInviteActivity"
+        <activity
+            android:name=".Group.view.GroupInviteActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -303,6 +304,10 @@
 
         <service
             android:name=".Authentication.service.MyService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".Group.service.GroupContentService"
             android:enabled="true"
             android:exported="true" />
         <service

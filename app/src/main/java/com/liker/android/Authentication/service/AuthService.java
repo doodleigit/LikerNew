@@ -125,7 +125,6 @@ public interface AuthService {
     @FormUrlEncoded
     Call<String> resendSignUpOTP(
             @Field("user_id") String userId
-
     );
 
     @POST(AppConstants.SOCIAL_LOGIN_APPS)

@@ -235,6 +235,7 @@ public class PostShare extends AppCompatActivity implements
         }
 
         App.setSharePostfooter(true);
+//        App.setSharePostfooter(false);
         postItemList.add(item);
         adapter = new PostAdapter(this, postItemList, this, this, this, this, this, this, "");
         sharedRecyclerview.setAdapter(adapter);
@@ -995,7 +996,6 @@ public class PostShare extends AppCompatActivity implements
                         Log.i("onEmptyResponse", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
                     }
                 }*/
-
 
                 String categoryId = App.getCategoryId();
                 headers.setDeviceId(deviceId);

@@ -18,7 +18,6 @@ public class AppConstants {
 
     //==========================STG SERVER=====================
 
-//
 //    public static final String BASE_URL = "https://www.stg.liker.com/";
 //    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
 //    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
@@ -103,7 +102,6 @@ public class AppConstants {
     public static final String LINK_SCRAP_URL = "linkScrapUrl";
     public static boolean IN_CHAT_MODE = false;
     public static final int RESULT_BACK_NUMBER = 71;
-
 
     // http://192.168.0.12:8040/sites/likeropt/isDuplicateFile
 
@@ -259,6 +257,7 @@ public class AppConstants {
     public static final String LEAVE_MEMBERS="leaveMember";
     public static final String JOIN_MEMBERS="joinMember";
     public static final String INVITE_MEMBERS="inviteMember";
+    public static final String ALL_GROUP_INFO="allGroupInfo";
 
     public static final int HOME_PAGE_NUMBER = 1;
     public static final int MESSAGE_PAGE_NUMBER = 2;

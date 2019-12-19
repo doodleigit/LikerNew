@@ -1,10 +1,6 @@
 package com.liker.android.Group.service;
 
-import com.liker.android.Authentication.model.City;
-import com.liker.android.Authentication.model.Country;
-import com.liker.android.Authentication.model.ForgotPassword;
-import com.liker.android.Authentication.model.LoginUser;
-import com.liker.android.Authentication.model.ResendStatus;
+import com.liker.android.Group.model.GroupContent;
 import com.liker.android.Group.model.MyGroupMember;
 import com.liker.android.Tool.AppConstants;
 
@@ -77,6 +73,7 @@ public interface GroupWebservice {
     );
 
 
+
     @POST(AppConstants.LEAVE_MEMBERS)
     @FormUrlEncoded
     Call<String> leaveMembers(
@@ -108,5 +105,15 @@ public interface GroupWebservice {
             @Field("invite_users[]") String[] inviteUsers
     );
 
+
+
+    @POST(AppConstants.ALL_GROUP_INFO)
+    @FormUrlEncoded
+    Call<GroupContent> allGroupInfo(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds
+            );
 }
 
