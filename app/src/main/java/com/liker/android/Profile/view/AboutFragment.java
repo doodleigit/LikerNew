@@ -588,7 +588,7 @@ public class AboutFragment extends Fragment {
         EmailModificationListener emailModificationListener = new EmailModificationListener() {
             @Override
             public void onEmailRemove(Email email, int position) {
-                android.support.v7.app.AlertDialog.Builder alertBuilder = new android.support.v7.app.AlertDialog.Builder(getContext());
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
                 alertBuilder.setCancelable(true);
                 alertBuilder.setMessage(getString(R.string.are_you_sure_you_want_to_remove_this_email));
                 alertBuilder.setPositiveButton(android.R.string.ok,
@@ -617,8 +617,18 @@ public class AboutFragment extends Fragment {
 
             @Override
             public void onPhoneRemove(Phone phone, int position) {
-                Call<String> call = profileService.removePhone(deviceId, token, userId, userId, phone.getPhoneNumber());
-                removePhone(call, position, phoneRecyclerView);
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
+                alertBuilder.setCancelable(true);
+                alertBuilder.setMessage(getString(R.string.are_you_sure_you_want_to_remove_this_phone_number));
+                alertBuilder.setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Call<String> call = profileService.removePhone(deviceId, token, userId, userId, phone.getPhoneNumber());
+                                removePhone(call, position, phoneRecyclerView);
+                            }
+                        });
+                alertBuilder.setNegativeButton(android.R.string.cancel, null);
+                alertBuilder.show();
             }
         };
 

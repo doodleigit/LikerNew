@@ -452,7 +452,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
 
     int position;
 
-
     public void setItem(PostItem item, int position) {
         this.item = item;
         this.position = position;
@@ -485,7 +484,6 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
             tvLikeShare.setVisibility(View.VISIBLE);
             imagePermission.setVisibility(View.VISIBLE);
         }
-
 
         if ("1".equalsIgnoreCase(isShared)) {
             containerHeaderShare.setVisibility(View.VISIBLE);
@@ -1234,7 +1232,7 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
             comment_list.clear();
             commentItem=item.getPostTopComment().get(0).getComment().get(0);
             comment_list.addAll(item.getPostTopComment().get(0).getComment());
-            adapter = new CommentAdapter(mContext, comment_list, item, this, this, this, this, true);
+            adapter = new CommentAdapter(mContext, comment_list, item, this, this, this, this, 0);
             rvPopularComment.setAdapter(adapter);
         }
 

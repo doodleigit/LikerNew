@@ -261,6 +261,7 @@
     <string name="cover_photo_has_been_updated">Cover photo has been updated</string>
     <string name="are_you_sure_you_want_to_deactivated_your_account">Are you sure you want to deactivated your account ?</string>
     <string name="are_you_sure_you_want_to_remove_this_email">Are you sure you want to remove this email ?</string>
+    <string name="are_you_sure_you_want_to_remove_this_phone_number">Are you sure you want to remove this phone number ?</string>
     <string name="a_verification_email_has_been_resent_to_your_email">A verification email has been resent to your email </string>
     <string name="if_you_need_help_please_contact_with_liker_support">If you need help please contact with Liker Support .</string>
     <string name="unverified">Unverified</string>

@@ -1376,7 +1376,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
             comment_list.clear();
             commentItem = postItem.getPostTopComment().get(0).getComment().get(0);
             comment_list.addAll(postItem.getPostTopComment().get(0).getComment());
-            adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, true);
+            adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, 0);
             rvPopularComment.setAdapter(adapter);
         }
 
