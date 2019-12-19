@@ -43,14 +43,14 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private CommentTextHolder.CommentListener commentListener;
     private CommentYoutubeHolder.CommentListener commentYoutubeListener;
     private CommentImageHolder.CommentListener commentImageListener;
-    private boolean isCommentMode;
+    private int isCommentMode;
 
     public CommentAdapter(Context context, List<Comment_> comment_list, PostItem postItem,
                           CommentTextHolder.CommentListener commentListener,
                           CommentLinkScriptHolder.CommentListener commentLinkListener,
                           CommentYoutubeHolder.CommentListener commentYoutubeListener,
                           CommentImageHolder.CommentListener commentImageListener,
-                          boolean isCommentMode
+                          int isCommentMode
 
     ) {
         this.mContext = context;

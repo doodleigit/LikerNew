@@ -1071,95 +1071,93 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             public void onResponse(Call<String> call, Response<String> response) {
 
                 String message = response.body();
+                if (message != null) {
+                    try {
+                        JSONObject object = new JSONObject(new String(message));
+                        if (isContain(object, "status")) {
+                            user.status = object.getBoolean("status");
+                            if (user.status) {
+                                if (flipperId == 1) {
+                                    flipperId++;
+                                    mViewFlipper.setInAnimation(slideLeftIn);
+                                    mViewFlipper.setOutAnimation(slideLeftOut);
+                                    mViewFlipper.showNext();
+                                }
 
-                try {
-                    JSONObject object = new JSONObject(new String(message));
-                    if (isContain(object, "status")) {
-                        user.status = object.getBoolean("status");
-                        if (user.status) {
-
-                            if (flipperId == 1) {
-                                flipperId++;
-                                mViewFlipper.setInAnimation(slideLeftIn);
-                                mViewFlipper.setOutAnimation(slideLeftOut);
-                                mViewFlipper.showNext();
-                            }
-
-                            if (isContain(object, "user_id")) {
-                                user.userId = object.getString("user_id");
-                                //manager.setProfileId(user.userId);
-                                String msg = getString(R.string.verification_email_sent_successfully);
-                                ResendEmail resendEmail = ResendEmail.newInstance(msg);
-                                resendEmail.show(getSupportFragmentManager(), "ResendEmail");
-                                //startActivity(new Intent(Signup.this, Liker.class));
+                                if (isContain(object, "user_id")) {
+                                    user.userId = object.getString("user_id");
+                                    //manager.setProfileId(user.userId);
+                                    String msg = getString(R.string.verification_email_sent_successfully);
+                                    ResendEmail resendEmail = ResendEmail.newInstance(msg);
+                                    resendEmail.show(getSupportFragmentManager(), "ResendEmail");
+                                    //startActivity(new Intent(Signup.this, Liker.class));
+                                } else {
+                                    user.userId = "";
+                                }
                             } else {
-                                user.userId = "";
+                                if (isContain(object, "error")) {
+                                    JSONObject errorObject = object.getJSONObject("error");
+                                    if (isContain(errorObject, "first_name")) {
+                                        user.first_name = errorObject.getString("first_name");
+                                        showSnackbar(user.first_name);
+                                        mViewFlipper.showPrevious();
+                                        flipperId--;
+
+
+                                    } else if (isContain(errorObject, "last_name")) {
+                                        user.last_name = errorObject.getString("last_name");
+                                        showSnackbar(user.last_name);
+                                        mViewFlipper.showPrevious();
+                                        flipperId--;
+
+                                    } else if (isContain(errorObject, "email")) {
+                                        user.email = errorObject.getString("email");
+                                        showSnackbar(user.email);
+                                        mViewFlipper.showPrevious();
+                                        flipperId--;
+
+
+                                    } else if (isContain(errorObject, "password")) {
+                                        user.password = errorObject.getString("password");
+                                        showSnackbar(user.password);
+                                        mViewFlipper.showPrevious();
+                                        flipperId--;
+
+                                    } else if (isContain(errorObject, "retype_password")) {
+                                        user.retype_password = errorObject.getString("retype_password");
+                                        showSnackbar(user.retype_password);
+                                        mViewFlipper.showPrevious();
+                                        flipperId--;
+
+                                    } else if (isContain(errorObject, "gender")) {
+                                        user.gender = errorObject.getString("gender");
+                                        showSnackbar(user.gender);
+                                    } else if (isContain(errorObject, "country")) {
+                                        user.country = errorObject.getString("country");
+                                        showSnackbar(user.country);
+                                    } else if (isContain(errorObject, "dob")) {
+                                        user.dob = errorObject.getString("dob");
+                                        showSnackbar(user.dob);
+                                    } else {
+                                        mViewFlipper.showPrevious();
+                                        flipperId--;
+                                    }
+                                }
+
                             }
                         } else {
-                            if (isContain(object, "error")) {
-                                JSONObject errorObject = object.getJSONObject("error");
-                                if (isContain(errorObject, "first_name")) {
-                                    user.first_name = errorObject.getString("first_name");
-                                    showSnackbar(user.first_name);
-                                    mViewFlipper.showPrevious();
-                                    flipperId--;
-
-
-                                } else if (isContain(errorObject, "last_name")) {
-                                    user.last_name = errorObject.getString("last_name");
-                                    showSnackbar(user.last_name);
-                                    mViewFlipper.showPrevious();
-                                    flipperId--;
-
-                                } else if (isContain(errorObject, "email")) {
-                                    user.email = errorObject.getString("email");
-                                    showSnackbar(user.email);
-                                    mViewFlipper.showPrevious();
-                                    flipperId--;
-
-
-                                } else if (isContain(errorObject, "password")) {
-                                    user.password = errorObject.getString("password");
-                                    showSnackbar(user.password);
-                                    mViewFlipper.showPrevious();
-                                    flipperId--;
-
-                                } else if (isContain(errorObject, "retype_password")) {
-                                    user.retype_password = errorObject.getString("retype_password");
-                                    showSnackbar(user.retype_password);
-                                    mViewFlipper.showPrevious();
-                                    flipperId--;
-
-                                } else if (isContain(errorObject, "gender")) {
-                                    user.gender = errorObject.getString("gender");
-                                    showSnackbar(user.gender);
-                                } else if (isContain(errorObject, "country")) {
-                                    user.country = errorObject.getString("country");
-                                    showSnackbar(user.country);
-                                } else if (isContain(errorObject, "dob")) {
-                                    user.dob = errorObject.getString("dob");
-                                    showSnackbar(user.dob);
-                                } else {
-                                    mViewFlipper.showPrevious();
-                                    flipperId--;
-                                }
-                            }
-
+                            status = false;
                         }
-                    } else {
-                        status = false;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-                Log.d("Message", message);
                 progressBar.setVisibility(View.GONE);
                 signUpDisable(false);
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("message", t.getMessage());
                 progressBar.setVisibility(View.GONE);
                 signUpDisable(false);
             }

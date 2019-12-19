@@ -1328,7 +1328,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
             comment_list.clear();
             commentItem=item.getPostTopComment().get(0).getComment().get(0);
             comment_list.addAll(item.getPostTopComment().get(0).getComment());
-            adapter = new CommentAdapter(mContext, comment_list, item, this, this, this, this, true);
+            adapter = new CommentAdapter(mContext, comment_list, item, this, this, this, this, 0);
             rvPopularComment.setAdapter(adapter);
         }
     }

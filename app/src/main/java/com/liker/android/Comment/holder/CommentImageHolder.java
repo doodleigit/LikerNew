@@ -63,6 +63,7 @@ import com.liker.android.Comment.view.activity.CommentPost;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.HomeService;
+import com.liker.android.Home.view.activity.Home;
 import com.liker.android.Home.view.fragment.LikerUserListFragment;
 import com.liker.android.Post.view.fragment.MediaFullViewFragment;
 import com.liker.android.Profile.view.ProfileActivity;
@@ -153,7 +154,7 @@ public class CommentImageHolder extends RecyclerView.ViewHolder {
     List<Reply> replyItem;
 
     CommentListener listener;
-    private boolean isCommentMode;
+    private int isCommentMode;
     String replyId = "";
     Reply reply;
 
@@ -168,7 +169,7 @@ public class CommentImageHolder extends RecyclerView.ViewHolder {
     private int commentLikeNumeric;
     private MediaPlayer player;
 
-    public CommentImageHolder(View itemView, Context context, final CommentListener listener, boolean isCommentMode) {
+    public CommentImageHolder(View itemView, Context context, final CommentListener listener, int isCommentMode) {
         super(itemView);
 
         mContext = context;
@@ -373,7 +374,10 @@ public class CommentImageHolder extends RecyclerView.ViewHolder {
             public void onClick(View view) {
                 FragmentTransaction ft;
                 Fragment prev;
-                if (isCommentMode) {
+                if (isCommentMode == 0) {
+                    ft = ((Home) mContext).getSupportFragmentManager().beginTransaction();
+                    prev = ((Home) mContext).getSupportFragmentManager().findFragmentByTag("dialog");
+                } else if (isCommentMode == 1) {
                     ft = ((CommentPost) mContext).getSupportFragmentManager().beginTransaction();
                     prev = ((CommentPost) mContext).getSupportFragmentManager().findFragmentByTag("dialog");
                 } else {

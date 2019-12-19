@@ -365,7 +365,7 @@ public class CommentPost extends AppCompatActivity implements View.OnClickListen
         webService = PostService.mRetrofit.create(PostService.class);
         //  Picasso.with(App.getInstance()).load(imageUrl).into(target);
         App.setRvCommentHeader(false);
-        adapter = new CommentAdapter(this, comment_list, postItem, this, this, this, this, true);
+        adapter = new CommentAdapter(this, comment_list, postItem, this, this, this, this, 1);
         recyclerView.setAdapter(adapter);
         postId = postItem.getSharedPostId();
         tvLikes = findViewById(R.id.tvLikes);
