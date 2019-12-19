@@ -916,7 +916,7 @@ public class PostShare extends AppCompatActivity implements
                     friends
             );
             sendSharedPostRequest(call);
-            App.setIsPostShare(false);
+
         } else {
             Tools.showNetworkDialog(getSupportFragmentManager());
             progressView.setVisibility(View.GONE);
@@ -943,9 +943,7 @@ public class PostShare extends AppCompatActivity implements
                             boolean status = successObject.getBoolean("status");
                             if (status) {
                                 Toast.makeText(PostShare.this, "successfully shared!", Toast.LENGTH_SHORT).show();
-
-
-
+                                App.setIsPostShare(true);
                                 Call<String> mCall = webService.sendBrowserNotification(
                                         deviceId,//"8b64708fa409da20341b1a555d1ddee526444",
                                         profileId,//"26444",
