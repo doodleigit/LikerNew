@@ -645,9 +645,7 @@ public class ReplyImageHolder extends RecyclerView.ViewHolder {
 
             }
         });
-        if (!isNullOrEmpty(commentItem.getTotalReply()) && Integer.parseInt(commentItem.getTotalReply()) > 0) {
-            tvCommentReply.setText(String.format("%s Reply", commentItem.getTotalReply()));
-        }
+
       /*  tvCommentReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

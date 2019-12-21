@@ -10,7 +10,7 @@
         <item>@drawable/public_</item>
         <item>@drawable/friends</item>
     </integer-array>
-
+    <string name="fa_icon_piechart">&#xf200;</string>
     <string name="app_name">Liker</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="copyright">Copyright \u00A9 %1$d Likeopedia, LLC</string>
@@ -387,6 +387,7 @@
     <string name="verification_email_sent_successfully">A verification email has been sent to your email address. Please confirm and complete your registration.</string>
     <string name="tv_create_group_disable_color">#94979E</string>
     <string name="group_see_all">Sell All</string>
+    <string name="maximum_allowed_file_size">Maximum allowed file size is 8 MB</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

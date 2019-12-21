@@ -23,6 +23,7 @@ import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -1068,13 +1069,13 @@ public class CommentPost extends AppCompatActivity implements View.OnClickListen
         if (Build.VERSION.SDK_INT < 19) {
             Intent intent1 = new Intent();
             intent1.setType("image/*");
-            intent1.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent1.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
             intent1.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent1, "Select images"), REQUEST_TAKE_GALLERY_IMAGE);
         } else {
             Intent intent2 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent2.addCategory(Intent.CATEGORY_OPENABLE);
-            intent2.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent2.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
             intent2.setType("image/*");
             startActivityForResult(intent2, REQUEST_TAKE_GALLERY_IMAGE);
         }
@@ -1143,14 +1144,20 @@ public class CommentPost extends AppCompatActivity implements View.OnClickListen
                 Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
                 sendIsDuplicateRequest(call);*/
                 File file = new File(imageFilePath);
+                long fileSize = file.length();
                 //Parsing any Media type file
-                RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
-                fileToUpload = MultipartBody.Part.createFormData("comment_image", file.getName(), requestFile);
+                if (fileSize < 8 * 1000000) {
+                    //Parsing any Media type file
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
+                    fileToUpload = MultipartBody.Part.createFormData("comment_image", file.getName(), requestFile);
 
 
-                progressDialog.show();
-                Call<Comment_> call = commentService.addedComment(deviceId, profileId, token, fileToUpload, commentText, commentType, hasMention, linkUrl, mention, postId, userIds);
-                sendCommentItemRequest(call);
+                    progressDialog.show();
+                    Call<Comment_> call = commentService.addedComment(deviceId, profileId, token, fileToUpload, commentText, commentType, hasMention, linkUrl, mention, postId, userIds);
+                    sendCommentItemRequest(call);
+                } else {
+                    makeText(getApplicationContext(), getString(R.string.maximum_allowed_file_size), Toast.LENGTH_LONG).show();
+                }
 
             }
         } else {
@@ -1168,13 +1175,17 @@ public class CommentPost extends AppCompatActivity implements View.OnClickListen
             Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
             sendIsDuplicateRequest(call);*/
             File file = new File(imageFilePath);
+            long fileSize = file.length();
             //Parsing any Media type file
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
-            fileToUpload = MultipartBody.Part.createFormData("comment_image", file.getName(), requestFile);
-            progressDialog.show();
-            Call<Comment_> call = commentService.addedComment(deviceId, profileId, token, fileToUpload, commentText, commentType, hasMention, linkUrl, mention, postId, userIds);
-            sendCommentItemRequest(call);
-
+            if (fileSize < 8 * 1000000) {
+                RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
+                fileToUpload = MultipartBody.Part.createFormData("comment_image", file.getName(), requestFile);
+                progressDialog.show();
+                Call<Comment_> call = commentService.addedComment(deviceId, profileId, token, fileToUpload, commentText, commentType, hasMention, linkUrl, mention, postId, userIds);
+                sendCommentItemRequest(call);
+            } else {
+                makeText(getApplicationContext(), getString(R.string.maximum_allowed_file_size), Toast.LENGTH_LONG).show();
+            }
 //            Call<String> mediaCall = webService.addPhoto(deviceId, profileId, token, fileToUpload);
 //            sendImageRequest(mediaCall);
 
