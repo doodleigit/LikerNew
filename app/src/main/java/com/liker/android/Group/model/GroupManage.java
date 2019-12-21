@@ -10,6 +10,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class GroupManage implements Serializable, Parcelable
 {
+    @SerializedName("creator_id")
+    @Expose
+    public String creatorId;
 
     @SerializedName("name")
     @Expose
@@ -42,6 +45,7 @@ public class GroupManage implements Serializable, Parcelable
     private final static long serialVersionUID = -825657093995440222L;
 
     protected GroupManage(Parcel in) {
+        this.creatorId = ((String) in.readValue((String.class.getClassLoader())));
         this.name = ((String) in.readValue((String.class.getClassLoader())));
         this.totalMember = ((String) in.readValue((String.class.getClassLoader())));
         this.totalPost = ((String) in.readValue((String.class.getClassLoader())));
@@ -49,6 +53,14 @@ public class GroupManage implements Serializable, Parcelable
     }
 
     public GroupManage() {
+    }
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
     }
 
     public String getName() {
@@ -85,6 +97,7 @@ public class GroupManage implements Serializable, Parcelable
     }
 
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(creatorId);
         dest.writeValue(name);
         dest.writeValue(totalMember);
         dest.writeValue(totalPost);

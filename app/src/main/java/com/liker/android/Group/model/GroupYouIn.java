@@ -11,6 +11,10 @@ import com.google.gson.annotations.SerializedName;
 public class GroupYouIn implements Serializable, Parcelable
 {
 
+    @SerializedName("creator_id")
+    @Expose
+    public String creatorId;
+
     @SerializedName("name")
     @Expose
     private String name;
@@ -46,6 +50,7 @@ public class GroupYouIn implements Serializable, Parcelable
 
     protected GroupYouIn(Parcel in) {
         this.name = ((String) in.readValue((String.class.getClassLoader())));
+        this.creatorId = ((String) in.readValue((String.class.getClassLoader())));
         this.totalMember = ((String) in.readValue((String.class.getClassLoader())));
         this.totalPost = ((String) in.readValue((String.class.getClassLoader())));
         this.imageName = ((String) in.readValue((String.class.getClassLoader())));
@@ -55,6 +60,13 @@ public class GroupYouIn implements Serializable, Parcelable
     }
 
 
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
 
     public String getName() {
         return name;
@@ -89,6 +101,7 @@ public class GroupYouIn implements Serializable, Parcelable
     }
 
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(creatorId);
         dest.writeValue(name);
         dest.writeValue(totalMember);
         dest.writeValue(totalPost);

@@ -386,7 +386,8 @@
     <string name="old_password_and_new_password_cannot_be_same">Old Password and New Password cannot be same</string>
     <string name="verification_email_sent_successfully">A verification email has been sent to your email address. Please confirm and complete your registration.</string>
     <string name="tv_create_group_disable_color">#94979E</string>
-    <string name="group_see_all">Sell All</string>
+    <string name="group_see_all">See all</string>
+    <string name="category">Category</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>
