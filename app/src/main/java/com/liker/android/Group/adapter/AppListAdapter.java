@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.liker.android.Group.model.App;
+import com.liker.android.Group.model.SuggestedCategory;
 import com.liker.android.R;
+import com.liker.android.Tool.AppConstants;
+import com.squareup.picasso.Picasso;
 
 
 import java.util.List;
@@ -21,7 +24,7 @@ import java.util.List;
 public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.MyViewHolder> {
 
     Context context;
-    List<App> appList;
+    List<SuggestedCategory> suggestedCategoryList;
     private int SHOW_INTERSTITIAL_AD = 5080;
     private String writingsCatageory;
     private int width, height, itemWidth;
@@ -42,9 +45,9 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.MyViewHo
         }
     }
 
-    public AppListAdapter(Context context, List<App> appList) {
+    public AppListAdapter(Context context, List<SuggestedCategory> suggestedCategoryList) {
         this.context = context;
-        this.appList = appList;
+        this.suggestedCategoryList = suggestedCategoryList;
 
         //Calculate the width and height of device
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -65,17 +68,21 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        final App app = appList.get(position);
-        holder.textViewName.setText(app.name);
-        Glide.with(context)
-                .load(app.drawable)
-                .into(holder.imageViewIcon);
+        final SuggestedCategory category = suggestedCategoryList.get(position);
+        holder.textViewName.setText(category.name);
+        holder.imageViewIcon.setImageBitmap(null);
+        String coverImage= AppConstants.USER_UPLOADED_IMAGES+category.getImageName();
+        Picasso.with(holder.imageViewIcon.getContext()).load(coverImage).into(holder.imageViewIcon);
+        holder.itemView.setTag(category);
+//        Glide.with(context)
+//                .load(app.imageName)
+//                .into(holder.imageViewIcon);
 
     }
 
     @Override
     public int getItemCount() {
-        return appList.size();
+        return suggestedCategoryList.size();
     }
 
 }

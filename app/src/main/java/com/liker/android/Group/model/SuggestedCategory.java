@@ -13,13 +13,13 @@ public class SuggestedCategory implements Serializable, Parcelable
 
     @SerializedName("cat_id")
     @Expose
-    private String catId;
+    public String catId;
     @SerializedName("name")
     @Expose
-    private String name;
+    public String name;
     @SerializedName("image_name")
     @Expose
-    private String imageName;
+    public String imageName;
     public final static Creator<SuggestedCategory> CREATOR = new Creator<SuggestedCategory>() {
 
 

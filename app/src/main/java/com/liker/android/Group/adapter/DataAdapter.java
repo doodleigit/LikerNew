@@ -4,12 +4,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.liker.android.Group.model.SuggestedGroup;
 import com.liker.android.Group.model.Header;
 import com.liker.android.Group.model.ListItem;
 import com.liker.android.R;
+import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.Tools;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -22,10 +26,10 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType == ListItem.TYPE_HEADER) {
+        if (viewType == ListItem.TYPE_HEADER) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.header_layout, parent, false);
-            return  new VHHeader(v);
-        } else if(viewType == ListItem.TYPE_ITEM) {
+            return new VHHeader(v);
+        } else if (viewType == ListItem.TYPE_ITEM) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
             return new VHItem(v);
         }
@@ -35,16 +39,26 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof VHHeader) {
+        if (holder instanceof VHHeader) {
             Header header = (Header) items.get(position);
-            VHHeader VHheader = (VHHeader)holder;
+            VHHeader VHheader = (VHHeader) holder;
             VHheader.tvName.setText(header.getName());
-        } else if(holder instanceof VHItem) {
+        } else if (holder instanceof VHItem) {
 
             SuggestedGroup suggestedGroup = (SuggestedGroup) items.get(position);
-            VHItem VHitem = (VHItem)holder;
+            VHItem VHitem = (VHItem) holder;
             VHitem.tvItem.setText(suggestedGroup.getName());
 
+            VHitem.image.setImageBitmap(null);
+            String coverImage = AppConstants.USER_UPLOADED_IMAGES + suggestedGroup.getImageName();
+            Picasso.with(VHitem.image.getContext()).load(coverImage).into(VHitem.image);
+
+            String groupMember = suggestedGroup.totalMember.equals("0") ? "" :"Members: "+ Tools.getFormattedLikerCount(suggestedGroup.totalMember);
+            String groupPosts = suggestedGroup.totalPost.equals("0") ? "" :  " | Posts: " +Tools.getFormattedLikerCount(suggestedGroup.totalPost);
+            String allCountInfo =  groupMember + groupPosts;
+            VHitem.tvGroupItemInfoCount.setText(allCountInfo);
+
+            holder.itemView.setTag(suggestedGroup);
         }
 
 
@@ -60,19 +74,24 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return items.get(position).getItemType();
     }
 
-    class VHHeader extends RecyclerView.ViewHolder{
+    class VHHeader extends RecyclerView.ViewHolder {
         TextView tvName;
+
         public VHHeader(View itemView) {
             super(itemView);
-            this.tvName = (TextView)itemView.findViewById(R.id.tvName);
+            this.tvName = (TextView) itemView.findViewById(R.id.tvName);
         }
     }
 
-    class VHItem extends RecyclerView.ViewHolder{
-        TextView tvItem;
+    class VHItem extends RecyclerView.ViewHolder {
+        TextView tvItem, tvGroupItemInfoCount;
+        ImageView image;
+
         public VHItem(View itemView) {
             super(itemView);
-            this.tvItem = (TextView)itemView.findViewById(R.id.tvItem);
+            this.tvItem = (TextView) itemView.findViewById(R.id.tvItem);
+            this.tvGroupItemInfoCount = (TextView) itemView.findViewById(R.id.tvGroupItemInfoCount);
+            this.image = (ImageView) itemView.findViewById(R.id.image);
         }
     }
 }

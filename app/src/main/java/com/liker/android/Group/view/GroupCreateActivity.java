@@ -1,6 +1,5 @@
 package com.liker.android.Group.view;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -11,50 +10,32 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.CompoundButton;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.liker.android.App;
-import com.liker.android.Authentication.model.UserInfo;
-import com.liker.android.DirectShare.DirectShareActivity;
 import com.liker.android.Group.service.GroupWebservice;
-import com.liker.android.Home.model.Headers;
-import com.liker.android.Home.model.TopContributorStatus;
-import com.liker.android.Home.service.SocketIOManager;
-import com.liker.android.Home.view.activity.Home;
 import com.liker.android.Post.model.Category;
 import com.liker.android.Post.model.Subcatg;
 import com.liker.android.Post.view.activity.PostCategory;
-import com.liker.android.Post.view.activity.PostNew;
-import com.liker.android.Post.view.fragment.ContributorStatus;
-import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
-import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.ClearableEditText;
-import com.liker.android.Tool.EditTextLinesLimiter;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
-import com.liker.android.Tool.Tools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.socket.client.Ack;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.liker.android.Tool.Tools.isNullOrEmpty;
 
-public class CreateGroupActivity extends AppCompatActivity implements View.OnClickListener {
+public class GroupCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     //data
@@ -71,7 +52,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
     private ViewGroup contentCategory;
     private TextView tvAudience, tvCreateGroup;
     private RadioButton rbPublic, rbPrivate;
-    private String TAG = "CreateGroupActivity";
+    private String TAG = "GroupCreateActivity";
 
 
     @Override
@@ -111,7 +92,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
 
                 groupName = s.toString();
 
-                if (!TextUtils.isEmpty(groupName) ) {
+                if (!TextUtils.isEmpty(groupName)) {
                     tvCreateGroup.setTextColor(Color.WHITE);
                     tvCreateGroup.setBackgroundResource(R.drawable.btn_round_outline);
                     tvCreateGroup.setEnabled(true);
@@ -142,7 +123,7 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
                 finish();
                 break;
             case R.id.contentCategory:
-                Intent intent = new Intent(CreateGroupActivity.this, PostCategory.class);
+                Intent intent = new Intent(GroupCreateActivity.this, PostCategory.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.bottom_up, R.anim.nothing);
                 break;
@@ -211,7 +192,6 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.i("Response", response.body().toString());
-                //Toast.makeText()
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
 
@@ -220,22 +200,23 @@ public class CreateGroupActivity extends AppCompatActivity implements View.OnCli
                             boolean status = object.getBoolean("status");
                             if (status) {
                                 JSONObject dataObject = object.getJSONObject("data");
-                              if(dataObject.length()>0){
-                                  String groupId=dataObject.getString("group_id");
-                                  String groupMemberId=dataObject.getString("group_member_id");
-                                  AppSingleton.getInstance().setGroupId(groupId);
-                                  AppSingleton.getInstance().setGroupMemberId(groupMemberId);
-                              }
+                                if (dataObject.length() > 0) {
+                                    String groupId = dataObject.getString("group_id");
+                                    String groupMemberId = dataObject.getString("group_member_id");
+                                    AppSingleton.getInstance().setGroupId(groupId);
+                                    AppSingleton.getInstance().setGroupMemberId(groupMemberId);
+                                }
                                 JSONObject messageObject = object.getJSONObject("message");
                                 JSONObject successObject = messageObject.getJSONObject("success");
                                 if (successObject.length() > 0) {
                                     String successMessage = successObject.getString("message");
-                                    Toast.makeText(CreateGroupActivity.this, successMessage, Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(CreateGroupActivity.this, GroupPageActivity.class));
+                                    Toast.makeText(GroupCreateActivity.this, successMessage, Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(GroupCreateActivity.this, GroupPageActivity.class));
+                                    finish();
                                 }
-                            }else {
-                                String message=object.getString("message");
-                                Toast.makeText(CreateGroupActivity.this, message, Toast.LENGTH_SHORT).show();
+                            } else {
+                                String message = object.getString("message");
+                                Toast.makeText(GroupCreateActivity.this, message, Toast.LENGTH_SHORT).show();
                             }
 
 

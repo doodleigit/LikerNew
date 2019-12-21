@@ -23,6 +23,7 @@ import com.liker.android.Group.adapter.DataAdapter;
 import com.liker.android.Group.adapter.RecyclerViewWithNavigationArrows;
 import com.liker.android.Group.model.App;
 import com.liker.android.Group.model.DummyDataHelper;
+import com.liker.android.Group.model.SuggestedCategory;
 import com.liker.android.Group.model.SuggestedGroup;
 import com.liker.android.Group.model.GroupContent;
 import com.liker.android.Group.model.GroupContentData;
@@ -34,6 +35,7 @@ import com.liker.android.Group.model.Message;
 import com.liker.android.Group.model.Success;
 import com.liker.android.Group.service.GroupContentService;
 import com.liker.android.R;
+import com.liker.android.Search.LikerSearch;
 import com.liker.android.Tool.NetworkHelper;
 
 import java.util.ArrayList;
@@ -74,7 +76,7 @@ if(groupContent!=null){
     Toast.makeText(this, successStatus, Toast.LENGTH_SHORT).show();
     if (status) {
         groupContentData = groupContent.getData();
-        Log.i(TAG, "onHandleIntent: " + groupContentData);
+        readyGroupCategory(groupContentData);
         List<SuggestedGroup> suggestedGroups1 = new ArrayList<SuggestedGroup>();
         List<SuggestedGroup> suggestedGroups2 = new ArrayList<SuggestedGroup>();
         List<SuggestedGroup> suggestedGroups3 = new ArrayList<SuggestedGroup>();
@@ -83,8 +85,9 @@ if(groupContent!=null){
 
         Header followerHeader=new Header("suggested group");
         items.add(followerHeader);
-        suggestedGroups1.addAll(groupContentData.getFollowerData());
-        items.addAll(suggestedGroups1);
+        suggestedGroups1.addAll(groupContentData.getSuggestedGroupData());
+//        suggestedGroups1.subList(0,2);
+        items.addAll(suggestedGroups1.subList(0,3));
 
 
         Header groupYouInDataHeader=new Header("Group you're in");
@@ -97,10 +100,11 @@ if(groupContent!=null){
             suggestedGroup.imageName=item.getImageName();
             suggestedGroup.totalMember=item.getTotalMember();
             suggestedGroup.totalPost=item.getTotalPost();
+            suggestedGroup.creatorId=item.getCreatorId();
             suggestedGroups2.add(suggestedGroup);
 
         }
-        items.addAll(suggestedGroups2);
+        items.addAll(suggestedGroups2.subList(0,3));
 
         Header groupManageHeader=new Header("Group you manage");
         items.add(groupManageHeader);
@@ -112,9 +116,10 @@ if(groupContent!=null){
             suggestedGroup.imageName=item.getImageName();
             suggestedGroup.totalMember=item.getTotalMember();
             suggestedGroup.totalPost=item.getTotalPost();
+            suggestedGroup.creatorId=item.getCreatorId();
             suggestedGroups3.add(suggestedGroup);
         }
-        items.addAll(suggestedGroups3);
+        items.addAll(suggestedGroups3.subList(0,3));
 
    /*     items.add(new Header("Header 1"));
         items.add(new Person("Item 1"));
@@ -135,7 +140,6 @@ if(groupContent!=null){
     }
 }
 
-
     }
 
     @Override
@@ -144,7 +148,6 @@ if(groupContent!=null){
         setContentView(R.layout.group_content);
         initComponent();
         readyGroupInfo();
-        readyGroupCategory();
 
         if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
             Intent intent = new Intent(this, GroupContentService.class);
@@ -165,25 +168,22 @@ if(groupContent!=null){
         recyclerView.setAdapter(adapter);
 
 //GRID LAYOUT MANAGER
-        GridLayoutManager gd = new GridLayoutManager(this, 2);
+        GridLayoutManager gd = new GridLayoutManager(this, 3);
 
         gd.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                return adapter.getItemViewType(position) == ListItem.TYPE_HEADER ? 2 : 1;
+                return adapter.getItemViewType(position) == ListItem.TYPE_HEADER ? 3 : 1;
             }
         });
-
         recyclerView.setLayoutManager(gd);
-
-
-
     }
 
-    private void readyGroupCategory() {
-        DummyDataHelper dummyDataHelper = new DummyDataHelper();
-        appsList = dummyDataHelper.getAppList();
-        AppListAdapter appListAdapter = new AppListAdapter(getApplicationContext(), appsList);
+    private void readyGroupCategory(GroupContentData groupContentData) {
+        List<SuggestedCategory> categoryList=groupContentData.getSuggestedCategoryData();
+//        DummyDataHelper dummyDataHelper = new DummyDataHelper();
+//        appsList = dummyDataHelper.getAppList();
+        AppListAdapter appListAdapter = new AppListAdapter(getApplicationContext(), categoryList);
         rv1.setAdapter(appListAdapter);
     }
 
@@ -210,11 +210,10 @@ if(groupContent!=null){
         int id = v.getId();
         switch (id) {
             case R.id.tvCreateNewGroup:
-                startActivity(new Intent(this, CreateGroupActivity.class));
+                startActivity(new Intent(this, GroupCreateActivity.class));
                 break;
-
             case R.id.image_search_group:
-                Toast.makeText(this, "Search Group....", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(GroupContentActivity.this, LikerSearch.class));
                 break;
         }
 

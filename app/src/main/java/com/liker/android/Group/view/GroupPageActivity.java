@@ -447,17 +447,15 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     }
 
     private void setData() {
-//        fullName = userAllInfo.getFirstName() + " " + userAllInfo.getLastName();
         //   userImage = AppConstants.USER_UPLOADED_IMAGES + userAllInfo.getPhoto();
         userImage = AppConstants.USER_UPLOADED_IMAGES + "";
         coverImage = AppConstants.USER_UPLOADED_IMAGES + groupImageName;
-        //  allCountInfo = Tools.getFormattedLikerCount("Members: " + Tools.getFormattedLikerCount(groupTotalMember) + " | Posts: " + Tools.getFormattedLikerCount(groupTotalPost));
-
-        // allCountInfo = Tools.getFormattedLikerCount(userAllInfo.getTotalLikes()) + " Likes " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowers()) + " Followers " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowings()) + " Following";
-        allCountInfo = "Members: " + Tools.getFormattedLikerCount("1500") + " | Posts: " + Tools.getFormattedLikerCount("2000");
-        //allCountInfo = Tools.getFormattedLikerCount("Members: " + Tools.getFormattedLikerCount("1500") + " | Posts: " + Tools.getFormattedLikerCount("2000"));
 
         tvGroupName.setText(groupName);
+//        allCountInfo = "Members: " + Tools.getFormattedLikerCount("1500") + " | Posts: " + Tools.getFormattedLikerCount("2000");
+        String groupMember = groupTotalMember.equals("0") ? "" :"Members: "+ Tools.getFormattedLikerCount(groupTotalMember);
+        String groupPosts = groupTotalPost.equals("0") ? "" :  " | Posts: " +Tools.getFormattedLikerCount(groupTotalPost);
+        String allCountInfo =  groupMember + groupPosts;
         tvTotalInfoCount.setText(allCountInfo);
         //  loadProfileImage();
         loadCoverImage();
@@ -795,7 +793,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                                 }
                             } else {
                                 String message = object.getString("message");
-                                //  Toast.makeText(CreateGroupActivity.this, message, Toast.LENGTH_SHORT).show();
+                                //  Toast.makeText(GroupCreateActivity.this, message, Toast.LENGTH_SHORT).show();
                             }
 
 

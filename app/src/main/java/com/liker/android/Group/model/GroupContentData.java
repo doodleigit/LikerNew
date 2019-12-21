@@ -50,12 +50,12 @@ public class GroupContentData implements Serializable, Parcelable{
     public GroupContentData() {
     }
 
-    public List<SuggestedGroup> getFollowerData() {
+    public List<SuggestedGroup> getSuggestedGroupData() {
         return suggestedGroupsData;
     }
 
-    public void setFollowerData(List<SuggestedGroup> followerData) {
-        this.suggestedGroupsData = followerData;
+    public void setSuggestedGroupData(List<SuggestedGroup> suggestedGroupsData) {
+        this.suggestedGroupsData = suggestedGroupsData;
     }
 
     public List<GroupYouIn> getGroupYouInData() {

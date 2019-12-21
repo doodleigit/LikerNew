@@ -40,7 +40,7 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Group.view.CreateGroupActivity"
+            android:name=".Group.view.GroupCreateActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName=".Group.view.GroupContentActivity"
             android:theme="@style/AppTheme.NoActionBar" />
