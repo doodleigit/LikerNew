@@ -2896,6 +2896,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
     private List<PostImage> getSelectedImagesPath(int requestCode, Intent data) throws FileNotFoundException {
 
         List<PostImage> result = new ArrayList<>();
+        ArrayList<String> maximumSizeImage = new ArrayList<>();
 
         ClipData clipData = data.getClipData();
         if (clipData != null) {
@@ -2910,29 +2911,37 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                 String strMD5 = getMD5EncryptedString(imagePath);
                 fileEncoded = strMD5;
 
-                if (mediaList.size() == 0) {
+                File file = new File(imageFilePath);
+                long fileSize = file.length();
+                //Parsing any Media type file
+                if (fileSize < 8 * 1000000) {
+
+                    if (mediaList.size() == 0) {
 
 
-                    Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
-                    sendIsDuplicateImageRequest(call, imagePath, fileEncoded, imageFilePath);
-                    tempMedia.add(imagePath);
-
-                } else {
-                    boolean hasAlready = false;
-                    for (String temp : mediaList) {
-                        if (temp.equalsIgnoreCase(imagePath)) {
-                            hasAlready = true;
-
-                            //  Tools.toast(PostNew.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
-                            break;
-                        }
-                    }
-                    if (!hasAlready) {
                         Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
                         sendIsDuplicateImageRequest(call, imagePath, fileEncoded, imageFilePath);
                         tempMedia.add(imagePath);
 
+                    } else {
+                        boolean hasAlready = false;
+                        for (String temp : mediaList) {
+                            if (temp.equalsIgnoreCase(imagePath)) {
+                                hasAlready = true;
+
+                                //  Tools.toast(PostNew.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
+                                break;
+                            }
+                        }
+                        if (!hasAlready) {
+                            Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
+                            sendIsDuplicateImageRequest(call, imagePath, fileEncoded, imageFilePath);
+                            tempMedia.add(imagePath);
+
+                        }
                     }
+                } else {
+                    maximumSizeImage.add(file.getName());
                 }
 
 
@@ -2947,24 +2956,35 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
             String strMD5 = getMD5EncryptedString(imagePath);
             fileEncoded = strMD5;
             //   String strBase64 = getBase64(imageFilePath);
+            File file = new File(imageFilePath);
+            long fileSize = file.length();
+            //Parsing any Media type file
+            if (fileSize < 8 * 1000000) {
 
-            if (mediaList.size() == 0) {
-                Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
-                sendIsDuplicateImageRequest(call, imagePath, fileEncoded, imageFilePath);
-                mediaList.add(imagePath);
-            } else {
-                for (String temp : mediaList) {
-                    if (temp.equalsIgnoreCase(imagePath)) {
+                if (mediaList.size() == 0) {
+                    Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
+                    sendIsDuplicateImageRequest(call, imagePath, fileEncoded, imageFilePath);
+                    mediaList.add(imagePath);
+                } else {
+                    for (String temp : mediaList) {
+                        if (temp.equalsIgnoreCase(imagePath)) {
 
-                        // Tools.toast(PostNew.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
-                    } else {
+                            // Tools.toast(PostNew.this, "You have already add this!", R.drawable.ic_info_outline_blue_24dp);
+                        } else {
 
-                        Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
-                        sendIsDuplicateImageRequest(call, imagePath, fileEncoded, imageFilePath);
+                            Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
+                            sendIsDuplicateImageRequest(call, imagePath, fileEncoded, imageFilePath);
+                        }
                     }
                 }
+            } else {
+                maximumSizeImage.add(file.getName());
             }
 
+        }
+
+        if (maximumSizeImage.size() > 0) {
+            makeText(getApplicationContext(), getString(R.string.maximum_allowed_file_size), Toast.LENGTH_LONG).show();
         }
 
         return result;

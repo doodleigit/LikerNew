@@ -388,6 +388,7 @@
     <string name="tv_create_group_disable_color">#94979E</string>
     <string name="group_see_all">See all</string>
     <string name="category">Category</string>
+    <string name="maximum_allowed_file_size">Maximum allowed file size is 8 MB</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

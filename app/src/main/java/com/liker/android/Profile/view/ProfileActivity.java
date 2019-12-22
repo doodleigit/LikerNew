@@ -2,6 +2,7 @@ package com.liker.android.Profile.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -67,6 +68,7 @@ import com.facebook.FacebookException;
 import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reason;
@@ -223,6 +225,8 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                 if (isOwnProfile) {
                     uploadContentType = 0;
                     selectImageSource(ivChangeProfileImage);
+                } else {
+                    viewFullImage(userImage);
                 }
             }
         });
@@ -233,6 +237,8 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                 if (isOwnProfile) {
                     uploadContentType = 1;
                     selectImageSource(ivChangeCoverImage);
+                } else {
+                    viewFullImage(coverImage);
                 }
             }
         });
@@ -255,7 +261,16 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 
                 popup = new android.support.v7.widget.PopupMenu(ProfileActivity.this, view);
                 popup.getMenuInflater().inflate(R.menu.profile_permission_menu, popup.getMenu());
-
+                if (userAllInfo.getPrivacy().getMessageSendPermission().equals("0")) {
+                    popup.getMenu().findItem(R.id.message).setVisible(true);
+                } else if (userAllInfo.getPrivacy().getMessageSendPermission().equals("1")) {
+                    popup.getMenu().findItem(R.id.message).setVisible(false);
+                } else {
+                    if (isFollow)
+                        popup.getMenu().findItem(R.id.message).setVisible(true);
+                    else
+                        popup.getMenu().findItem(R.id.message).setVisible(false);
+                }
 //                popup.show();
                 @SuppressLint("RestrictedApi") MenuPopupHelper menuHelper = new MenuPopupHelper(ProfileActivity.this, (MenuBuilder) popup.getMenu(), view);
                 menuHelper.setForceShowIcon(true);
@@ -944,6 +959,26 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         reportPersonMessageSheet.show(getSupportFragmentManager(), "ReportPersonMessageSheet");
     }
 
+    private void viewFullImage(String url) {
+        Dialog dialog = new Dialog(this, R.style.Theme_Dialog);
+        dialog.setContentView(R.layout.image_full_view);
+
+        ImageView close = dialog.findViewById(R.id.close);
+        PhotoView photoView = dialog.findViewById(R.id.photo_view);
+        Glide.with(App.getAppContext())
+                .load(url)
+                .dontAnimate()
+                .into(photoView);
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
 
     private void sendBrowserNotification(String followUserId) {
         Call<String> call = webService.sendBrowserNotification(deviceId, userId, token, followUserId, userId, "0", "follow");

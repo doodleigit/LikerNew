@@ -1165,13 +1165,13 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
         if (Build.VERSION.SDK_INT < 19) {
             Intent intent1 = new Intent();
             intent1.setType("image/*");
-            intent1.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent1.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
             intent1.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent1, "Select images"), REQUEST_TAKE_GALLERY_IMAGE);
         } else {
             Intent intent2 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent2.addCategory(Intent.CATEGORY_OPENABLE);
-            intent2.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            intent2.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
             intent2.setType("image/*");
             startActivityForResult(intent2, REQUEST_TAKE_GALLERY_IMAGE);
         }
@@ -1241,16 +1241,21 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
                 Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
                 sendIsDuplicateRequest(call);*/
                 File file = new File(imageFilePath);
+                long fileSize = file.length();
                 //Parsing any Media type file
-                RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
-                fileToUpload = MultipartBody.Part.createFormData("comment_image", file.getName(), requestFile);
+                if (fileSize < 8 * 1000000) {
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
+                    fileToUpload = MultipartBody.Part.createFormData("comment_image", file.getName(), requestFile);
 
 
-                progressDialog.show();
-                Call<Comment_> call = commentService.addedComment(deviceId, profileId, token, fileToUpload, commentText, commentType, hasMention, linkUrl, mention, postId, userIds);
+                    progressDialog.show();
+//                    Call<Comment_> call = commentService.addedComment(deviceId, profileId, token, fileToUpload, commentText, commentType, hasMention, linkUrl, mention, postId, userIds);
 //                sendCommentItemRequest(call);
-//                Call<String> call = commentService.addedCommentReply(deviceId, profileId, token,commentItem.getId(), fileToUpload, commentText, commentType, mention, linkUrl, "", postId, userIds);
-//                sendCommentItemRequest(call);
+                    Call<Reply> call = commentService.addedCommentReply(deviceId, profileId, token, commentItem.getId(), fileToUpload, commentText, commentType, mention, linkUrl, "", postId, userIds);
+                    sendCommentItemRequest(call);
+                } else {
+                    makeText(getApplicationContext(), getString(R.string.maximum_allowed_file_size), Toast.LENGTH_LONG).show();
+                }
 
             }
         } else {
@@ -1268,19 +1273,24 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
             Call<String> call = webService.isDuplicateFile(deviceId, profileId, token, userIds, "1", strMD5);
             sendIsDuplicateRequest(call);*/
             File file = new File(imageFilePath);
+            long fileSize = file.length();
             //Parsing any Media type file
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
-            fileToUpload = MultipartBody.Part.createFormData("comment_image", file.getName(), requestFile);
-            progressDialog.show();
+            if (fileSize < 8 * 1000000) {
+                RequestBody requestFile = RequestBody.create(MediaType.parse("image"), file);
+                fileToUpload = MultipartBody.Part.createFormData("comment_image", file.getName(), requestFile);
+                progressDialog.show();
 //            Call<Comment_> call = commentService.addedComment(deviceId, profileId, token, fileToUpload, commentText, commentType, hasMention, linkUrl, mention, postId, userIds);
 //            sendCommentItemRequest(call);
 //
-            //    Call<String> call = commentService.addedCommentReply(deviceId, profileId, token,commentItem.getId(), fileToUpload, commentText, commentType, mention, linkUrl, "", postId, userIds);
-            //     sendCommentItemRequest(call);
+                Call<Reply> call = commentService.addedCommentReply(deviceId, profileId, token, commentItem.getId(), fileToUpload, commentText, commentType, mention, linkUrl, "", postId, userIds);
+                sendCommentItemRequest(call);
 
 
 //            Call<String> mediaCall = webService.addPhoto(deviceId, profileId, token, fileToUpload);
 //            sendImageRequest(mediaCall);
+            } else {
+                makeText(getApplicationContext(), getString(R.string.maximum_allowed_file_size), Toast.LENGTH_LONG).show();
+            }
 
         }
 
@@ -1424,7 +1434,6 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
                             recyclerView.smoothScrollToPosition(replyItems.size() - 1);
 
                         }
-
 
 
                     } else {
