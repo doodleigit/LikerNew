@@ -1373,11 +1373,14 @@ public class TextHolder extends RecyclerView.ViewHolder implements
 
         //ADD MOST POPULAR COMMENT
         if (postItem.getPostTopComment().size() > 0) {
+            rvPopularComment.setVisibility(View.VISIBLE);
             comment_list.clear();
             commentItem = postItem.getPostTopComment().get(0).getComment().get(0);
             comment_list.addAll(postItem.getPostTopComment().get(0).getComment());
             adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, 0);
             rvPopularComment.setAdapter(adapter);
+        } else {
+            rvPopularComment.setVisibility(View.GONE);
         }
 
     }

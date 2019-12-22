@@ -63,7 +63,6 @@
                 android:textColor="@color/colorPostText"
                 android:imeOptions="actionSend"
                 android:layout_margin="@dimen/_5sdp"
-                android:textIsSelectable="true"
                 android:inputType="textCapSentences|textMultiLine" />
             <ImageView
                 android:id="@+id/imgLinkScript"

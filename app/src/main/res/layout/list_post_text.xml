@@ -59,7 +59,6 @@
                     android:textColor="@color/colorPostText"
                     android:background="@null"
                     android:imeOptions="actionSend"
-                    android:textIsSelectable="true"
                     android:inputType="textCapSentences|textMultiLine" />
 
 

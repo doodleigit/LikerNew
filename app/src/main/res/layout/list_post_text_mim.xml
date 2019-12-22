@@ -64,8 +64,7 @@
                     android:background="@null"
                     android:imeOptions="actionSend"
                     android:inputType="textCapSentences|textMultiLine"
-                    android:textColor="@color/colorPostText"
-                    android:textIsSelectable="true" />
+                    android:textColor="@color/colorPostText" />
 
             </LinearLayout>
 

@@ -1334,8 +1334,8 @@ public class Tools {
         ReadMoreOption readMoreOption = new ReadMoreOption.Builder(context)
                 // .textLength(3, ReadMoreOption.TYPE_LINE) // OR
                 .textLength(200, ReadMoreOption.TYPE_CHARACTER)
-                .moreLabel("Show more")
-                .lessLabel("Show less")
+                .moreLabel(" Show more")
+                .lessLabel(" Show less")
                 .moreLabelColor(Color.parseColor("#33B5E5"))
                 .lessLabelColor(Color.parseColor("#33B5E5"))
                 .labelUnderLine(false)
@@ -1431,6 +1431,24 @@ public class Tools {
 
     public static void setPageTraffic(Context context, int pageNumber) {
 //        context.sendBroadcast((new Intent().putExtra("page_number", pageNumber)).setAction(AppConstants.ADD_TRAFFIC_BROADCAST));
+    }
+
+    public static String getImageMaximumSizeAlert(ArrayList<String> arrayList) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String imageNames = "";
+        for (int i = 0; i < arrayList.size(); i++) {
+            stringBuilder.append(arrayList.get(i)).append(", ");
+        }
+
+        String holder = stringBuilder.toString();
+
+        if (holder.length() > 0) {
+            imageNames = holder.substring(0, holder.length() - 1);
+        } else {
+            imageNames = "";
+        }
+
+        return imageNames;
     }
 
 }

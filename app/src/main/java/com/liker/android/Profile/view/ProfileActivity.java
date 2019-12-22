@@ -261,7 +261,16 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 
                 popup = new android.support.v7.widget.PopupMenu(ProfileActivity.this, view);
                 popup.getMenuInflater().inflate(R.menu.profile_permission_menu, popup.getMenu());
-
+                if (userAllInfo.getPrivacy().getMessageSendPermission().equals("0")) {
+                    popup.getMenu().findItem(R.id.message).setVisible(true);
+                } else if (userAllInfo.getPrivacy().getMessageSendPermission().equals("1")) {
+                    popup.getMenu().findItem(R.id.message).setVisible(false);
+                } else {
+                    if (isFollow)
+                        popup.getMenu().findItem(R.id.message).setVisible(true);
+                    else
+                        popup.getMenu().findItem(R.id.message).setVisible(false);
+                }
 //                popup.show();
                 @SuppressLint("RestrictedApi") MenuPopupHelper menuHelper = new MenuPopupHelper(ProfileActivity.this, (MenuBuilder) popup.getMenu(), view);
                 menuHelper.setForceShowIcon(true);
