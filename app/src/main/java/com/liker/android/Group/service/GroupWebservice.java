@@ -73,7 +73,6 @@ public interface GroupWebservice {
     );
 
 
-
     @POST(AppConstants.LEAVE_MEMBERS)
     @FormUrlEncoded
     Call<String> leaveMembers(
@@ -106,7 +105,6 @@ public interface GroupWebservice {
     );
 
 
-
     @POST(AppConstants.ALL_GROUP_INFO)
     @FormUrlEncoded
     Call<GroupContent> allGroupInfo(
@@ -114,6 +112,33 @@ public interface GroupWebservice {
             @Header("User-Id") String userId,
             @Header("Security-Token") String token,
             @Field("user_id") String userIds
-            );
+    );
+
+    @POST(AppConstants.SUGGESTED_GROUP)
+    @FormUrlEncoded
+    Call<GroupContent> suggestedGroup(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds
+    );
+
+    @POST(AppConstants.GROUP_YOU_MANAGE)
+    @FormUrlEncoded
+    Call<GroupContent> groupYouManage(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds
+    );
+
+    @POST(AppConstants.GROUP_YOU_IN)
+    @FormUrlEncoded
+    Call<GroupContent> groupYouIn(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds
+    );
 }
 

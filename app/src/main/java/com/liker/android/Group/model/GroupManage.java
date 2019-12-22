@@ -10,9 +10,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class GroupManage implements Serializable, Parcelable
 {
-    @SerializedName("creator_id")
+    @SerializedName("group_id")
     @Expose
-    public String creatorId;
+    public String groupId;
 
     @SerializedName("name")
     @Expose
@@ -26,6 +26,10 @@ public class GroupManage implements Serializable, Parcelable
     @SerializedName("image_name")
     @Expose
     private String imageName;
+
+    @SerializedName("is_member")
+    @Expose
+    private String isMember;
 
     public final static Creator<GroupManage> CREATOR = new Creator<GroupManage>() {
 
@@ -45,22 +49,31 @@ public class GroupManage implements Serializable, Parcelable
     private final static long serialVersionUID = -825657093995440222L;
 
     protected GroupManage(Parcel in) {
-        this.creatorId = ((String) in.readValue((String.class.getClassLoader())));
+        this.groupId = ((String) in.readValue((String.class.getClassLoader())));
         this.name = ((String) in.readValue((String.class.getClassLoader())));
         this.totalMember = ((String) in.readValue((String.class.getClassLoader())));
         this.totalPost = ((String) in.readValue((String.class.getClassLoader())));
         this.imageName = ((String) in.readValue((String.class.getClassLoader())));
+        this.isMember = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     public GroupManage() {
     }
 
-    public String getCreatorId() {
-        return creatorId;
+    public String getIsMember() {
+        return isMember;
     }
 
-    public void setCreatorId(String creatorId) {
-        this.creatorId = creatorId;
+    public void setIsMember(String isMember) {
+        this.isMember = isMember;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public String getName() {
@@ -97,11 +110,12 @@ public class GroupManage implements Serializable, Parcelable
     }
 
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(creatorId);
+        dest.writeValue(groupId);
         dest.writeValue(name);
         dest.writeValue(totalMember);
         dest.writeValue(totalPost);
         dest.writeValue(imageName);
+        dest.writeValue(isMember);
     }
 
     public int describeContents() {

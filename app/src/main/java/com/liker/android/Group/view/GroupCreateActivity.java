@@ -202,9 +202,8 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
                                 JSONObject dataObject = object.getJSONObject("data");
                                 if (dataObject.length() > 0) {
                                     String groupId = dataObject.getString("group_id");
-                                    String groupMemberId = dataObject.getString("group_member_id");
                                     AppSingleton.getInstance().setGroupId(groupId);
-                                    AppSingleton.getInstance().setGroupMemberId(groupMemberId);
+
                                 }
                                 JSONObject messageObject = object.getJSONObject("message");
                                 JSONObject successObject = messageObject.getJSONObject("success");

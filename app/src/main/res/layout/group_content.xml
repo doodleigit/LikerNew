@@ -10,6 +10,7 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:elevation="0dp"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -70,7 +71,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <TextView
-        android:id="@+id/tvName"
+        android:id="@+id/tvGroupName"
         android:layout_below="@id/appBar"
         android:textSize="16sp"
         android:layout_width="wrap_content"
@@ -91,7 +92,7 @@
 
     <com.liker.android.Group.adapter.RecyclerViewWithNavigationArrows
         android:id="@+id/recycler_view_one"
-        android:layout_below="@id/tvName"
+        android:layout_below="@id/tvGroupName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
          />

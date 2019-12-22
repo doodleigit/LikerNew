@@ -102,7 +102,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     private String groupTotalPost;
     private String groupImageName;
     private String groupDescription;
-    private String profileUserId, groupMemberId;
+    private String profileUserId;
 
 
     private TabLayout tabLayout;
@@ -149,7 +149,6 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
     private void initialComponent() {
         groupId = AppSingleton.getInstance().getGroupId();
-        groupMemberId = AppSingleton.getInstance().getGroupMemberId();
         manager = new PrefManager(this);
         deviceId = manager.getDeviceId();
         userId = manager.getProfileId();

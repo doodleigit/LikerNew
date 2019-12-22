@@ -11,7 +11,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,7 +21,6 @@ import com.liker.android.Group.adapter.AppListAdapter;
 import com.liker.android.Group.adapter.DataAdapter;
 import com.liker.android.Group.adapter.RecyclerViewWithNavigationArrows;
 import com.liker.android.Group.model.App;
-import com.liker.android.Group.model.DummyDataHelper;
 import com.liker.android.Group.model.SuggestedCategory;
 import com.liker.android.Group.model.SuggestedGroup;
 import com.liker.android.Group.model.GroupContent;
@@ -46,7 +44,7 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
 
     private static final String TAG = "GroupContentActivity";
     private Toolbar toolbar;
-    private TextView tvCreateNewGroup;
+    private TextView tvCreateNewGroup, tvGroupName;
     private ImageView imageSearchGroup;
 
     private ArrayList<ListItem> items = new ArrayList<>();
@@ -68,58 +66,83 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
     };
 
     private void displayData() {
-if(groupContent!=null){
-    boolean status = groupContent.isStatus();
-    Message message = groupContent.getMessage();
-    Success success = message.getSuccess();
-    String successStatus = success.getMessage();
-    Toast.makeText(this, successStatus, Toast.LENGTH_SHORT).show();
-    if (status) {
-        groupContentData = groupContent.getData();
-        readyGroupCategory(groupContentData);
-        List<SuggestedGroup> suggestedGroups1 = new ArrayList<SuggestedGroup>();
-        List<SuggestedGroup> suggestedGroups2 = new ArrayList<SuggestedGroup>();
-        List<SuggestedGroup> suggestedGroups3 = new ArrayList<SuggestedGroup>();
-        List<GroupYouIn> groupYouInData = new ArrayList<GroupYouIn>();
-        List<GroupManage> groupManageData = new ArrayList<GroupManage>();
-
-        Header followerHeader=new Header("suggested group");
-        items.add(followerHeader);
-        suggestedGroups1.addAll(groupContentData.getSuggestedGroupData());
-//        suggestedGroups1.subList(0,2);
-        items.addAll(suggestedGroups1.subList(0,3));
+        if (groupContent != null) {
+            boolean status = groupContent.isStatus();
+            Message message = groupContent.getMessage();
+            Success success = message.getSuccess();
+            String successStatus = success.getMessage();
+            Toast.makeText(this, successStatus, Toast.LENGTH_SHORT).show();
+            if (status) {
+                groupContentData = groupContent.getData();
+                readyGroupCategory(groupContentData);
+                List<SuggestedGroup> suggestedGroups1 = new ArrayList<SuggestedGroup>();
+                List<SuggestedGroup> suggestedGroups2 = new ArrayList<SuggestedGroup>();
+                List<SuggestedGroup> suggestedGroups3 = new ArrayList<SuggestedGroup>();
+                List<GroupYouIn> groupYouInData = new ArrayList<GroupYouIn>();
+                List<GroupManage> groupManageData = new ArrayList<GroupManage>();
 
 
-        Header groupYouInDataHeader=new Header("Group you're in");
-        items.add(groupYouInDataHeader);
-        groupYouInData.addAll(groupContentData.getGroupYouInData());
-        for (GroupYouIn item:groupYouInData) {
+                if (groupContentData.getSuggestedGroupData().size() != 0) {
+                    Header followerHeader = new Header("Suggested group");
+                    items.add(followerHeader);
+                    suggestedGroups1.addAll(groupContentData.getSuggestedGroupData());
+                    if (suggestedGroups1.size() > 3) {
+                        items.addAll(suggestedGroups1.subList(0, 3));
+                    } else {
+                        items.addAll(suggestedGroups1);
+                    }
 
-            SuggestedGroup suggestedGroup =new SuggestedGroup();
-            suggestedGroup.name=item.getName();
-            suggestedGroup.imageName=item.getImageName();
-            suggestedGroup.totalMember=item.getTotalMember();
-            suggestedGroup.totalPost=item.getTotalPost();
-            suggestedGroup.creatorId=item.getCreatorId();
-            suggestedGroups2.add(suggestedGroup);
+                }
 
-        }
-        items.addAll(suggestedGroups2.subList(0,3));
 
-        Header groupManageHeader=new Header("Group you manage");
-        items.add(groupManageHeader);
-        groupManageData.addAll(groupContentData.getGroupManageData());
+                if (groupContentData.getGroupYouInData().size() != 0) {
+                    Header groupYouInDataHeader = new Header("Group you're in");
+                    items.add(groupYouInDataHeader);
+                    groupYouInData.addAll(groupContentData.getGroupYouInData());
+                    for (GroupYouIn item : groupYouInData) {
 
-        for (GroupManage item:groupManageData) {
-            SuggestedGroup suggestedGroup =new SuggestedGroup();
-            suggestedGroup.name=item.getName();
-            suggestedGroup.imageName=item.getImageName();
-            suggestedGroup.totalMember=item.getTotalMember();
-            suggestedGroup.totalPost=item.getTotalPost();
-            suggestedGroup.creatorId=item.getCreatorId();
-            suggestedGroups3.add(suggestedGroup);
-        }
-        items.addAll(suggestedGroups3.subList(0,3));
+                        SuggestedGroup suggestedGroup = new SuggestedGroup();
+                        suggestedGroup.name = item.getName();
+                        suggestedGroup.imageName = item.getImageName();
+                        suggestedGroup.totalMember = item.getTotalMember();
+                        suggestedGroup.totalPost = item.getTotalPost();
+                        suggestedGroup.groupId = item.getGroupId();
+                        suggestedGroup.isMember = item.getIsMember();
+                        suggestedGroups2.add(suggestedGroup);
+
+                    }
+                    if (suggestedGroups2.size() > 3) {
+                        items.addAll(suggestedGroups2.subList(0, 3));
+                    } else {
+                        items.addAll(suggestedGroups2);
+                    }
+
+                }
+
+
+                if (groupContentData.getGroupManageData().size() != 0) {
+                    Header groupManageHeader = new Header("Group you manage");
+                    items.add(groupManageHeader);
+                    groupManageData.addAll(groupContentData.getGroupManageData());
+
+                    for (GroupManage item : groupManageData) {
+                        SuggestedGroup suggestedGroup = new SuggestedGroup();
+                        suggestedGroup.name = item.getName();
+                        suggestedGroup.imageName = item.getImageName();
+                        suggestedGroup.totalMember = item.getTotalMember();
+                        suggestedGroup.totalPost = item.getTotalPost();
+                        suggestedGroup.groupId = item.getGroupId();
+                        suggestedGroup.isMember = item.getIsMember();
+                        suggestedGroups3.add(suggestedGroup);
+                    }
+                    if (suggestedGroups3.size() > 3) {
+                        items.addAll(suggestedGroups3.subList(0, 3));
+                    } else {
+                        items.addAll(suggestedGroups3);
+                    }
+
+                }
+
 
    /*     items.add(new Header("Header 1"));
         items.add(new Person("Item 1"));
@@ -136,10 +159,9 @@ if(groupContent!=null){
         items.add(new Person("Item 10"));
         items.add(new Person("Item 11"));
         items.add(new Person("Item 12"));*/
-        adapter.notifyDataSetChanged();
-    }
-}
-
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override
@@ -164,7 +186,7 @@ if(groupContent!=null){
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new DataAdapter(items);
+        adapter = new DataAdapter(this, items);
         recyclerView.setAdapter(adapter);
 
 //GRID LAYOUT MANAGER
@@ -180,9 +202,12 @@ if(groupContent!=null){
     }
 
     private void readyGroupCategory(GroupContentData groupContentData) {
-        List<SuggestedCategory> categoryList=groupContentData.getSuggestedCategoryData();
-//        DummyDataHelper dummyDataHelper = new DummyDataHelper();
-//        appsList = dummyDataHelper.getAppList();
+        List<SuggestedCategory> categoryList = groupContentData.getSuggestedCategoryData();
+        if (categoryList.size() > 0) {
+            tvGroupName.setVisibility(View.VISIBLE);
+        } else {
+            tvGroupName.setVisibility(View.GONE);
+        }
         AppListAdapter appListAdapter = new AppListAdapter(getApplicationContext(), categoryList);
         rv1.setAdapter(appListAdapter);
     }
@@ -190,6 +215,7 @@ if(groupContent!=null){
     private void initComponent() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         tvCreateNewGroup = findViewById(R.id.tvCreateNewGroup);
+        tvGroupName = findViewById(R.id.tvGroupName);
         tvCreateNewGroup.setOnClickListener(this);
         imageSearchGroup = findViewById(R.id.image_search_group);
         imageSearchGroup.setOnClickListener(this);

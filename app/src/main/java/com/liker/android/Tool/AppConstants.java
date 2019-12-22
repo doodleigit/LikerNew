@@ -258,6 +258,9 @@ public class AppConstants {
     public static final String JOIN_MEMBERS="joinMember";
     public static final String INVITE_MEMBERS="inviteMember";
     public static final String ALL_GROUP_INFO="allGroupInfo";
+    public static final String SUGGESTED_GROUP="suggestedGroup";
+    public static final String GROUP_YOU_MANAGE="groupYouManage";
+    public static final String GROUP_YOU_IN="groupYouIn";
 
     public static final int HOME_PAGE_NUMBER = 1;
     public static final int MESSAGE_PAGE_NUMBER = 2;

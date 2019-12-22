@@ -7,7 +7,7 @@ public class AppSingleton {
     private String mimColor;
     private int hasMim;
     String groupId;
-    String groupMemberId;
+
 
 
     private static final AppSingleton ourInstance = new AppSingleton();
@@ -22,14 +22,6 @@ public class AppSingleton {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
-    }
-
-    public String getGroupMemberId() {
-        return groupMemberId;
-    }
-
-    public void setGroupMemberId(String groupMemberId) {
-        this.groupMemberId = groupMemberId;
     }
 
     public String getMimColor() {

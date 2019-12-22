@@ -38,7 +38,7 @@
                 android:textColor="#AAB5BD"
                 android:text="Members: 550 | Posts: 301" />
             <LinearLayout
-                android:id="@+id/follow_layout"
+                android:id="@+id/is_member_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center|bottom"

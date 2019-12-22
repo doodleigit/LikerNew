@@ -502,7 +502,7 @@ public class BreakingPost extends Fragment {
 
             @Override
             public void onFailure(Call<List<PostItem>> call, Throwable t) {
-                Log.d("MESSAGE: ", t.getMessage());
+           //     Log.d("MESSAGE: ", t.getMessage());
                 postItemList.clear();
                 onPostResponseFailure();
             }
