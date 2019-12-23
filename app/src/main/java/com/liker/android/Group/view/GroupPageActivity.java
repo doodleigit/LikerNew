@@ -778,7 +778,9 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                                     groupTotalPost = groupInfoObject.getString("total_post");
                                     groupImageName = groupInfoObject.getString("image_name");
                                     groupDescription = groupInfoObject.getString("description");
+                                    AppSingleton.getInstance().setPageAboutDescription(groupDescription);
                                     boolean isMember = dataObject.getBoolean("is_member");
+                                    AppSingleton.getInstance().setMember(isMember);
                                     //  isFriendStatus();
                                     isMemberStatus(isMember);
                                     setData();

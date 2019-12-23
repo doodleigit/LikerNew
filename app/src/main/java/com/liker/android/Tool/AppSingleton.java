@@ -6,14 +6,31 @@ public class AppSingleton {
 
     private String mimColor;
     private int hasMim;
-    String groupId;
-
+    private String groupId;
+    private boolean isMember;
+    private String pageAboutDescription;
 
 
     private static final AppSingleton ourInstance = new AppSingleton();
 
     public static AppSingleton getInstance() {
         return ourInstance;
+    }
+
+    public boolean isMember() {
+        return isMember;
+    }
+
+    public void setMember(boolean member) {
+        isMember = member;
+    }
+
+    public String getPageAboutDescription() {
+        return pageAboutDescription;
+    }
+
+    public void setPageAboutDescription(String pageAboutDescription) {
+        this.pageAboutDescription = pageAboutDescription;
     }
 
     public String getGroupId() {

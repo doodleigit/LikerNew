@@ -140,5 +140,17 @@ public interface GroupWebservice {
             @Header("Security-Token") String token,
             @Field("user_id") String userIds
     );
+
+    @POST(AppConstants.UPDATE_GROUP_ABOUT)
+    @FormUrlEncoded
+    Call<String> updateGroupabout(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("group_id") String groupId,
+            @Field("description") String description
+    );
+
 }
 

@@ -186,11 +186,6 @@ public class GroupListActivity extends AppCompatActivity {
                         }
 
 
-                        // isFollow = false;
-//                        isMember = false;
-//                        imageGroupJoin.setImageResource(R.drawable.ic_add_group_24dp);
-//                        tvGroupJoin.setText(getString(R.string.groupJoin));
-                        //tvFollow.setText(getString(R.string.follow));
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
                     }

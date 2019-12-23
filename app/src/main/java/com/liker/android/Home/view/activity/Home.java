@@ -118,6 +118,7 @@ import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
 import com.liker.android.Group.view.GroupContentActivity;
+import com.liker.android.Group.view.GroupPageActivity;
 import com.liker.android.Home.adapter.CategoryTitleAdapter;
 import com.liker.android.Home.adapter.SubCategoryAdapter;
 import com.liker.android.Home.adapter.ViewPagerAdapter;
@@ -2108,6 +2109,7 @@ public class Home extends AppCompatActivity implements
 
             case R.id.action_create_group:
                 Intent groupIntent = new Intent(this, GroupContentActivity.class);
+//                Intent groupIntent = new Intent(this, GroupPageActivity.class);
                 startActivity(groupIntent);
                 break;
         }
