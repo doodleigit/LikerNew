@@ -309,13 +309,13 @@ public class DataFetchingService extends Service {
     }
 
     private void setSessionUser(boolean status, String pathName) {
-        if (socket != null && socket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+        if (socket != null && socket.connected() && userIds != null && !userIds.isEmpty()) {
             SessionOnline sessionOnline = new SessionOnline();
             Headers headers = new Headers();
-            headers.setDeviceId(manager.getDeviceId());
+            headers.setDeviceId(deviceId);
             headers.setIsApps(true);
-            headers.setSecurityToken(manager.getToken());
-            sessionOnline.setUserId(manager.getProfileId());
+            headers.setSecurityToken(token);
+            sessionOnline.setUserId(userIds);
             sessionOnline.setUrl(pathName);
             sessionOnline.setDeviceType("Android");
             sessionOnline.setHeaders(headers);
@@ -676,6 +676,7 @@ public class DataFetchingService extends Service {
         try {
             setUserStatus(false);
             setSessionUser(false, "");
+            Log.d("dafafafaffa", "Notification > isAppIsInBackground: Exception: ");
             socket.off("web_notification");
             mSocket.off("message");
             mSocket.off("message_own");

@@ -185,7 +185,7 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
 
     PostItem item;
     private PopupMenu popup, popupMenu;
-    private ImageView imagePostShare, imagePostShareSetting, imagePermission;
+    private ImageView imagePostShare, imagePermission;
     public HomeService webService;
     public PrefManager manager;
     private String deviceId, profileId, token, userIds;
@@ -345,7 +345,6 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
 
     public ImageView imgLike;
     private int postLikeNumeric;
-    ViewGroup tvLikeShare;
     private ProgressDialog progressDialog;
 
 
@@ -381,7 +380,6 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
         sharePostBody = (LinearLayout) itemView.findViewById(R.id.sharePostBody);
         tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
         imgLike = itemView.findViewById(R.id.imgLike);
-        tvLikeShare = itemView.findViewById(R.id.tvLikeShare);
         tvWallPostInfo = itemView.findViewById(R.id.tvWallPostInfo);
 
 
@@ -402,7 +400,6 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
         star15 = itemView.findViewById(R.id.star15);
         star16 = itemView.findViewById(R.id.star16);
         imagePostShare = itemView.findViewById(R.id.imagePostShare);
-        imagePostShareSetting = itemView.findViewById(R.id.imagePostShareSetting);
         imagePermission = itemView.findViewById(R.id.imagePermission);
         imagePostPermission = itemView.findViewById(R.id.imagePostPermission);
 
@@ -469,35 +466,22 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
 
         switch (postPermission) {
             case "0":
-                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_public_black_24dp);
                 break;
             case "1":
-                imagePostShare.setVisibility(View.INVISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_only_me_12dp);
                 break;
             case "2":
-                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_friends_12dp);
                 break;
-            default:
-                imagePostShare.setVisibility(View.INVISIBLE);
-                break;
         }
-
 
         isShared = item.getIsShared();
-        if (App.isSharePostfooter()) {
-            tvLikeShare.setVisibility(View.GONE);
-            imagePermission.setVisibility(View.GONE);
-        } else {
-            tvLikeShare.setVisibility(View.VISIBLE);
-            imagePermission.setVisibility(View.VISIBLE);
-        }
 
         if ("1".equalsIgnoreCase(isShared)) {
             containerHeaderShare.setVisibility(View.VISIBLE);
-            //  imagePermission.setVisibility(View.GONE);
+//            imagePermission.setVisibility(View.GONE);
+            imagePostShare.setVisibility(View.INVISIBLE);
 
             setMargins(postBodyLayer, 10, 10, 10, 10);
             postBodyLayer.setBackgroundResource(R.drawable.drawable_comment);
@@ -543,12 +527,8 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
 
         } else {
             containerHeaderShare.setVisibility(View.GONE);
-            imagePermission.setVisibility(View.VISIBLE);
-            if (App.isSharePostfooter()) {
-                imagePermission.setVisibility(View.GONE);
-            } else {
-                imagePermission.setVisibility(View.VISIBLE);
-            }
+//            imagePermission.setVisibility(View.VISIBLE);
+            imagePostShare.setVisibility(postPermission.equals("1") ? View.INVISIBLE : View.VISIBLE);
             if (sharedPostText == null || sharedPostText.isEmpty()) {
                 tvSharePostContent.setVisibility(View.GONE);
             } else {
@@ -1054,17 +1034,6 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
                         return true;
                     }
                 });
-
-            }
-        });
-        imagePostShareSetting.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("RestrictedApi")
-            @Override
-            public void onClick(View v) {
-
-                activity = (AppCompatActivity) v.getContext();
-                PostPermissionSheet reportReasonSheet = PostPermissionSheet.newInstance(item, position);
-                reportReasonSheet.show(activity.getSupportFragmentManager(), "ReportReasonSheet");
 
             }
         });

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
@@ -779,7 +781,7 @@ public class MultipleMediaPopUpFragment extends Fragment {
                             getActivity().overridePendingTransition(R.anim.bottom_up, R.anim.nothing);
                         }
                         if (id == R.id.delete) {
-//                            listener.deletePost(item, position); work
+                            deletePost();
                         }
                         if (id == R.id.turnOffNotification) {
                             switch (postPermissions) {
@@ -816,6 +818,63 @@ public class MultipleMediaPopUpFragment extends Fragment {
                 openCommentSection();
             }
         });
+    }
+
+    private void deletePost() {
+        new AlertDialog.Builder(getActivity())
+                //  .setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete this post? You will permanently lose this post !")
+
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        if (networkOk) {
+                            Call<String> call = webService.postDelete(deviceId, profileId, token, userIds, item.getPostId());
+                            sendDeletePostRequest(call);
+                        } else {
+                            Tools.showNetworkDialog(getActivity().getSupportFragmentManager());
+                        }
+
+
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                // .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    public void sendDeletePostRequest(Call<String> call) {
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        try {
+                            JSONObject object = new JSONObject(response.body());
+                            boolean status = object.getBoolean("status");
+                            if (status) {
+                                App.getAppContext().sendBroadcast(new Intent(AppConstants.PERMISSION_CHANGE_BROADCAST).putExtra("post_item", (Parcelable) item).putExtra("position", position).putExtra("type", "delete"));
+                                getActivity().onBackPressed();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.i("onSuccess", response.body().toString());
+                    } else {
+                        Log.i("onEmptyResponse", "Returned empty response");
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+
+        });
+
+
     }
 
     private void openCommentSection() {
@@ -1109,7 +1168,7 @@ public class MultipleMediaPopUpFragment extends Fragment {
             public void onResponse(Call<PostShareItem> call, Response<PostShareItem> response) {
 
                 PostShareItem postShareItem = response.body();
-                Log.d("Data", postShareItem.toString());
+//                Log.d("Data", postShareItem.toString());
                 if (postShareItem != null) {
                     Intent intent = new Intent(getContext(), PostShare.class);
                     //intent.putExtra(ITEM_ID_KEY,item.getItemId());

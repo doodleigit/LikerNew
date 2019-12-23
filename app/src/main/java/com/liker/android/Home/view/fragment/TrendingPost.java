@@ -276,7 +276,6 @@ public class TrendingPost extends Fragment   {
                 TrendingPost.this.deletePost(deletePostItem, deletePosition);
             }
         };
-        App.setSharePostfooter(false);
         adapter = new PostAdapter(getActivity(), postItemList, mCallback, mimListener, videoListener, youtubeListener, linkListener, imageListener, AppConstants.HOME);
         recyclerView.setMediaObjects(postItemList);
         recyclerView.setActivityContext(getActivity());

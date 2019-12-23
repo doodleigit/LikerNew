@@ -166,7 +166,7 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
     public TextView tvPostLinkTitle, tvPostLinkDescription, tvPostLinkHost;
 
 
-    public ImageView imagePostShare,imagePostShareSetting, imagePermission;
+    public ImageView imagePostShare, imagePermission;
     private PopupMenu popup, popupMenu;
     public HomeService webService;
     public PrefManager manager;
@@ -232,7 +232,6 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
     private CircleImageView imageSharePostUser;
     private ImageView imageSharePostPermission;
     private TextView tvSharePostUserName, tvSharePostTime, tvShareHeaderInfo, tvSharePostContent;
-    private ViewGroup tvLikeShare;
     private TextView tvShared, tvPostShareUserName,tvWallPostInfo;
     private MediaPlayer player;
     //footerFollow Status
@@ -352,7 +351,6 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
         userIds = manager.getProfileId();
         webService = HomeService.mRetrofit.create(HomeService.class);
         imagePostShare = (ImageView) itemView.findViewById(R.id.imagePostShare);
-        imagePostShareSetting = (ImageView) itemView.findViewById(R.id.imagePostShareSetting);
         imagePermission = (ImageView) itemView.findViewById(R.id.imagePermission);
         imagePostPermission = (ImageView) itemView.findViewById(R.id.imagePostPermission);
         imgLike = (ImageView) itemView.findViewById(R.id.imgLike);
@@ -370,7 +368,6 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
         postBodyLayer = (LinearLayout) itemView.findViewById(R.id.postBodyLayer);
         sharePostBody = (LinearLayout) itemView.findViewById(R.id.sharePostBody);
         tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
-        tvLikeShare = itemView.findViewById(R.id.tvLikeShare);
 
 
         star1 = itemView.findViewById(R.id.star1);
@@ -451,36 +448,23 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
 
         switch (postPermission) {
             case "0":
-                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_public_black_24dp);
                 break;
             case "1":
-                imagePostShare.setVisibility(View.INVISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_only_me_12dp);
                 break;
             case "2":
-                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_friends_12dp);
-                break;
-            default:
-                imagePostShare.setVisibility(View.INVISIBLE);
                 break;
         }
 
         isShared = item.getIsShared();
 
-        if (App.isSharePostfooter()) {
-            tvLikeShare.setVisibility(View.GONE);
-            imagePermission.setVisibility(View.GONE);
-        } else {
-            tvLikeShare.setVisibility(View.VISIBLE);
-            imagePermission.setVisibility(View.VISIBLE);
-        }
-
-
         if ("1".equalsIgnoreCase(isShared)) {
             containerHeaderShare.setVisibility(View.VISIBLE);
-           // imagePermission.setVisibility(View.GONE);
+//            imagePermission.setVisibility(View.GONE);
+            imagePostShare.setVisibility(View.INVISIBLE);
+
             setMargins(postBodyLayer,10,10,10,10);
             postBodyLayer.setBackgroundResource(R.drawable.drawable_comment);
             sharePostBody.setBackgroundColor(Color.parseColor("#cfcfcf"));
@@ -525,19 +509,14 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
 
         } else {
             containerHeaderShare.setVisibility(View.GONE);
-            imagePermission.setVisibility(View.VISIBLE);
-            if (App.isSharePostfooter()) {
-                imagePermission.setVisibility(View.GONE);
-            } else {
-                imagePermission.setVisibility(View.VISIBLE);
-            }
+//            imagePermission.setVisibility(View.VISIBLE);
+            imagePostShare.setVisibility(postPermission.equals("1") ? View.INVISIBLE : View.VISIBLE);
             if (sharedPostText == null || sharedPostText.isEmpty()) {
                 tvSharePostContent.setVisibility(View.GONE);
             } else {
                 tvSharePostContent.setVisibility(View.VISIBLE);
             }
         }
-
 
         tvCommentLike.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1025,17 +1004,7 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
 
             }
         });
-        imagePostShareSetting.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("RestrictedApi")
-            @Override
-            public void onClick(View v) {
 
-                activity = (AppCompatActivity) v.getContext();
-                PostPermissionSheet reportReasonSheet = PostPermissionSheet.newInstance(item, position);
-                reportReasonSheet.show(activity.getSupportFragmentManager(), "ReportReasonSheet");
-
-            }
-        });
         imagePermission.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
             @Override
