@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.google.gson.Gson;
+import com.liker.android.App;
 import com.liker.android.Authentication.model.UserInfo;
 import com.liker.android.Home.adapter.PostAdapter;
 import com.liker.android.Home.holder.ImageHolder;
@@ -301,7 +302,6 @@ public class BreakingPost extends Fragment {
             }
         };
 
-//        App.setSharePostfooter(false);
         adapter = new PostAdapter(getActivity(), postItemList, mCallback, mimListener, videoListener, youtubeListener, linkListener, imageListener, AppConstants.HOME);
         recyclerView.setMediaObjects(postItemList);
         recyclerView.setActivityContext(getActivity());

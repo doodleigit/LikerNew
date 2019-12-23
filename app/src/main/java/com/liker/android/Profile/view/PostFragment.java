@@ -234,8 +234,6 @@ public class PostFragment extends Fragment {
             }
         };
 
-//        App.setSharePostfooter(true);
-        App.setSharePostfooter(false);
         adapter = new PostAdapter(getActivity(), postItemList, mCallback, mimListener, videoListener, youtubeListener, linkListener, imageListener, AppConstants.WALL);
         recyclerView.setMediaObjects(postItemList);
         recyclerView.setActivityContext(getActivity());

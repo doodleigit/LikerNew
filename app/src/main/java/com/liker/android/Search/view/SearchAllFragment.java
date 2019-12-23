@@ -97,6 +97,7 @@ public class SearchAllFragment extends Fragment {
         userLoadMoreLayout = view.findViewById(R.id.user_load_more_layout);
         postLoadMoreLayout = view.findViewById(R.id.post_load_more_layout);
         postLoadMore = view.findViewById(R.id.post_load_more);
+        postLoadMoreProgress = view.findViewById(R.id.post_load_more_progress);
         tvUserSeeAll = view.findViewById(R.id.user_see_all);
         tvAlertText = view.findViewById(R.id.alertText);
 

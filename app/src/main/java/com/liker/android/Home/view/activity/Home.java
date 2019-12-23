@@ -508,7 +508,7 @@ public class Home extends AppCompatActivity implements
         categories.add(new PostFilterCategory("1", "All Categories", new ArrayList<>()));
         categories.add(new PostFilterCategory("2", "My Favorites", new ArrayList<>()));
         categories.add(new PostFilterCategory("3", "Single Category", new ArrayList<>()));
-        categories.add(new PostFilterCategory("4", "Everything Except", new ArrayList<>()));
+        categories.add(new PostFilterCategory("4", "Everything Except...", new ArrayList<>()));
         categoryFilter();
     }
 

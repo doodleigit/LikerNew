@@ -234,8 +234,6 @@ public class PostShare extends AppCompatActivity implements
                     .into(imgPostUser);
         }
 
-        App.setSharePostfooter(true);
-//        App.setSharePostfooter(false);
         postItemList.add(item);
         adapter = new PostAdapter(this, postItemList, this, this, this, this, this, this, "");
         sharedRecyclerview.setAdapter(adapter);
@@ -870,7 +868,6 @@ public class PostShare extends AppCompatActivity implements
                 emojiPopup.toggle();
                 break;
             case R.id.imageCancelPost:
-                App.setSharePostfooter(false);
                 finish();
                 break;
             case R.id.tvSubmitPost:
@@ -894,7 +891,6 @@ public class PostShare extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        App.setSharePostfooter(false);
     }
 
     private void shareAsPost() {

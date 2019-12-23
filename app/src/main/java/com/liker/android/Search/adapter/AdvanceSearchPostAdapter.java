@@ -133,10 +133,10 @@ public class AdvanceSearchPostAdapter extends RecyclerView.Adapter<AdvanceSearch
                     imgPostPermission.setImageResource(R.drawable.ic_public_black_24dp);
                     break;
                 case 1:
-                    imgPostPermission.setImageResource(R.drawable.ic_lock_black_24dp);
+                    imgPostPermission.setImageResource(R.drawable.ic_only_me_12dp);
                     break;
                 case 2:
-                    imgPostPermission.setImageResource(R.drawable.ic_people_black_24dp);
+                    imgPostPermission.setImageResource(R.drawable.ic_friends_12dp);
                     break;
             }
 

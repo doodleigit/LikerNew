@@ -252,9 +252,8 @@ public class TextHolder extends RecyclerView.ViewHolder implements
 
     private LinearLayout containerHeaderShare;
     private CircleImageView imageSharePostUser;
-    private ImageView imageSharePostPermission, imagePostShareSetting;
+    private ImageView imageSharePostPermission;
     private TextView tvSharePostUserName, tvSharePostTime, tvShareHeaderInfo, tvSharePostContent;
-    private ViewGroup tvLikeShare;
     private List<MentionItem> mentionNameList;
     private ClickableSpan clickableSpan;
     private TextView tvShared, tvPostShareUserName;
@@ -384,7 +383,6 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         imagePostShare = (ImageView) itemView.findViewById(R.id.imagePostShare);
         imagePermission = (ImageView) itemView.findViewById(R.id.imagePermission);
         imagePostPermission = itemView.findViewById(R.id.imagePostPermission);
-        tvLikeShare = itemView.findViewById(R.id.tvLikeShare);
 
         mentions = new ArrayList<>();
         mList = new ArrayList<>();
@@ -456,7 +454,6 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         tvShareHeaderInfo = itemView.findViewById(R.id.tvShareHeaderInfo);
 
         imageSharePostPermission = itemView.findViewById(R.id.imageSharePostPermission);
-        imagePostShareSetting = itemView.findViewById(R.id.imagePostShareSetting);
         tvSharePostContent = itemView.findViewById(R.id.tvSharePostContent);
         tvWallPost = itemView.findViewById(R.id.tvWallPost);
         tvWallPostInfo = itemView.findViewById(R.id.tvWallPostInfo);
@@ -487,39 +484,25 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         String postPermission = item.getPermission();
         switch (postPermission) {
             case "0":
-                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_public_black_24dp);
                 break;
             case "1":
-                imagePostShare.setVisibility(View.INVISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_only_me_12dp);
                 break;
             case "2":
-                imagePostShare.setVisibility(View.VISIBLE);
                 imagePostPermission.setBackgroundResource(R.drawable.ic_friends_12dp);
-                break;
-            default:
-                imagePostShare.setVisibility(View.INVISIBLE);
                 break;
         }
         isShared = item.getIsShared();
 
-        if (App.isSharePostfooter()) {
-            tvLikeShare.setVisibility(View.GONE);
-            imagePermission.setVisibility(View.GONE);
-            //imagePostShareSetting.setVisibility(View.GONE);
-        } else {
-            tvLikeShare.setVisibility(View.VISIBLE);
-            imagePermission.setVisibility(View.VISIBLE);
-            //imagePostShareSetting.setVisibility(View.GONE);
-        }
         if ("1".equalsIgnoreCase(isShared)) {
+            containerHeaderShare.setVisibility(View.VISIBLE);
+//            imagePermission.setVisibility(View.GONE);
+            imagePostShare.setVisibility(View.INVISIBLE);
+
             setMargins(postBodyLayer, 10, 10, 10, 10);
             postBodyLayer.setBackgroundResource(R.drawable.drawable_comment);
             sharePostBody.setBackgroundColor(Color.parseColor("#cfcfcf"));
-
-            containerHeaderShare.setVisibility(View.VISIBLE);
-            // imagePermission.setVisibility(View.GONE);
 
             SharedProfile itemSharedProfile = item.getSharedProfile();
             sharedFirstName = itemSharedProfile.getUserFirstName();
@@ -562,12 +545,8 @@ public class TextHolder extends RecyclerView.ViewHolder implements
 
         } else {
             containerHeaderShare.setVisibility(View.GONE);
-            imagePermission.setVisibility(View.VISIBLE);
-            if (App.isSharePostfooter()) {
-                imagePermission.setVisibility(View.GONE);
-            } else {
-                imagePermission.setVisibility(View.VISIBLE);
-            }
+//            imagePermission.setVisibility(View.VISIBLE);
+            imagePostShare.setVisibility(postPermission.equals("1") ? View.INVISIBLE : View.VISIBLE);
             if (sharedPostText == null || sharedPostText.isEmpty()) {
                 tvSharePostContent.setVisibility(View.GONE);
             } else {
@@ -1336,18 +1315,6 @@ public class TextHolder extends RecyclerView.ViewHolder implements
                         return true;
                     }
                 });*/
-
-            }
-        });
-
-        imagePostShareSetting.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("RestrictedApi")
-            @Override
-            public void onClick(View v) {
-                activity = (AppCompatActivity) v.getContext();
-                PostPermissionSheet reportReasonSheet = PostPermissionSheet.newInstance(postItem, position);
-                reportReasonSheet.show(activity.getSupportFragmentManager(), "ReportReasonSheet");
-
 
             }
         });

@@ -94,7 +94,6 @@ public class App extends Application implements LifecycleObserver {
     private static boolean isPostShare;
     private static boolean checkEmail;
     private static boolean rvCommentHeader;
-    private static boolean sharePostfooter;
     private static CommentPersistData commentPersistData;
     private static ReplyPersistData replyPersistData;
     private static boolean configChange;
@@ -116,14 +115,6 @@ public class App extends Application implements LifecycleObserver {
 
     public static void setCommentPersistData(CommentPersistData commentPersistData) {
         App.commentPersistData = commentPersistData;
-    }
-
-    public static boolean isSharePostfooter() {
-        return sharePostfooter;
-    }
-
-    public static void setSharePostfooter(boolean sharePostfooter) {
-        App.sharePostfooter = sharePostfooter;
     }
 
     public static boolean isRvCommentHeader() {

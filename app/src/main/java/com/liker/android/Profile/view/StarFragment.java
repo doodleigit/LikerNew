@@ -216,7 +216,6 @@ public class StarFragment extends Fragment {
                 StarFragment.this.deletePost(deletePostItem, deletePosition);
             }
         };
-        App.setSharePostfooter(false);
         adapter = new PostAdapter(getActivity(), postItemList, mCallback, mimListener, videoListener, youtubeListener, linkListener, imageListener, AppConstants.WALL);
         feedRecyclerView.setMediaObjects(postItemList);
         feedRecyclerView.setActivityContext(getActivity());
