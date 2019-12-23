@@ -246,6 +246,7 @@ public class LikerSearch extends AppCompatActivity implements View.OnClickListen
                             if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
                                 progressView.setVisibility(View.VISIBLE);
                                 progressView.startAnimation();
+                                App.setQueryResult(searchHistoryList.get(position).searchText);
                                 Call<AdvanceSearches> call = webService.advanceSearch(deviceId, profileId, token, mProfileId, searchHistoryList.get(position).searchText, 5, 0, 1, 1);
 
                                 sendAdvanceSearchRequest(call);
@@ -283,32 +284,34 @@ public class LikerSearch extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onResponse(Call<List<SearchUser>> call, Response<List<SearchUser>> response) {
 
-                SearchUser searchUser = new SearchUser();
-                searchUserList = response.body();
-                if (searchUserList.size() > 0) {
-                    progressView.stopAnimation();
-                    progressView.setVisibility(View.GONE);
-                    for (SearchUser item : searchUserList) {
-                        searchUser.userId = item.userId;
-                        searchUser.firstName = item.firstName;
-                        searchUser.lastName = item.lastName;
-                        searchUser.fullname = item.fullname;
-                        searchUser.userName = item.userName;
-                        searchUser.totalBadge = item.totalBadge;
-                        searchUser.photo = item.photo;
-                        searchUser.totalLikes = item.totalLikes;
-                        searchUser.goldStars = item.goldStars;
-                        searchUser.sliverStars = item.sliverStars;
-                        searchUser.foundingUser = item.foundingUser;
+                if (response.body() != null) {
+                    SearchUser searchUser = new SearchUser();
+                    searchUserList = response.body();
+                    if (searchUserList.size() > 0) {
+                        progressView.stopAnimation();
+                        progressView.setVisibility(View.GONE);
+                        for (SearchUser item : searchUserList) {
+                            searchUser.userId = item.userId;
+                            searchUser.firstName = item.firstName;
+                            searchUser.lastName = item.lastName;
+                            searchUser.fullname = item.fullname;
+                            searchUser.userName = item.userName;
+                            searchUser.totalBadge = item.totalBadge;
+                            searchUser.photo = item.photo;
+                            searchUser.totalLikes = item.totalLikes;
+                            searchUser.goldStars = item.goldStars;
+                            searchUser.sliverStars = item.sliverStars;
+                            searchUser.foundingUser = item.foundingUser;
+
+                        }
+
+                        searchUsersAdapter = new SearchUsersAd(LikerSearch.this, searchUserList);
+                        listView.setAdapter(searchUsersAdapter);
+                        tvShowSearchResult.setVisibility(View.VISIBLE);
+                        tvShowSearchResult.setText("Search results for " + queryText);
+
 
                     }
-
-                    searchUsersAdapter = new SearchUsersAd(LikerSearch.this, searchUserList);
-                    listView.setAdapter(searchUsersAdapter);
-                    tvShowSearchResult.setVisibility(View.VISIBLE);
-                    tvShowSearchResult.setText("Search results for " + queryText);
-
-
                 } else {
                     progressView.stopAnimation();
                     progressView.setVisibility(View.GONE);
