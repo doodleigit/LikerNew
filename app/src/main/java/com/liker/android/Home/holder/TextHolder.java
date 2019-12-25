@@ -467,6 +467,7 @@ public class TextHolder extends RecyclerView.ViewHolder implements
         unFollowImage = itemView.findViewById(R.id.unFollowImage);
 
         rvPopularComment = itemView.findViewById(R.id.rvPopularComment);
+        rvPopularComment.setNestedScrollingEnabled(false);
         comment_list = new ArrayList<>();
         //    adapter = new CommentAdapter(mContext, comment_list, postItem, this, this, this, this, true);
         //  rvPopularComment.setAdapter(adapter);
