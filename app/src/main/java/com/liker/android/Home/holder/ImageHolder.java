@@ -463,6 +463,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
 
 
         rvPopularComment = itemView.findViewById(R.id.rvPopularComment);
+        rvPopularComment.setNestedScrollingEnabled(false);
         comment_list = new ArrayList<>();
 
 

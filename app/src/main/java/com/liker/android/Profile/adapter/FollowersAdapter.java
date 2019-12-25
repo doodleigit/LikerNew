@@ -53,7 +53,11 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.View
         fullName = arrayList.get(i).getFirstName() + " " + arrayList.get(i).getLastName();
         photo = AppConstants.PROFILE_IMAGE + arrayList.get(i).getPhoto();
         likes = arrayList.get(i).getTotalLikes();
-        stars = arrayList.get(i).getGoldStars();
+        try {
+            stars = String.valueOf(Integer.parseInt(arrayList.get(i).getGoldStars()) + Integer.parseInt(arrayList.get(i).getSliverStars()));
+        } catch (NumberFormatException e) {
+            stars = "0";
+        }
 
         viewHolder.userName.setText(fullName);
         viewHolder.likes.setText(likes + " " + context.getString(R.string.likes));

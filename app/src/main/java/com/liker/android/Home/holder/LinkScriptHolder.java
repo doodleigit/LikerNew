@@ -442,6 +442,7 @@ public class LinkScriptHolder extends RecyclerView.ViewHolder implements
         unFollowImage = itemView.findViewById(R.id.unFollowImage);
 
         rvPopularComment = itemView.findViewById(R.id.rvPopularComment);
+        rvPopularComment.setNestedScrollingEnabled(false);
         comment_list = new ArrayList<>();
     }
 

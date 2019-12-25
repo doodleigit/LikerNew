@@ -946,6 +946,8 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                     Picasso.with(this).load(imageUrl).into(target);
                     messageContainer.setBackground(mDrawable);
                     editPostMessage.setHeight(200);
+                    editPostMessage.setGravity(Gravity.CENTER);
+                    messageContainer.setGravity(Gravity.CENTER);
                     editPostMessage.setTextSize(22f);
                     switch (mimColor) {
                         case "img_bg_birthday.png":

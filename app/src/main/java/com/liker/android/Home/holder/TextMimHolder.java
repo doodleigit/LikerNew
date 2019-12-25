@@ -447,6 +447,7 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
         unFollowImage = itemView.findViewById(R.id.unFollowImage);
 
         rvPopularComment = itemView.findViewById(R.id.rvPopularComment);
+        rvPopularComment.setNestedScrollingEnabled(false);
         comment_list = new ArrayList<>();
 
 
@@ -921,7 +922,19 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
             }
         });
 
-        postBodyLayer.setOnClickListener(new View.OnClickListener() {
+        tvPostContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, PostPopup.class);
+                intent.putExtra(ITEM_KEY, (Parcelable) item);
+                intent.putExtra("has_footer", true);
+                intent.putExtra("position", position);
+                mContext.startActivity(intent);
+                ((Activity) mContext).overridePendingTransition(R.anim.bottom_up, R.anim.nothing);
+            }
+        });
+
+        tvPostEmojiContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, PostPopup.class);
