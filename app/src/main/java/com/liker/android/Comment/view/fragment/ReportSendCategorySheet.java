@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 //import com.doodle.App;
 //import com.doodle.Comment.model.Comment_;
@@ -23,8 +24,10 @@ import android.widget.RadioGroup;
 import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reply;
+import com.liker.android.Group.model.GroupDataInfo;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.R;
+import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.PrefManager;
 
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ public class ReportSendCategorySheet extends BottomSheetDialogFragment implement
     private BottomSheetListener mListener;
     public static final String MESSAGE_key = "message_key";
     public static final String COMMENT_key = "comment_key";
+    public static final String GROUP_DATA_INFO_key = "group_data_info_key";
     public static final String IS_FOLLOW_key = "is_follow_key";
     private PrefManager manager;
     private BottomSheetBehavior mBehavior;
@@ -46,14 +50,17 @@ public class ReportSendCategorySheet extends BottomSheetDialogFragment implement
     private String reportPersonName;
     private boolean isFollow;
     private Comment_ commentItem;
+    private GroupDataInfo groupDataInfo;
     List<String> reportCategoryList = new ArrayList<>();
     private String categoryName;
+    private String leaveGroup;
 
-    public static ReportSendCategorySheet newInstance(String message, Comment_ comment_Item, boolean isFollow) {
+    public static ReportSendCategorySheet newInstance(String message, Comment_ comment_Item, boolean isFollow, GroupDataInfo groupDataInfo) {
 
         Bundle args = new Bundle();
         //args.putString(ExampleBottomSheetDialog.MESSAGE_key, resend);
         args.putParcelable(ReportSendCategorySheet.COMMENT_key, comment_Item);
+        args.putParcelable(ReportSendCategorySheet.GROUP_DATA_INFO_key, groupDataInfo);
         args.putString(ReportSendCategorySheet.MESSAGE_key, message);
         args.putBoolean(ReportSendCategorySheet.IS_FOLLOW_key, isFollow);
 
@@ -80,8 +87,7 @@ public class ReportSendCategorySheet extends BottomSheetDialogFragment implement
             reportId = argument.getString(MESSAGE_key);
             isFollow = argument.getBoolean(IS_FOLLOW_key);
             commentItem = argument.getParcelable(COMMENT_key);
-            //  Toast.makeText(getActivity(), "comment_key: " + commentItem.getUserFirstName() + "isFriend: " + isFriend, Toast.LENGTH_SHORT).show();
-
+            groupDataInfo = argument.getParcelable(GROUP_DATA_INFO_key);
         }
     }
 
@@ -106,20 +112,34 @@ public class ReportSendCategorySheet extends BottomSheetDialogFragment implement
         if (!isEmpty(commentItem)) {
             reportPersonName = commentItem.getUserFirstName() + " " + commentItem.getUserLastName();
         } else if (!isEmpty(item)) {
-
             reportPersonName = item.getUserFirstName() + " " + item.getUserLastName();
         } else if (!isEmpty(replyItem)) {
             reportPersonName = replyItem.getFirstName() + " " + replyItem.getLastName();
+        }else if (!isEmpty(groupDataInfo)){
+            reportPersonName="group admin";
         }
 
         reoprtUser = "Send a message to " + reportPersonName;
         unFollowUser = "Unfollow " + reportPersonName;
         reportLiker = "Report to Liker";
+        leaveGroup="Leave group";
+        /*Send a message to group admin
+Leave group
+Report to Liker*/
         if (isFollow) {
             reportCategoryList.add(reoprtUser);
             reportCategoryList.add(unFollowUser);
             reportCategoryList.add(reportLiker);
-        } else {
+        } else if(groupDataInfo.isIsMember()) {
+            reportCategoryList.add(reoprtUser);
+            reportCategoryList.add(leaveGroup);
+            reportCategoryList.add(reportLiker);
+        }else if(!groupDataInfo.isIsMember()){
+            reportCategoryList.add(reoprtUser);
+           // reportCategoryList.add(leaveGroup);
+            reportCategoryList.add(reportLiker);
+        }
+        else {
             reportCategoryList.add(reoprtUser);
             reportCategoryList.add(reportLiker);
         }
@@ -138,9 +158,7 @@ public class ReportSendCategorySheet extends BottomSheetDialogFragment implement
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 int checkedRadioButtonId = radioGroupSendCategory.getCheckedRadioButtonId();
                 RadioButton radioBtn = (RadioButton) root.findViewById(checkedRadioButtonId);
-                //  reasonId=String.valueOf(checkedRadioButtonId);
                 categoryName = radioBtn.getText().toString();
-                //   Toast.makeText(getActivity(), categoryName, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -165,6 +183,9 @@ public class ReportSendCategorySheet extends BottomSheetDialogFragment implement
                     dismiss();
                 } else if (reportLiker.equalsIgnoreCase(categoryName)) {
                     mListener.onReportLikerClicked(R.drawable.ic_public_black_12dp, categoryName);
+                    dismiss();
+                }else if(leaveGroup.equalsIgnoreCase(categoryName)){
+                    Toast.makeText(getActivity(), "leave group", Toast.LENGTH_SHORT).show();
                     dismiss();
                 }
 

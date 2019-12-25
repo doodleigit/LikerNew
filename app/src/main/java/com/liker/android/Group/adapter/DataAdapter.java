@@ -91,8 +91,8 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             String coverImage = AppConstants.USER_UPLOADED_IMAGES + suggestedGroup.getImageName();
             Picasso.with(VHitem.image.getContext()).load(coverImage).into(VHitem.image);
 
-            String groupMember = suggestedGroup.totalMember.equals("0") ? "" :"Members: "+ Tools.getFormattedLikerCount(suggestedGroup.totalMember);
-            String groupPosts = suggestedGroup.totalPost.equals("0") ? "" :  " | Posts: " +Tools.getFormattedLikerCount(suggestedGroup.totalPost);
+            String groupMember = suggestedGroup.totalMember.equals("0") ? "Members: 0" :"Members: "+ Tools.getFormattedLikerCount(suggestedGroup.totalMember);
+            String groupPosts = suggestedGroup.totalPost.equals("0") ? " | Posts: 0" :  " | Posts: " +Tools.getFormattedLikerCount(suggestedGroup.totalPost);
             String allCountInfo =  groupMember + groupPosts;
             VHitem.tvGroupItemInfoCount.setText(allCountInfo);
 
@@ -110,8 +110,8 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             VHitem.image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AppSingleton.getInstance().setGroupId(suggestedGroup.groupId);
-                    mContext.startActivity(new Intent(mContext, GroupPageActivity.class));
+                  //  AppSingleton.getInstance().setGroupId(suggestedGroup.groupId);
+                    mContext.startActivity(new Intent(mContext, GroupPageActivity.class).putExtra("group_id",suggestedGroup.groupId));
                 }
             });
 

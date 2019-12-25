@@ -69,26 +69,35 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
+<android.support.v4.widget.NestedScrollView
+    android:layout_below="@id/appBar"
+    android:id="@+id/contentGroupPage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvItems"
+        android:layout_alignParentStart="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
     <TextView
         android:id="@+id/tvGroupName"
-        android:layout_below="@id/appBar"
         android:textSize="16sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
+        android:layout_below="@id/rvItems"
         android:gravity="start"
         android:text="@string/category"
-        android:layout_alignParentStart="true"
         android:layout_margin="@dimen/_10sdp"
         android:textColor="@color/colorPostText"
         android:padding="5dp"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvItems"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/recycler_view_one" />
 
     <com.liker.android.Group.adapter.RecyclerViewWithNavigationArrows
         android:id="@+id/recycler_view_one"
@@ -96,5 +105,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
          />
+</RelativeLayout>
+</android.support.v4.widget.NestedScrollView>
 
 </RelativeLayout>

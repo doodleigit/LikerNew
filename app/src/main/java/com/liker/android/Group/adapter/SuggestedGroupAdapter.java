@@ -59,8 +59,8 @@ public class SuggestedGroupAdapter extends RecyclerView.Adapter<SuggestedGroupAd
         String groupName, photo;
         groupName = arrayList.get(i).getName();
         viewHolder.userName.setText(groupName);
-        String groupMember = arrayList.get(i).getIsMember().equals("0") ? "" :"Members: "+ Tools.getFormattedLikerCount(arrayList.get(i).getTotalMember());
-        String groupPosts = arrayList.get(i).getTotalPost().equals("0") ? "" :  " | Posts: " +Tools.getFormattedLikerCount(arrayList.get(i).getTotalPost());
+        String groupMember = arrayList.get(i).getTotalMember().equals("0") ? "Members: 0" :"Members: "+ Tools.getFormattedLikerCount(arrayList.get(i).getTotalMember());
+        String groupPosts = arrayList.get(i).getTotalPost().equals("0") ? " | Posts: 0" :  " | Posts: " +Tools.getFormattedLikerCount(arrayList.get(i).getTotalPost());
         String allCountInfo =  groupMember + groupPosts;
         viewHolder.tvGroupItemInfoCount.setText(allCountInfo);
 
@@ -111,8 +111,7 @@ public class SuggestedGroupAdapter extends RecyclerView.Adapter<SuggestedGroupAd
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AppSingleton.getInstance().setGroupId(arrayList.get(i).groupId);
-                context.startActivity(new Intent(context, GroupPageActivity.class));            }
+                context.startActivity(new Intent(context, GroupPageActivity.class).putExtra("group_id",arrayList.get(i).groupId));            }
         });
 
     }

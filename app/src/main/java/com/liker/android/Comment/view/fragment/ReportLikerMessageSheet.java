@@ -143,7 +143,7 @@ public class ReportLikerMessageSheet extends BottomSheetDialogFragment implement
                     }
                     message = etReportMessage.getText().toString();
                     if(!isNullOrWhiteSpace(message)){
-                        Call<String> call = commentService.reportUser(deviceId, profileId, token, commentId, message, postId, reasonId, reportType, "2", "20248", userIds);
+                        Call<String> call = commentService.reportUser(deviceId, profileId, token, commentId, message, postId, reasonId, reportType,"", "2", "20248", userIds);
                         sendReportUserRequest(call);
                     }else {
                         Tools.toast(getActivity(),"Message Required!",R.drawable.icon_checked);

@@ -19,6 +19,7 @@ import com.liker.android.Profile.service.FollowUnfollowClickListener;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.PrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +36,15 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
     private Context context;
     private List<GroupMember> groupMembers;
     private FollowUnfollowClickListener followUnfollowClickListener;
+    private PrefManager manager;
+    private String userId;
 
     public GroupMemberAdapter(Context context, List<GroupMember> groupMembers, FollowUnfollowClickListener followUnfollowClickListener) {
         this.context = context;
         this.groupMembers = groupMembers;
         this.followUnfollowClickListener = followUnfollowClickListener;
+        manager=new PrefManager(context);
+        userId=manager.getProfileId();
     }
 
     @NonNull
@@ -61,10 +66,15 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
         viewHolder.userName.setText(fullName);
         viewHolder.likes.setText(likes + " " + context.getString(R.string.likes));
         viewHolder.stars.setText(stars + " " + context.getString(R.string.stars));
-        if (groupMembers.get(i).isIsFollowed()) {
-            viewHolder.follow.setText(context.getString(R.string.unfollow));
-        } else {
-            viewHolder.follow.setText(context.getString(R.string.follow));
+        if(userId.equalsIgnoreCase(groupMembers.get(i).getUserId())){
+            viewHolder.follow.setVisibility(View.INVISIBLE);
+        }else {
+            viewHolder.follow.setVisibility(View.VISIBLE);
+            if (groupMembers.get(i).isIsFollowed()) {
+                viewHolder.follow.setText(context.getString(R.string.unfollow));
+            } else {
+                viewHolder.follow.setText(context.getString(R.string.follow));
+            }
         }
 
         Glide.with(App.getAppContext())

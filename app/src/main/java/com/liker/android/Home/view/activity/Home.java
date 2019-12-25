@@ -117,6 +117,7 @@ import com.liker.android.Comment.view.fragment.ReportLikerMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
+import com.liker.android.Group.model.GroupDataInfo;
 import com.liker.android.Group.view.GroupContentActivity;
 import com.liker.android.Group.view.GroupPageActivity;
 import com.liker.android.Home.adapter.CategoryTitleAdapter;
@@ -1702,7 +1703,7 @@ public class Home extends AppCompatActivity implements
         Comment_ commentChild = new Comment_();
         commentChild = App.getCommentItem();
         boolean isFollow = App.isIsFollow();
-        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow);
+        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow,new GroupDataInfo());
         reportSendCategorySheet.show(getSupportFragmentManager(), "ReportSendCategorySheet");
     }
 
@@ -1732,7 +1733,7 @@ public class Home extends AppCompatActivity implements
         //  commentChild = null;
         Reply reply = new Reply();
         reply = null;
-        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply);
+        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply,new GroupDataInfo());
         reportPersonMessageSheet.show(getSupportFragmentManager(), "ReportPersonMessageSheet");
     }
 
@@ -2110,6 +2111,7 @@ public class Home extends AppCompatActivity implements
             case R.id.action_create_group:
                 Intent groupIntent = new Intent(this, GroupContentActivity.class);
 //                Intent groupIntent = new Intent(this, GroupPageActivity.class);
+
                 startActivity(groupIntent);
                 break;
         }

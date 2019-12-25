@@ -30,6 +30,7 @@ import com.liker.android.Authentication.model.UserInfo;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reply;
 import com.liker.android.Comment.service.CommentService;
+import com.liker.android.Group.model.GroupDataInfo;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.R;
 import com.liker.android.Tool.NetworkHelper;
@@ -43,6 +44,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.liker.android.Comment.view.fragment.ReportSendCategorySheet.GROUP_DATA_INFO_key;
 import static com.liker.android.Tool.Tools.isEmpty;
 import static com.liker.android.Tool.Tools.isNullOrEmpty;
 import static com.liker.android.Tool.Tools.isNullOrWhiteSpace;
@@ -58,19 +60,22 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
     private PrefManager manager;
     private BottomSheetBehavior mBehavior;
     private Comment_ commentItem;
+    private GroupDataInfo groupDataInfo;
     private Reply replyItem;
     private CommentService commentService;
     private String commentId, postId, toId;
     private String reportType;
+    private String groupId;
 
 
-    public static ReportPersonMessageSheet newInstance(String message, Comment_ commentItem, Reply replyItem) {
+    public static ReportPersonMessageSheet newInstance(String message, Comment_ commentItem, Reply replyItem, GroupDataInfo groupDataInfo) {
 
         Bundle args = new Bundle();
         //args.putString(ExampleBottomSheetDialog.MESSAGE_key, resend);
 //        args.putParcelable(ResendEmail.MESSAGE_key, message);
         args.putString(ReportPersonMessageSheet.MESSAGE_key, message);
         args.putParcelable(ReportSendCategorySheet.COMMENT_key, commentItem);
+        args.putParcelable(GROUP_DATA_INFO_key, groupDataInfo);
         args.putParcelable(ReportSendCategorySheet.REPLY_key, replyItem);
         ReportPersonMessageSheet fragment = new ReportPersonMessageSheet();
         fragment.setArguments(args);
@@ -111,6 +116,7 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
         networkOk = NetworkHelper.hasNetworkAccess(getActivity());
         replyItem = new Reply();
         commentItem = new Comment_();
+        groupDataInfo = new GroupDataInfo();
         Bundle argument = getArguments();
 
         item = new PostItem();
@@ -119,12 +125,17 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
         if (argument != null) {
             reasonId = argument.getString(MESSAGE_key);
             commentItem = argument.getParcelable(COMMENT_key);
+            groupDataInfo = argument.getParcelable(GROUP_DATA_INFO_key);
             replyItem = argument.getParcelable(REPLY_key);
             if (!isEmpty(commentItem)) {
                 personName = commentItem.getUserFirstName() + " " + commentItem.getUserLastName();
             } else if (!isEmpty(item)) {
                 personName = item.getUserFirstName() + " " + item.getUserLastName();
-            } else if (!isEmpty(replyItem))
+            }else if(!isEmpty(groupDataInfo)){
+                personName = "group admin";
+            }
+
+            else if (!isEmpty(replyItem))
                 personTitle = "Send a Message to " + personName;
             personSubTitle = "Letting " + personName + " know what you think may help him make a better post next time.";
 
@@ -177,20 +188,36 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
                         toId = replyItem.getUserId();
                         postId = item.getPostId();
                         reportType = "3";
+                    } else if (!isEmpty(groupDataInfo)) {
+                        commentId = replyItem.getCommentId();
+                        toId = groupDataInfo.getGroupInfo().getCreatorId();
+                        postId = item.getPostId();
+                        reportType = "5";
+                        groupId=groupDataInfo.getGroupInfo().getGroupId();
+                        /*user_id: 28738
+	to_id: 26444
+	msg: sdf sf sf
+	post_id: ''
+	reasonid: 5
+	comment_id:
+	group_id: 2
+	report_type: 5
+	send_type: 1*/
+
                     } else {
                         commentId = "";
                         toId = item.getPostUserid();
                         postId = item.getPostId();
-                        if(!isNullOrEmpty(postId)){
+                        if (!isNullOrEmpty(postId)) {
                             reportType = "2";
-                        }else {
-                            reportType="1";
+                        } else {
+                            reportType = "1";
                         }
                     }
                     message = etReportPerson.getText().toString();
 
                     if (!isNullOrWhiteSpace(message)) {
-                        Call<String> call = commentService.reportUser(deviceId, profileId, token, commentId, message, postId, reasonId, reportType, "1", toId, userIds);
+                        Call<String> call = commentService.reportUser(deviceId, profileId, token, commentId, message, postId, reasonId, reportType,groupId, "1", toId, userIds);
                         sendReportUserRequest(call);
                     } else {
                         Tools.toast(getActivity(), "Message Required!", R.drawable.icon_checked);

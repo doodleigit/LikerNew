@@ -2,6 +2,8 @@ package com.liker.android.Group.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+
+
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Intent;
@@ -15,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reason;
@@ -46,6 +50,8 @@ import com.liker.android.Comment.view.fragment.ReportLikerMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
+import com.liker.android.Group.model.GroupDataInfo;
+import com.liker.android.Group.model.GroupInfo;
 import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.HomeService;
@@ -136,6 +142,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     private ImageView imageGroupJoin;
     private TextView tvGroupJoin;
     private boolean isMember;
+    private GroupDataInfo groupDataInfo;
 
 
     @Override
@@ -148,8 +155,13 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     }
 
     private void initialComponent() {
-        groupId = AppSingleton.getInstance().getGroupId();
+        groupId = getIntent().getExtras().getString("group_id");
+        AppSingleton.getInstance().setGroupId(groupId);
+        if (groupId == null) {
+            throw new AssertionError("Null data item received!");
+        }
         manager = new PrefManager(this);
+        groupDataInfo=new GroupDataInfo();
         deviceId = manager.getDeviceId();
         userId = manager.getProfileId();
         token = manager.getToken();
@@ -228,10 +240,8 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             @Override
             public void onClick(View view) {
                 if (isMember) {
-          //          setUnFollow(profileUserId);
                     setLeaveMember();
                 } else {
-                 //   setFollow(profileUserId);
                     setJoinMember();
                 }
             }
@@ -245,6 +255,14 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                 popup = new android.support.v7.widget.PopupMenu(GroupPageActivity.this, view);
                 popup.getMenuInflater().inflate(R.menu.group_permission_menu, popup.getMenu());
 
+                if (isMember) {
+                    popup.getMenu().findItem(R.id.editPage).setVisible(true);
+                    popup.getMenu().findItem(R.id.reportGroup).setVisible(false);
+                } else {
+                    popup.getMenu().findItem(R.id.editPage).setVisible(false);
+                    popup.getMenu().findItem(R.id.reportGroup).setVisible(true);
+                }
+
 //                popup.show();
                 @SuppressLint("RestrictedApi") MenuPopupHelper menuHelper = new MenuPopupHelper(GroupPageActivity.this, (MenuBuilder) popup.getMenu(), view);
                 menuHelper.setForceShowIcon(true);
@@ -257,9 +275,9 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
                         if (id == R.id.invitePeople) {
 
-                            startActivity(new Intent(GroupPageActivity.this,GroupInviteActivity.class));
+                            startActivity(new Intent(GroupPageActivity.this, GroupInviteActivity.class).putExtra("group_id",groupId));
 
-                            Toast.makeText(GroupPageActivity.this, "invite people", LENGTH_SHORT).show();
+
 
                           /*  //   fullName = userAllInfo.getFirstName() + " " + userAllInfo.getLastName();
                             //  profileUserId = getIntent().getStringExtra("user_id");
@@ -276,9 +294,9 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                         if (id == R.id.reportGroup) {
 
 
-                            Toast.makeText(GroupPageActivity.this, "Report people", LENGTH_SHORT).show();
+                           // Toast.makeText(GroupPageActivity.this, "Report people", LENGTH_SHORT).show();
 
-                          /*  if (!isEmpty(userAllInfo)) {
+                            if (!isEmpty(userAllInfo)) {
                                 PostItem item = new PostItem();
                                 item.setUserFirstName(userAllInfo.getFirstName());
                                 item.setUserLastName(userAllInfo.getLastName());
@@ -287,12 +305,20 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                             }
 
                             if (networkOk) {
-                                Call<ReportReason> call = commentService.getReportReason(deviceId, userId, token, profileUserId, "1", userId);
+                                Call<ReportReason> call = commentService.getReportReason(deviceId, userId, token, groupDataInfo.getGroupInfo().getCreatorId(), "2", userId);
                                 sendReportReason(call);
                             } else {
                                 Tools.showNetworkDialog(getSupportFragmentManager());
                             }
-*/
+                        }
+
+                        if (id == R.id.editPage) {
+
+                            Intent groupEditIntent = new Intent(GroupPageActivity.this, GroupCreateActivity.class);
+                            groupEditIntent.putExtra("group_id", groupId);
+                            groupEditIntent.putExtra("group_name", groupName);
+                            startActivity(groupEditIntent);
+                            //  Toast.makeText(GroupPageActivity.this, "Edit page", LENGTH_SHORT).show();
                         }
 
                         return true;
@@ -328,7 +354,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
         progressDialog.setMessage(getString(R.string.updating));
         progressDialog.show();
-        Call<String> call = groupWebservice.joinMembers(deviceId,userId, token, userId, groupId);
+        Call<String> call = groupWebservice.joinMembers(deviceId, userId, token, userId, groupId);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -337,7 +363,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                     JSONObject obj = new JSONObject(jsonResponse);
                     boolean status = obj.getBoolean("status");
                     if (status) {
-                      //  isFollow = false;
+                        //  isFollow = false;
                         isMember = true;
                         imageGroupJoin.setImageResource(R.drawable.ic_group_joined_24dp);
                         tvGroupJoin.setText(getString(R.string.groupJoined));
@@ -362,7 +388,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
         progressDialog.setMessage(getString(R.string.updating));
         progressDialog.show();
-        Call<String> call = groupWebservice.leaveMembers(deviceId,userId, token, userId, groupId);
+        Call<String> call = groupWebservice.leaveMembers(deviceId, userId, token, userId, groupId);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -371,7 +397,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                     JSONObject obj = new JSONObject(jsonResponse);
                     boolean status = obj.getBoolean("status");
                     if (status) {
-                       // isFollow = false;
+                        // isFollow = false;
                         isMember = false;
                         imageGroupJoin.setImageResource(R.drawable.ic_add_group_24dp);
                         tvGroupJoin.setText(getString(R.string.groupJoin));
@@ -404,7 +430,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                 if (response.body() != null) {
                     ReportReason reportReason = response.body();
                     boolean isFollowed = reportReason.isFollowed();
-                    App.setIsFollow(isFollowed);
+                  //  App.setIsFollow(isFollowed);
                     List<Reason> reasonList = reportReason.getReason();
                     ReportReasonSheet reportReasonSheet = ReportReasonSheet.newInstance(reasonList);
                     reportReasonSheet.show(getSupportFragmentManager(), "ReportReasonSheet");
@@ -452,9 +478,9 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
         tvGroupName.setText(groupName);
 //        allCountInfo = "Members: " + Tools.getFormattedLikerCount("1500") + " | Posts: " + Tools.getFormattedLikerCount("2000");
-        String groupMember = groupTotalMember.equals("0") ? "" :"Members: "+ Tools.getFormattedLikerCount(groupTotalMember);
-        String groupPosts = groupTotalPost.equals("0") ? "" :  " | Posts: " +Tools.getFormattedLikerCount(groupTotalPost);
-        String allCountInfo =  groupMember + groupPosts;
+        String groupMember = groupTotalMember.equals("0") ? "Members: 0" : "Members: " + Tools.getFormattedLikerCount(groupTotalMember);
+        String groupPosts = groupTotalPost.equals("0") ? " | Posts: 0" : " | Posts: " + Tools.getFormattedLikerCount(groupTotalPost);
+        String allCountInfo = groupMember + groupPosts;
         tvTotalInfoCount.setText(allCountInfo);
         //  loadProfileImage();
         loadCoverImage();
@@ -485,7 +511,10 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         fragment.setArguments(bundle);
         transaction.replace(R.id.container, fragment).commit();
+
     }
+
+
 
     private void selectImageSource(View view) {
         PopupMenu popup = new PopupMenu(this, view);
@@ -702,9 +731,12 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                 if (tab.getPosition() == 0) {
                     initialFragment(new GroupPostFragment());
                 } else if (tab.getPosition() == 1) {
-                    initialFragment(new GroupAboutFragment());
+
+                    initialGroupAboutFragment();
+
                 } else if (tab.getPosition() == 2) {
-                    initialFragment(new GroupMemberFragment());
+                    initialGroupMemberFragment();
+//                    initialFragment(new GroupMemberFragment());
                 } else if (tab.getPosition() == 3) {
                     initialFragment(new GroupPhotosFragment());
                 } /*else if (tab.getPosition() == 4) {
@@ -726,6 +758,20 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
             }
         });
+    }
+
+    private void initialGroupMemberFragment() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        GroupMemberFragment fragment = GroupMemberFragment.newInstance(groupId, isMember);
+        fragmentTransaction.replace(R.id.container, fragment);
+        fragmentTransaction.commit();
+    }
+
+    private void initialGroupAboutFragment() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        GroupAboutFragment fragment = GroupAboutFragment.newInstance(groupId, isMember);
+        fragmentTransaction.replace(R.id.container, fragment);
+        fragmentTransaction.commit();
     }
 
     private void isFriendStatus() {
@@ -771,7 +817,22 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                             boolean status = object.getBoolean("status");
                             if (status) {
                                 JSONObject dataObject = object.getJSONObject("data");
-                                if (dataObject.length() > 0) {
+                                String  jsonString =dataObject.toString(); //http request
+                                Gson gson = new Gson();
+                                groupDataInfo= gson.fromJson(jsonString,GroupDataInfo.class);
+                                GroupInfo groupInfo=groupDataInfo.getGroupInfo();
+                                isMember=groupDataInfo.isIsMember();
+                                groupName=groupInfo.getName();
+                                groupTotalMember=groupInfo.getTotalMember();
+                                groupTotalPost=groupInfo.getTotalPost();
+                                groupImageName=groupInfo.getImageName();
+                                groupDescription=groupInfo.getDescription();
+                                isMemberStatus(isMember);
+                                setData();
+                                viewHandler(true);
+                                AppSingleton.getInstance().setPageAboutDescription(groupDescription);
+                                AppSingleton.getInstance().setMember(isMember);
+                             /*   if (dataObject.length() > 0) {
                                     JSONObject groupInfoObject = dataObject.getJSONObject("group_info");
                                     groupName = groupInfoObject.getString("name");
                                     groupTotalMember = groupInfoObject.getString("total_member");
@@ -779,13 +840,13 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                                     groupImageName = groupInfoObject.getString("image_name");
                                     groupDescription = groupInfoObject.getString("description");
                                     AppSingleton.getInstance().setPageAboutDescription(groupDescription);
-                                    boolean isMember = dataObject.getBoolean("is_member");
+                                     isMember = dataObject.getBoolean("is_member");
                                     AppSingleton.getInstance().setMember(isMember);
                                     //  isFriendStatus();
                                     isMemberStatus(isMember);
                                     setData();
                                     viewHandler(true);
-                                }
+                                }*/
                                 JSONObject messageObject = object.getJSONObject("message");
                                 JSONObject successObject = messageObject.getJSONObject("success");
                                 if (successObject.length() > 0) {
@@ -993,7 +1054,6 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             blockUserId = item.getPostUserid();
         }
 
-
         Call<String> call = commentService.blockedUser(deviceId, userId, token, blockUserId, userId);
         sendBlockUserRequest(call);
     }
@@ -1026,7 +1086,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         Comment_ commentChild = new Comment_();
         commentChild = App.getCommentItem();
         boolean isFollow = App.isIsFollow();
-        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow);
+        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow,groupDataInfo);
         reportSendCategorySheet.show(getSupportFragmentManager(), "ReportSendCategorySheet");
     }
 
@@ -1057,7 +1117,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         commentChild = null;
         Reply reply = new Reply();
         reply = null;
-        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply);
+        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply,groupDataInfo);
         reportPersonMessageSheet.show(getSupportFragmentManager(), "ReportPersonMessageSheet");
     }
 

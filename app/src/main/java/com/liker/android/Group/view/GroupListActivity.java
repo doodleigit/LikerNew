@@ -1,11 +1,14 @@
 package com.liker.android.Group.view;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +27,7 @@ import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Group.service.InviteClickListener;
 import com.liker.android.Group.service.JoinClickListener;
 import com.liker.android.R;
+import com.liker.android.Search.LikerSearch;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
 
@@ -39,7 +43,7 @@ import retrofit2.Response;
 
 import static com.liker.android.Home.holder.TextHolder.COMMENT_TYPE_KEY;
 
-public class GroupListActivity extends AppCompatActivity {
+public class GroupListActivity extends AppCompatActivity implements View.OnClickListener {
 
     private String groupCategoryName;
     private Toolbar mActionBarToolbar;
@@ -55,7 +59,7 @@ public class GroupListActivity extends AppCompatActivity {
     ArrayList<GroupYouIn> groupYouInData;
     ArrayList<GroupManage> groupManageData;
     private ProgressDialog progressDialog;
-
+    private ImageView imageSearchGroup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +125,8 @@ public class GroupListActivity extends AppCompatActivity {
         mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mActionBarToolbar);
         getSupportActionBar().setTitle(groupCategoryName);
+        imageSearchGroup = findViewById(R.id.image_search_group);
+        imageSearchGroup.setOnClickListener(this);
         recyclerView = findViewById(R.id.rvGroupList);
         JoinClickListener joinClickListener = new JoinClickListener() {
             @Override
@@ -279,6 +285,16 @@ public class GroupListActivity extends AppCompatActivity {
                 }
 
             }
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id=v.getId();
+        switch (id){
+            case R.id.image_search_group:
+                startActivity(new Intent(GroupListActivity.this, LikerSearch.class));
+                break;
         }
     }
 }

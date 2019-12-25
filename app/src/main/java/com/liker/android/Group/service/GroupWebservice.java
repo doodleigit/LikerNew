@@ -152,5 +152,19 @@ public interface GroupWebservice {
             @Field("description") String description
     );
 
+    @POST(AppConstants.UPDATE_GROUP)
+    @FormUrlEncoded
+    Call<String> updateGroup(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("group_id") String groupId,
+            @Field("category_id") String categoryId,
+            @Field("group_name") String groupName,
+            @Field("permission") String permission
+    );
+
+
 }
 

@@ -262,6 +262,7 @@ public class AppConstants {
     public static final String GROUP_YOU_MANAGE="groupYouManage";
     public static final String GROUP_YOU_IN="groupYouIn";
     public static final String UPDATE_GROUP_ABOUT="updateGroupabout";
+    public static final String UPDATE_GROUP="updateGroup";
 
     public static final int HOME_PAGE_NUMBER = 1;
     public static final int MESSAGE_PAGE_NUMBER = 2;

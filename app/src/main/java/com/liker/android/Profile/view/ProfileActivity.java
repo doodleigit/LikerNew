@@ -81,6 +81,7 @@ import com.liker.android.Comment.view.fragment.ReportLikerMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
+import com.liker.android.Group.model.GroupDataInfo;
 import com.liker.android.Home.model.PostFooter;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.HomeService;
@@ -924,7 +925,8 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         Comment_ commentChild = new Comment_();
         commentChild = App.getCommentItem();
         boolean isFollow = App.isIsFollow();
-        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow);
+
+        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow,new GroupDataInfo());
         reportSendCategorySheet.show(getSupportFragmentManager(), "ReportSendCategorySheet");
     }
 
@@ -955,7 +957,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         commentChild = null;
         Reply reply = new Reply();
         reply = null;
-        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply);
+        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply,new GroupDataInfo());
         reportPersonMessageSheet.show(getSupportFragmentManager(), "ReportPersonMessageSheet");
     }
 

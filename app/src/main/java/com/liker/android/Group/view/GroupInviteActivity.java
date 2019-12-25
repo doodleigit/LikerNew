@@ -63,6 +63,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
     private int currentItems;
     private TextView tvBackGroupPage;
     private ImageView imageCancelInviteGroup;
+    private String groupId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +81,11 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initialComponent() {
+
+        groupId = getIntent().getExtras().getString("group_id");
+        if (groupId == null) {
+            throw new AssertionError("Null data item received!");
+        }
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.loading));
         progressDialog.show();
@@ -195,7 +201,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
         String[] inviteUsers = new String[]{followUserId};
         //   String[] inviteUsers={followUserId};
         progressDialog.show();
-        Call<String> call = groupWebservice.inviteMembers(deviceId, userId, token, userId, AppSingleton.getInstance().getGroupId(), inviteUsers);
+        Call<String> call = groupWebservice.inviteMembers(deviceId, userId, token, userId, groupId, inviteUsers);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

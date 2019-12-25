@@ -81,6 +81,32 @@ public class GroupMemberFragment extends Fragment {
 
     //GROUP-MEMBER===
    private GroupWebservice groupWebservice;
+    private String groupId;
+    private boolean isMember;
+
+
+    public static GroupMemberFragment newInstance(String groupId,boolean isMember) {
+
+        Bundle args = new Bundle();
+        args.putString("group_id",groupId);
+        args.putBoolean("is_member",isMember);
+        GroupMemberFragment fragment = new GroupMemberFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle argument=getArguments();
+        if (argument != null) {
+            groupId=argument.getString("group_id");
+            isMember=argument.getBoolean("is_member");
+        }
+
+    }
+
+
 
     @Nullable
     @Override
@@ -163,7 +189,7 @@ public class GroupMemberFragment extends Fragment {
     }
 
     private void sendGroupMemberListRequest() {
-        Call<MyGroupMember> call = groupWebservice.groupMembers(deviceId, userId, token, userId, AppSingleton.getInstance().getGroupId());
+        Call<MyGroupMember> call = groupWebservice.groupMembers(deviceId, userId, token, userId, groupId);
         call.enqueue(new Callback<MyGroupMember>() {
             @Override
             public void onResponse(Call<MyGroupMember> call, Response<MyGroupMember> response) {
@@ -201,7 +227,7 @@ public class GroupMemberFragment extends Fragment {
 
     private void sendFriendListPaginationRequest() {
         progressBar.setVisibility(View.VISIBLE);
-        Call<MyGroupMember> call = groupWebservice.groupMembers(deviceId,userId, token,  userId, AppSingleton.getInstance().getGroupId());
+        Call<MyGroupMember> call = groupWebservice.groupMembers(deviceId,userId, token,  userId, groupId);
         call.enqueue(new Callback<MyGroupMember>() {
             @Override
             public void onResponse(Call<MyGroupMember> call, Response<MyGroupMember> response) {

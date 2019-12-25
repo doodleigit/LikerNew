@@ -2,9 +2,11 @@ package com.liker.android.Group.view;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.usage.NetworkStatsManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,26 +14,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.liker.android.Group.service.GroupAboutDescriptionEvent;
 import com.liker.android.Group.service.GroupWebservice;
+import com.liker.android.Post.view.fragment.Audience;
 import com.liker.android.R;
 import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.NetworkHelper;
 import com.liker.android.Tool.PrefManager;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.liker.android.Tool.Tools.isNullOrEmpty;
 
 public class GroupAboutEditDialog extends DialogFragment implements View.OnClickListener {
 
 
     public static final String GROUP_ABOUT_MESSAGE = "group_about_message";
+    public static final String GROUP_ID = "group_id";
     private String groupAboutMessage;
     private GroupWebservice groupWebservice;
     private PrefManager manager;
@@ -44,11 +47,13 @@ public class GroupAboutEditDialog extends DialogFragment implements View.OnClick
     private View view;
     private TextView tvBackGroupAboutPage, tvSaveDescription;
     private String pageDescription;
+    private String groupId;
 
-    public static GroupAboutEditDialog newInstance(String groupAbout) {
+    public static GroupAboutEditDialog newInstance(String groupAbout,String groupId) {
 
         Bundle args = new Bundle();
         args.putString(GROUP_ABOUT_MESSAGE, groupAbout);
+        args.putString(GROUP_ID, groupId);
         GroupAboutEditDialog fragment = new GroupAboutEditDialog();
         fragment.setArguments(args);
         return fragment;
@@ -61,6 +66,7 @@ public class GroupAboutEditDialog extends DialogFragment implements View.OnClick
         Bundle argument = getArguments();
         if (argument != null) {
             groupAboutMessage = argument.getString(GROUP_ABOUT_MESSAGE);
+            groupId = argument.getString(GROUP_ID);
         }
         groupWebservice = GroupWebservice.retrofitBase.create(GroupWebservice.class);
         progressDialog=new ProgressDialog(getActivity());
@@ -99,6 +105,24 @@ public class GroupAboutEditDialog extends DialogFragment implements View.OnClick
         }else {
             editPageAboutDescription.append(groupAboutMessage);
         }
+
+        editPageAboutDescription.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                pageDescription=editPageAboutDescription.getText().toString();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
 
@@ -112,7 +136,7 @@ public class GroupAboutEditDialog extends DialogFragment implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        pageDescription=editPageAboutDescription.getText().toString();
+
         int id = v.getId();
         switch (id) {
             case R.id.tvBackGroupAboutPage:
@@ -120,17 +144,20 @@ public class GroupAboutEditDialog extends DialogFragment implements View.OnClick
                 break;
             case R.id.tvSaveDescription:
                 if(groupAboutMessage.equalsIgnoreCase(pageDescription)){
+
                     dismiss();
                 }else if(isNullOrEmpty(pageDescription)){
+
                     dismiss();
                 }else {
                     if(networkOk){
-                        Call<String> call =groupWebservice.updateGroupabout(deviceId,userId,token,profileUserId, AppSingleton.getInstance().getGroupId(),groupAboutMessage);
+                        Call<String> call =groupWebservice.updateGroupabout(deviceId,userId,token,profileUserId, groupId,pageDescription);
                         sendRequestUpdateGroup(call);
                     }else {
                         Toast.makeText(getActivity(), "No internet!", Toast.LENGTH_SHORT).show();
                     }
                 }
+
                 break;
         }
     }
@@ -148,7 +175,9 @@ public class GroupAboutEditDialog extends DialogFragment implements View.OnClick
                   if (status) {
                       String message=successObject.getString("message");
                       Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-                      AppSingleton.getInstance().setPageAboutDescription(pageDescription);
+//                      AppSingleton.getInstance().setPageAboutDescription(pageDescription);
+                      GroupAboutDescriptionEvent event=new GroupAboutDescriptionEvent(pageDescription);
+                      EventBus.getDefault().post(event);
                       dismiss();
                       //  isFollow = false;
 //                      isMember = true;
@@ -169,5 +198,13 @@ public class GroupAboutEditDialog extends DialogFragment implements View.OnClick
 
           }
       });
+    }
+
+    private Context mContext;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+
     }
 }

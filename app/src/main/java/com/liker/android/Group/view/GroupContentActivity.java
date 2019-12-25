@@ -94,7 +94,6 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
 
                 }
 
-
                 if (groupContentData.getGroupYouInData().size() != 0) {
                     Header groupYouInDataHeader = new Header("Group you're in");
                     items.add(groupYouInDataHeader);
@@ -116,9 +115,7 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
                     } else {
                         items.addAll(suggestedGroups2);
                     }
-
                 }
-
 
                 if (groupContentData.getGroupManageData().size() != 0) {
                     Header groupManageHeader = new Header("Group you manage");
@@ -140,7 +137,6 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
                     } else {
                         items.addAll(suggestedGroups3);
                     }
-
                 }
 
 
@@ -236,7 +232,10 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
         int id = v.getId();
         switch (id) {
             case R.id.tvCreateNewGroup:
-                startActivity(new Intent(this, GroupCreateActivity.class));
+              Intent groupCreateIntent=new Intent(this, GroupCreateActivity.class);
+                groupCreateIntent.putExtra("group_id","");
+                groupCreateIntent.putExtra("group_name","");
+                startActivity(groupCreateIntent);
                 break;
             case R.id.image_search_group:
                 startActivity(new Intent(GroupContentActivity.this, LikerSearch.class));

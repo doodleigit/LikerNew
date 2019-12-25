@@ -391,6 +391,10 @@
     <string name="maximum_allowed_file_size">Maximum allowed file size is 8 MB</string>
     <string name="update_page_info">Update Page Info</string>
     <string name="add_group_description">Add description</string>
+    <string name="edit_page">Edit Page</string>
+    <string name="group_edit">Edit</string>
+    <string name="edit_group">Edit group</string>
+    <string name="create_new_group">Create New Group</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>

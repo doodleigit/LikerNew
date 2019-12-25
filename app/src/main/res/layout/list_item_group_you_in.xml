@@ -68,7 +68,6 @@
         android:padding="5dp"
         android:background="@drawable/rectangle_corner_round_thirteen"
         android:textAllCaps="false"
-        android:text="@string/group_invite"
         android:textColor="@color/colorWhite"
         android:textSize="12sp"/>
 

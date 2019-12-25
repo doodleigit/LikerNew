@@ -110,6 +110,7 @@ public interface CommentService {
             @Field("post_id") String postId,
             @Field("reasonid") String reasonid,
             @Field("report_type") String reportType,
+            @Field("group_id") String groupId,
             @Field("send_type") String sendType,
             @Field("to_id") String toId,
             @Field("user_id") String userIds

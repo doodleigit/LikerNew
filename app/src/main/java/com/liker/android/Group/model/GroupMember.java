@@ -8,7 +8,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GroupMember implements Serializable, Parcelable
+public class  GroupMember implements Serializable, Parcelable
 {
 
     @SerializedName("id")
@@ -62,9 +62,16 @@ public class GroupMember implements Serializable, Parcelable
     @SerializedName("push_notification")
     @Expose
     private String pushNotification;
+    @SerializedName("is_member")
+    @Expose
+    public String isMember;
+    @SerializedName("group_id")
+    @Expose
+    public String groupId;
     @SerializedName("is_followed")
     @Expose
     private boolean isFollowed;
+
     public final static Parcelable.Creator<GroupMember> CREATOR = new Creator<GroupMember>() {
 
 
@@ -101,10 +108,29 @@ public class GroupMember implements Serializable, Parcelable
         this.isMaster = ((String) in.readValue((String.class.getClassLoader())));
         this.emailNotification = ((String) in.readValue((String.class.getClassLoader())));
         this.pushNotification = ((String) in.readValue((String.class.getClassLoader())));
+        this.isMember = ((String) in.readValue((String.class.getClassLoader())));
+        this.groupId = ((String) in.readValue((String.class.getClassLoader())));
         this.isFollowed = ((boolean) in.readValue((boolean.class.getClassLoader())));
+
     }
 
     public GroupMember() {
+    }
+
+    public String getIsMember() {
+        return isMember;
+    }
+
+    public void setIsMember(String isMember) {
+        this.isMember = isMember;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public String getId() {
@@ -269,7 +295,9 @@ public class GroupMember implements Serializable, Parcelable
         dest.writeValue(isMaster);
         dest.writeValue(emailNotification);
         dest.writeValue(pushNotification);
+        dest.writeValue(isMember);
         dest.writeValue(isFollowed);
+        dest.writeValue(groupId);
     }
 
     public int describeContents() {
