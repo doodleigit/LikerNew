@@ -501,7 +501,10 @@ public class Tools {
                 throw new IllegalStateException("Unexpected value: " + postSource);
         }
 
-        String headerInfo = String.format("%s Likes | %d Stars | %s Followers | %s", likes, totalStars, followers, "");
+        String totalLikes = Tools.getFormattedLikerCount(likes);
+
+//        String headerInfo = String.format("%s Likes | %d Stars | %s Followers | %s", likes, totalStars, followers, "");
+        String headerInfo = String.format("Likes: %s | Followers: %s | Stars: %d | %s", totalLikes, followers, totalStars, "");
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
         SpannableString spannableUserStr = new SpannableString(headerInfo);
