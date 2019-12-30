@@ -1722,7 +1722,7 @@ public class Home extends AppCompatActivity implements
     public void onReportLikerClicked(int image, String text) {
         String message = text;
         Comment_ commentChild = App.getCommentItem();
-        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild);
+        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild,new GroupDataInfo());
         reportLikerMessageSheet.show(getSupportFragmentManager(), "ReportLikerMessageSheet");
     }
 

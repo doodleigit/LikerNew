@@ -1597,7 +1597,8 @@ public class DirectShareActivity extends AppCompatActivity implements
                     friends,//"",
                     scheduleTime,//0,
                     hasMim,//0
-                    mediaFiles.toString()
+                    mediaFiles.toString(),
+                    ""
             );
             sendNewPostRequest(call);
         } else {

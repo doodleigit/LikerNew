@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.liker.android.Authentication.model.CountryInfo;
-import com.liker.android.Group.adapter.AppListAdapter;
+import com.liker.android.Group.adapter.GroupCategoryAdapter;
 import com.liker.android.Group.adapter.DataAdapter;
 import com.liker.android.Group.adapter.RecyclerViewWithNavigationArrows;
 import com.liker.android.Group.model.App;
@@ -204,8 +204,8 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
         } else {
             tvGroupName.setVisibility(View.GONE);
         }
-        AppListAdapter appListAdapter = new AppListAdapter(getApplicationContext(), categoryList);
-        rv1.setAdapter(appListAdapter);
+        GroupCategoryAdapter groupCategoryAdapter = new GroupCategoryAdapter(getApplicationContext(), categoryList);
+        rv1.setAdapter(groupCategoryAdapter);
     }
 
     private void initComponent() {

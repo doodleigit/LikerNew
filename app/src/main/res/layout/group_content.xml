@@ -95,6 +95,7 @@
         android:layout_below="@id/rvItems"
         android:gravity="start"
         android:text="@string/category"
+        android:visibility="gone"
         android:layout_margin="@dimen/_10sdp"
         android:textColor="@color/colorPostText"
         android:padding="5dp"/>

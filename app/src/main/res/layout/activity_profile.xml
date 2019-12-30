@@ -36,15 +36,15 @@
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/search"/>
+                        android:src="@drawable/search" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:hint="Search"
-                        android:textSize="16sp"
-                        android:textColorHint="#E0E0E0"/>
+                        android:textColorHint="#E0E0E0"
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
@@ -116,36 +116,38 @@
                                     android:orientation="horizontal"
                                     android:visibility="visible">
 
-                                    <!--<LinearLayout-->
-                                    <!--android:layout_width="match_parent"-->
-                                    <!--android:layout_height="wrap_content"-->
-                                    <!--android:layout_marginBottom="5dp"-->
-                                    <!--android:background="@drawable/rectangle_corner_round_seven"-->
-                                    <!--android:gravity="center"-->
-                                    <!--android:orientation="horizontal"-->
-                                    <!--android:paddingStart="5dp"-->
-                                    <!--android:paddingTop="3dp"-->
-                                    <!--android:paddingEnd="5dp"-->
-                                    <!--android:paddingBottom="3dp">-->
+                                    <LinearLayout
+                                        android:visibility="gone"
+                                        android:id="@+id/friendRequestLayout"
+                                        android:layout_width="@dimen/_80sdp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="5dp"
+                                        android:background="@drawable/rectangle_corner_round_seven"
+                                        android:gravity="center"
+                                        android:orientation="horizontal"
+                                        android:padding="5dp"
+                                        >
 
-                                    <!--<ImageView-->
-                                    <!--android:layout_width="15dp"-->
-                                    <!--android:layout_height="15dp"-->
-                                    <!--android:src="@drawable/friend_requests" />-->
+                                        <ImageView
+                                            android:layout_width="12dp"
+                                            android:layout_height="12dp"
+                                            android:src="@drawable/friend_requests"
+                                            android:tint="@color/colorWhite" />
 
-                                    <!--<TextView-->
-                                    <!--android:layout_width="wrap_content"-->
-                                    <!--android:layout_height="wrap_content"-->
-                                    <!--android:layout_marginStart="5dp"-->
-                                    <!--android:text="Add Friend"-->
-                                    <!--android:textColor="@color/colorWhite"-->
-                                    <!--android:textSize="12sp" />-->
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginStart="5dp"
+                                            android:text="Add Friend"
+                                            android:textColor="@color/colorWhite"
+                                            android:textSize="10sp" />
 
-                                    <!--</LinearLayout>-->
+                                    </LinearLayout>
 
                                     <LinearLayout
                                         android:id="@+id/follow_layout"
                                         android:layout_width="80dp"
+                                        android:layout_marginStart="10dp"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="5dp"
                                         android:background="@drawable/rectangle_corner_round_seven"
@@ -178,14 +180,13 @@
                                         android:background="@drawable/rectangle_corner_round_seven"
                                         android:gravity="center"
                                         android:orientation="horizontal"
-                                        android:padding="5dp"
-                                        >
+                                        android:padding="5dp">
 
                                         <ImageView
                                             android:layout_width="12dp"
                                             android:layout_height="12dp"
-                                            android:tint="@color/colorWhite"
-                                            android:src="@drawable/ic_menu_black_24dp" />
+                                            android:src="@drawable/ic_menu_black_24dp"
+                                            android:tint="@color/colorWhite" />
 
                                         <TextView
                                             android:layout_width="wrap_content"
@@ -245,11 +246,11 @@
                                     android:id="@+id/change_profile_image"
                                     android:layout_width="30dp"
                                     android:layout_height="30dp"
-                                    android:padding="5dp"
                                     android:layout_alignEnd="@+id/profile_image"
                                     android:layout_alignBottom="@+id/profile_image"
-                                    android:src="@drawable/camera"
-                                    android:background="@drawable/round_one"/>
+                                    android:background="@drawable/round_one"
+                                    android:padding="5dp"
+                                    android:src="@drawable/camera" />
 
                             </RelativeLayout>
 
@@ -265,8 +266,8 @@
                         android:background="@android:color/white"
                         app:tabGravity="center"
                         app:tabIndicatorColor="@color/colorAccent"
-                        app:tabMode="scrollable"
                         app:tabMinWidth="@dimen/_75sdp"
+                        app:tabMode="scrollable"
                         app:tabTextAppearance="@style/MyTabLayoutTextAppearance" />
 
                     <!--<android.support.v4.view.ViewPager-->
@@ -277,7 +278,7 @@
                     <FrameLayout
                         android:id="@+id/container"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="match_parent" />
 
                 </LinearLayout>
 
@@ -292,17 +293,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/something_went_wrong"/>
+                        android:text="@string/something_went_wrong" />
 
                     <TextView
                         android:id="@+id/retry"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:padding="10dp"
                         android:background="?android:attr/selectableItemBackground"
+                        android:padding="10dp"
                         android:text="@string/retry"
-                        android:textColor="@color/colorPrimary"/>
+                        android:textColor="@color/colorPrimary" />
 
                 </LinearLayout>
 

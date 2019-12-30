@@ -1,5 +1,6 @@
 package com.liker.android.Comment.view.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -25,14 +26,25 @@ import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reply;
 import com.liker.android.Group.model.GroupDataInfo;
+import com.liker.android.Group.service.GroupAboutDescriptionEvent;
+import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.R;
 import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.PrefManager;
 
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.liker.android.Tool.Tools.isEmpty;
 
 //import static com.doodle.Tool.Tools.isEmpty;
@@ -185,8 +197,8 @@ Report to Liker*/
                     mListener.onReportLikerClicked(R.drawable.ic_public_black_12dp, categoryName);
                     dismiss();
                 }else if(leaveGroup.equalsIgnoreCase(categoryName)){
-                    Toast.makeText(getActivity(), "leave group", Toast.LENGTH_SHORT).show();
-                    dismiss();
+                    setLeaveMember();
+                  //  dismiss();
                 }
 
                 break;
@@ -196,12 +208,57 @@ Report to Liker*/
         }
     }
 
+    private void setLeaveMember() {
+
+        PrefManager manager=new PrefManager(getActivity());
+        String deviceId=manager.getDeviceId();
+        String userId=manager.getProfileId();
+        String token=manager.getToken();
+        String groupId=groupDataInfo.getGroupInfo().getGroupId();
+        ProgressDialog progressDialog=new ProgressDialog(getActivity());
+        progressDialog.setMessage(getString(R.string.updating));
+        progressDialog.show();
+        GroupWebservice groupWebservice=GroupWebservice.retrofitBase.create(GroupWebservice.class);
+        Call<String> call = groupWebservice.leaveMembers(deviceId, userId, token, userId, groupId);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String jsonResponse = response.body();
+                try {
+                    JSONObject obj = new JSONObject(jsonResponse);
+                    boolean status = obj.getBoolean("status");
+                    if (status) {
+                        // isFollow = false;
+                        GroupDataInfo event=new GroupDataInfo(false);
+                        EventBus.getDefault().post(event);
+                        dismiss();
+
+                        //tvFollow.setText(getString(R.string.follow));
+                    } else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                progressDialog.dismiss();
+            }
+        });
+
+
+    }
+
     public interface BottomSheetListener {
         void onFollowClicked(int image, String text);
 
         void onReportLikerClicked(int image, String text);
 
         void onPersonLikerClicked(int image, String text);
+
     }
 
     @Override

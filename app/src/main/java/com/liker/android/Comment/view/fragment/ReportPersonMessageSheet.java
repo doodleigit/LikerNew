@@ -71,8 +71,6 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
     public static ReportPersonMessageSheet newInstance(String message, Comment_ commentItem, Reply replyItem, GroupDataInfo groupDataInfo) {
 
         Bundle args = new Bundle();
-        //args.putString(ExampleBottomSheetDialog.MESSAGE_key, resend);
-//        args.putParcelable(ResendEmail.MESSAGE_key, message);
         args.putString(ReportPersonMessageSheet.MESSAGE_key, message);
         args.putParcelable(ReportSendCategorySheet.COMMENT_key, commentItem);
         args.putParcelable(GROUP_DATA_INFO_key, groupDataInfo);
@@ -189,20 +187,20 @@ public class ReportPersonMessageSheet extends BottomSheetDialogFragment implemen
                         postId = item.getPostId();
                         reportType = "3";
                     } else if (!isEmpty(groupDataInfo)) {
-                        commentId = replyItem.getCommentId();
+                        commentId = "";
                         toId = groupDataInfo.getGroupInfo().getCreatorId();
-                        postId = item.getPostId();
+                        postId = "";
                         reportType = "5";
                         groupId=groupDataInfo.getGroupInfo().getGroupId();
                         /*user_id: 28738
-	to_id: 26444
-	msg: sdf sf sf
-	post_id: ''
-	reasonid: 5
-	comment_id:
-	group_id: 2
-	report_type: 5
-	send_type: 1*/
+                        to_id: 26444
+                        msg: sdf sf sf
+                        post_id: ''
+                        reasonid: 5
+                        comment_id:
+                        group_id: 2
+                        report_type: 5
+                        send_type: 1*/
 
                     } else {
                         commentId = "";

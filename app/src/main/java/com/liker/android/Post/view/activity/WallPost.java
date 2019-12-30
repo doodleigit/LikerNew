@@ -1384,7 +1384,8 @@ public class WallPost extends AppCompatActivity implements View.OnClickListener,
                     friends,//"",
                     scheduleTime,//0,
                     hasMim,//0
-                    mediaFiles.toString()
+                    mediaFiles.toString(),
+                    ""
             );
             sendNewPostRequest(call);
         } else {

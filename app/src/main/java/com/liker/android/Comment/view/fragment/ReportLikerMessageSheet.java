@@ -25,6 +25,7 @@ import android.widget.EditText;
 import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.service.CommentService;
+import com.liker.android.Group.model.GroupDataInfo;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.R;
 import com.liker.android.Tool.NetworkHelper;
@@ -38,6 +39,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.liker.android.Comment.view.fragment.ReportSendCategorySheet.GROUP_DATA_INFO_key;
 import static com.liker.android.Tool.Tools.isEmpty;
 import static com.liker.android.Tool.Tools.isNullOrEmpty;
 import static com.liker.android.Tool.Tools.isNullOrWhiteSpace;
@@ -52,20 +54,24 @@ public class ReportLikerMessageSheet extends BottomSheetDialogFragment implement
     public static final String MESSAGE_key = "message_key";
     public static final String COMMENT_key = "comment_key";
     private Comment_ commentItem;
+    private GroupDataInfo groupDataInfo;
     private CommentService commentService;
 
     private String deviceId, profileId, token, userIds;
     private String commentId;
     private String postId;
     private String reportType;
+    private Object toId;
+    private String groupId;
 
-    public static ReportLikerMessageSheet newInstance(String message, Comment_ commentItem) {
+    public static ReportLikerMessageSheet newInstance(String message, Comment_ commentItem, GroupDataInfo groupDataInfo) {
 
         Bundle args = new Bundle();
         //args.putString(ExampleBottomSheetDialog.MESSAGE_key, resend);
 //        args.putParcelable(ResendEmail.MESSAGE_key, message);
         args.putString(ReportLikerMessageSheet.MESSAGE_key, message);
         args.putParcelable(ReportSendCategorySheet.COMMENT_key, commentItem);
+        args.putParcelable(GROUP_DATA_INFO_key, groupDataInfo);
         ReportLikerMessageSheet fragment = new ReportLikerMessageSheet();
         fragment.setArguments(args);
         return fragment;
@@ -95,6 +101,7 @@ public class ReportLikerMessageSheet extends BottomSheetDialogFragment implement
         // setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.CustomBottomSheetStyle);
         Bundle argument = getArguments();
         if (argument != null) {
+            groupDataInfo = argument.getParcelable(GROUP_DATA_INFO_key);
             commentItem = argument.getParcelable(COMMENT_key);
             reasonId = argument.getString(MESSAGE_key);
 
@@ -128,7 +135,25 @@ public class ReportLikerMessageSheet extends BottomSheetDialogFragment implement
                         commentId = commentItem.getId();
                         postId = commentItem.getPostId();
                         reportType="3";
-                    }else {
+                    }else if (!isEmpty(groupDataInfo)) {
+                        commentId = "";
+                        toId = groupDataInfo.getGroupInfo().getCreatorId();
+                        postId = "";
+                        reportType = "5";
+                        groupId=groupDataInfo.getGroupInfo().getGroupId();
+                        /*user_id: 28738
+                        to_id: 26444
+                        msg: sdf sf sf
+                        post_id: ''
+                        reasonid: 5
+                        comment_id:
+                        group_id: 2
+                        report_type: 5
+                        send_type: 1*/
+
+                    }
+
+                    else {
                         PostItem item=new PostItem();
                         item=App.getItem();
                         commentId="";
@@ -143,7 +168,7 @@ public class ReportLikerMessageSheet extends BottomSheetDialogFragment implement
                     }
                     message = etReportMessage.getText().toString();
                     if(!isNullOrWhiteSpace(message)){
-                        Call<String> call = commentService.reportUser(deviceId, profileId, token, commentId, message, postId, reasonId, reportType,"", "2", "20248", userIds);
+                        Call<String> call = commentService.reportUser(deviceId, profileId, token, commentId, message, postId, reasonId, reportType,groupId, "2", "20248", userIds);
                         sendReportUserRequest(call);
                     }else {
                         Tools.toast(getActivity(),"Message Required!",R.drawable.icon_checked);

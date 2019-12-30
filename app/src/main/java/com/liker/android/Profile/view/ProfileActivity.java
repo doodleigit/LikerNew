@@ -5,14 +5,11 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,7 +23,6 @@ import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +30,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -63,11 +58,6 @@ import com.bumptech.glide.Glide;
 //import com.doodle.Tool.AppConstants;
 //import com.doodle.Tool.PrefManager;
 //import com.doodle.Tool.Tools;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.share.Sharer;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareDialog;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
@@ -82,15 +72,13 @@ import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
 import com.liker.android.Group.model.GroupDataInfo;
-import com.liker.android.Home.model.PostFooter;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.HomeService;
-import com.liker.android.Home.view.activity.Home;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
 import com.liker.android.Message.model.FriendInfo;
 import com.liker.android.Message.view.MessageActivity;
-import com.liker.android.Post.view.fragment.FollowStatus;
 import com.liker.android.Profile.adapter.ViewPagerAdapter;
+import com.liker.android.Profile.model.Privacy;
 import com.liker.android.Profile.model.UserAllInfo;
 import com.liker.android.Profile.service.ProfileDataFetchCompleteListener;
 import com.liker.android.Profile.service.ProfileService;
@@ -122,8 +110,6 @@ import retrofit2.Response;
 import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
 import static com.liker.android.Tool.Tools.isEmpty;
-import static com.liker.android.Tool.Tools.isNullOrEmpty;
-import static java.util.Objects.isNull;
 //import static com.doodle.Tool.Tools.isEmpty;
 
 public class ProfileActivity extends AppCompatActivity implements ReportReasonSheet.BottomSheetListener,
@@ -160,6 +146,9 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     private android.support.v7.widget.PopupMenu popup;
     private boolean networkOk;
     private HomeService webService;
+  //  private ViewGroup friendRequestLayout;
+    private String friendSendPermission;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -183,6 +172,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         contentHolderLayout = findViewById(R.id.content_holder_layout);
         searchLayout = findViewById(R.id.search_layout);
         followLayout = findViewById(R.id.follow_layout);
+//        friendRequestLayout = findViewById(R.id.friendRequestLayout);
         moreLayout = findViewById(R.id.more_layout);
         alertLayout = findViewById(R.id.alert_layout);
         coverImageLayout = findViewById(R.id.cover_image_layout);
@@ -284,8 +274,8 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 
                         if (id == R.id.blockUser) {
 
-                         //   fullName = userAllInfo.getFirstName() + " " + userAllInfo.getLastName();
-                          //  profileUserId = getIntent().getStringExtra("user_id");
+                            //   fullName = userAllInfo.getFirstName() + " " + userAllInfo.getLastName();
+                            //  profileUserId = getIntent().getStringExtra("user_id");
                             PostItem item = new PostItem();
                             item.setUserFirstName(userAllInfo.getFirstName());
                             item.setUserLastName(userAllInfo.getLastName());
@@ -298,7 +288,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                         }
                         if (id == R.id.reportProfile) {
 
-                            if(!isEmpty(userAllInfo)){
+                            if (!isEmpty(userAllInfo)) {
                                 PostItem item = new PostItem();
                                 item.setUserFirstName(userAllInfo.getFirstName());
                                 item.setUserLastName(userAllInfo.getLastName());
@@ -397,6 +387,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             ivChangeCoverImage.setVisibility(View.VISIBLE);
             followLayout.setVisibility(View.INVISIBLE);
             moreLayout.setVisibility(View.INVISIBLE);
+         //   friendRequestLayout.setVisibility(View.INVISIBLE);
 //            moreLayout.setVisibility(View.GONE);
         } else {
             isOwnProfile = false;
@@ -404,7 +395,9 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             ivChangeCoverImage.setVisibility(View.INVISIBLE);
             followLayout.setVisibility(View.VISIBLE);
             moreLayout.setVisibility(View.VISIBLE);
-          //  moreLayout.setVisibility(View.GONE);
+          //  friendRequestLayout.setVisibility(View.VISIBLE);
+            //  moreLayout.setVisibility(View.GONE);
+            //setFriendRequestLayout(friendSendPermission);
         }
     }
 
@@ -418,7 +411,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         userImage = AppConstants.USER_UPLOADED_IMAGES + userAllInfo.getPhoto();
         coverImage = AppConstants.USER_UPLOADED_IMAGES + userAllInfo.getCoverImage();
 //        allCountInfo = Tools.getFormattedLikerCount(userAllInfo.getTotalLikes()) + " Likes " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowers()) + " Followers " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowings()) + " Following";
-        allCountInfo = "Likes: " + Tools.getFormattedLikerCount(userAllInfo.getTotalLikes()) + " | Followers: " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowers()) + " | Following: " +  Tools.getFormattedLikerCount(userAllInfo.getTotalFollowings());
+        allCountInfo = "Likes: " + Tools.getFormattedLikerCount(userAllInfo.getTotalLikes()) + " | Followers: " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowers()) + " | Following: " + Tools.getFormattedLikerCount(userAllInfo.getTotalFollowings());
 
         tvUserName.setText(fullName);
         tvTotalInfoCount.setText(allCountInfo);
@@ -724,6 +717,9 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                 if (response.isSuccessful()) {
                     if (response.body() != null && response.body().getId() != null) {
                         userAllInfo = response.body();
+                        Privacy privacy = userAllInfo.getPrivacy();
+                        friendSendPermission = privacy.getFriendSendPermission();
+                       // setFriendRequestLayout(friendSendPermission);
                         isFriendStatus();
                         setData();
                         viewHandler(true);
@@ -740,6 +736,15 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                 progressDialog.dismiss();
             }
         });
+    }
+
+    private void setFriendRequestLayout(String friendSendPermission) {
+
+        if ("0".equalsIgnoreCase(friendSendPermission)) {
+            //friendRequestLayout.setVisibility(View.VISIBLE);
+        } else if ("1".equalsIgnoreCase(friendSendPermission)) {
+           // friendRequestLayout.setVisibility(View.INVISIBLE);
+        }
     }
 
     private void viewHandler(boolean status) {
@@ -927,7 +932,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         commentChild = App.getCommentItem();
         boolean isFollow = App.isIsFollow();
 
-        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow,new GroupDataInfo());
+        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow, new GroupDataInfo());
         reportSendCategorySheet.show(getSupportFragmentManager(), "ReportSendCategorySheet");
     }
 
@@ -947,7 +952,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         String message = text;
         Comment_ commentChild = new Comment_();
         commentChild = App.getCommentItem();
-        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild);
+        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild, new GroupDataInfo());
         reportLikerMessageSheet.show(getSupportFragmentManager(), "ReportLikerMessageSheet");
     }
 
@@ -958,7 +963,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         commentChild = null;
         Reply reply = new Reply();
         reply = null;
-        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply,new GroupDataInfo());
+        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply, new GroupDataInfo());
         reportPersonMessageSheet.show(getSupportFragmentManager(), "ReportPersonMessageSheet");
     }
 

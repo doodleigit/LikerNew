@@ -9,22 +9,19 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.liker.android.Group.adapter.GroupManageAdapter;
 import com.liker.android.Group.adapter.GroupYouInAdapter;
-import com.liker.android.Group.adapter.SuggestedGroupAdapter;
+import com.liker.android.Group.adapter.GroupSuggestedAdapter;
 import com.liker.android.Group.model.GroupContent;
 import com.liker.android.Group.model.GroupContentData;
 import com.liker.android.Group.model.GroupManage;
 import com.liker.android.Group.model.GroupYouIn;
-import com.liker.android.Group.model.Header;
 import com.liker.android.Group.model.Message;
 import com.liker.android.Group.model.Success;
 import com.liker.android.Group.model.SuggestedGroup;
 import com.liker.android.Group.service.GroupWebservice;
-import com.liker.android.Group.service.InviteClickListener;
 import com.liker.android.Group.service.JoinClickListener;
 import com.liker.android.R;
 import com.liker.android.Search.LikerSearch;
@@ -35,13 +32,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.liker.android.Home.holder.TextHolder.COMMENT_TYPE_KEY;
 
 public class GroupListActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -52,7 +46,7 @@ public class GroupListActivity extends AppCompatActivity implements View.OnClick
     private GroupWebservice groupWebservice;
     private boolean networkOk;
     private RecyclerView recyclerView;
-    private SuggestedGroupAdapter suggestedGroupAdapter;
+    private GroupSuggestedAdapter groupSuggestedAdapter;
     private GroupManageAdapter groupManageAdapter;
     private GroupYouInAdapter groupYouInAdapter;
     ArrayList<SuggestedGroup> suggestedGroups;
@@ -146,8 +140,8 @@ public class GroupListActivity extends AppCompatActivity implements View.OnClick
         };
         switch (groupCategoryName) {
             case "Suggested group":
-                suggestedGroupAdapter = new SuggestedGroupAdapter(this, suggestedGroups, joinClickListener);
-                recyclerView.setAdapter(suggestedGroupAdapter);
+                groupSuggestedAdapter = new GroupSuggestedAdapter(this, suggestedGroups, joinClickListener);
+                recyclerView.setAdapter(groupSuggestedAdapter);
                 break;
             case "Group you're in":
                 groupYouInAdapter = new GroupYouInAdapter(this, groupYouInData, joinClickListener);
@@ -177,7 +171,7 @@ public class GroupListActivity extends AppCompatActivity implements View.OnClick
                         switch (groupCategoryName) {
                             case "Suggested group":
                                 suggestedGroups.get(position).setIsMember("false");
-                                suggestedGroupAdapter.notifyDataSetChanged();
+                                groupSuggestedAdapter.notifyDataSetChanged();
                                 break;
                             case "Group you're in":
                                 groupYouInData.get(position).setIsMember("false");
@@ -224,7 +218,7 @@ public class GroupListActivity extends AppCompatActivity implements View.OnClick
                         switch (groupCategoryName) {
                             case "Suggested group":
                                 suggestedGroups.get(position).setIsMember("true");
-                                suggestedGroupAdapter.notifyDataSetChanged();
+                                groupSuggestedAdapter.notifyDataSetChanged();
                                 break;
                             case "Group you're in":
                                 groupYouInData.get(position).setIsMember("true");
@@ -271,7 +265,7 @@ public class GroupListActivity extends AppCompatActivity implements View.OnClick
                 switch (groupCategoryName) {
                     case "Suggested group":
                         suggestedGroups.addAll(groupContentData.getSuggestedGroupData());
-                        suggestedGroupAdapter.notifyDataSetChanged();
+                        groupSuggestedAdapter.notifyDataSetChanged();
                         break;
                     case "Group you're in":
                         groupYouInData.addAll(groupContentData.getGroupYouInData());

@@ -1446,7 +1446,7 @@ public class CommentPost extends AppCompatActivity implements View.OnClickListen
     public void onReportLikerClicked(int image, String text) {
         String message = text;
         commentChild = App.getCommentItem();
-        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild);
+        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild,new GroupDataInfo());
         reportLikerMessageSheet.show(getSupportFragmentManager(), "ReportLikerMessageSheet");
     }
 

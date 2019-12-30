@@ -95,7 +95,8 @@ public interface PostService {
             @Field("friends") String friends,
             @Field("schedule_time") int scheduleTime,
             @Field("has_meme") int hasMeme,
-            @Field("files") String mediaFiles
+            @Field("files") String mediaFiles,
+            @Field("group_id") String groupId
     );
 
 
