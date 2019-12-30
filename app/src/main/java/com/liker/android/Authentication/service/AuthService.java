@@ -16,6 +16,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -86,6 +87,15 @@ public interface AuthService {
             @Field("email") String email,
             @Field("password") String password,
             @Field("device_id") String device_id
+    );
+
+    @POST(AppConstants.GET_SECURITY_TOKEN)
+    @FormUrlEncoded
+    Call<String> checkToken(
+            @Header("Device-Id") String deviceId,
+            @Header("Security-Token") String token,
+            @Header("User-Id") String userId,
+            @Field("is_app") boolean isApps
     );
 
     @POST(AppConstants.FORGOT_PASSWORD_NEW)

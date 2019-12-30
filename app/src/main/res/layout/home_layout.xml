@@ -64,8 +64,8 @@
                         android:focusable="true"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:paddingTop="7dp"
-                        android:paddingBottom="13dp">
+                        android:paddingTop="10dp"
+                        android:paddingBottom="11dp">
 
                         <ImageView
 
@@ -98,8 +98,8 @@
                         android:focusable="true"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:paddingTop="7dp"
-                        android:paddingBottom="13dp">
+                        android:paddingTop="10dp"
+                        android:paddingBottom="11dp">
 
                         <RelativeLayout
                             android:layout_width="40dp"
@@ -151,8 +151,8 @@
                         android:focusable="true"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:paddingTop="7dp"
-                        android:paddingBottom="13dp">
+                        android:paddingTop="10dp"
+                        android:paddingBottom="11dp">
 
                         <RelativeLayout
                             android:layout_width="40dp"
@@ -234,8 +234,8 @@
                         android:focusable="true"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:paddingTop="7dp"
-                        android:paddingBottom="13dp">
+                        android:paddingTop="10dp"
+                        android:paddingBottom="11dp">
 
                         <ImageView
 
@@ -280,6 +280,7 @@
                 app:contentInsetEnd="0dp"
                 app:contentInsetStartWithNavigation="0dp"
                 app:layout_collapseMode="pin"
+                android:background="@color/colorBlack"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:titleMarginTop="15dp">
 

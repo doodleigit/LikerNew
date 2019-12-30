@@ -71,6 +71,7 @@
     <string name="failed_preview">Preview failed.\nClick to dismiss.</string>
 
     <string name="submit">Submit</string>
+    <string name="exit">Exit</string>
 
     <string name="random">Random</string>
     <string name="post">Post</string>
@@ -395,6 +396,8 @@
     <string name="group_edit">Edit</string>
     <string name="edit_group">Edit group</string>
     <string name="create_new_group">Create New Group</string>
+    <string name="please_check_your_network_connection">Please check your network connection and try again.</string>
+    <string name="the_server_not_responding">The server is not responding please try again</string>
     <string-array name="string_array_alcohol">
         <item>Vodka</item>
         <item>Rum</item>
