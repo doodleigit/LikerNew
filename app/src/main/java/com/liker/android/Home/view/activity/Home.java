@@ -2017,7 +2017,6 @@ public class Home extends AppCompatActivity implements
     }
 
     private void sendLogoutRequest(Call<String> call) {
-//        showProgressBar(getString(R.string.logging_out));
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

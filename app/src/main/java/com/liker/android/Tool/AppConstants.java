@@ -52,6 +52,7 @@ public class AppConstants {
     public static final String NEWS_FEED = "top-headlines?country=us&apiKey=" + API_KEY;
     public static final String SIGN_UP = "complete_signup";
     public static final String LOGIN_NEW = "login_new";
+    public static final String GET_SECURITY_TOKEN = "getSecuirityToken";
     public static final String FORGOT_PASSWORD_NEW = "forgot_password_new";
     public static final String CITY_LIST = "get_city_list";
     public static final String COUNTRY_LIST = "countrylists";
