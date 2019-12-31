@@ -24,34 +24,41 @@
             android:background="#F7F7F7"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvItem"
+            <LinearLayout
+                android:id="@+id/containerGroupInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                android:textColor="@android:color/black" />
+                <TextView
+                    android:id="@+id/tvItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black" />
 
-            <TextView
-                android:id="@+id/tvGroupItemInfoCount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#AAB5BD"
-                android:text="Members: 550 | Posts: 301" />
+                <TextView
+                    android:id="@+id/tvGroupItemInfoCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Members: 550 | Posts: 301"
+                    android:textColor="#AAB5BD" />
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/is_member_layout"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center|bottom"
+
+                android:layout_gravity="center"
                 android:orientation="horizontal"
-                android:layout_weight="1"
                 android:padding="@dimen/spacing_large">
 
                 <ImageView
                     android:id="@+id/imageGroupJoin"
                     android:layout_width="12dp"
                     android:layout_height="12dp"
-                    android:tint="@color/colorPrimary"
-                    android:src="@drawable/ic_group_joined_24dp" />
+                    android:src="@drawable/ic_group_joined_24dp"
+                    android:tint="@color/colorPrimary" />
 
                 <TextView
                     android:id="@+id/tvGroupJoin"

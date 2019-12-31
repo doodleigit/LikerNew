@@ -21,6 +21,7 @@ import com.liker.android.Profile.service.FollowUnfollowClickListener;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
+import com.liker.android.Tool.PrefManager;
 
 import java.util.ArrayList;
 
@@ -36,11 +37,13 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
     private Context context;
     private ArrayList<FollowersResult> arrayList;
     private InviteClickListener inviteClickListener;
+    private PrefManager manager;
 
     public GroupInviteAdapter(Context context, ArrayList<FollowersResult> arrayList, InviteClickListener inviteClickListener) {
         this.context = context;
         this.arrayList = arrayList;
         this.inviteClickListener = inviteClickListener;
+        manager = new PrefManager(context);
     }
 
     @NonNull
@@ -63,19 +66,24 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
         viewHolder.likes.setText(likes + " " + context.getString(R.string.likes));
         viewHolder.stars.setText(stars + " " + context.getString(R.string.stars));
 
-
-        if (arrayList.get(i).getGroupMemberInvite()) {
-            viewHolder.btnInvite.setText(context.getString(R.string.group_invited));
-            viewHolder.btnInvite.setEnabled(false);
-            viewHolder.btnInvite.setBackgroundResource(R.drawable.drawable_comment);
-            viewHolder.btnInvite.setTextColor(Color.BLACK);
+        if (manager.getProfileId().equalsIgnoreCase(arrayList.get(i).getUserId())) {
+            viewHolder.btnInvite.setVisibility(View.INVISIBLE);
         } else {
-            viewHolder.btnInvite.setText(context.getString(R.string.group_invite));
-            viewHolder.btnInvite.setEnabled(true);
-            viewHolder.btnInvite.setBackgroundResource(R.drawable.rectangle_corner_round_thirteen);
-            viewHolder.btnInvite.setTextColor(Color.WHITE);
+            viewHolder.btnInvite.setVisibility(View.VISIBLE);
+            if (arrayList.get(i).getGroupMemberInvite()) {
+                viewHolder.btnInvite.setText(context.getString(R.string.group_invited));
+                viewHolder.btnInvite.setEnabled(false);
+                viewHolder.btnInvite.setBackgroundResource(R.drawable.drawable_comment);
+                viewHolder.btnInvite.setTextColor(Color.BLACK);
+            } else {
+                viewHolder.btnInvite.setText(context.getString(R.string.group_invite));
+                viewHolder.btnInvite.setEnabled(true);
+                viewHolder.btnInvite.setBackgroundResource(R.drawable.rectangle_corner_round_thirteen);
+                viewHolder.btnInvite.setTextColor(Color.WHITE);
 
+            }
         }
+
 
         Glide.with(App.getAppContext())
                 .load(photo)
@@ -89,7 +97,7 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
             @Override
             public void onClick(View view) {
                 inviteClickListener.onInviteClick(arrayList.get(i).getUserId(), i);
-             //   Toast.makeText(context, "invite user", Toast.LENGTH_SHORT).show();
+                //   Toast.makeText(context, "invite user", Toast.LENGTH_SHORT).show();
                 /*if (arrayList.get(i).getIsFollowed()) {
                     followUnfollowClickListener.onUnFollowClick(arrayList.get(i).getUserId(), i);
                 } else {

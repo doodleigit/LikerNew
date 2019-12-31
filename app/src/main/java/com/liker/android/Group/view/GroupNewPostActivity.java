@@ -345,7 +345,7 @@ public class GroupNewPostActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.new_post);
+        setContentView(R.layout.group_new_post);
         mContext = this;
         groupDataInfo = getIntent().getParcelableExtra("group_data_info");
         groupId=groupDataInfo.getGroupInfo().getGroupId();
@@ -408,8 +408,6 @@ public class GroupNewPostActivity extends AppCompatActivity implements
         imageListener = new ImageViewHolder.ImageListener() {
             @Override
             public void deleteImage(PostImage postImage, int position) {
-
-
                 postImages.remove(postImage);
                 mediaAdapter.deleteItem(position);
                 mediaRecyclerView.scrollToPosition(position);
@@ -1532,7 +1530,7 @@ public class GroupNewPostActivity extends AppCompatActivity implements
                     status,//0,
                     imageFile,
                     fileEncoded,//"",
-                    postPermission,//0,
+                    0,//postPermission,//0,
                     categoryId,//3,
                     subCategoryId,// 54,
                     contentType,//1,

@@ -5,8 +5,11 @@ import android.annotation.SuppressLint;
 
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -87,6 +90,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -166,6 +170,9 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             throw new AssertionError("Null data item received!");
         }
         EventBus.getDefault().register(this);
+        IntentFilter newPostFilter = new IntentFilter();
+        newPostFilter.addAction(AppConstants.NEW_POST_ADD_BROADCAST);
+        Objects.requireNonNull(this).registerReceiver(newPostBroadcastReceiver, newPostFilter);
         manager = new PrefManager(this);
         groupDataInfo = new GroupDataInfo();
         deviceId = manager.getDeviceId();
@@ -228,7 +235,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             }
         });
 
-        coverImageLayout.setOnClickListener(new View.OnClickListener() {
+        coverImageLayout.setOnClickListener(new View.OnClickListener()   {
             @Override
             public void onClick(View view) {
 
@@ -1219,11 +1226,18 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         }
 
     }
-
+    BroadcastReceiver newPostBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getData();
+        }
+    };
     @Override
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        Objects.requireNonNull(this).unregisterReceiver(newPostBroadcastReceiver);
+
     }
 
 }

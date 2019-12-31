@@ -117,7 +117,6 @@
                                     android:visibility="visible">
 
                                     <LinearLayout
-                                        android:visibility="gone"
                                         android:id="@+id/friendRequestLayout"
                                         android:layout_width="@dimen/_80sdp"
                                         android:layout_height="wrap_content"

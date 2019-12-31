@@ -110,7 +110,12 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             VHitem.image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                  //  AppSingleton.getInstance().setGroupId(suggestedGroup.groupId);
+                    mContext.startActivity(new Intent(mContext, GroupPageActivity.class).putExtra("group_id",suggestedGroup.groupId));
+                }
+            });
+            VHitem.containerGroupInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     mContext.startActivity(new Intent(mContext, GroupPageActivity.class).putExtra("group_id",suggestedGroup.groupId));
                 }
             });
@@ -118,9 +123,7 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             VHitem.isMemberLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     setGroupJoinStatus(isMember,VHitem.imageGroupJoin,VHitem.tvGroupJoin,suggestedGroup.groupId);
-
                 }
             });
 
@@ -234,7 +237,7 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     class VHItem extends RecyclerView.ViewHolder {
         TextView tvItem, tvGroupItemInfoCount,tvGroupJoin;
         ImageView image,imageGroupJoin;
-        ViewGroup isMemberLayout;
+        ViewGroup isMemberLayout,containerGroupInfo;
 
         public VHItem(View itemView) {
             super(itemView);
@@ -244,6 +247,7 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.image = itemView.findViewById(R.id.image);
             this.imageGroupJoin = itemView.findViewById(R.id.imageGroupJoin);
             this.isMemberLayout =  itemView.findViewById(R.id.is_member_layout);
+            this.containerGroupInfo =  itemView.findViewById(R.id.containerGroupInfo);
         }
     }
 }

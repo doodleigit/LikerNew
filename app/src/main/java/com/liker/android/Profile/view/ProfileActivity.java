@@ -59,6 +59,7 @@ import com.bumptech.glide.Glide;
 //import com.doodle.Tool.PrefManager;
 //import com.doodle.Tool.Tools;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.gson.Gson;
 import com.liker.android.App;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reason;
@@ -71,11 +72,15 @@ import com.liker.android.Comment.view.fragment.ReportLikerMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
+import com.liker.android.Friend.FriendRequestSend;
 import com.liker.android.Group.model.GroupDataInfo;
+import com.liker.android.Home.model.Headers;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.HomeService;
+import com.liker.android.Home.service.SocketIOManager;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
 import com.liker.android.Message.model.FriendInfo;
+import com.liker.android.Message.model.OnlineNotify;
 import com.liker.android.Message.view.MessageActivity;
 import com.liker.android.Profile.adapter.ViewPagerAdapter;
 import com.liker.android.Profile.model.Privacy;
@@ -100,6 +105,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import io.socket.client.Socket;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -109,6 +115,7 @@ import retrofit2.Response;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
+import static com.liker.android.Home.service.SocketIOManager.mSocket;
 import static com.liker.android.Tool.Tools.isEmpty;
 //import static com.doodle.Tool.Tools.isEmpty;
 
@@ -118,7 +125,8 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         ReportLikerMessageSheet.BottomSheetListener,
         FollowSheet.BottomSheetListener,
         BlockUserDialog.BlockListener,
-        PostPermissionSheet.BottomSheetListener {
+        PostPermissionSheet.BottomSheetListener,
+        View.OnClickListener  {
 
     private TabLayout tabLayout;
     //    private ViewPager viewPager;
@@ -146,8 +154,10 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     private android.support.v7.widget.PopupMenu popup;
     private boolean networkOk;
     private HomeService webService;
-  //  private ViewGroup friendRequestLayout;
+    private ViewGroup friendRequestLayout;
     private String friendSendPermission;
+    // TODO: 12/31/2019 FRIEND
+    private Socket mSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +172,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         profileUserId = getIntent().getStringExtra("user_id");
         profileUserName = getIntent().getStringExtra("user_name");
         manager = new PrefManager(this);
+        mSocket=new SocketIOManager().getMSocketInstance();
         deviceId = manager.getDeviceId();
         userId = manager.getProfileId();
         token = manager.getToken();
@@ -172,7 +183,8 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         contentHolderLayout = findViewById(R.id.content_holder_layout);
         searchLayout = findViewById(R.id.search_layout);
         followLayout = findViewById(R.id.follow_layout);
-//        friendRequestLayout = findViewById(R.id.friendRequestLayout);
+        friendRequestLayout = findViewById(R.id.friendRequestLayout);
+        friendRequestLayout.setOnClickListener(this);
         moreLayout = findViewById(R.id.more_layout);
         alertLayout = findViewById(R.id.alert_layout);
         coverImageLayout = findViewById(R.id.cover_image_layout);
@@ -387,7 +399,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             ivChangeCoverImage.setVisibility(View.VISIBLE);
             followLayout.setVisibility(View.INVISIBLE);
             moreLayout.setVisibility(View.INVISIBLE);
-         //   friendRequestLayout.setVisibility(View.INVISIBLE);
+            friendRequestLayout.setVisibility(View.INVISIBLE);
 //            moreLayout.setVisibility(View.GONE);
         } else {
             isOwnProfile = false;
@@ -395,7 +407,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             ivChangeCoverImage.setVisibility(View.INVISIBLE);
             followLayout.setVisibility(View.VISIBLE);
             moreLayout.setVisibility(View.VISIBLE);
-          //  friendRequestLayout.setVisibility(View.VISIBLE);
+            friendRequestLayout.setVisibility(View.VISIBLE);
             //  moreLayout.setVisibility(View.GONE);
             //setFriendRequestLayout(friendSendPermission);
         }
@@ -719,7 +731,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                         userAllInfo = response.body();
                         Privacy privacy = userAllInfo.getPrivacy();
                         friendSendPermission = privacy.getFriendSendPermission();
-                       // setFriendRequestLayout(friendSendPermission);
+                        setFriendRequestLayout(friendSendPermission);
                         isFriendStatus();
                         setData();
                         viewHandler(true);
@@ -740,11 +752,17 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 
     private void setFriendRequestLayout(String friendSendPermission) {
 
-        if ("0".equalsIgnoreCase(friendSendPermission)) {
-            //friendRequestLayout.setVisibility(View.VISIBLE);
-        } else if ("1".equalsIgnoreCase(friendSendPermission)) {
-           // friendRequestLayout.setVisibility(View.INVISIBLE);
+        if (userId.equals(profileUserId)) {
+            friendRequestLayout.setVisibility(View.INVISIBLE);
+        } else {
+            if ("0".equalsIgnoreCase(friendSendPermission)) {
+                friendRequestLayout.setVisibility(View.VISIBLE);
+            } else if ("1".equalsIgnoreCase(friendSendPermission)) {
+                friendRequestLayout.setVisibility(View.INVISIBLE);
+            }
         }
+
+
     }
 
     private void viewHandler(boolean status) {
@@ -1012,4 +1030,35 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         progressDialog.dismiss();
     }
 
+    private void sendFriendRequest(boolean status) {
+        if (mSocket != null && mSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+            FriendRequestSend friendRequestSend = new FriendRequestSend();
+            Headers headers = new Headers();
+            headers.setDeviceId(manager.getDeviceId());
+            headers.setIsApps(true);
+            headers.setSecurityToken(manager.getToken());
+            headers.setUserId(manager.getProfileId());
+            friendRequestSend.setUserId(manager.getProfileId());
+            friendRequestSend.setToUserId(profileUserId);
+            friendRequestSend.setHeaders(headers);
+            Gson gson = new Gson();
+            String json = gson.toJson(friendRequestSend);
+            mSocket.emit("friend_request_send", json);
+//            if (status) {
+//            } else {
+//                mSocket.emit("current_offline_user", json);
+//            }
+        }
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id=v.getId();
+        switch (id){
+            case R.id.friendRequestLayout:
+                sendFriendRequest(true);
+                break;
+        }
+    }
 }
