@@ -1,8 +1,12 @@
 package com.liker.android.Group.service;
 
 import com.liker.android.Group.model.GroupContent;
+import com.liker.android.Group.model.GroupWiseCateGoryInfo;
 import com.liker.android.Group.model.MyGroupMember;
+import com.liker.android.Home.model.PostItem;
 import com.liker.android.Tool.AppConstants;
+
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -165,6 +169,60 @@ public interface GroupWebservice {
             @Field("permission") String permission
     );
 
+
+    @POST(AppConstants.DELETE_GROUP)
+    @FormUrlEncoded
+    Call<String> deleteGroup(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("group_id") String groupId
+    );
+
+    @POST(AppConstants.CATEGORY_GROUP)
+    @FormUrlEncoded
+    Call<GroupWiseCateGoryInfo> categoryGroup(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("category_id") String categoryId
+    );
+
+    @POST(AppConstants.GROUP_FEED)
+    @FormUrlEncoded
+    Call<List<PostItem>> groupFeed(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("group_id") String groupId,
+            @Field("limit") int limit,
+            @Field("offset") int offset,
+            @Field("cat_id") String cat_id,
+            @Field("is_public") boolean isPublic,
+            @Field("max_post_id") String maxPostId
+            );
+/*
+http://192.168.0.77:8040/sites/likerapp/groupFeed
+user_id:
+group_id:
+limit:5
+offset:0
+cat_id:
+is_public:false
+max_post_id:0*
+
+user_id:
+group_id:
+limit:
+offset:
+cat_id:
+is_public:
+max_post_id:
+/
+ */
 
 }
 

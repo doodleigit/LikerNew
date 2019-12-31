@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -18,10 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
+import com.liker.android.Group.model.GroupDataInfo;
+import com.liker.android.Group.service.GroupDataFetchCompleteListener;
+import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Home.adapter.PostAdapter;
 import com.liker.android.Home.holder.ImageHolder;
 import com.liker.android.Home.holder.LinkScriptHolder;
@@ -31,10 +34,7 @@ import com.liker.android.Home.holder.TextMimHolder;
 import com.liker.android.Home.holder.VideoHolder;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.VideoPlayerRecyclerView;
-import com.liker.android.Post.view.activity.WallPost;
-import com.liker.android.Profile.service.ProfileDataFetchCompleteListener;
 import com.liker.android.Profile.service.ProfileService;
-import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.NetworkHelper;
@@ -53,26 +53,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//import com.doodle.App;
-//import com.doodle.Comment.model.CommentItem;
-//import com.doodle.Home.adapter.PostAdapter;
-//import com.doodle.Home.model.PostItem;
-//import com.doodle.Home.holder.ImageHolder;
-//import com.doodle.Home.holder.LinkScriptHolder;
-//import com.doodle.Home.holder.LinkScriptYoutubeHolder;
-//import com.doodle.Home.holder.TextHolder;
-//import com.doodle.Home.holder.TextMimHolder;
-//import com.doodle.Home.holder.VideoHolder;
-//import com.doodle.Home.service.VideoPlayerRecyclerView;
-//import com.doodle.Post.view.activity.PostNew;
-//import com.doodle.Post.view.activity.WallPost;
-//import com.doodle.Profile.service.ProfileDataFetchCompleteListener;
-//import com.doodle.Profile.service.ProfileService;
-//import com.doodle.R;
-//import com.doodle.Tool.AppConstants;
-//import com.doodle.Tool.NetworkHelper;
-//import com.doodle.Tool.PrefManager;
-//import com.doodle.Tool.Tools;
 
 public class GroupPostFragment extends Fragment {
     View v;
@@ -90,7 +70,7 @@ public class GroupPostFragment extends Fragment {
     private VideoPlayerRecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private boolean isScrolling;
-    int limit = 15;
+    int limit = 5;
     int offset = 0;
     private String catIds = "";
 
@@ -106,17 +86,32 @@ public class GroupPostFragment extends Fragment {
     public static LinkScriptHolder.PostItemListener linkListener;
     public static ImageHolder.PostItemListener imageListener;
 
-    PostItem deletePostItem;
-    int deletePosition;
+    private PostItem deletePostItem;
+   private int deletePosition;
+    private GroupDataInfo groupDataInfo;
+    private GroupWebservice groupWebservice;
+
+    public static GroupPostFragment newInstance(GroupDataInfo groupDataInfo) {
+
+        Bundle args = new Bundle();
+        args.putParcelable("group_data_info", groupDataInfo);
+        GroupPostFragment fragment = new GroupPostFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
     }
 
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(AppConstants.PROFILE_PAGE_PAGINATION_BROADCAST);
@@ -144,6 +139,7 @@ public class GroupPostFragment extends Fragment {
         userId = manager.getProfileId();
         userImage = manager.getProfileImage();
         profileService = ProfileService.mRetrofit.create(ProfileService.class);
+        groupWebservice=GroupWebservice.retrofitBase.create(GroupWebservice.class);
         networkOk = NetworkHelper.hasNetworkAccess(getActivity());
         postItemList = new ArrayList<>();
         deletePostItem = new PostItem();
@@ -168,22 +164,20 @@ public class GroupPostFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
         v = root;
+        //  ownGroupPageCheck();
 
-        ((GroupPageActivity) Objects.requireNonNull(getActivity())).profileDataFetchCompleteListener = new ProfileDataFetchCompleteListener() {
+        ((GroupPageActivity) Objects.requireNonNull(getActivity())).groupDataFetchCompleteListener = new GroupDataFetchCompleteListener() {
             @Override
-            public void onComplete(String wallPermission, boolean isFollow) {
-                if (wallPermission.equals("0")) {
+            public void onComplete(GroupDataInfo mGroupDataInfo) {
+                groupDataInfo=mGroupDataInfo;
+                getData();
+                if (groupDataInfo.isIsMember()) {
                     addPostLayout.setVisibility(View.VISIBLE);
-                } else if (wallPermission.equals("1")) {
-                    addPostLayout.setVisibility(View.GONE);
                 } else {
-                    if (isFollow)
-                        addPostLayout.setVisibility(View.VISIBLE);
+                    addPostLayout.setVisibility(View.GONE);
                 }
-
             }
         };
-
         mCallback = new TextHolder.PostItemListener() {
             @Override
             public void deletePost(PostItem postItem, int position) {
@@ -251,20 +245,26 @@ public class GroupPostFragment extends Fragment {
                 .dontAnimate()
                 .into(ivImage);
 
-        getData();
+        //getData();
 
         addPostLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Toast.makeText(getContext(), "Group post", Toast.LENGTH_SHORT).show();
-                //  startActivity(new Intent(getContext(), WallPost.class).putExtra("wall_user_id", profileuserId));
-                  startActivity(new Intent(getContext(), GroupNewPostActivity.class));
+                startActivity(new Intent(getContext(), GroupNewPostActivity.class).putExtra("group_data_info", (Parcelable) groupDataInfo));
             }
         });
 
         return root;
     }
+
+//    private void ownGroupPageCheck() {
+//        if (groupDataInfo.isIsMember()) {
+//            addPostLayout.setVisibility(View.VISIBLE);
+//        } else {
+//            addPostLayout.setVisibility(View.GONE);
+//        }
+//
+//    }
 
     private void deletePost(PostItem deletePostItem, int deletePosition) {
         new AlertDialog.Builder(getActivity())
@@ -330,7 +330,17 @@ public class GroupPostFragment extends Fragment {
         if (NetworkHelper.hasNetworkAccess(getContext())) {
             offset = 0;
             progressView.setVisibility(View.VISIBLE);
-            Call<List<PostItem>> call = profileService.feed(deviceId, userId, token, userId, limit, offset, catIds, profileUserName, false);
+            String groupId=groupDataInfo.getGroupInfo().getGroupId();
+//            Call<List<PostItem>> call = profileService.feed(deviceId, userId, token, userId, limit, offset, catIds, profileUserName, false);
+            Call<List<PostItem>> call = groupWebservice.groupFeed(deviceId, userId, token, userId, groupId,limit, offset, "", true,"0");
+           /*user_id:26444
+group_id:2
+limit:5
+offset:0
+cat_id:
+is_public:true
+max_post_id:0*/
+           // Call<List<PostItem>> call = groupWebservice.groupFeed(deviceId, userId, token, "26444", "2",5, 0, "", true,"");
             sendPostItemRequest(call);
         } else {
             Tools.showNetworkDialog(getActivity().getSupportFragmentManager());
@@ -342,7 +352,10 @@ public class GroupPostFragment extends Fragment {
         isScrolling = false;
         progressView.setVisibility(View.VISIBLE);
         if (NetworkHelper.hasNetworkAccess(getContext())) {
-            Call<List<PostItem>> call = profileService.feed(deviceId, userId, token, userId, limit, offset, catIds, profileUserName, false);
+            String groupId=groupDataInfo.getGroupInfo().getGroupId();
+          //  Call<List<PostItem>> call = profileService.feed(deviceId, userId, token, userId, limit, offset, catIds, profileUserName, false);
+            Call<List<PostItem>> call = groupWebservice.groupFeed(deviceId, userId, token, userId, groupId,limit, offset, "", true,"0");
+         //   Call<List<PostItem>> call = groupWebservice.groupFeed(deviceId, userId, token, "26444", "2",5, 0, "", true,"");
             PostItemPagingRequest(call);
 
         } else {
@@ -380,8 +393,8 @@ public class GroupPostFragment extends Fragment {
                         sb.append(separator).append(s);
                     }
 
-                    totalPostIDs = sb.substring(separator.length()).replaceAll("\\s+", "");
-                    Log.d("friends", totalPostIDs);
+//                    totalPostIDs = sb.substring(separator.length()).replaceAll("\\s+", "");
+//                    Log.d("friends", totalPostIDs);
 //                    Call<CommentItem> mCall = webService.getPostComments(deviceId, profileId, token, "false", limit, offset, "DESC", totalPostIDs, userIds);
 //                    sendCommentItemPagingRequest(mCall);
                     offset += 15;
@@ -414,7 +427,6 @@ public class GroupPostFragment extends Fragment {
 //                    String totalPostIDs;
                     List<String> postIdSet = new ArrayList<>();
                     for (PostItem temp : postItemList) {
-
                         postIdSet.add(temp.getPostId());
                     }
                     String separator = ", ";
@@ -587,6 +599,8 @@ public class GroupPostFragment extends Fragment {
         Objects.requireNonNull(getActivity()).unregisterReceiver(postChangeBroadcast);
         Objects.requireNonNull(getActivity()).unregisterReceiver(permissionBroadcast);
     }
+
+
 
 
 }

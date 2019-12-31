@@ -2,7 +2,6 @@ package com.liker.android.Group.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,14 +14,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
 import com.liker.android.Group.model.SuggestedGroup;
-import com.liker.android.Group.service.InviteClickListener;
 import com.liker.android.Group.service.JoinClickListener;
 import com.liker.android.Group.view.GroupPageActivity;
-import com.liker.android.Profile.model.FollowersResult;
-import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
-import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.Tools;
 
 import java.util.ArrayList;
@@ -34,13 +29,13 @@ import java.util.ArrayList;
 //import com.doodle.R;
 //import com.doodle.Tool.AppConstants;
 
-public class SuggestedGroupAdapter extends RecyclerView.Adapter<SuggestedGroupAdapter.ViewHolder> {
+public class GroupSuggestedAdapter extends RecyclerView.Adapter<GroupSuggestedAdapter.ViewHolder> {
 
     private Context context;
     private ArrayList<SuggestedGroup> arrayList;
     private JoinClickListener joinClickListener;
 
-    public SuggestedGroupAdapter(Context context, ArrayList<SuggestedGroup> arrayList, JoinClickListener joinClickListener) {
+    public GroupSuggestedAdapter(Context context, ArrayList<SuggestedGroup> arrayList, JoinClickListener joinClickListener) {
         this.context = context;
         this.arrayList = arrayList;
         this.joinClickListener = joinClickListener;

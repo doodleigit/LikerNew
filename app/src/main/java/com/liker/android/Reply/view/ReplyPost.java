@@ -1632,7 +1632,6 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
                                 replyItems.remove(position);
                                 adapter.notifyDataSetChanged();
                                 --offset;
-
                             }
 
                         } catch (JSONException e) {
@@ -1689,14 +1688,13 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
     public void onReportLikerClicked(int image, String text) {
         String message = text;
         commentChild = App.getCommentItem();
-        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild);
+        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild,new GroupDataInfo());
         reportLikerMessageSheet.show(getSupportFragmentManager(), "ReportLikerMessageSheet");
     }
 
     @Override
     public void onPersonLikerClicked(int image, String text) {
         String message = text;
-
         Reply replyItem = App.getReplyItem();
         Comment_ comment_ = new Comment_();
         comment_ = null;

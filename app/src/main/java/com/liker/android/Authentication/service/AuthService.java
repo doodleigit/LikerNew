@@ -124,7 +124,7 @@ public interface AuthService {
 
     @POST(AppConstants.LOGIN_WITH_OTP_APPS)
     @FormUrlEncoded
-        Call<String> setOTPLogin(
+    Call<String> setOTPLogin(
             @Field("user_id") String userId,
             @Field("device_id") String deviceId,
             @Field("verify_otp") String verifyOTP
@@ -157,8 +157,8 @@ public interface AuthService {
 
     @GET("{number}")
     Call<String> trivia(@Path("number") String number);
-//https://www.stg.liker.com/check_email_exists
 
+    //https://www.stg.liker.com/check_email_exists
     @POST(AppConstants.CHECK_EMAIL_EXIST)
     @FormUrlEncoded
     Call<String> checkEmailExists(

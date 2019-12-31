@@ -374,11 +374,11 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
         int id = v.getId();
         switch (id) {
             case R.id.tvBackGroupPage:
-                startActivity(new Intent(this, GroupPageActivity.class));
+              //  startActivity(new Intent(this, GroupPageActivity.class));
                 finish();
                 break;
             case R.id.imageCancelInviteGroup:
-                startActivity(new Intent(this, GroupPageActivity.class));
+              //  startActivity(new Intent(this, GroupPageActivity.class));
                 finish();
                 break;
         }

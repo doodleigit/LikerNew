@@ -41,6 +41,10 @@ public class GroupDataInfo implements Serializable, Parcelable {
     public GroupDataInfo() {
     }
 
+    public GroupDataInfo(boolean isMember) {
+        this.isMember = isMember;
+    }
+
     public GroupInfo getGroupInfo() {
         return groupInfo;
     }

@@ -1,6 +1,7 @@
 package com.liker.android.Group.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,10 +11,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.liker.android.Group.model.App;
 import com.liker.android.Group.model.SuggestedCategory;
+import com.liker.android.Group.view.GroupListCategoryWiseActivity;
+import com.liker.android.Group.view.GroupPageActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 import com.squareup.picasso.Picasso;
@@ -21,7 +23,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.MyViewHolder> {
+public class GroupCategoryAdapter extends RecyclerView.Adapter<GroupCategoryAdapter.MyViewHolder> {
 
     Context context;
     List<SuggestedCategory> suggestedCategoryList;
@@ -45,7 +47,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.MyViewHo
         }
     }
 
-    public AppListAdapter(Context context, List<SuggestedCategory> suggestedCategoryList) {
+    public GroupCategoryAdapter(Context context, List<SuggestedCategory> suggestedCategoryList) {
         this.context = context;
         this.suggestedCategoryList = suggestedCategoryList;
 
@@ -78,6 +80,17 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.MyViewHo
 //                .load(app.imageName)
 //                .into(holder.imageViewIcon);
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent categoryWiseGroupIntent=new Intent(context, GroupListCategoryWiseActivity.class);
+                categoryWiseGroupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                categoryWiseGroupIntent.putExtra("category_id",category.catId);
+                categoryWiseGroupIntent.putExtra("category_name",category.name);
+                categoryWiseGroupIntent.putExtra("category_image",category.imageName);
+                context.startActivity(categoryWiseGroupIntent);
+            }
+        });
     }
 
     @Override

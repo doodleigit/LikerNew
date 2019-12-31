@@ -66,6 +66,7 @@ import com.leocardz.link.preview.library.SourceContent;
 import com.leocardz.link.preview.library.TextCrawler;
 import com.liker.android.App;
 import com.liker.android.DirectShare.SelectContactActivity;
+import com.liker.android.Group.model.GroupDataInfo;
 import com.liker.android.Home.holder.mediaHolder.ImageViewHolder;
 import com.liker.android.Home.holder.mediaHolder.VideoViewHolder;
 import com.liker.android.Home.model.Headers;
@@ -337,6 +338,8 @@ public class GroupNewPostActivity extends AppCompatActivity implements
      */
     private int mContactId;
 
+    private GroupDataInfo groupDataInfo;
+    private String groupId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -344,7 +347,11 @@ public class GroupNewPostActivity extends AppCompatActivity implements
 
         setContentView(R.layout.new_post);
         mContext = this;
-
+        groupDataInfo = getIntent().getParcelableExtra("group_data_info");
+        groupId=groupDataInfo.getGroupInfo().getGroupId();
+        if (groupDataInfo == null) {
+            throw new AssertionError("Null data item received!");
+        }
         manager = new PrefManager(this);
         webService = PostService.mRetrofit.create(PostService.class);
         videoServices = PostService.videoRetrofit.create(PostService.class);
@@ -1540,7 +1547,8 @@ public class GroupNewPostActivity extends AppCompatActivity implements
                     friends,//"",
                     scheduleTime,//0,
                     hasMim,//0
-                    mediaFiles.toString()
+                    mediaFiles.toString(),
+                    groupId
             );
             sendNewPostRequest(call);
         } else {
