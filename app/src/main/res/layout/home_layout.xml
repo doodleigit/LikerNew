@@ -320,9 +320,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="start|center"
                                 android:drawableLeft="@drawable/ic_search_black_24dp"
-                                android:drawableTint="@android:color/white"
-                                android:text="Search"
-                                android:textColor="@android:color/white" />
+                                android:drawableTint="@color/colorIconText"
+                                android:text=" Search"
+                                android:textColor="@color/colorIconText" />
 
                             <View
                                 android:layout_width="wrap_content"
