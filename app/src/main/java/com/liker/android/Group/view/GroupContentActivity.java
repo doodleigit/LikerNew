@@ -34,10 +34,12 @@ import com.liker.android.Group.model.Success;
 import com.liker.android.Group.service.GroupContentService;
 import com.liker.android.R;
 import com.liker.android.Search.LikerSearch;
+import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.NetworkHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GroupContentActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -73,6 +75,7 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
             String successStatus = success.getMessage();
             Toast.makeText(this, successStatus, Toast.LENGTH_SHORT).show();
             if (status) {
+                items.clear();
                 groupContentData = groupContent.getData();
                 readyGroupCategory(groupContentData);
                 List<SuggestedGroup> suggestedGroups1 = new ArrayList<SuggestedGroup>();
@@ -174,9 +177,22 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
             Toast.makeText(this, "no internet!", Toast.LENGTH_SHORT).show();
         }
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mBroadcastReceiver, new IntentFilter(GroupContentService.GROUP_CONTENT_SERVICE_MESSAGE));
-
+        IntentFilter newPostFilter = new IntentFilter();
+        newPostFilter.addAction(AppConstants.GROUP_CONTENT_UPDATE_BROADCAST);
+        Objects.requireNonNull(this).registerReceiver(groupContentUpdateReceiver, newPostFilter);
 
     }
+    BroadcastReceiver groupContentUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (NetworkHelper.hasNetworkAccess(getApplicationContext())) {
+                Intent intentGroupService = new Intent(GroupContentActivity.this, GroupContentService.class);
+                startService(intentGroupService);
+            } else {
+                Toast.makeText(GroupContentActivity.this, "no internet!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     private void readyGroupInfo() {
         recyclerView.setHasFixedSize(true);
@@ -242,5 +258,11 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
                 break;
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Objects.requireNonNull(this).unregisterReceiver(groupContentUpdateReceiver);
     }
 }

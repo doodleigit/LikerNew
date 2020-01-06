@@ -2,7 +2,6 @@ package com.liker.android.Group.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,24 +14,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
 import com.liker.android.Group.model.GroupManage;
-import com.liker.android.Group.service.InviteClickListener;
 import com.liker.android.Group.service.JoinClickListener;
 import com.liker.android.Group.view.GroupPageActivity;
-import com.liker.android.Profile.model.FollowersResult;
-import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
-import com.liker.android.Tool.AppSingleton;
 import com.liker.android.Tool.Tools;
 
 import java.util.ArrayList;
-
-//import com.doodle.App;
-//import com.doodle.Profile.model.FollowersResult;
-//import com.doodle.Profile.service.FollowUnfollowClickListener;
-//import com.doodle.Profile.view.ProfileActivity;
-//import com.doodle.R;
-//import com.doodle.Tool.AppConstants;
 
 public class GroupManageAdapter extends RecyclerView.Adapter<GroupManageAdapter.ViewHolder> {
 

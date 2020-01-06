@@ -73,6 +73,7 @@ import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
 import com.liker.android.Friend.FriendRequestSend;
+import com.liker.android.Friend.FriendRequestStatus;
 import com.liker.android.Group.model.GroupDataInfo;
 import com.liker.android.Home.model.Headers;
 import com.liker.android.Home.model.PostItem;
@@ -80,7 +81,6 @@ import com.liker.android.Home.service.HomeService;
 import com.liker.android.Home.service.SocketIOManager;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
 import com.liker.android.Message.model.FriendInfo;
-import com.liker.android.Message.model.OnlineNotify;
 import com.liker.android.Message.view.MessageActivity;
 import com.liker.android.Profile.adapter.ViewPagerAdapter;
 import com.liker.android.Profile.model.Privacy;
@@ -106,6 +106,7 @@ import java.util.List;
 import java.util.Locale;
 
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -115,7 +116,8 @@ import retrofit2.Response;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
-import static com.liker.android.Home.service.SocketIOManager.mSocket;
+import static com.liker.android.R.*;
+import static com.liker.android.R.string.*;
 import static com.liker.android.Tool.Tools.isEmpty;
 //import static com.doodle.Tool.Tools.isEmpty;
 
@@ -126,8 +128,9 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         FollowSheet.BottomSheetListener,
         BlockUserDialog.BlockListener,
         PostPermissionSheet.BottomSheetListener,
-        View.OnClickListener  {
+        View.OnClickListener {
 
+    private static final String TAG = "Profile";
     private TabLayout tabLayout;
     //    private ViewPager viewPager;
     private Toolbar toolbar;
@@ -154,15 +157,18 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     private android.support.v7.widget.PopupMenu popup;
     private boolean networkOk;
     private HomeService webService;
-    private ViewGroup friendRequestLayout;
+    private ViewGroup friendRequestLayout, acceptFriendStatusLayout;
     private String friendSendPermission;
     // TODO: 12/31/2019 FRIEND
     private Socket mSocket;
+    // TODO: 1/2/2020 addFriendRequestStatus
+    private TextView tvAddFriendRequestStatus;
+    private String fromId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(layout.activity_profile);
         initialComponent();
         setupTabIcons();
         getData();
@@ -172,38 +178,40 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         profileUserId = getIntent().getStringExtra("user_id");
         profileUserName = getIntent().getStringExtra("user_name");
         manager = new PrefManager(this);
-        mSocket=new SocketIOManager().getMSocketInstance();
+        mSocket = new SocketIOManager().getMSocketInstance();
         deviceId = manager.getDeviceId();
         userId = manager.getProfileId();
         token = manager.getToken();
         networkOk = NetworkHelper.hasNetworkAccess(this);
         webService = HomeService.mRetrofit.create(HomeService.class);
-        toolbar = findViewById(R.id.toolbar);
-        scrollView = findViewById(R.id.scrollView);
-        contentHolderLayout = findViewById(R.id.content_holder_layout);
-        searchLayout = findViewById(R.id.search_layout);
-        followLayout = findViewById(R.id.follow_layout);
-        friendRequestLayout = findViewById(R.id.friendRequestLayout);
+        toolbar = findViewById(id.toolbar);
+        scrollView = findViewById(id.scrollView);
+        contentHolderLayout = findViewById(id.content_holder_layout);
+        searchLayout = findViewById(id.search_layout);
+        followLayout = findViewById(id.follow_layout);
+        friendRequestLayout = findViewById(id.friendRequestLayout);
+        acceptFriendStatusLayout = findViewById(id.accept_friend_status_layout);
         friendRequestLayout.setOnClickListener(this);
-        moreLayout = findViewById(R.id.more_layout);
-        alertLayout = findViewById(R.id.alert_layout);
-        coverImageLayout = findViewById(R.id.cover_image_layout);
-        profileImageLayout = findViewById(R.id.profile_image_layout);
-        ivCoverImage = findViewById(R.id.cover_image);
-        ivProfileImage = findViewById(R.id.profile_image);
-        ivChangeCoverImage = findViewById(R.id.change_cover_image);
-        ivChangeProfileImage = findViewById(R.id.change_profile_image);
-        tvUserName = findViewById(R.id.user_name);
-        tvTotalInfoCount = findViewById(R.id.total_info_count);
-        tvFollow = findViewById(R.id.follow);
-        tvRetry = findViewById(R.id.retry);
-        tabLayout = findViewById(R.id.tabs);
+        acceptFriendStatusLayout.setOnClickListener(this);
+        moreLayout = findViewById(id.more_layout);
+        alertLayout = findViewById(id.alert_layout);
+        coverImageLayout = findViewById(id.cover_image_layout);
+        profileImageLayout = findViewById(id.profile_image_layout);
+        ivCoverImage = findViewById(id.cover_image);
+        ivProfileImage = findViewById(id.profile_image);
+        ivChangeCoverImage = findViewById(id.change_cover_image);
+        ivChangeProfileImage = findViewById(id.change_profile_image);
+        tvUserName = findViewById(id.user_name);
+        tvTotalInfoCount = findViewById(id.total_info_count);
+        tvFollow = findViewById(id.follow);
+        tvRetry = findViewById(id.retry);
+        tabLayout = findViewById(id.tabs);
 //        viewPager = findViewById(R.id.viewpager);
 
         profileService = ProfileService.mRetrofit.create(ProfileService.class);
         commentService = CommentService.mRetrofit.create(CommentService.class);
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setMessage(getString(loading));
         progressDialog.show();
 
         ownProfileCheck();
@@ -263,16 +271,16 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             public void onClick(View view) {
 
                 popup = new android.support.v7.widget.PopupMenu(ProfileActivity.this, view);
-                popup.getMenuInflater().inflate(R.menu.profile_permission_menu, popup.getMenu());
+                popup.getMenuInflater().inflate(menu.profile_permission_menu, popup.getMenu());
                 if (userAllInfo.getPrivacy().getMessageSendPermission().equals("0")) {
-                    popup.getMenu().findItem(R.id.message).setVisible(true);
+                    popup.getMenu().findItem(id.message).setVisible(true);
                 } else if (userAllInfo.getPrivacy().getMessageSendPermission().equals("1")) {
-                    popup.getMenu().findItem(R.id.message).setVisible(false);
+                    popup.getMenu().findItem(id.message).setVisible(false);
                 } else {
                     if (isFollow)
-                        popup.getMenu().findItem(R.id.message).setVisible(true);
+                        popup.getMenu().findItem(id.message).setVisible(true);
                     else
-                        popup.getMenu().findItem(R.id.message).setVisible(false);
+                        popup.getMenu().findItem(id.message).setVisible(false);
                 }
 //                popup.show();
                 @SuppressLint("RestrictedApi") MenuPopupHelper menuHelper = new MenuPopupHelper(ProfileActivity.this, (MenuBuilder) popup.getMenu(), view);
@@ -358,6 +366,10 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                 }
             }
         });
+        // TODO: 1/2/2020 friendRequestStatus
+        tvAddFriendRequestStatus = findViewById(id.tvAddFriendRequestStatus);
+        getFriendRequestSendStatus();
+
     }
 
     @Override
@@ -400,6 +412,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             followLayout.setVisibility(View.INVISIBLE);
             moreLayout.setVisibility(View.INVISIBLE);
             friendRequestLayout.setVisibility(View.INVISIBLE);
+            acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
 //            moreLayout.setVisibility(View.GONE);
         } else {
             isOwnProfile = false;
@@ -408,6 +421,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             followLayout.setVisibility(View.VISIBLE);
             moreLayout.setVisibility(View.VISIBLE);
             friendRequestLayout.setVisibility(View.VISIBLE);
+            acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
             //  moreLayout.setVisibility(View.GONE);
             //setFriendRequestLayout(friendSendPermission);
         }
@@ -434,8 +448,8 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     private void loadProfileImage() {
         Glide.with(App.getAppContext())
                 .load(userImage)
-                .placeholder(R.drawable.profile)
-                .error(R.drawable.profile)
+                .placeholder(drawable.profile)
+                .error(drawable.profile)
                 .centerCrop()
                 .dontAnimate()
                 .into(ivProfileImage);
@@ -455,25 +469,25 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         bundle.putString("user_name", profileUserName);
         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         fragment.setArguments(bundle);
-        transaction.replace(R.id.container, fragment).commit();
+        transaction.replace(id.container, fragment).commit();
     }
 
     private void selectImageSource(View view) {
         PopupMenu popup = new PopupMenu(this, view);
         //Inflating the Popup using xml file
         if (uploadContentType == 0) {
-            popup.getMenuInflater().inflate(R.menu.image_source_menu, popup.getMenu());
+            popup.getMenuInflater().inflate(menu.image_source_menu, popup.getMenu());
         } else {
-            popup.getMenuInflater().inflate(R.menu.cover_image_source_menu, popup.getMenu());
+            popup.getMenuInflater().inflate(menu.cover_image_source_menu, popup.getMenu());
         }
         //registering popup with OnMenuItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.select_picture:
+                    case id.select_picture:
                         checkGalleryPermission();
                         return true;
-                    case R.id.capture_picture:
+                    case id.capture_picture:
                         checkCameraPermission();
                         return true;
                     default:
@@ -529,7 +543,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         } else {
             mediaCall = profileService.uploadCoverImage(deviceId, userId, token, fileToUpload);
         }
-        progressDialog.setMessage(getString(R.string.uploading));
+        progressDialog.setMessage(getString(uploading));
         progressDialog.show();
         sendImageRequest(mediaCall);
     }
@@ -559,7 +573,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                     imageUri = result.getUri();
                     uploadImage();
                 } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(something_went_wrong), LENGTH_SHORT).show();
                 }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
@@ -652,12 +666,12 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 //    }
 
     private void setupTabIcons() {
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.posts)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.about)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.followers)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.following)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.photos)));
-        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.stars)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(posts)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(about)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(followers)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(following)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(photos)));
+        tabLayout.addTab(tabLayout.newTab().setText(getString(stars)));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -699,14 +713,39 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                 String jsonResponse = response.body();
                 try {
                     JSONObject obj = new JSONObject(jsonResponse);
+                    boolean isResponseFriend = obj.getBoolean("response");
+                    fromId = obj.getString("from_id");
+                    String toId = obj.getString("to_id");
+                    String status = obj.getString("status");
+
+                    if (isResponseFriend) {
+                        if (fromId.equalsIgnoreCase(userId)) {
+                            acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                            friendRequestLayout.setVisibility(View.VISIBLE);
+                            tvAddFriendRequestStatus.setText(getString(friend_requst_cancel));
+                        } else {
+                            if ("0".equalsIgnoreCase(status)) {
+                                acceptFriendStatusLayout.setVisibility(View.VISIBLE);
+                                friendRequestLayout.setVisibility(View.VISIBLE);
+                                tvAddFriendRequestStatus.setText(getString(friend_request_reject));
+                            } else {
+                                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                                friendRequestLayout.setVisibility(View.VISIBLE);
+                                tvAddFriendRequestStatus.setText(getString(friend_request_unfriend));
+                            }
+
+                        }
+                    }
                     boolean follow = obj.getBoolean("follow");
                     if (follow) {
                         isFollow = true;
-                        tvFollow.setText(getString(R.string.following));
+                        tvFollow.setText(getString(following));
                     } else {
                         isFollow = false;
-                        tvFollow.setText(getString(R.string.follow));
+                        tvFollow.setText(getString(string.follow));
                     }
+
+
                     if (profileDataFetchCompleteListener != null) {
                         profileDataFetchCompleteListener.onComplete(userAllInfo.getPrivacy().getWallPermission(), isFollow);
                     }
@@ -714,6 +753,8 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                     e.printStackTrace();
                 }
             }
+
+            // TODO: 1/2/2020  JUNE RAMIREZ REQUEST SENDER developer1
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
@@ -754,11 +795,14 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 
         if (userId.equals(profileUserId)) {
             friendRequestLayout.setVisibility(View.INVISIBLE);
+            acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
         } else {
             if ("0".equalsIgnoreCase(friendSendPermission)) {
                 friendRequestLayout.setVisibility(View.VISIBLE);
+                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
             } else if ("1".equalsIgnoreCase(friendSendPermission)) {
                 friendRequestLayout.setVisibility(View.INVISIBLE);
+                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
             }
         }
 
@@ -777,7 +821,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     }
 
     private void setFollow(String followUserId) {
-        progressDialog.setMessage(getString(R.string.updating));
+        progressDialog.setMessage(getString(updating));
         progressDialog.show();
         Call<String> call = profileService.setFollow(deviceId, token, userId, userId, followUserId);
         call.enqueue(new Callback<String>() {
@@ -789,9 +833,9 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         isFollow = true;
-                        tvFollow.setText(getString(R.string.following));
+                        tvFollow.setText(getString(following));
                     } else {
-                        Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(something_went_wrong), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -807,7 +851,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     }
 
     private void setUnFollow(String followUserId) {
-        progressDialog.setMessage(getString(R.string.updating));
+        progressDialog.setMessage(getString(updating));
         progressDialog.show();
         Call<String> call = profileService.setUnFollow(deviceId, token, userId, userId, followUserId);
         call.enqueue(new Callback<String>() {
@@ -819,9 +863,9 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         isFollow = false;
-                        tvFollow.setText(getString(R.string.follow));
+                        tvFollow.setText(getString(follow));
                     } else {
-                        Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(something_went_wrong), Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -850,15 +894,15 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                             userImage = AppConstants.USER_UPLOADED_IMAGES + image;
                             manager.setProfileImage(AppConstants.PROFILE_IMAGE + image);
                             loadProfileImage();
-                            message = getString(R.string.profile_photo_has_been_updated);
+                            message = getString(profile_photo_has_been_updated);
                         } else {
                             coverImage = AppConstants.USER_UPLOADED_IMAGES + image;
                             loadCoverImage();
-                            message = getString(R.string.cover_photo_has_been_updated);
+                            message = getString(cover_photo_has_been_updated);
                         }
                         Toast.makeText(getApplicationContext(), message, LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getString(something_went_wrong), LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -868,7 +912,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), getString(R.string.something_went_wrong), LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(something_went_wrong), LENGTH_SHORT).show();
                 progressDialog.dismiss();
             }
         });
@@ -986,11 +1030,11 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     }
 
     private void viewFullImage(String url) {
-        Dialog dialog = new Dialog(this, R.style.Theme_Dialog);
-        dialog.setContentView(R.layout.image_full_view);
+        Dialog dialog = new Dialog(this, style.Theme_Dialog);
+        dialog.setContentView(layout.image_full_view);
 
-        ImageView close = dialog.findViewById(R.id.close);
-        PhotoView photoView = dialog.findViewById(R.id.photo_view);
+        ImageView close = dialog.findViewById(id.close);
+        PhotoView photoView = dialog.findViewById(id.photo_view);
         Glide.with(App.getAppContext())
                 .load(url)
                 .dontAnimate()
@@ -1048,17 +1092,182 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 //            } else {
 //                mSocket.emit("current_offline_user", json);
 //            }
+
         }
 
     }
 
+    private void receiveFriendRequestStatus() {
+        mSocket = new SocketIOManager().getMSocketInstance();
+        mSocket.on("friend_request_send", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status = newPostResultJson.getBoolean("status");
+                    String friendUserId = newPostResultJson.getString("friend_user_id");
+                    Log.d(TAG, "call: " + friendUserId);
+                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
-        int id=v.getId();
-        switch (id){
+        int id = v.getId();
+        /* Unfriend,Reject,Cancel Request*/
+        String friendRequestStatus = tvAddFriendRequestStatus.getText().toString();
+        switch (id) {
             case R.id.friendRequestLayout:
-                sendFriendRequest(true);
+                if (friendRequestStatus.equalsIgnoreCase("Add Friend")) {
+                    sendFriendRequest(true);
+                    makeText(this, "Add Friend", LENGTH_SHORT).show();
+                } else if (friendRequestStatus.equalsIgnoreCase("Cancel Request")) {
+                    cancelFriendRequest();
+                    makeText(this, "cancel Request", LENGTH_SHORT).show();
+                } else if (friendRequestStatus.equalsIgnoreCase("Unfriend")) {
+
+                    makeText(this, "Unfriend", LENGTH_SHORT).show();
+                } else if (friendRequestStatus.equalsIgnoreCase("Reject")) {
+                    makeText(this, "Reject", LENGTH_SHORT).show();
+                    rejectFriendRequest();
+
+                }
+                break;
+            case R.id.accept_friend_status_layout:
+                acceptFriendRequest();
+                makeText(this, "acceptFriend", LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    private void acceptFriendRequest() {
+
+        if (mSocket != null && mSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+            FriendRequestStatus friendRequestStatus = new FriendRequestStatus();
+            Headers headers = new Headers();
+            headers.setDeviceId(manager.getDeviceId());
+            headers.setIsApps(true);
+            headers.setSecurityToken(manager.getToken());
+            headers.setUserId(manager.getProfileId());
+            friendRequestStatus.setUserId(manager.getProfileId());
+            friendRequestStatus.setFriendUserId(fromId);
+            friendRequestStatus.setHeaders(headers);
+            Gson gson = new Gson();
+            String json = gson.toJson(friendRequestStatus);
+            mSocket.emit("friend_request_accept", json);
+
+        }
+
+    }
+
+    private void rejectFriendRequest() {
+
+        if (mSocket != null && mSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+            FriendRequestStatus friendRequestStatus = new FriendRequestStatus();
+            Headers headers = new Headers();
+            headers.setDeviceId(manager.getDeviceId());
+            headers.setIsApps(true);
+            headers.setSecurityToken(manager.getToken());
+            headers.setUserId(manager.getProfileId());
+            friendRequestStatus.setUserId(manager.getProfileId());
+            friendRequestStatus.setFriendUserId(fromId);
+            friendRequestStatus.setHeaders(headers);
+            Gson gson = new Gson();
+            String json = gson.toJson(friendRequestStatus);
+            mSocket.emit("cancel_friend_request", json);
+
+        }
+
+    }
+
+    private void cancelFriendRequest() {
+        /*emit : undo_friend_request
+parameter :
+user_id: ,
+friend_user_id: ,
+headers:*/
+        if (mSocket != null && mSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+            FriendRequestStatus friendRequestStatus = new FriendRequestStatus();
+            Headers headers = new Headers();
+            headers.setDeviceId(manager.getDeviceId());
+            headers.setIsApps(true);
+            headers.setSecurityToken(manager.getToken());
+            headers.setUserId(manager.getProfileId());
+            friendRequestStatus.setUserId(manager.getProfileId());
+            friendRequestStatus.setFriendUserId(fromId);
+            friendRequestStatus.setHeaders(headers);
+            Gson gson = new Gson();
+            String json = gson.toJson(friendRequestStatus);
+            mSocket.emit("undo_friend_request", json);
+            getCancelFriendRequestStatus();
+        }
+    }
+
+    private void getCancelFriendRequestStatus() {
+        /*undo friend request by sender : message socket on : undo_friend_request_status
+undo friend request by receiver: message socket on : undo_friend_request_by_sender*/
+
+        mSocket = new SocketIOManager().getMSocketInstance();
+        mSocket.on("undo_friend_request_status", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status = newPostResultJson.getBoolean("status");
+                    String friendUserId = newPostResultJson.getString("friend_user_id");
+                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                tvAddFriendRequestStatus.setText(getString(friend_request_add));
+                            }
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
+
+    }
+
+    private void getFriendRequestSendStatus() {
+        mSocket = new SocketIOManager().getMSocketInstance();
+        mSocket.on("friend_request_send_status", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status = newPostResultJson.getBoolean("status");
+                    String friendUserId = newPostResultJson.getString("friend_user_id");
+                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                tvAddFriendRequestStatus.setText(getString(friend_requst_cancel));
+                            }
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
+
     }
 }

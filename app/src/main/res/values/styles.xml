@@ -143,6 +143,8 @@
     <style name="MyCustomTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
     </style>
-
+    <style name="PopupMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:textColor">@color/colorIconText</item>
+    </style>
 
 </resources>

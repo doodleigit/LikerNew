@@ -79,14 +79,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.liker.android.Tool.ClearableEditText
+                <EditText
                     android:id="@+id/etGroupName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_cancel_black_24dp"
-                    android:drawableRight="@drawable/ic_cancel_black_24dp"
                     android:hint="Name"
-                    android:imeOptions="actionGo"
                     android:inputType="text"
                     android:textSize="14sp" />
             </android.support.design.widget.TextInputLayout>
@@ -209,7 +206,7 @@
                         android:layout_alignParentStart="true"
                         android:background="@drawable/circle"
                         android:padding="@dimen/_5sdp"
-                        android:src="@drawable/ic_lock_black_24dp" />
+                        android:src="@drawable/ic_group_public_black_24dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -259,7 +256,7 @@
                         android:layout_alignParentStart="true"
                         android:background="@drawable/circle"
                         android:padding="@dimen/_5sdp"
-                        android:src="@drawable/ic_group_public_black_24dp" />
+                        android:src="@drawable/ic_lock_black_24dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -273,12 +270,14 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tvPermissionPrivate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Private"
                             android:textColor="@color/colorBlack" />
 
                         <TextView
+                            android:id="@+id/tvPrivatePermissionInfo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Only members can see who's in the group and what they post " />

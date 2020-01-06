@@ -5,16 +5,18 @@
     <item
         android:id="@+id/invitePeople"
         android:icon="@drawable/ic_group_add_black_24dp"
-        android:title="@string/invite_people" />
+        app:iconTint="@color/colorIconText"
+        android:title="@string/invite_member" />
     <item
         android:id="@+id/reportGroup"
         android:icon="@drawable/ic_description_black_24dp"
+        app:iconTint="@color/colorIconText"
         android:title="@string/report_group" />
 
     <item
         android:id="@+id/editPage"
         android:icon="@drawable/ic_mode_edit_black_24dp"
+        app:iconTint="@color/colorIconText"
         android:title="@string/edit_group" />
-
 
 </menu>

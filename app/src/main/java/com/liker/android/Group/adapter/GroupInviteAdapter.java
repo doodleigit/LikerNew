@@ -10,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
+import com.liker.android.Group.model.InviteMember;
 import com.liker.android.Group.service.InviteClickListener;
 import com.liker.android.Profile.model.FollowersResult;
 import com.liker.android.Profile.service.FollowUnfollowClickListener;
@@ -35,11 +37,11 @@ import java.util.ArrayList;
 public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<FollowersResult> arrayList;
+    private ArrayList<InviteMember> arrayList;
     private InviteClickListener inviteClickListener;
     private PrefManager manager;
 
-    public GroupInviteAdapter(Context context, ArrayList<FollowersResult> arrayList, InviteClickListener inviteClickListener) {
+    public GroupInviteAdapter(Context context, ArrayList<InviteMember> arrayList, InviteClickListener inviteClickListener) {
         this.context = context;
         this.arrayList = arrayList;
         this.inviteClickListener = inviteClickListener;
@@ -65,12 +67,12 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
         viewHolder.userName.setText(fullName);
         viewHolder.likes.setText(likes + " " + context.getString(R.string.likes));
         viewHolder.stars.setText(stars + " " + context.getString(R.string.stars));
-
+        viewHolder.progressBarInvite.setVisibility(View.INVISIBLE);
         if (manager.getProfileId().equalsIgnoreCase(arrayList.get(i).getUserId())) {
             viewHolder.btnInvite.setVisibility(View.INVISIBLE);
         } else {
             viewHolder.btnInvite.setVisibility(View.VISIBLE);
-            if (arrayList.get(i).getGroupMemberInvite()) {
+            if (arrayList.get(i).isIsMember()) {
                 viewHolder.btnInvite.setText(context.getString(R.string.group_invited));
                 viewHolder.btnInvite.setEnabled(false);
                 viewHolder.btnInvite.setBackgroundResource(R.drawable.drawable_comment);
@@ -96,7 +98,8 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
         viewHolder.btnInvite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                inviteClickListener.onInviteClick(arrayList.get(i).getUserId(), i);
+                viewHolder.progressBarInvite.setVisibility(View.VISIBLE);
+                inviteClickListener.onInviteClick(arrayList.get(i).getUserId(), i,viewHolder.progressBarInvite);
                 //   Toast.makeText(context, "invite user", Toast.LENGTH_SHORT).show();
                 /*if (arrayList.get(i).getIsFollowed()) {
                     followUnfollowClickListener.onUnFollowClick(arrayList.get(i).getUserId(), i);
@@ -125,6 +128,7 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
         ImageView userImage;
         TextView userName, likes, stars;
         Button btnInvite;
+        ProgressBar progressBarInvite;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -134,10 +138,11 @@ public class GroupInviteAdapter extends RecyclerView.Adapter<GroupInviteAdapter.
             likes = itemView.findViewById(R.id.likes);
             stars = itemView.findViewById(R.id.stars);
             btnInvite = itemView.findViewById(R.id.btnInvite);
+            progressBarInvite = itemView.findViewById(R.id.progress_bar_invite);
         }
     }
 
-    public void filterList(ArrayList<FollowersResult> filteredList) {
+    public void filterList(ArrayList<InviteMember> filteredList) {
         arrayList = filteredList;
         notifyDataSetChanged();
     }

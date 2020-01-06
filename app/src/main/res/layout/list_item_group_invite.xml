@@ -22,8 +22,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="5dp"
-        android:layout_toEndOf="@+id/userImage"
         android:layout_toStartOf="@+id/follow"
+        android:layout_toEndOf="@+id/userImage"
         android:orientation="vertical">
 
         <TextView
@@ -36,7 +36,7 @@
             android:text="Ar"
             android:textColor="@color/colorBlack"
             android:textSize="14sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,15 +68,32 @@
         android:id="@+id/btnInvite"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_centerInParent="true"
         android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
         android:layout_marginEnd="10dp"
-        android:padding="5dp"
         android:background="@drawable/rectangle_corner_round_thirteen"
-        android:textAllCaps="false"
+        android:padding="5dp"
         android:text="@string/group_invite"
+        android:textAllCaps="false"
         android:textColor="@color/colorWhite"
-        android:textSize="12sp"/>
+        android:textSize="12sp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_invite"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btnInvite"
+        android:layout_alignLeft="@+id/btnInvite"
+        android:layout_alignTop="@+id/btnInvite"
+        android:layout_alignEnd="@+id/btnInvite"
+        android:layout_alignRight="@+id/btnInvite"
+        android:layout_alignBottom="@+id/btnInvite"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:indeterminateTint="@android:color/holo_blue_bright"
+       />
 
     <View
         android:layout_width="match_parent"

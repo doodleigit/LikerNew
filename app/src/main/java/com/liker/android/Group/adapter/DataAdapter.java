@@ -89,7 +89,9 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             VHitem.image.setImageBitmap(null);
             String coverImage = AppConstants.USER_UPLOADED_IMAGES + suggestedGroup.getImageName();
+
             Picasso.with(VHitem.image.getContext()).load(coverImage).into(VHitem.image);
+            Picasso.with(VHitem.image.getContext()).invalidate(coverImage);
 
             String groupMember = suggestedGroup.totalMember.equals("0") ? "Members: 0" :"Members: "+ Tools.getFormattedLikerCount(suggestedGroup.totalMember);
             String groupPosts = suggestedGroup.totalPost.equals("0") ? " | Posts: 0" :  " | Posts: " +Tools.getFormattedLikerCount(suggestedGroup.totalPost);

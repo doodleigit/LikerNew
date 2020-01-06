@@ -17,7 +17,7 @@ public class AppConstants {
 //    public static final String BASE_URL_LOCATION = "http://192.168.0.77:8040/sites/likerapp/";
 
     //==========================STG SERVER=====================
-
+//
     public static final String BASE_URL = "https://www.stg.liker.com/";
     public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
     public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
@@ -167,6 +167,9 @@ public class AppConstants {
     public static final String PERSONAL_PHOTO_BROADCAST = "personal_photo_broadcast";
     public static final String TOP_POST_COMMENT_CHANGE_BROADCAST = "top_post_comment_change_broadcast";
     public static final String ADD_TRAFFIC_BROADCAST = "add_traffic_broadcast";
+    // TODO: 1/6/2020 BROADCAST
+    public static final String GROUP_CONTENT_UPDATE_BROADCAST = "group_content_update_broadcast";
+
 
     public static final String NOTIFICATION = "newNotification";
     public static final String CHAT_USERS = "get_chat_users";
@@ -268,6 +271,7 @@ public class AppConstants {
     public static final String DELETE_GROUP = "deleteGroup";
     public static final String CATEGORY_GROUP = "categoryGroup";
     public static final String GROUP_FEED = "groupFeed";
+    public static final String INVITE_MEMBER_LIST = "inviteMemberList";
 
     public static final int HOME_PAGE_NUMBER = 1;
     public static final int MESSAGE_PAGE_NUMBER = 2;
@@ -281,5 +285,5 @@ public class AppConstants {
 
 // TODO: 12/31/2019 FRIEND REQUEST
 
-
+    //public static final String IS_FRIEND_STATUS = "isFriendStatus";
 }

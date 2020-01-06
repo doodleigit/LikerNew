@@ -24,29 +24,32 @@
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:gravity="left|center"
+                android:padding="@dimen/_5sdp"
+                android:text="@string/group_content"
+                android:textColor="#E0E0E0" />
+
             <LinearLayout
                 android:id="@+id/search_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="right"
                 android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="left|center"
-                    android:gravity="left|center"
-                    android:padding="@dimen/_5sdp"
-                    android:text="@string/group_content"
-                    android:textColor="#E0E0E0" />
 
 
                 <ImageView
                     android:id="@+id/image_search_group"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="end|center"
-                    android:layout_weight="1"
-                    android:background="@drawable/create_new_group_selector"
+                    android:padding="@dimen/_5sdp"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:background="@drawable/search_new_group_selector"
                     android:src="@drawable/ic_search_black_24dp"
                     android:tint="#E0E0E0" />
 

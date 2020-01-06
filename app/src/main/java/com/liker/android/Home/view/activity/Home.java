@@ -495,7 +495,7 @@ public class Home extends AppCompatActivity implements
             }
         });
 
-        getFriendRequest();
+        //getFriendRequest();
 
     }
 
@@ -2206,38 +2206,7 @@ public class Home extends AppCompatActivity implements
 
     }
 
-    private void getFriendRequest() {
-//        mSocket = SocketIOManager.mSocket;
-        mSocket=new SocketIOManager().getMSocketInstance();
-        mSocket.on("friend_request_send_status", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                try {
-                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
-                    boolean status = newPostResultJson.getBoolean("status");
-                     String message = newPostResultJson.getString("message");
-                    JSONObject dataJson = newPostResultJson.getJSONObject("data");
-                    int total = dataJson.getInt("total");
-                    JSONArray followers = dataJson.getJSONArray("followers");
-                    int permission = dataJson.getInt("permission");
-                    NewMessage newMessage = new NewMessage();
-                    if (total > 0) {
-                        manager.setPostCount();
-                        int newCount = manager.getPostCount();
-                        setPostCount(newCount);
-                    }
 
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException ignored) {
-                }
-//                if (!IN_CHAT_MODE)
-//                    sendBroadcast((new Intent().putExtra("type", "1")).setAction(AppConstants.NEW_NOTIFICATION_BROADCAST));
-            }
-        });
-
-    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
