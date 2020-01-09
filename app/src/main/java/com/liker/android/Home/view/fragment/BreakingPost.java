@@ -59,6 +59,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.liker.android.Tool.AppConstants.catIds;
+import static com.liker.android.Tool.AppConstants.filter;
+
 //import com.doodle.Authentication.model.UserInfo;
 //import com.doodle.App;
 //import com.doodle.Home.adapter.PostAdapter;
@@ -95,7 +98,6 @@ public class BreakingPost extends Fragment {
     private HomeService webService;
     private PrefManager manager;
     private String deviceId, profileId, token, userIds;
-    private int cat_id, filter = 1;
     private boolean isPublic;
     private boolean networkOk;
     private CircularProgressView progressView;
@@ -111,7 +113,6 @@ public class BreakingPost extends Fragment {
     int limit = 15;
     int offset = 0;
     int isWithInTime = 1;
-    private String catIds = "";
     private ShimmerFrameLayout shimmerFrameLayout;
     private TextView tvAlert;
 
@@ -621,8 +622,8 @@ public class BreakingPost extends Fragment {
         public void onReceive(Context context, Intent intent) {
             ((Home) Objects.requireNonNull(getActivity())).loadCompleteListener.onLoadInitial();
             recyclerView.scrollToPosition(0);
-            catIds = intent.getStringExtra("category_ids");
-            filter = intent.getIntExtra("filter", 1);
+//            catIds = intent.getStringExtra("category_ids");
+//            filter = intent.getIntExtra("filter", 1);
             getData();
         }
     };

@@ -73,6 +73,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.liker.android.Tool.AppConstants.catIds;
+import static com.liker.android.Tool.AppConstants.filter;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -86,7 +89,6 @@ public class FollowingPost extends Fragment   {
     private HomeService webService;
     private PrefManager manager;
     private String deviceId, profileId, token, userIds;
-    private int cat_id, filter = 1;
     private boolean isPublic;
     private boolean networkOk;
     private CircularProgressView progressView;
@@ -102,7 +104,6 @@ public class FollowingPost extends Fragment   {
     int limit = 15;
     int offset = 0;
     int isWithInTime = 1;
-    private String catIds = "";
     private ShimmerFrameLayout shimmerFrameLayout;
     private TextView tvAlert;
 
@@ -576,8 +577,8 @@ public class FollowingPost extends Fragment   {
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            catIds = intent.getStringExtra("category_ids");
-            filter = intent.getIntExtra("filter", 1);
+//            catIds = intent.getStringExtra("category_ids");
+//            filter = intent.getIntExtra("filter", 1);
             ((Home) Objects.requireNonNull(getActivity())).loadCompleteListener.onLoadInitial();
             recyclerView.scrollToPosition(0);
             getData();
