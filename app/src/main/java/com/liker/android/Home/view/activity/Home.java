@@ -383,8 +383,9 @@ public class Home extends AppCompatActivity implements
 
                 manager.setPostCountClear();
                 setPostCount(0);
-                viewPager.setCurrentItem(1);
-                breakingTabClickListener.onTabClick();
+//                viewPager.setCurrentItem(1); //working
+                replacePostFragment(1);
+//                breakingTabClickListener.onTabClick(); //working
 
             }
         });
@@ -608,6 +609,7 @@ public class Home extends AppCompatActivity implements
             public void onCategorySelect(CommonCategory commonCategory) {
                 ArrayList<String> arrayList = new ArrayList<>();
                 arrayList.add(commonCategory.getCatId());
+                setFilterCategories(Tools.setCategoryIds(arrayList), (categoryPosition == 3 ? 8 : 1));
                 sendBroadcast((new Intent().putExtra("category_ids", Tools.setCategoryIds(arrayList)).putExtra("filter", (categoryPosition == 3 ? 8 : 1))).setAction(AppConstants.CATEGORY_CHANGE_BROADCAST));
             }
 
@@ -617,6 +619,7 @@ public class Home extends AppCompatActivity implements
                 for (CommonCategory commonCategory : commonCategories) {
                     arrayList.add(commonCategory.getCatId());
                 }
+                setFilterCategories(Tools.setCategoryIds(arrayList), (categoryPosition == 3 ? 8 : 1));
                 sendBroadcast((new Intent().putExtra("category_ids", Tools.setCategoryIds(arrayList)).putExtra("filter", (categoryPosition == 3 ? 8 : 1))).setAction(AppConstants.CATEGORY_CHANGE_BROADCAST));
             }
 
@@ -649,6 +652,11 @@ public class Home extends AppCompatActivity implements
             categoryTitleAdapter.setSelectable(true);
         }
         categoryTitleAdapter.notifyDataSetChanged();
+    }
+
+    private void setFilterCategories(String cats, int filter) {
+        AppConstants.catIds = cats;
+        AppConstants.filter = filter;
     }
 
     BroadcastReceiver filterBroadcast = new BroadcastReceiver() {
@@ -1142,37 +1150,42 @@ public class Home extends AppCompatActivity implements
     }
 
     private void setupTabIcons(int position) {
+        if (tabLayout.getTabCount() < 1) {
+            tabOne = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+            tabOneText = tabOne.findViewById(R.id.tab);
+            tabOneInfo = tabOne.findViewById(R.id.tab_info);
+            tabOneText.setText("Trending");
 
-        tabOne = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabOneText = tabOne.findViewById(R.id.tab);
-        tabOneInfo = tabOne.findViewById(R.id.tab_info);
-        tabOneText.setText("Trending");
+//        tabLayout.getTabAt(0).setCustomView(tabOne); //working
+
+
+            tabTwo = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+            tabTwoText = tabTwo.findViewById(R.id.tab);
+            tabTwoInfo = tabTwo.findViewById(R.id.tab_info);
+            tabTwoText.setText("Breaking");
+
+//        tabLayout.getTabAt(1).setCustomView(tabTwo); //working
+
+
+            tabThree = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+            tabThreeText = tabThree.findViewById(R.id.tab);
+            tabThreeInfo = tabThree.findViewById(R.id.tab_info);
+            tabThreeText.setText("Following");
+
+//        tabLayout.getTabAt(2).setCustomView(tabThree); //working
+
+
+            tabLayout.addTab(tabLayout.newTab().setCustomView(tabOne));
+            tabLayout.addTab(tabLayout.newTab().setCustomView(tabTwo));
+            tabLayout.addTab(tabLayout.newTab().setCustomView(tabThree));
+        }
+
         tabOneText.setTextColor(viewBackgroundActive(0, position) ? Color.parseColor("#1483C9") : Color.parseColor("#AAAAAA"));
         tabOneInfo.setImageResource(viewBackgroundActive(0, position) ? R.drawable.ic_info_outline_blue_24dp : R.drawable.ic_info_outline_black_24dp);
-        tabLayout.getTabAt(0).setCustomView(tabOne);
-
-        tabTwo = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabTwoText = tabTwo.findViewById(R.id.tab);
-        tabTwoInfo = tabTwo.findViewById(R.id.tab_info);
-        tabTwoText.setText("Breaking");
         tabTwoText.setTextColor(viewBackgroundActive(1, position) ? Color.parseColor("#1483C9") : Color.parseColor("#AAAAAA"));
         tabTwoInfo.setImageResource(viewBackgroundActive(1, position) ? R.drawable.ic_info_outline_blue_24dp : R.drawable.ic_info_outline_black_24dp);
-        tabLayout.getTabAt(1).setCustomView(tabTwo);
-
-        tabThree = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabThreeText = tabThree.findViewById(R.id.tab);
-        tabThreeInfo = tabThree.findViewById(R.id.tab_info);
-        tabThreeText.setText("Following");
         tabThreeText.setTextColor(viewBackgroundActive(2, position) ? Color.parseColor("#1483C9") : Color.parseColor("#AAAAAA"));
         tabThreeInfo.setImageResource(viewBackgroundActive(2, position) ? R.drawable.ic_info_outline_blue_24dp : R.drawable.ic_info_outline_black_24dp);
-        tabLayout.getTabAt(2).setCustomView(tabThree);
-
-//        tabOne.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                viewPager.setCurrentItem(0);
-//            }
-//        });
 
         tabOneInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1255,8 +1268,8 @@ public class Home extends AppCompatActivity implements
     }
 
     private void setupViewPager() {
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+        viewPager = findViewById(R.id.viewpager);
+        setupViewPagerAdapter();
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -1266,10 +1279,10 @@ public class Home extends AppCompatActivity implements
 
             @Override
             public void onPageSelected(int position) {
-                viewPager.getAdapter().notifyDataSetChanged();
-                tabLayout.setupWithViewPager(viewPager);
-                setupTabIcons(position);
-                appBarLayout.setExpanded(true);
+//                viewPager.getAdapter().notifyDataSetChanged();
+//                tabLayout.setupWithViewPager(viewPager); //working
+//                setupTabIcons(position);
+//                appBarLayout.setExpanded(true);
 
             }
 
@@ -1280,7 +1293,7 @@ public class Home extends AppCompatActivity implements
         });
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+//        tabLayout.setupWithViewPager(viewPager); //working
         setupTabIcons(0);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -1300,6 +1313,7 @@ public class Home extends AppCompatActivity implements
 //                    tabThreeText.setTextColor(Color.parseColor("#AAAAAA"));
                     manager.setPostCountClear();
                     setPostCount(0);
+                    replacePostFragment(0); //working
                 } else if (tab.getPosition() == 1) {
 //                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
 //                    tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
@@ -1311,6 +1325,7 @@ public class Home extends AppCompatActivity implements
 //                    tabThreeText.setTextColor(Color.parseColor("#AAAAAA"));
                     manager.setPostCountClear();
                     setPostCount(0);
+                    replacePostFragment(1); //working
                 } else {
 //                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
 //                    tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
@@ -1322,6 +1337,7 @@ public class Home extends AppCompatActivity implements
 //                    tabThreeText.setTextColor(Color.parseColor("#1483C9"));
                     manager.setPostCountClear();
                     setPostCount(0);
+                    replacePostFragment(2); //working
                 }
 
             }
@@ -1357,16 +1373,35 @@ public class Home extends AppCompatActivity implements
 
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+    private void replacePostFragment(int position) {
+        setupTabIcons(position);
+        appBarLayout.setExpanded(true);
+        adapter.clearFragment();
+        switch (position) {
+            case 0:
+                adapter.addFrag(new TrendingPost(), "Tab 1");
+                break;
+            case 1:
+                adapter.addFrag(new BreakingPost(), "Tab 2");
+                break;
+            case 2:
+                adapter.addFrag(new FollowingPost(), "Tab 3");
+                break;
+        }
+    }
+
+    ViewPagerAdapter adapter; //working
+
+    private void setupViewPagerAdapter() {
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
 
         adapter.addFrag(new TrendingPost(), "Tab 1");
-        adapter.addFrag(new BreakingPost(), "Tab 2");
-        adapter.addFrag(new FollowingPost(), "Tab 3");
+//        adapter.addFrag(new BreakingPost(), "Tab 2");
+//        adapter.addFrag(new FollowingPost(), "Tab 3"); //working
 
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(3);
+//        viewPager.setOffscreenPageLimit(3); //working
 
     }
 
@@ -1620,6 +1655,7 @@ public class Home extends AppCompatActivity implements
                     ((TextView) parent.getChildAt(0)).setTextColor(Color.parseColor("#60b2fc"));//60b2fc
                     categorySpinner.setBackgroundColor(Color.parseColor("#ffffff"));
                     spinnerDropDown.setImageResource(R.drawable.ic_arrow_drop_down_blue_24dp);
+                    setFilterCategories("", 1);
                     sendBroadcast((new Intent().putExtra("category_ids", "").putExtra("filter", 1)).setAction(AppConstants.CATEGORY_CHANGE_BROADCAST));
                     break;
                 case 1:
@@ -1704,7 +1740,7 @@ public class Home extends AppCompatActivity implements
         Comment_ commentChild = new Comment_();
         commentChild = App.getCommentItem();
         boolean isFollow = App.isIsFollow();
-        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow,new GroupDataInfo());
+        ReportSendCategorySheet reportSendCategorySheet = ReportSendCategorySheet.newInstance(reportId, commentChild, isFollow, new GroupDataInfo());
         reportSendCategorySheet.show(getSupportFragmentManager(), "ReportSendCategorySheet");
     }
 
@@ -1723,7 +1759,7 @@ public class Home extends AppCompatActivity implements
     public void onReportLikerClicked(int image, String text) {
         String message = text;
         Comment_ commentChild = App.getCommentItem();
-        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild,new GroupDataInfo());
+        ReportLikerMessageSheet reportLikerMessageSheet = ReportLikerMessageSheet.newInstance(reportId, commentChild, new GroupDataInfo());
         reportLikerMessageSheet.show(getSupportFragmentManager(), "ReportLikerMessageSheet");
     }
 
@@ -1734,7 +1770,7 @@ public class Home extends AppCompatActivity implements
         //  commentChild = null;
         Reply reply = new Reply();
         reply = null;
-        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply,new GroupDataInfo());
+        ReportPersonMessageSheet reportPersonMessageSheet = ReportPersonMessageSheet.newInstance(reportId, commentChild, reply, new GroupDataInfo());
         reportPersonMessageSheet.show(getSupportFragmentManager(), "ReportPersonMessageSheet");
     }
 
@@ -1836,6 +1872,7 @@ public class Home extends AppCompatActivity implements
                             }
                         } else {
                             if (isReload) {
+                                setFilterCategories(catIds, (categoryPosition == 3 ? 8 : 1));
                                 sendBroadcast((new Intent().putExtra("category_ids", catIds).putExtra("filter", (categoryPosition == 3 ? 8 : 1))).setAction(AppConstants.CATEGORY_CHANGE_BROADCAST));
                             }
                         }
@@ -1985,6 +2022,7 @@ public class Home extends AppCompatActivity implements
             filterItem.setText(selectedCategory);
         if (!isAllCategory) {
             updateCategoryTitles();
+            setFilterCategories(Tools.setCategoryIds(arrayList), (categoryPosition == 3 ? 8 : 1));
             sendBroadcast((new Intent().putExtra("category_ids", Tools.setCategoryIds(arrayList)).putExtra("filter", (categoryPosition == 3 ? 8 : 1))).setAction(AppConstants.CATEGORY_CHANGE_BROADCAST));
         } else {
             hideProgressBar();
@@ -2205,7 +2243,6 @@ public class Home extends AppCompatActivity implements
         });
 
     }
-
 
 
     @Override

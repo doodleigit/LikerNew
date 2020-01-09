@@ -12,9 +12,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
+    private FragmentManager manager;
 
     public ViewPagerAdapter(FragmentManager manager) {
         super(manager);
+        this.manager = manager;
     }
 
     @Override
@@ -27,9 +29,18 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         return mFragmentList.size();
     }
 
+    public void clearFragment() {
+        for (Fragment frag : mFragmentList)
+            manager.beginTransaction().remove(frag).commit();
+        manager.executePendingTransactions();
+        mFragmentList.clear(); //working
+        mFragmentTitleList.clear(); //working
+    }
+
     public void addFrag(Fragment fragment, String title) {
         mFragmentList.add(fragment);
         mFragmentTitleList.add(title);
+        notifyDataSetChanged();
     }
 
     @Override

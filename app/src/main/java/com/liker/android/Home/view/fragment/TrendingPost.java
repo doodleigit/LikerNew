@@ -74,6 +74,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.liker.android.Tool.AppConstants.catIds;
+import static com.liker.android.Tool.AppConstants.filter;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -88,7 +91,6 @@ public class TrendingPost extends Fragment   {
     private HomeService webService;
     private PrefManager manager;
     private String deviceId, profileId, token, userIds;
-    private int cat_id, filter = 1;
     private boolean isPublic;
     private boolean networkOk;
     private CircularProgressView progressView;
@@ -104,7 +106,6 @@ public class TrendingPost extends Fragment   {
     int limit = 15;
     int offset = 0;
     int isWithInTime = 1;
-    private String catIds = "";
     private ShimmerFrameLayout shimmerFrameLayout;
     private TextView tvAlert;
 
@@ -579,8 +580,8 @@ public class TrendingPost extends Fragment   {
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            catIds = intent.getStringExtra("category_ids");
-            filter = intent.getIntExtra("filter", 1);
+//            catIds = intent.getStringExtra("category_ids");
+//            filter = intent.getIntExtra("filter", 1);
             recyclerView.scrollToPosition(0);
             ((Home) Objects.requireNonNull(getActivity())).loadCompleteListener.onLoadInitial();
             getData();
