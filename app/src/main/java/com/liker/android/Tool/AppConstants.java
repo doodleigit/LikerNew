@@ -18,17 +18,17 @@ public class AppConstants {
 
     //==========================STG SERVER=====================
 
-//    public static final String BASE_URL = "https://www.stg.liker.com/";
-//    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
-//    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
-//    public static final String SOCKET_WEB = "https://node.liker.com:7803";
-//    public static final String SOCKET_MESSAGE = "https://node.liker.com:7804";
-//    public static final String SOCKET_NEW_POST = "http://192.168.0.12:7902";
-//    public static final String SOCKET_VIDEO = "https://node.liker.com:7807";
-//    public static final String FACEBOOK_SHARE = "https://www.stg.liker.com/public/posts/";
-//    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
-//    public static final String FACEBOOK_INVITATION = "https://www.d.liker.com/settings/fbinvite/";
-//    public static final String BASE_URL_LOCATION = "https://www.stg.liker.com/";
+    public static final String BASE_URL = "https://www.stg.liker.com/";
+    public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
+    public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";
+    public static final String SOCKET_WEB = "https://node.liker.com:7803";
+    public static final String SOCKET_MESSAGE = "https://node.liker.com:7804";
+    public static final String SOCKET_NEW_POST = "http://192.168.0.12:7902";
+    public static final String SOCKET_VIDEO = "https://node.liker.com:7807";
+    public static final String FACEBOOK_SHARE = "https://www.stg.liker.com/public/posts/";
+    public static final String LINK_IMAGES = "https://www.cdn-liker.com/uploads/link_images/";
+    public static final String FACEBOOK_INVITATION = "https://www.d.liker.com/settings/fbinvite/";
+    public static final String BASE_URL_LOCATION = "https://www.stg.liker.com/";
 
     /*http://192.168.0.7:8040/sites/likerapp/user_apprate,
      parameter: user_id, status*/
@@ -152,7 +152,7 @@ public class AppConstants {
     public static final String NEW_MESSAGE_BROADCAST = "new_message_broadcast";
     public static final String NEW_MESSAGE_BROADCAST_FROM_HOME = "new_message_broadcast_from_home";
     public static final String NEW_POST_BROADCAST_FROM_HOME = "new_post_broadcast_from_home";
-    public static final String NEW_ORIENTATION_BROADCAST= "new_orientation_broadcast";
+    public static final String NEW_ORIENTATION_BROADCAST = "new_orientation_broadcast";
     public static final String LIST_MESSAGE_BROADCAST = "list_message_broadcast";
     public static final String NEW_NOTIFICATION_BROADCAST = "new_notification_broadcast";
     public static final String RECONNECT_SOCKET_BROADCAST = "reconnect_socket_broadcast";
@@ -167,6 +167,9 @@ public class AppConstants {
     public static final String PERSONAL_PHOTO_BROADCAST = "personal_photo_broadcast";
     public static final String TOP_POST_COMMENT_CHANGE_BROADCAST = "top_post_comment_change_broadcast";
     public static final String ADD_TRAFFIC_BROADCAST = "add_traffic_broadcast";
+    // TODO: 1/6/2020 BROADCAST
+    public static final String GROUP_CONTENT_UPDATE_BROADCAST = "group_content_update_broadcast";
+
 
     public static final String NOTIFICATION = "newNotification";
     public static final String CHAT_USERS = "get_chat_users";
@@ -251,23 +254,24 @@ public class AppConstants {
     public static final String USER_APP_RATE = "user_apprate";
     public static final String SINGLE_USER_APP_RATE = "single_user_apprate";
 
-    //GROUP
-    public static final String CREATE_GROUP="createGroup";
-    public static final String GET_GROUP_ABOUT="getGroupabout";
-    public static final String UPDATE_GROUP_MEDIA="updateGroupMedia";
-    public static final String GROUP_MEMBERS="groupMembers";
-    public static final String LEAVE_MEMBERS="leaveMember";
-    public static final String JOIN_MEMBERS="joinMember";
-    public static final String INVITE_MEMBERS="inviteMember";
-    public static final String ALL_GROUP_INFO="allGroupInfo";
-    public static final String SUGGESTED_GROUP="suggestedGroup";
-    public static final String GROUP_YOU_MANAGE="groupYouManage";
-    public static final String GROUP_YOU_IN="groupYouIn";
-    public static final String UPDATE_GROUP_ABOUT="updateGroupabout";
-    public static final String UPDATE_GROUP="updateGroup";
-    public static final String DELETE_GROUP="deleteGroup";
-    public static final String CATEGORY_GROUP="categoryGroup";
-    public static final String GROUP_FEED="groupFeed";
+    // TODO: GROUP
+    public static final String CREATE_GROUP = "createGroup";
+    public static final String GET_GROUP_ABOUT = "getGroupabout";
+    public static final String UPDATE_GROUP_MEDIA = "updateGroupMedia";
+    public static final String GROUP_MEMBERS = "groupMembers";
+    public static final String LEAVE_MEMBERS = "leaveMember";
+    public static final String JOIN_MEMBERS = "joinMember";
+    public static final String INVITE_MEMBERS = "inviteMember";
+    public static final String ALL_GROUP_INFO = "allGroupInfo";
+    public static final String SUGGESTED_GROUP = "suggestedGroup";
+    public static final String GROUP_YOU_MANAGE = "groupYouManage";
+    public static final String GROUP_YOU_IN = "groupYouIn";
+    public static final String UPDATE_GROUP_ABOUT = "updateGroupabout";
+    public static final String UPDATE_GROUP = "updateGroup";
+    public static final String DELETE_GROUP = "deleteGroup";
+    public static final String CATEGORY_GROUP = "categoryGroup";
+    public static final String GROUP_FEED = "groupFeed";
+    public static final String INVITE_MEMBER_LIST = "inviteMemberList";
 
     public static final int HOME_PAGE_NUMBER = 1;
     public static final int MESSAGE_PAGE_NUMBER = 2;
@@ -279,4 +283,7 @@ public class AppConstants {
 
     public static final int ADVANCE_SEARCH_PAGE_NUMBER = 8;
 
+// TODO: 12/31/2019 FRIEND REQUEST
+
+    //public static final String IS_FRIEND_STATUS = "isFriendStatus";
 }

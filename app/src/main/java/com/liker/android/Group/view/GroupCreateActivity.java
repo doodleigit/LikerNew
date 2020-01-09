@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
 
 
     //data
+    private String TAG = "GroupCreateActivity";
     private String categoryId = "", subCategoryId = "";
     private String groupId;
     private String categoryName, audience;
@@ -49,15 +51,14 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
     private String groupName;
     private String deviceId, token, userId;
 
-    private ImageView imageCancelCreateGroup;
+    private ImageView imageCancelCreateGroup,imagePrivate;
     private PrefManager manager;
     private GroupWebservice groupWebservice;
     private boolean networkOk;
-    private ClearableEditText etGroupName;
+    private EditText etGroupName;
     private ViewGroup contentCategory,privatePermissionContainer;
-    private TextView tvAudience, tvCreateGroup, tvEditGroup, tvCreateGroupTitle;
+    private TextView tvAudience, tvCreateGroup, tvEditGroup, tvCreateGroupTitle,tvPermissionPrivate,tvPrivatePermissionInfo;
     private RadioButton rbPublic, rbPrivate;
-    private String TAG = "GroupCreateActivity";
 
 
     @Override
@@ -78,9 +79,23 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
      int silverStar=Integer.parseInt(userInfo.sliverStars);
      int totalStars=goldStar+silverStar;
      if(totalStars>0){
-         privatePermissionContainer.setVisibility(View.VISIBLE);
+
+         rbPrivate.setEnabled(true);
+         imagePrivate.setImageResource(R.drawable.ic_lock_black_24dp);
+         tvPermissionPrivate.setTextColor(Color.BLACK);
+
      }else {
-         privatePermissionContainer.setVisibility(View.GONE);
+
+         tvPermissionPrivate.setTextColor(Color.parseColor("#DCDCDC"));
+         tvPrivatePermissionInfo.setTextColor(Color.parseColor("#DCDCDC"));
+         imagePrivate.setImageResource(R.drawable.ic_lock_disable_24dp);
+
+         // android:inputType="textCapWords"
+         //   android:capitalize="words"
+         rbPublic.setChecked(true);
+         rbPublic.setSelected(true);
+         rbPrivate.setEnabled(false);
+         permission = "0";
      }
 
     }
@@ -117,6 +132,7 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
         token = manager.getToken();
         userId = manager.getProfileId();
         imageCancelCreateGroup = findViewById(R.id.imageCancelCreateGroup);
+        imagePrivate = findViewById(R.id.imagePrivate);
         etGroupName = findViewById(R.id.etGroupName);
         contentCategory = findViewById(R.id.contentCategory);
         privatePermissionContainer = findViewById(R.id.privatePermissionContainer);
@@ -127,6 +143,8 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
         contentCategory.setOnClickListener(this);
         tvAudience = findViewById(R.id.tvAudience);
         tvCreateGroup = findViewById(R.id.tvCreateGroup);
+        tvPermissionPrivate = findViewById(R.id.tvPermissionPrivate);
+        tvPrivatePermissionInfo = findViewById(R.id.tvPrivatePermissionInfo);
         tvEditGroup = findViewById(R.id.tvEditGroup);
         tvCreateGroupTitle = findViewById(R.id.tvCreateGroupTitle);
         imageCancelCreateGroup.setOnClickListener(this);
@@ -145,6 +163,7 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 groupName = s.toString();
+                capitalizedGroupName(groupName);
 
                 if (!TextUtils.isEmpty(groupName)) {
                     tvCreateGroup.setTextColor(Color.WHITE);
@@ -158,6 +177,7 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
                 }
 
 
+
             }
 
             @Override
@@ -165,6 +185,18 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
 
             }
         });
+
+    }
+
+    private void capitalizedGroupName(String mGroupName) {
+        String str = mGroupName;
+        String[] strArray = str.split(" ");
+        StringBuilder builder = new StringBuilder();
+        for (String s : strArray) {
+            String cap = s.substring(0, 1).toUpperCase() + s.substring(1);
+            builder.append(cap + " ");
+        }
+        groupName=builder.toString();
 
     }
 

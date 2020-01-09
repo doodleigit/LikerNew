@@ -14,22 +14,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.liker.android.App;
 import com.liker.android.Group.model.GroupMember;
-import com.liker.android.Profile.model.FollowersResult;
 import com.liker.android.Profile.service.FollowUnfollowClickListener;
 import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.PrefManager;
 
-import java.util.ArrayList;
 import java.util.List;
-
-//import com.doodle.App;
-//import com.doodle.Profile.model.FollowersResult;
-//import com.doodle.Profile.service.FollowUnfollowClickListener;
-//import com.doodle.Profile.view.ProfileActivity;
-//import com.doodle.R;
-//import com.doodle.Tool.AppConstants;
 
 public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.ViewHolder> {
 

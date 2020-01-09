@@ -42,6 +42,7 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private PrefManager manager;
     private String userId,token,deviceId;
     private String groupCategoryName;
+    private boolean isMember;
 
     public DataAdapter(Context mContext,ArrayList<ListItem> items) {
         this.items = items;
@@ -89,14 +90,16 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             VHitem.image.setImageBitmap(null);
             String coverImage = AppConstants.USER_UPLOADED_IMAGES + suggestedGroup.getImageName();
+
             Picasso.with(VHitem.image.getContext()).load(coverImage).into(VHitem.image);
+            Picasso.with(VHitem.image.getContext()).invalidate(coverImage);
 
             String groupMember = suggestedGroup.totalMember.equals("0") ? "Members: 0" :"Members: "+ Tools.getFormattedLikerCount(suggestedGroup.totalMember);
             String groupPosts = suggestedGroup.totalPost.equals("0") ? " | Posts: 0" :  " | Posts: " +Tools.getFormattedLikerCount(suggestedGroup.totalPost);
             String allCountInfo =  groupMember + groupPosts;
             VHitem.tvGroupItemInfoCount.setText(allCountInfo);
 
-            boolean isMember=Boolean.parseBoolean(suggestedGroup.isMember);
+             isMember=Boolean.parseBoolean(suggestedGroup.isMember);
             if (isMember) {
                 VHitem. imageGroupJoin.setImageResource(R.drawable.ic_group_joined_24dp);
                 VHitem. tvGroupJoin.setText(mContext.getString(R.string.groupJoined));
@@ -110,7 +113,12 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             VHitem.image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                  //  AppSingleton.getInstance().setGroupId(suggestedGroup.groupId);
+                    mContext.startActivity(new Intent(mContext, GroupPageActivity.class).putExtra("group_id",suggestedGroup.groupId));
+                }
+            });
+            VHitem.containerGroupInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     mContext.startActivity(new Intent(mContext, GroupPageActivity.class).putExtra("group_id",suggestedGroup.groupId));
                 }
             });
@@ -118,9 +126,7 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             VHitem.isMemberLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     setGroupJoinStatus(isMember,VHitem.imageGroupJoin,VHitem.tvGroupJoin,suggestedGroup.groupId);
-
                 }
             });
 
@@ -157,9 +163,10 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         //  isFollow = false;
-                    //    isMember = true;
+                        isMember = true;
                         imageGroupJoin.setImageResource(R.drawable.ic_group_joined_24dp);
                         tvGroupJoin.setText(mContext.getString(R.string.groupJoined));
+                     //   notifyDataSetChanged();
                         //tvFollow.setText(getString(R.string.follow));
                     } else {
                         Toast.makeText(mContext, mContext.getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
@@ -190,9 +197,11 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         // isFollow = false;
-                     //   isMember = false;
+                        isMember = false;
+//                        suggestedGroup.isMember="false";
                         imageGroupJoin.setImageResource(R.drawable.ic_add_group_24dp);
                         tvGroupJoin.setText(mContext.getString(R.string.groupJoin));
+                       // notifyDataSetChanged();
                         //tvFollow.setText(getString(R.string.follow));
                     } else {
                         Toast.makeText(mContext, mContext.getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
@@ -234,7 +243,7 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     class VHItem extends RecyclerView.ViewHolder {
         TextView tvItem, tvGroupItemInfoCount,tvGroupJoin;
         ImageView image,imageGroupJoin;
-        ViewGroup isMemberLayout;
+        ViewGroup isMemberLayout,containerGroupInfo;
 
         public VHItem(View itemView) {
             super(itemView);
@@ -244,6 +253,7 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.image = itemView.findViewById(R.id.image);
             this.imageGroupJoin = itemView.findViewById(R.id.imageGroupJoin);
             this.isMemberLayout =  itemView.findViewById(R.id.is_member_layout);
+            this.containerGroupInfo =  itemView.findViewById(R.id.containerGroupInfo);
         }
     }
 }

@@ -22,6 +22,7 @@ import com.liker.android.App;
 import com.liker.android.Post.model.PostImage;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -94,10 +95,6 @@ public class ImageViewHolder extends RecyclerView.ViewHolder {
                         .position(ViewTooltip.Position.RIGHT)
                         .text("You have already add this")
                         .show();
-
-
-
-
             }
         });
 

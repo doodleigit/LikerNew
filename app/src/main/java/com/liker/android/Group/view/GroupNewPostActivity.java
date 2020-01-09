@@ -345,7 +345,7 @@ public class GroupNewPostActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.new_post);
+        setContentView(R.layout.group_new_post);
         mContext = this;
         groupDataInfo = getIntent().getParcelableExtra("group_data_info");
         groupId=groupDataInfo.getGroupInfo().getGroupId();
@@ -408,8 +408,6 @@ public class GroupNewPostActivity extends AppCompatActivity implements
         imageListener = new ImageViewHolder.ImageListener() {
             @Override
             public void deleteImage(PostImage postImage, int position) {
-
-
                 postImages.remove(postImage);
                 mediaAdapter.deleteItem(position);
                 mediaRecyclerView.scrollToPosition(position);
@@ -599,8 +597,11 @@ public class GroupNewPostActivity extends AppCompatActivity implements
                 String imageUrl = AppConstants.MIM_IMAGE + mimColor;
                 Picasso.with(this).load(imageUrl).into(target);
                 messageContainer.setBackground(mDrawable);
-                editPostMessage.setHeight(200);
+              //  editPostMessage.setHeight(200);
                 editPostMessage.setTextSize(22f);
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._200sdp);
+                messageContainer.setLayoutParams(params);
                 messageContainer.setGravity(Gravity.CENTER);
                 editPostMessage.setGravity(Gravity.CENTER);
                 //  editPostMessage.setTextAppearance(GroupNewPostActivity.this, android.R.style.TextAppearance_Large);
@@ -1471,7 +1472,6 @@ public class GroupNewPostActivity extends AppCompatActivity implements
                 }
                 // Tools.showCustomToast(LikerSearch.this, mView, " Write Minimum Three Characters !", Gravity.TOP);
 
-
 //                String linkText = editPostMessage.getText().toString();
 //                textCrawler.makePreview(callback, linkText);
 //                if (linkText.startsWith("http")) {
@@ -1532,7 +1532,7 @@ public class GroupNewPostActivity extends AppCompatActivity implements
                     status,//0,
                     imageFile,
                     fileEncoded,//"",
-                    postPermission,//0,
+                    0,//postPermission,//0,
                     categoryId,//3,
                     subCategoryId,// 54,
                     contentType,//1,
@@ -1630,7 +1630,6 @@ public class GroupNewPostActivity extends AppCompatActivity implements
         Transition transition = new Fade();
         transition.setDuration(600);
         transition.addTarget(recyclerViewSearchMention);
-
         TransitionManager.beginDelayedTransition(rootView, transition);
         recyclerViewSearchMention.setVisibility(rvMentionUserShow ? View.VISIBLE : View.GONE);
     }
@@ -1726,9 +1725,7 @@ public class GroupNewPostActivity extends AppCompatActivity implements
                 progressView.stopAnimation();
             }
         });
-
     }
-
 
     @Override
     public void onButtonClicked(int image, String text) {
@@ -1744,11 +1741,8 @@ public class GroupNewPostActivity extends AppCompatActivity implements
             case "Followers Only":
                 postPermission = 2;
                 break;
-
-
         }
     }
-
 
     private Target target = new Target() {
         @Override
@@ -1765,7 +1759,6 @@ public class GroupNewPostActivity extends AppCompatActivity implements
         public void onPrepareLoad(Drawable placeHolderDrawable) {
         }
     };
-
 
     @Override
     public void onDestroy() {  // could be in onPause or onStop
@@ -1791,7 +1784,6 @@ public class GroupNewPostActivity extends AppCompatActivity implements
     }
 
     Uri imageUri;
-
     public void sendImageFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Intent takePictureIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
@@ -1826,7 +1818,6 @@ public class GroupNewPostActivity extends AppCompatActivity implements
         }
 
     }
-
 
     private void checkGalleryPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

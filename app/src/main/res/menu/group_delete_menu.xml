@@ -5,6 +5,7 @@
     <item
         android:id="@+id/deleteGroup"
         android:icon="@drawable/ic_account_group_outline"
+        app:iconTint="@color/colorIconText"
         android:title="@string/delete_group" />
 
 

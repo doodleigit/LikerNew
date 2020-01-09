@@ -1,6 +1,7 @@
 package com.liker.android.Group.service;
 
 import com.liker.android.Group.model.GroupContent;
+import com.liker.android.Group.model.GroupInviteMember;
 import com.liker.android.Group.model.GroupWiseCateGoryInfo;
 import com.liker.android.Group.model.MyGroupMember;
 import com.liker.android.Home.model.PostItem;
@@ -204,25 +205,22 @@ public interface GroupWebservice {
             @Field("is_public") boolean isPublic,
             @Field("max_post_id") String maxPostId
             );
-/*
-http://192.168.0.77:8040/sites/likerapp/groupFeed
-user_id:
-group_id:
-limit:5
-offset:0
-cat_id:
-is_public:false
-max_post_id:0*
+/*Get Invite Follower List API - http://192.168.0.77:8040/sites/likerapp/inviteMemberList
+Form Data: 	user_id:
+			group_id:*/
 
-user_id:
-group_id:
-limit:
-offset:
-cat_id:
-is_public:
-max_post_id:
-/
- */
 
+    @POST(AppConstants.INVITE_MEMBER_LIST)
+    @FormUrlEncoded
+    Call<GroupInviteMember> inviteMemberList(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("user_id") String userIds,
+            @Field("group_id") String groupId,
+            @Field("limit") int limit,
+            @Field("offset") int offset,
+            @Field("fetch_more") boolean fetchMore
+    );
 }
 

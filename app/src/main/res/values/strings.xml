@@ -34,7 +34,7 @@
 
     //Expandale list
     <string name="action_contributor_settings">Contributor Settings</string>
-    <string name="action_create_group">Group</string>
+    <string name="action_create_group">Groups</string>
     <string name="action_log_out">Log Out</string>
     <string name="text_alcohol">Alcohol</string>
     <string name="text_coffee">Coffee</string>
@@ -398,7 +398,7 @@
     <string name="create_new_group">Create New Group</string>
     <string name="please_check_your_network_connection">Please check your network connection and try again.</string>
     <string name="the_server_not_responding">The server is not responding please try again</string>
-    <string name="delete_group">Delete group</string>
+    <string name="delete_group">Leave And Delete Group</string>
     <string name="lorem">Lorem ipsum dolor sit amet, at pro sonet audire, graeco maiestatis intellegebat mea ut. Rebum falli nobis pri eu. Cu per autem mentitum. Vis te iusto pertinax. Liber essent senserit ut nam. Ei qui nostro menandri, vero natum adversarium ad duo. Lorem docendi usu an, sonet recusabo vim at.  Fugit diceret an pri, modus moderatius eum an. In autem virtute argumentum sed, eum eu noluisse vivendum omittantur. Sit luptatum posidonium ea. Qui iudicabit interpretaris in, autem feugiat id vim.  Et vel animal commodo sententiae. Mea solum dissentiunt ad. Posse paulo deseruisse ea vel, alii tale rebum vis no. Assum definiebas vis ex, ex mel agam ipsum accusata, cum sint viris cotidieque eu.  Nam case falli viderer in, duo eu ullum nonumes, eos debet posidonium necessitatibus no. Prima accumsan est ne. Eu eum mnesarchum eloquentiam reformidans, dicit nonumes accusamus no pro. Ne dolore definitiones per, in eam assum dicam, sed no accumsan molestiae eloquentiam. An sed falli tritani civibus, fastidii fabellas accusamus est ne, ea eam delenit sensibus. Per an essent dissentias disputationi, vis ne labore propriae dissentiunt.  Mei ad simul noluisse. Te equidem splendide sit, ei essent mediocrem sed. Duo quod natum paulo ea. Mollis necessitatibus vel et, est ex audire fabulas.</string>
     <string name="title_search">Search</string>
     <string-array name="string_array_alcohol">
@@ -582,4 +582,11 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="group_description">Group Description</string>
+    <string name="friend_requst_cancel">Cancel Request</string>
+    <string name="friend_request_add">Add Friend</string>
+    <string name="friend_request_reject">Reject</string>
+    <string name="friend_request_unfriend">Unfriend</string>
+    <string name="invite_member">Invite Members</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>

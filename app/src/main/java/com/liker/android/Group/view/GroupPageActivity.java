@@ -2,14 +2,16 @@ package com.liker.android.Group.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-
-
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -20,7 +22,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.Toolbar;
@@ -39,6 +41,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.liker.android.App;
+import com.liker.android.Authentication.view.activity.Signup;
 import com.liker.android.Comment.model.Comment_;
 import com.liker.android.Comment.model.Reason;
 import com.liker.android.Comment.model.Reply;
@@ -57,14 +60,13 @@ import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.HomeService;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
+import com.liker.android.Home.view.fragment.RateusStatus;
 import com.liker.android.Profile.adapter.ViewPagerAdapter;
 import com.liker.android.Profile.model.UserAllInfo;
-import com.liker.android.Profile.service.ProfileDataFetchCompleteListener;
 import com.liker.android.Profile.service.ProfileService;
 import com.liker.android.Profile.view.AboutFragment;
 import com.liker.android.Profile.view.FollowersFragment;
 import com.liker.android.Profile.view.PhotosFragment;
-
 import com.liker.android.Profile.view.StarFragment;
 import com.liker.android.R;
 import com.liker.android.Search.LikerSearch;
@@ -87,6 +89,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -104,7 +107,8 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         ReportLikerMessageSheet.BottomSheetListener,
         FollowSheet.BottomSheetListener,
         BlockUserDialog.BlockListener,
-        PostPermissionSheet.BottomSheetListener {
+        PostPermissionSheet.BottomSheetListener,
+        GroupDeleteDialog.DeleteGroupListener{
 
     //DATA
     private String groupName;
@@ -144,7 +148,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
     private HomeService webService;
 
     private ImageView imageGroupJoin;
-    private TextView tvGroupJoin;
+    private TextView tvGroupJoin,tvGroupNameTitle;
     private boolean isMember;
     private GroupDataInfo groupDataInfo;
 
@@ -166,6 +170,9 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             throw new AssertionError("Null data item received!");
         }
         EventBus.getDefault().register(this);
+        IntentFilter newPostFilter = new IntentFilter();
+        newPostFilter.addAction(AppConstants.NEW_POST_ADD_BROADCAST);
+        Objects.requireNonNull(this).registerReceiver(newPostBroadcastReceiver, newPostFilter);
         manager = new PrefManager(this);
         groupDataInfo = new GroupDataInfo();
         deviceId = manager.getDeviceId();
@@ -187,6 +194,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         ivChangeCoverImage = findViewById(R.id.change_cover_image);
         ivChangeProfileImage = findViewById(R.id.change_profile_image);
         tvGroupName = findViewById(R.id.tvGroupName);
+        tvGroupNameTitle = findViewById(R.id.tvGroupNameTitle);
         tvTotalInfoCount = findViewById(R.id.total_info_count);
 
         tvRetry = findViewById(R.id.retry);
@@ -228,7 +236,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             }
         });
 
-        coverImageLayout.setOnClickListener(new View.OnClickListener() {
+        coverImageLayout.setOnClickListener(new View.OnClickListener()   {
             @Override
             public void onClick(View view) {
 
@@ -260,18 +268,9 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
                             int id = menuItem.getItemId();
-
                             if (id == R.id.deleteGroup) {
-
-                                if (networkOk) {
-                                    Call<String> call = groupWebservice.deleteGroup(deviceId, userId, token, userId, groupId);
-                                    sendRequestForDeleteGroup(call);
-                                } else {
-                                    Tools.showNetworkDialog(getSupportFragmentManager());
-                                }
+                                displayDeleteGroupDialog();
                             }
-
-
                             return true;
                         }
                     });
@@ -282,10 +281,6 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                         setJoinMember();
                     }
                 }
-
-//
-
-
             }
         });
 
@@ -293,8 +288,8 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View view) {
-
-                popup = new android.support.v7.widget.PopupMenu(GroupPageActivity.this, view);
+                Context wrapper = new ContextThemeWrapper(GroupPageActivity.this, R.style.PopupMenu);
+                popup = new android.support.v7.widget.PopupMenu(wrapper, view);
                 popup.getMenuInflater().inflate(R.menu.group_permission_menu, popup.getMenu());
 
                 if (userId.equalsIgnoreCase(groupDataInfo.getGroupInfo().getCreatorId())) {
@@ -304,6 +299,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                     popup.getMenu().findItem(R.id.editPage).setVisible(false);
                     popup.getMenu().findItem(R.id.reportGroup).setVisible(true);
                 }
+
 
 //                popup.show();
                 @SuppressLint("RestrictedApi") MenuPopupHelper menuHelper = new MenuPopupHelper(GroupPageActivity.this, (MenuBuilder) popup.getMenu(), view);
@@ -356,6 +352,8 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                startActivity(new Intent(GroupPageActivity.this,GroupContentActivity.class));
+                sendBroadcast((new Intent()).setAction(AppConstants.GROUP_CONTENT_UPDATE_BROADCAST));
                 finish();
             }
         });
@@ -389,7 +387,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
                         if (status) {
                             JSONObject successObject = messageObject.getJSONObject("success");
                             String message=successObject.getString("message");
-                            Toast.makeText(GroupPageActivity.this, message, LENGTH_SHORT).show();
+                            Tools.toast(GroupPageActivity.this,message, R.drawable.ic_check_black_24dp);
                             startActivity(new Intent(GroupPageActivity.this,GroupContentActivity.class));
                             finish();
                         }
@@ -540,6 +538,7 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         coverImage = AppConstants.USER_UPLOADED_IMAGES + groupImageName;
 
         tvGroupName.setText(groupName);
+        tvGroupNameTitle.setText(groupName);
 //        allCountInfo = "Members: " + Tools.getFormattedLikerCount("1500") + " | Posts: " + Tools.getFormattedLikerCount("2000");
         String groupMember = groupTotalMember.equals("0") ? "Members: 0" : "Members: " + Tools.getFormattedLikerCount(groupTotalMember);
         String groupPosts = groupTotalPost.equals("0") ? " | Posts: 0" : " | Posts: " + Tools.getFormattedLikerCount(groupTotalPost);
@@ -1219,11 +1218,38 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
         }
 
     }
-
+    BroadcastReceiver newPostBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getData();
+        }
+    };
     @Override
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        Objects.requireNonNull(this).unregisterReceiver(newPostBroadcastReceiver);
+
     }
 
+    @Override
+    public void onDeleteGroup(DialogFragment dlg) {
+        if (networkOk) {
+            Call<String> call = groupWebservice.deleteGroup(deviceId, userId, token, userId, groupId);
+            sendRequestForDeleteGroup(call);
+        } else {
+            Tools.showNetworkDialog(getSupportFragmentManager());
+        }
+    }
+
+    @Override
+    public void onNo(DialogFragment dlg) {
+
+    }
+
+    private void displayDeleteGroupDialog() {
+        GroupDeleteDialog status = GroupDeleteDialog.newInstance(groupName);
+        status.setCancelable(false);
+        status.show(getSupportFragmentManager(), "GroupDeleteDialog");
+    }
 }

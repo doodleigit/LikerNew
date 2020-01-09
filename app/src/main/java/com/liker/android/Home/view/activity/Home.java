@@ -418,7 +418,7 @@ public class Home extends AppCompatActivity implements
         }
 
         socket = SocketIOManager.wSocket;
-        mSocket = SocketIOManager.mSocket;
+        //mSocket = SocketIOManager.mSocket;
         //nSocket = SocketIOManager.nSocket;
 
 
@@ -495,6 +495,7 @@ public class Home extends AppCompatActivity implements
             }
         });
 
+        //getFriendRequest();
 
     }
 
@@ -2204,6 +2205,7 @@ public class Home extends AppCompatActivity implements
         });
 
     }
+
 
 
     @Override
