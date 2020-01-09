@@ -17,7 +17,7 @@ public class AppConstants {
 //    public static final String BASE_URL_LOCATION = "http://192.168.0.77:8040/sites/likerapp/";
 
     //==========================STG SERVER=====================
-//
+
     public static final String BASE_URL = "https://www.stg.liker.com/";
     public static final String BASE_URL_MEDIA = "https://www.cdn-liker.com/";
     public static final String BASE_URL_IMAGES = "https://www.cdn-liker.com/";

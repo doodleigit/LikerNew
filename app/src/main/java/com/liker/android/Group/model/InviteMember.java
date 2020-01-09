@@ -2,14 +2,15 @@
 package com.liker.android.Group.model;
 
 import java.io.Serializable;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Parcelable.Creator;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class InviteMember implements Serializable, Parcelable
-{
+public class InviteMember implements Serializable, Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -68,11 +69,14 @@ public class InviteMember implements Serializable, Parcelable
     @SerializedName("is_member")
     @Expose
     private boolean isMember;
+    @SerializedName("is_invite")
+    @Expose
+    private boolean isInvite;
     public final static Creator<InviteMember> CREATOR = new Creator<InviteMember>() {
 
 
         @SuppressWarnings({
-            "unchecked"
+                "unchecked"
         })
         public InviteMember createFromParcel(Parcel in) {
             return new InviteMember(in);
@@ -82,8 +86,7 @@ public class InviteMember implements Serializable, Parcelable
             return (new InviteMember[size]);
         }
 
-    }
-    ;
+    };
     private final static long serialVersionUID = 5267396593704408936L;
 
     protected InviteMember(Parcel in) {
@@ -106,9 +109,18 @@ public class InviteMember implements Serializable, Parcelable
         this.pushNotification = ((String) in.readValue((String.class.getClassLoader())));
         this.isFollowed = ((boolean) in.readValue((boolean.class.getClassLoader())));
         this.isMember = ((boolean) in.readValue((boolean.class.getClassLoader())));
+        this.isInvite = ((boolean) in.readValue((boolean.class.getClassLoader())));
     }
 
     public InviteMember() {
+    }
+
+    public boolean isInvite() {
+        return isInvite;
+    }
+
+    public void setInvite(boolean invite) {
+        isInvite = invite;
     }
 
     public String getId() {
@@ -283,10 +295,11 @@ public class InviteMember implements Serializable, Parcelable
         dest.writeValue(pushNotification);
         dest.writeValue(isFollowed);
         dest.writeValue(isMember);
+        dest.writeValue(isInvite);
     }
 
     public int describeContents() {
-        return  0;
+        return 0;
     }
 
 }

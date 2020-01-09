@@ -48,6 +48,11 @@ public class DataProvider {
         mimList = new ArrayList<>();
         mimMap = new HashMap<>();
         addItem(new Mim(1, "#FFFFFF"));
+        addItem(new Mim(38, "img_bg_birthday.png"));//black
+        addItem(new Mim(39, "img_bg_love.png"));//2D4F73
+        addItem(new Mim(40, "img_bg_love2.png"));//444748
+        addItem(new Mim(41, "img_bg_red.png"));//white
+        addItem(new Mim(42, "img_bg_love3.png"));//white
         addItem(new Mim(21, "#FFB8A0"));
         addItem(new Mim(22, "#FF7A7A"));
         addItem(new Mim(23, "#D8A91E"));
@@ -64,11 +69,7 @@ public class DataProvider {
         addItem(new Mim(34, "#8D0DB7"));
         addItem(new Mim(35, "#FF7DFF"));
         addItem(new Mim(37, "#2E2E2E"));
-        addItem(new Mim(38, "img_bg_birthday.png"));//black
-        addItem(new Mim(39, "img_bg_love.png"));//2D4F73
-        addItem(new Mim(40, "img_bg_love2.png"));//444748
-        addItem(new Mim(41, "img_bg_red.png"));//white
-        addItem(new Mim(42, "img_bg_love3.png"));//white
+
         return mimList;
     }
 

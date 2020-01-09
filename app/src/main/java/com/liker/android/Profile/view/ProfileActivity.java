@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -18,7 +19,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.Toolbar;
@@ -36,28 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-//import com.doodle.App;
-//import com.doodle.Comment.model.Comment_;
-//import com.doodle.Comment.model.Reply;
-//import com.doodle.Comment.service.CommentService;
-//import com.doodle.Comment.view.fragment.BlockUserDialog;
-//import com.doodle.Comment.view.fragment.FollowSheet;
-//import com.doodle.Comment.view.fragment.ReportLikerMessageSheet;
-//import com.doodle.Comment.view.fragment.ReportPersonMessageSheet;
-//import com.doodle.Comment.view.fragment.ReportReasonSheet;
-//import com.doodle.Comment.view.fragment.ReportSendCategorySheet;
-//import com.doodle.Home.model.PostItem;
-//import com.doodle.Home.view.fragment.PostPermissionSheet;
-//import com.doodle.Profile.adapter.ViewPagerAdapter;
-//import com.doodle.Profile.model.Privacy;
-//import com.doodle.Profile.model.UserAllInfo;
-//import com.doodle.Profile.service.ProfileDataFetchCompleteListener;
-//import com.doodle.Profile.service.ProfileService;
-//import com.doodle.R;
-//import com.doodle.Search.LikerSearch;
-//import com.doodle.Tool.AppConstants;
-//import com.doodle.Tool.PrefManager;
-//import com.doodle.Tool.Tools;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.gson.Gson;
 import com.liker.android.App;
@@ -116,9 +94,54 @@ import retrofit2.Response;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
-import static com.liker.android.R.*;
-import static com.liker.android.R.string.*;
+import static com.liker.android.R.drawable;
+import static com.liker.android.R.id;
+import static com.liker.android.R.layout;
+import static com.liker.android.R.menu;
+import static com.liker.android.R.string;
+import static com.liker.android.R.string.about;
+import static com.liker.android.R.string.cover_photo_has_been_updated;
+import static com.liker.android.R.string.follow;
+import static com.liker.android.R.string.followers;
+import static com.liker.android.R.string.following;
+import static com.liker.android.R.string.friend_request_add;
+import static com.liker.android.R.string.friend_request_reject;
+import static com.liker.android.R.string.friend_request_unfriend;
+import static com.liker.android.R.string.friend_requst_cancel;
+import static com.liker.android.R.string.loading;
+import static com.liker.android.R.string.photos;
+import static com.liker.android.R.string.posts;
+import static com.liker.android.R.string.profile_photo_has_been_updated;
+import static com.liker.android.R.string.something_went_wrong;
+import static com.liker.android.R.string.stars;
+import static com.liker.android.R.string.updating;
+import static com.liker.android.R.string.uploading;
+import static com.liker.android.R.style;
 import static com.liker.android.Tool.Tools.isEmpty;
+import static com.liker.android.Tool.Tools.isNullOrEmpty;
+
+//import com.doodle.App;
+//import com.doodle.Comment.model.Comment_;
+//import com.doodle.Comment.model.Reply;
+//import com.doodle.Comment.service.CommentService;
+//import com.doodle.Comment.view.fragment.BlockUserDialog;
+//import com.doodle.Comment.view.fragment.FollowSheet;
+//import com.doodle.Comment.view.fragment.ReportLikerMessageSheet;
+//import com.doodle.Comment.view.fragment.ReportPersonMessageSheet;
+//import com.doodle.Comment.view.fragment.ReportReasonSheet;
+//import com.doodle.Comment.view.fragment.ReportSendCategorySheet;
+//import com.doodle.Home.model.PostItem;
+//import com.doodle.Home.view.fragment.PostPermissionSheet;
+//import com.doodle.Profile.adapter.ViewPagerAdapter;
+//import com.doodle.Profile.model.Privacy;
+//import com.doodle.Profile.model.UserAllInfo;
+//import com.doodle.Profile.service.ProfileDataFetchCompleteListener;
+//import com.doodle.Profile.service.ProfileService;
+//import com.doodle.R;
+//import com.doodle.Search.LikerSearch;
+//import com.doodle.Tool.AppConstants;
+//import com.doodle.Tool.PrefManager;
+//import com.doodle.Tool.Tools;
 //import static com.doodle.Tool.Tools.isEmpty;
 
 public class ProfileActivity extends AppCompatActivity implements ReportReasonSheet.BottomSheetListener,
@@ -162,8 +185,9 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     // TODO: 12/31/2019 FRIEND
     private Socket mSocket;
     // TODO: 1/2/2020 addFriendRequestStatus
-    private TextView tvAddFriendRequestStatus;
+    private TextView tvAddFriendRequestStatus,tvAcceptFriendStatus;
     private String fromId;
+    private String friendUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -368,7 +392,210 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         });
         // TODO: 1/2/2020 friendRequestStatus
         tvAddFriendRequestStatus = findViewById(id.tvAddFriendRequestStatus);
+        tvAcceptFriendStatus = findViewById(id.tvAcceptFriendStatus);
         getFriendRequestSendStatus();
+        getFriendRequestSendReceiverStatus();
+        getCancelFriendRequestStatus();
+        getCancelFriendRequestBySenderStatus();
+        getRejectFriendRequestByReceiverStatus();
+        getRejectFriendRequestStatus();
+        getFriendRequestAcceptStatus();
+        getFriendRequestAcceptByUserStatus();
+
+    }
+
+    private void getCancelFriendRequestBySenderStatus() {
+
+        mSocket = new SocketIOManager().getMSocketInstance();
+        mSocket.on("undo_friend_request_by_sender", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status = newPostResultJson.getBoolean("status");
+                    String friendUserId = newPostResultJson.getString("friend_user_id");
+                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                friendRequestLayout.setVisibility(View.VISIBLE);
+                                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                                tvAddFriendRequestStatus.setText(getString(friend_request_add));
+                            }
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
+    }
+
+    private void getFriendRequestAcceptStatus() {
+        mSocket = new SocketIOManager().getMSocketInstance();
+        mSocket.on("friend_request_accept_status", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status = newPostResultJson.getBoolean("status");
+                    friendUserId = newPostResultJson.getString("friend_user_id");
+                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                friendRequestLayout.setVisibility(View.VISIBLE);
+                                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                                tvAddFriendRequestStatus.setText("Unfriend");                            }
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
+
+
+    } private void getFriendRequestAcceptByUserStatus() {
+
+        mSocket = new SocketIOManager().getMSocketInstance();
+        mSocket.on("friend_request_accepted_byuser", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status = newPostResultJson.getBoolean("status");
+                    friendUserId = newPostResultJson.getString("friend_user_id");
+                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                friendRequestLayout.setVisibility(View.VISIBLE);
+                                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                                tvAddFriendRequestStatus.setText("Unfriend");                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
+
+    }
+
+    private void getFriendRequestSendReceiverStatus() {
+        mSocket = new SocketIOManager().getMSocketInstance();
+        mSocket.on("friend_request_send", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+
+                    /*id: 14951
+from_id: 2
+to_id: 10
+fb_friends: 0
+time: 1578546608
+status: 0
+user_name: "omar2117"
+first_name: "Omar"
+last_name: "Rivero"
+total_likes: 2119
+gold_stars: 2
+sliver_stars: 0
+photo: "5db16e9d93733.jpg"
+is_following: true
+: Object*/
+                    String fromId=newPostResultJson.getString("from_id");
+                    String toId=newPostResultJson.getString("to_id");
+                    int status = newPostResultJson.getInt("status");
+                    String userName=newPostResultJson.getString("user_name");
+                    String firstName=newPostResultJson.getString("first_name");
+                    String lastName=newPostResultJson.getString("last_name");
+
+                    if ( profileUserId.equalsIgnoreCase(fromId)) {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                friendRequestLayout.setVisibility(View.VISIBLE);
+                                acceptFriendStatusLayout.setVisibility(View.VISIBLE);
+                                tvAddFriendRequestStatus.setText(getString(friend_request_reject));                            }
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
+
+    }
+
+    private void getRejectFriendRequestStatus() {//by whom reject get own status
+        mSocket = new SocketIOManager().getMSocketInstance();
+        mSocket.on("cancel_friend_request_status", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status = newPostResultJson.getBoolean("status");
+                    String friendUserId = newPostResultJson.getString("friend_user_id");
+                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                friendRequestLayout.setVisibility(View.VISIBLE);
+                                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                                tvAddFriendRequestStatus.setText(getString(friend_request_add));                            }
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
+
+    }
+
+    private void getRejectFriendRequestByReceiverStatus() {//event from reciever
+        mSocket = new SocketIOManager().getMSocketInstance();
+        mSocket.on("           ", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    boolean status = newPostResultJson.getBoolean("status");
+                    String friendUserId = newPostResultJson.getString("friend_user_id");
+                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                friendRequestLayout.setVisibility(View.VISIBLE);
+                                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                                tvAddFriendRequestStatus.setText(getString(friend_request_add));
+                            }
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
 
     }
 
@@ -1133,12 +1360,11 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                     cancelFriendRequest();
                     makeText(this, "cancel Request", LENGTH_SHORT).show();
                 } else if (friendRequestStatus.equalsIgnoreCase("Unfriend")) {
-
+                    unFriendRequest();
                     makeText(this, "Unfriend", LENGTH_SHORT).show();
                 } else if (friendRequestStatus.equalsIgnoreCase("Reject")) {
                     makeText(this, "Reject", LENGTH_SHORT).show();
                     rejectFriendRequest();
-
                 }
                 break;
             case R.id.accept_friend_status_layout:
@@ -1146,6 +1372,27 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                 makeText(this, "acceptFriend", LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    private void unFriendRequest() {
+
+        if (mSocket != null && mSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+            FriendRequestSend friendRequestSend = new FriendRequestSend();
+            Headers headers = new Headers();
+            headers.setDeviceId(manager.getDeviceId());
+            headers.setIsApps(true);
+            headers.setSecurityToken(manager.getToken());
+            headers.setUserId(manager.getProfileId());
+            friendRequestSend.setUserId(manager.getProfileId());
+            friendRequestSend.setToUserId(profileUserId);
+            friendRequestSend.setHeaders(headers);
+            Gson gson = new Gson();
+            String json = gson.toJson(friendRequestSend);
+            mSocket.emit("unfriend_user", json);
+
+
+        }
+
     }
 
     private void acceptFriendRequest() {
@@ -1159,10 +1406,11 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             headers.setUserId(manager.getProfileId());
             friendRequestStatus.setUserId(manager.getProfileId());
             friendRequestStatus.setFriendUserId(fromId);
+//            friendRequestStatus.setFriendUserId(friendUserId);
             friendRequestStatus.setHeaders(headers);
             Gson gson = new Gson();
             String json = gson.toJson(friendRequestStatus);
-            mSocket.emit("friend_request_accept", json);
+            mSocket.emit("friend_request_accepted", json);
 
         }
 
@@ -1178,7 +1426,13 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
             headers.setSecurityToken(manager.getToken());
             headers.setUserId(manager.getProfileId());
             friendRequestStatus.setUserId(manager.getProfileId());
-            friendRequestStatus.setFriendUserId(fromId);
+            if(isNullOrEmpty(fromId)){
+                friendRequestStatus.setFriendUserId(friendUserId);
+            }else {
+                friendRequestStatus.setFriendUserId(fromId);
+            }
+
+//
             friendRequestStatus.setHeaders(headers);
             Gson gson = new Gson();
             String json = gson.toJson(friendRequestStatus);
@@ -1189,11 +1443,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     }
 
     private void cancelFriendRequest() {
-        /*emit : undo_friend_request
-parameter :
-user_id: ,
-friend_user_id: ,
-headers:*/
+
         if (mSocket != null && mSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
             FriendRequestStatus friendRequestStatus = new FriendRequestStatus();
             Headers headers = new Headers();
@@ -1202,12 +1452,12 @@ headers:*/
             headers.setSecurityToken(manager.getToken());
             headers.setUserId(manager.getProfileId());
             friendRequestStatus.setUserId(manager.getProfileId());
-            friendRequestStatus.setFriendUserId(fromId);
+           // friendRequestStatus.setFriendUserId(fromId);
+            friendRequestStatus.setFriendUserId(friendUserId);
             friendRequestStatus.setHeaders(headers);
             Gson gson = new Gson();
             String json = gson.toJson(friendRequestStatus);
             mSocket.emit("undo_friend_request", json);
-            getCancelFriendRequestStatus();
         }
     }
 
@@ -1222,7 +1472,7 @@ undo friend request by receiver: message socket on : undo_friend_request_by_send
                 try {
                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
                     boolean status = newPostResultJson.getBoolean("status");
-                    String friendUserId = newPostResultJson.getString("friend_user_id");
+                     String friendUserId = newPostResultJson.getString("friend_user_id");
                     if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
                         runOnUiThread(new Runnable() {
 
@@ -1250,11 +1500,9 @@ undo friend request by receiver: message socket on : undo_friend_request_by_send
                 try {
                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
                     boolean status = newPostResultJson.getBoolean("status");
-                    String friendUserId = newPostResultJson.getString("friend_user_id");
+                     friendUserId = newPostResultJson.getString("friend_user_id");
                     if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
-
                         runOnUiThread(new Runnable() {
-
                             @Override
                             public void run() {
                                 tvAddFriendRequestStatus.setText(getString(friend_requst_cancel));

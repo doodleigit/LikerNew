@@ -495,6 +495,9 @@ public class PostNew extends AppCompatActivity implements
                             Picasso.with(PostNew.this).load(imageUrl).into(target);
                             messageContainer.setBackground(mDrawable);
                             editPostMessage.setHeight(200);
+//                            ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+//                            params.height = (int) getResources().getDimension(R.dimen._200sdp);
+//                            messageContainer.setLayoutParams(params);
                             messageContainer.setGravity(Gravity.CENTER);
                             editPostMessage.setGravity(Gravity.CENTER);
                             editPostMessage.setTextSize(22f);
@@ -641,8 +644,11 @@ public class PostNew extends AppCompatActivity implements
                 String imageUrl = AppConstants.MIM_IMAGE + mimColor;
                 Picasso.with(this).load(imageUrl).into(target);
                 messageContainer.setBackground(mDrawable);
-                editPostMessage.setHeight(200);
+              //  editPostMessage.setHeight(200);
                 editPostMessage.setTextSize(22f);
+                ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
+                params.height = (int) getResources().getDimension(R.dimen._200sdp);
+                messageContainer.setLayoutParams(params);
                 messageContainer.setGravity(Gravity.CENTER);
                 editPostMessage.setGravity(Gravity.CENTER);
                 //  editPostMessage.setTextAppearance(PostNew.this, android.R.style.TextAppearance_Large);

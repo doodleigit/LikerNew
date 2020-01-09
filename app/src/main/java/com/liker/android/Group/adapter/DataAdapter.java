@@ -42,6 +42,7 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private PrefManager manager;
     private String userId,token,deviceId;
     private String groupCategoryName;
+    private boolean isMember;
 
     public DataAdapter(Context mContext,ArrayList<ListItem> items) {
         this.items = items;
@@ -98,7 +99,7 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             String allCountInfo =  groupMember + groupPosts;
             VHitem.tvGroupItemInfoCount.setText(allCountInfo);
 
-            boolean isMember=Boolean.parseBoolean(suggestedGroup.isMember);
+             isMember=Boolean.parseBoolean(suggestedGroup.isMember);
             if (isMember) {
                 VHitem. imageGroupJoin.setImageResource(R.drawable.ic_group_joined_24dp);
                 VHitem. tvGroupJoin.setText(mContext.getString(R.string.groupJoined));
@@ -162,9 +163,10 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         //  isFollow = false;
-                    //    isMember = true;
+                        isMember = true;
                         imageGroupJoin.setImageResource(R.drawable.ic_group_joined_24dp);
                         tvGroupJoin.setText(mContext.getString(R.string.groupJoined));
+                     //   notifyDataSetChanged();
                         //tvFollow.setText(getString(R.string.follow));
                     } else {
                         Toast.makeText(mContext, mContext.getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();
@@ -195,9 +197,11 @@ public class DataAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     boolean status = obj.getBoolean("status");
                     if (status) {
                         // isFollow = false;
-                     //   isMember = false;
+                        isMember = false;
+//                        suggestedGroup.isMember="false";
                         imageGroupJoin.setImageResource(R.drawable.ic_add_group_24dp);
                         tvGroupJoin.setText(mContext.getString(R.string.groupJoin));
+                       // notifyDataSetChanged();
                         //tvFollow.setText(getString(R.string.follow));
                     } else {
                         Toast.makeText(mContext, mContext.getString(R.string.something_went_wrong), Toast.LENGTH_LONG).show();

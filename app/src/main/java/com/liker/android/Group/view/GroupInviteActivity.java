@@ -1,7 +1,7 @@
 package com.liker.android.Group.view;
 
 import android.app.ProgressDialog;
-import android.graphics.PorterDuff;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -25,7 +26,6 @@ import com.liker.android.Group.model.GroupInviteMember;
 import com.liker.android.Group.model.InviteMember;
 import com.liker.android.Group.service.GroupWebservice;
 import com.liker.android.Group.service.InviteClickListener;
-import com.liker.android.Profile.model.Followers;
 import com.liker.android.Profile.model.FollowersResult;
 import com.liker.android.Profile.service.ProfileService;
 import com.liker.android.R;
@@ -35,7 +35,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -121,6 +120,9 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
 
                 setInviteGroupMember(followUserId, position, progressBarInvite);
 
+
+                //mListener.editname(pos);
+
              /*   @Override
                 public void onFollowClick(String followUserId, int position) {
                     setFollow(followUserId, position);
@@ -179,12 +181,14 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                //Integer id = (Integer)view.getTag();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                //   filter(s.toString());
                 filter(s.toString());
+
             }
         });
     }
@@ -206,7 +210,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
     private void setInviteGroupMember(String followUserId, int position, ProgressBar progressBarInvite) {
         String[] inviteUsers = new String[]{followUserId};
         //   String[] inviteUsers={followUserId};
-     //   progressDialog.show();
+        //   progressDialog.show();
 
         progressBarInvite.setVisibility(View.VISIBLE);
         Call<String> call = groupWebservice.inviteMembers(deviceId, userId, token, userId, groupId, inviteUsers);
@@ -218,8 +222,11 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
                     JSONObject obj = new JSONObject(jsonResponse);
                     boolean status = obj.getBoolean("status");
                     if (status) {
-                        inviteMemberList.get(position).setIsMember(true);
+
+                        inviteMemberList.get(position).setInvite(true);
                         groupInviteAdapter.notifyItemChanged(position);
+
+                     //////////////   groupInviteAdapter.notifyDataSetChanged();
                         sendBrowserNotification(followUserId);
                         progressBarInvite.setVisibility(View.INVISIBLE);
                     } else {
@@ -234,6 +241,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
                     e.printStackTrace();
                 }
                 //   progressDialog.hide();
+                progressBarInvite.setVisibility(View.INVISIBLE);
 
             }
 
@@ -247,7 +255,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
 
     private void sendFriendListRequest() {
 //             Call<Followers> call = profileService.getFollowers(deviceId, token, userId, userId, profileUserId, limit, offset, false);
-        Call<GroupInviteMember> call = groupWebservice.inviteMemberList(deviceId, userId,token, profileUserId, groupId,limit,offset,false);
+        Call<GroupInviteMember> call = groupWebservice.inviteMemberList(deviceId, userId, token, profileUserId, groupId, limit, offset, false);
         call.enqueue(new Callback<GroupInviteMember>() {
             @Override
             public void onResponse(Call<GroupInviteMember> call, Response<GroupInviteMember> response) {
@@ -264,7 +272,7 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
 
             @Override
             public void onFailure(Call<GroupInviteMember> call, Throwable t) {
-                Log.d(TAG, "onFailure: "+t.getMessage());
+                Log.d(TAG, "onFailure: " + t.getMessage());
 
             }
         });
@@ -302,8 +310,8 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
 
     private void sendFriendListPaginationRequest() {
         progressBar.setVisibility(View.VISIBLE);
-      //  Call<Followers> call = profileService.getFollowers(deviceId, token, userId, userId, profileUserId, limit, offset, false);
-        Call<GroupInviteMember> call = groupWebservice.inviteMemberList(deviceId, userId,token, profileUserId, groupId,limit,offset,false);
+        //  Call<Followers> call = profileService.getFollowers(deviceId, token, userId, userId, profileUserId, limit, offset, false);
+        Call<GroupInviteMember> call = groupWebservice.inviteMemberList(deviceId, userId, token, profileUserId, groupId, limit, offset, false);
 
         call.enqueue(new Callback<GroupInviteMember>() {
             @Override
@@ -417,5 +425,13 @@ public class GroupInviteActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
     }
 }
