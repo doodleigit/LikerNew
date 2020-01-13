@@ -33,7 +33,6 @@ public class AppConstants {
     /*http://192.168.0.7:8040/sites/likerapp/user_apprate,
      parameter: user_id, status*/
 
-
     //=======================LIVE SERVER=============================
 
     public static final String BASE_URL = "https://www.api.liker.com/";

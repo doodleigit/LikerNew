@@ -120,7 +120,7 @@
                                         android:layout_height="wrap_content"
                                         android:orientation="horizontal"
                                         android:layout_gravity="right"
-                                        android:visibility="visible">
+                                        android:visibility="gone">
                                         <LinearLayout
 
                                             android:id="@+id/accept_friend_status_layout"
