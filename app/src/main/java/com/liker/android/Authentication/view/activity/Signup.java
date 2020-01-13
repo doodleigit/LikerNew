@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -250,15 +251,8 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
 
-        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
-            @Override
-            public void idsAvailable(String deviceId, String registrationId) {
-                Log.d("debug", "User:" + deviceId);
-                manager.setDeviceId(deviceId);
-                if (registrationId != null)
-                    Log.d("debug", "registrationId:" + registrationId);
-            }
-        });
+        getDeviceId();
+
         mDeviceId = manager.getDeviceId();
         etFirstName = (ClearableEditText) findViewById(R.id.etFirstName);
 
@@ -704,6 +698,18 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
         setDate();
     }
 
+    private void getDeviceId() {
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String deviceId, String registrationId) {
+                Log.d("debug", "User:" + deviceId);
+                manager.setDeviceId(deviceId);
+                if (registrationId != null)
+                    Log.d("debug", "registrationId:" + registrationId);
+            }
+        });
+    }
+
     private void sendCheckEmailRequest(Call<String> call) {
         call.enqueue(new Callback<String>() {
             @Override
@@ -898,7 +904,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                 goBrowser();
                 break;
             case R.id.btnOTPContinue:
-                requestForOTPLogin();
+                callOTPLogin();
                 break;
             case R.id.tvResendOTP:
                 String msg = "Resend OTP Code.";
@@ -912,6 +918,22 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                 loginToTwitter();
                 break;
 
+        }
+    }
+
+    private void callOTPLogin() {
+        btnOTPContinue.setEnabled(false);
+        btnOTPContinue.setBackgroundResource(R.drawable.btn_round_outline_disable);
+        if (mDeviceId.isEmpty()) {
+            getDeviceId();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    callOTPLogin();
+                }
+            }, 5 * 1000);
+        } else {
+            requestForOTPLogin();
         }
     }
 
@@ -944,7 +966,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String data = response.body();
-
+//                Toast.makeText(getApplicationContext(), data, Toast.LENGTH_LONG).show();
                 try {
                     JSONObject object = new JSONObject(data);
                     if (isContain(object, "status")) {
@@ -994,20 +1016,20 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                         startActivity(intent);
                     } else {
                         if (otpBounceData == -1) {
-                            String message = "OTP Miss Match";
+                            String message = "OTP Mismatched";
                             showStatus(message);
                         } else {
                             if (otpBounceData == 1) {
-                                showStatus("Email Invalid");
+                                showStatus("Invalid Email");
                             } else if (otpBounceData == 0) {
-                                Toast.makeText(Signup.this, "Your OTP Expire", Toast.LENGTH_SHORT).show();
-                                showStatus("Your OTP Expire");
+                                Toast.makeText(Signup.this, "Your OTP has Expired", Toast.LENGTH_SHORT).show();
+                                showStatus("Your OTP has Expired");
                                 String msg = "Resend OTP Code.";
                                 ResendEmail resendEmail = ResendEmail.newInstance(msg);
                                 resendEmail.show(getSupportFragmentManager(), "ResendEmail");
 
                             } else {
-                                String message = "OTP Miss Match";
+                                String message = "OTP Mismatched";
                                 showStatus(message);
                             }
                         }
@@ -1016,11 +1038,14 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                btnOTPContinue.setEnabled(true);
+                btnOTPContinue.setBackgroundResource(R.drawable.btn_round_outline);
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                btnOTPContinue.setEnabled(true);
+                btnOTPContinue.setBackgroundResource(R.drawable.btn_round_outline);
             }
         });
 
