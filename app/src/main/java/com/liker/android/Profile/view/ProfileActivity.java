@@ -185,7 +185,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     // TODO: 12/31/2019 FRIEND
     private Socket mSocket;
     // TODO: 1/2/2020 addFriendRequestStatus
-    private TextView tvAddFriendRequestStatus,tvAcceptFriendStatus;
+    private TextView tvAddFriendRequestStatus, tvAcceptFriendStatus;
     private String fromId;
     private String friendUserId;
 
@@ -435,24 +435,38 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     }
 
     private void getFriendRequestAcceptStatus() {
-        mSocket = new SocketIOManager().getMSocketInstance();
-        mSocket.on("friend_request_accept_status", new Emitter.Listener() {
+//        mSocket = new SocketIOManager().getMSocketInstance();
+        Socket   wSocket = new SocketIOManager().getWSocketInstance();
+        wSocket.on("friend_request_accept_status", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 try {
                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
-                    boolean status = newPostResultJson.getBoolean("status");
-                    friendUserId = newPostResultJson.getString("friend_user_id");
-                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+
+                    /*{ status: 1,
+  message: 'Friend has accepted.',
+  user_id: 26445,
+  to_user_id: 26444 }*/
+
+                    int status = newPostResultJson.getInt("status");
+                    String message=newPostResultJson.getString("message");
+                    int toUserId=newPostResultJson.getInt("to_user_id");
+                    int userId=newPostResultJson.getInt("user_id");
+
+                    friendRequestLayout.setVisibility(View.VISIBLE);
+                    acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                    tvAddFriendRequestStatus.setText("Unfriend");
+                /*    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
                         runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
                                 friendRequestLayout.setVisibility(View.VISIBLE);
                                 acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
-                                tvAddFriendRequestStatus.setText("Unfriend");                            }
+                                tvAddFriendRequestStatus.setText("Unfriend");
+                            }
                         });
-                    }
+                    }*/
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -462,25 +476,37 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         });
 
 
-    } private void getFriendRequestAcceptByUserStatus() {
+    }
 
-        mSocket = new SocketIOManager().getMSocketInstance();
-        mSocket.on("friend_request_accepted_byuser", new Emitter.Listener() {
+    private void getFriendRequestAcceptByUserStatus() {
+
+        //mSocket = new SocketIOManager().getMSocketInstance();
+         Socket   wSocket = new SocketIOManager().getWSocketInstance();
+        wSocket.on("friend_request_accepted_byuser", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 try {
                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
-                    boolean status = newPostResultJson.getBoolean("status");
-                    friendUserId = newPostResultJson.getString("friend_user_id");
-                    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+                    int status = newPostResultJson.getInt("status");
+                    String message=newPostResultJson.getString("message");
+                    int toUserId=newPostResultJson.getInt("to_user_id");
+                    int userId=newPostResultJson.getInt("user_id");
+
+
+                    friendRequestLayout.setVisibility(View.VISIBLE);
+                    acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                    tvAddFriendRequestStatus.setText("Unfriend");
+
+                 /*   if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 friendRequestLayout.setVisibility(View.VISIBLE);
                                 acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
-                                tvAddFriendRequestStatus.setText("Unfriend");                            }
+                                tvAddFriendRequestStatus.setText("Unfriend");
+                            }
                         });
-                    }
+                    }*/
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (NullPointerException ignored) {
@@ -513,21 +539,23 @@ sliver_stars: 0
 photo: "5db16e9d93733.jpg"
 is_following: true
 : Object*/
-                    String fromId=newPostResultJson.getString("from_id");
-                    String toId=newPostResultJson.getString("to_id");
+                    String fromId = newPostResultJson.getString("from_id");
+                    friendUserId = fromId;
+                    String toId = newPostResultJson.getString("to_id");
                     int status = newPostResultJson.getInt("status");
-                    String userName=newPostResultJson.getString("user_name");
-                    String firstName=newPostResultJson.getString("first_name");
-                    String lastName=newPostResultJson.getString("last_name");
+                    String userName = newPostResultJson.getString("user_name");
+                    String firstName = newPostResultJson.getString("first_name");
+                    String lastName = newPostResultJson.getString("last_name");
 
-                    if ( profileUserId.equalsIgnoreCase(fromId)) {
+                    if (profileUserId.equalsIgnoreCase(fromId)) {
                         runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
                                 friendRequestLayout.setVisibility(View.VISIBLE);
                                 acceptFriendStatusLayout.setVisibility(View.VISIBLE);
-                                tvAddFriendRequestStatus.setText(getString(friend_request_reject));                            }
+                                tvAddFriendRequestStatus.setText(getString(friend_request_reject));
+                            }
                         });
                     }
 
@@ -556,7 +584,8 @@ is_following: true
                             public void run() {
                                 friendRequestLayout.setVisibility(View.VISIBLE);
                                 acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
-                                tvAddFriendRequestStatus.setText(getString(friend_request_add));                            }
+                                tvAddFriendRequestStatus.setText(getString(friend_request_add));
+                            }
                         });
                     }
 
@@ -571,11 +600,11 @@ is_following: true
 
     private void getRejectFriendRequestByReceiverStatus() {//event from reciever
         mSocket = new SocketIOManager().getMSocketInstance();
-        mSocket.on("           ", new Emitter.Listener() {
+        mSocket.on("cancel_friend_request_by_receiver", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 try {
-                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
                     boolean status = newPostResultJson.getBoolean("status");
                     String friendUserId = newPostResultJson.getString("friend_user_id");
                     if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
@@ -954,7 +983,7 @@ is_following: true
                             if ("0".equalsIgnoreCase(status)) {
                                 acceptFriendStatusLayout.setVisibility(View.VISIBLE);
                                 friendRequestLayout.setVisibility(View.VISIBLE);
-                                tvAddFriendRequestStatus.setText(getString(friend_request_reject));
+                                 tvAddFriendRequestStatus.setText(getString(friend_request_reject));
                             } else {
                                 acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
                                 friendRequestLayout.setVisibility(View.VISIBLE);
@@ -1405,12 +1434,15 @@ is_following: true
             headers.setSecurityToken(manager.getToken());
             headers.setUserId(manager.getProfileId());
             friendRequestStatus.setUserId(manager.getProfileId());
-            friendRequestStatus.setFriendUserId(fromId);
-//            friendRequestStatus.setFriendUserId(friendUserId);
+            if (isNullOrEmpty(fromId)) {
+                friendRequestStatus.setFriendUserId(friendUserId);
+            } else {
+                friendRequestStatus.setFriendUserId(fromId);
+            }
             friendRequestStatus.setHeaders(headers);
             Gson gson = new Gson();
             String json = gson.toJson(friendRequestStatus);
-            mSocket.emit("friend_request_accepted", json);
+            mSocket.emit("friend_request_accepted", json);//friend_request_accepted
 
         }
 
@@ -1426,13 +1458,12 @@ is_following: true
             headers.setSecurityToken(manager.getToken());
             headers.setUserId(manager.getProfileId());
             friendRequestStatus.setUserId(manager.getProfileId());
-            if(isNullOrEmpty(fromId)){
+            if (isNullOrEmpty(fromId)) {
                 friendRequestStatus.setFriendUserId(friendUserId);
-            }else {
+            } else {
                 friendRequestStatus.setFriendUserId(fromId);
             }
 
-//
             friendRequestStatus.setHeaders(headers);
             Gson gson = new Gson();
             String json = gson.toJson(friendRequestStatus);
@@ -1452,8 +1483,12 @@ is_following: true
             headers.setSecurityToken(manager.getToken());
             headers.setUserId(manager.getProfileId());
             friendRequestStatus.setUserId(manager.getProfileId());
-           // friendRequestStatus.setFriendUserId(fromId);
-            friendRequestStatus.setFriendUserId(friendUserId);
+            if (isNullOrEmpty(fromId)) {
+                friendRequestStatus.setFriendUserId(friendUserId);
+            } else {
+                friendRequestStatus.setFriendUserId(fromId);
+            }
+
             friendRequestStatus.setHeaders(headers);
             Gson gson = new Gson();
             String json = gson.toJson(friendRequestStatus);
@@ -1472,7 +1507,7 @@ undo friend request by receiver: message socket on : undo_friend_request_by_send
                 try {
                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
                     boolean status = newPostResultJson.getBoolean("status");
-                     String friendUserId = newPostResultJson.getString("friend_user_id");
+                    String friendUserId = newPostResultJson.getString("friend_user_id");
                     if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
                         runOnUiThread(new Runnable() {
 
@@ -1500,7 +1535,7 @@ undo friend request by receiver: message socket on : undo_friend_request_by_send
                 try {
                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
                     boolean status = newPostResultJson.getBoolean("status");
-                     friendUserId = newPostResultJson.getString("friend_user_id");
+                    friendUserId = newPostResultJson.getString("friend_user_id");
                     if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
                         runOnUiThread(new Runnable() {
                             @Override
