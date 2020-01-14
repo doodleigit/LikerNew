@@ -53,7 +53,7 @@ public class Splash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         initialComponent();
-
+        printHashKey(this);
         if (manager.getProfileId().isEmpty()) {
             startActivity(new Intent(Splash.this, Welcome.class));
             finish();
