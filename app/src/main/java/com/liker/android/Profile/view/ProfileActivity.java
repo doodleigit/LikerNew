@@ -401,6 +401,44 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
         getRejectFriendRequestStatus();
         getFriendRequestAcceptStatus();
         getFriendRequestAcceptByUserStatus();
+        getUnFriendUserStatus();
+
+    }
+
+    private void getUnFriendUserStatus() {
+        //unfriend_user_status
+
+        Socket wSocket = new SocketIOManager().getWSocketInstance();
+        wSocket.on("unfriend_user_status", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+
+                    int status = newPostResultJson.getInt("status");
+//                    String message = newPostResultJson.getString("message");
+//                    int toUserId = newPostResultJson.getInt("to_user_id");
+//                    int userId = newPostResultJson.getInt("user_id");
+
+
+                    if (status == 1) {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                friendRequestLayout.setVisibility(View.VISIBLE);
+                                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
+                                tvAddFriendRequestStatus.setText(getString(friend_request_add));
+                            }
+                        });
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+            }
+        });
 
     }
 
@@ -436,7 +474,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
 
     private void getFriendRequestAcceptStatus() {
 //        mSocket = new SocketIOManager().getMSocketInstance();
-        Socket   wSocket = new SocketIOManager().getWSocketInstance();
+        Socket wSocket = new SocketIOManager().getWSocketInstance();
         wSocket.on("friend_request_accept_status", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -447,16 +485,13 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
   message: 'Friend has accepted.',
   user_id: 26445,
   to_user_id: 26444 }*/
-
                     int status = newPostResultJson.getInt("status");
-                    String message=newPostResultJson.getString("message");
-                    int toUserId=newPostResultJson.getInt("to_user_id");
-                    int userId=newPostResultJson.getInt("user_id");
+                    String message = newPostResultJson.getString("message");
+                    int toUserId = newPostResultJson.getInt("to_user_id");
+                    int userId = newPostResultJson.getInt("user_id");
 
-                    friendRequestLayout.setVisibility(View.VISIBLE);
-                    acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
-                    tvAddFriendRequestStatus.setText("Unfriend");
-                /*    if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+
+                    if (status == 1) {
                         runOnUiThread(new Runnable() {
 
                             @Override
@@ -466,7 +501,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                                 tvAddFriendRequestStatus.setText("Unfriend");
                             }
                         });
-                    }*/
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -481,23 +516,19 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
     private void getFriendRequestAcceptByUserStatus() {
 
         //mSocket = new SocketIOManager().getMSocketInstance();
-         Socket   wSocket = new SocketIOManager().getWSocketInstance();
+        Socket wSocket = new SocketIOManager().getWSocketInstance();
         wSocket.on("friend_request_accepted_byuser", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 try {
                     JSONObject newPostResultJson = new JSONObject(args[0].toString());
                     int status = newPostResultJson.getInt("status");
-                    String message=newPostResultJson.getString("message");
-                    int toUserId=newPostResultJson.getInt("to_user_id");
-                    int userId=newPostResultJson.getInt("user_id");
+                    String message = newPostResultJson.getString("message");
+                    int toUserId = newPostResultJson.getInt("to_user_id");
+                    int userId = newPostResultJson.getInt("user_id");
 
 
-                    friendRequestLayout.setVisibility(View.VISIBLE);
-                    acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
-                    tvAddFriendRequestStatus.setText("Unfriend");
-
-                 /*   if (status && profileUserId.equalsIgnoreCase(friendUserId)) {
+                    if (status == 1) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -506,7 +537,7 @@ public class ProfileActivity extends AppCompatActivity implements ReportReasonSh
                                 tvAddFriendRequestStatus.setText("Unfriend");
                             }
                         });
-                    }*/
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (NullPointerException ignored) {
@@ -983,7 +1014,7 @@ is_following: true
                             if ("0".equalsIgnoreCase(status)) {
                                 acceptFriendStatusLayout.setVisibility(View.VISIBLE);
                                 friendRequestLayout.setVisibility(View.VISIBLE);
-                                 tvAddFriendRequestStatus.setText(getString(friend_request_reject));
+                                tvAddFriendRequestStatus.setText(getString(friend_request_reject));
                             } else {
                                 acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
                                 friendRequestLayout.setVisibility(View.VISIBLE);
@@ -1404,8 +1435,8 @@ is_following: true
     }
 
     private void unFriendRequest() {
-
-        if (mSocket != null && mSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+        Socket wSocket = new SocketIOManager().getWSocketInstance();
+        if (wSocket != null && wSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
             FriendRequestSend friendRequestSend = new FriendRequestSend();
             Headers headers = new Headers();
             headers.setDeviceId(manager.getDeviceId());
@@ -1417,8 +1448,7 @@ is_following: true
             friendRequestSend.setHeaders(headers);
             Gson gson = new Gson();
             String json = gson.toJson(friendRequestSend);
-            mSocket.emit("unfriend_user", json);
-
+            wSocket.emit("unfriend_user", json);
 
         }
 
@@ -1426,8 +1456,34 @@ is_following: true
 
     private void acceptFriendRequest() {
 
-        if (mSocket != null && mSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
-            FriendRequestStatus friendRequestStatus = new FriendRequestStatus();
+
+        /*accept friend request :
+----------------------------
+web Socket :
+==========
+emit : friend_request_accept
+parameter :
+user_id: ,
+to_user_id: ,
+headers:*/
+        Socket wSocket = new SocketIOManager().getWSocketInstance();
+        if (wSocket != null && wSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
+
+
+            FriendRequestSend friendRequestSend = new FriendRequestSend();
+            Headers headers = new Headers();
+            headers.setDeviceId(manager.getDeviceId());
+            headers.setIsApps(true);
+            headers.setSecurityToken(manager.getToken());
+            headers.setUserId(manager.getProfileId());
+            friendRequestSend.setUserId(manager.getProfileId());
+            friendRequestSend.setToUserId(profileUserId);
+            friendRequestSend.setHeaders(headers);
+            Gson gson = new Gson();
+            String json = gson.toJson(friendRequestSend);
+
+
+    /*        FriendRequestStatus friendRequestStatus = new FriendRequestStatus();
             Headers headers = new Headers();
             headers.setDeviceId(manager.getDeviceId());
             headers.setIsApps(true);
@@ -1441,8 +1497,8 @@ is_following: true
             }
             friendRequestStatus.setHeaders(headers);
             Gson gson = new Gson();
-            String json = gson.toJson(friendRequestStatus);
-            mSocket.emit("friend_request_accepted", json);//friend_request_accepted
+            String json = gson.toJson(friendRequestStatus);*/
+            wSocket.emit("friend_request_accept", json);
 
         }
 
@@ -1469,7 +1525,7 @@ is_following: true
             String json = gson.toJson(friendRequestStatus);
             mSocket.emit("cancel_friend_request", json);
 
-        }
+         }
 
     }
 
