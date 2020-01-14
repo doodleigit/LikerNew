@@ -161,7 +161,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
     public static final String POST_ITEM_POSITION = "post_item_position";
     public static final String COMMENT_TYPE_KEY = "comment_type_key";
 
-    public TextView tvHeaderInfo, tvPostTime, tvPostUserName, tvImgShareCount, tvPostLikeCount, tvLinkScriptText, tvCommentCount;
+    public TextView tvHeaderInfo, tvPostTime, tvPostUserName, tvImgShareCount, tvPostLikeCount, tvLinkScriptText, tvCommentCount,tvViewMoreComments;
     public CircleImageView imagePostUser;
     public TextView tvPostContent;
   //  public ReadMoreTextView tvPostContent;
@@ -309,10 +309,15 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
                                 item.setTotalComment(String.valueOf(totalComment));
                                 if (!isNullOrEmpty(item.getTotalComment()) && !"0".equalsIgnoreCase(item.getTotalComment())) {
                                     tvCommentCount.setVisibility(View.VISIBLE);
-                                    tvCommentCount.setText(item.getTotalComment());
+                                    //  tvCommentCount.setText(item.getTotalComment());
+                                    int totalComments = Integer.parseInt(item.getTotalComment()) - 1;
+                                    tvViewMoreComments.setVisibility(View.VISIBLE);
+                                    tvViewMoreComments.setText("view more comments"+"("+totalComments+")");
                                 } else {
                                     tvCommentCount.setVisibility(View.GONE);
+                                    tvViewMoreComments.setVisibility(View.GONE);
                                     tvCommentCount.setText("");
+                                    tvViewMoreComments.setText("");
                                 }
                                 comment_list.clear();
 //                                adapter.deleteItem(position);
@@ -377,6 +382,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
      //   postBodyLayer =  itemView.findViewById(R.id.postBodyLayer);
         sharePostBody =  itemView.findViewById(R.id.sharePostBody);
         tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
+        tvViewMoreComments = itemView.findViewById(R.id.tvViewMoreComments);
         dynamicMediaFrame = itemView.findViewById(R.id.dynamic_media_frame);
 
 
@@ -884,9 +890,17 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
 
 
         if (!isNullOrEmpty(item.getTotalComment()) && !"0".equalsIgnoreCase(item.getTotalComment())) {
-            tvCommentCount.setText(item.getTotalComment());
+            tvCommentCount.setVisibility(View.VISIBLE);
+            //  tvCommentCount.setText(item.getTotalComment());
+            tvViewMoreComments.setVisibility(View.VISIBLE);
+            int totalComments = Integer.parseInt(item.getTotalComment()) - 1;
+
+            tvViewMoreComments.setText("view more comments"+"("+totalComments+")");
         } else {
+            tvCommentCount.setVisibility(View.GONE);
+            tvViewMoreComments.setVisibility(View.GONE);
             tvCommentCount.setText("");
+            tvViewMoreComments.setText("");
         }
 
         if (item.getPostFiles().size() <= 4) {
@@ -1241,6 +1255,28 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
             }
         });
         commentContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppCompatActivity activity = (AppCompatActivity) v.getContext();
+                //  mContext.startActivity(new Intent(mContext, CommentPost.class));
+//                FullBottomSheetDialogFragment postPermissions = new FullBottomSheetDialogFragment();
+//                postPermissions.show(activity.getSupportFragmentManager(), "PostPermission");
+                if (NetworkHelper.hasNetworkAccess(mContext)) {
+
+                    Call<CommentItem> call = commentService.getAllPostComments(deviceId, profileId, token, "false", limit, offset, "DESC", item.getPostId(), userIds);
+                    sendAllCommentItemRequest(call);
+
+                    //    log("Running code");
+                    delayLoadComment(mProgressBar);
+                } else {
+                    Tools.showNetworkDialog(activity.getSupportFragmentManager());
+
+
+                }
+
+            }
+        });
+        tvViewMoreComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
