@@ -82,7 +82,7 @@ import static com.liker.android.Tool.AppConstants.PROFILE_IMAGE;
 
 //import static com.doodle.Tool.AppConstants.PROFILE_IMAGE;
 
-public class Login extends AppCompatActivity implements View.OnClickListener,ResendEmail.BottomSheetListener {
+public class Login extends AppCompatActivity implements View.OnClickListener, ResendEmail.BottomSheetListener {
 
     public static final String SOCIAL_ITEM = "social_item";
     private ClearableEditText etEmail;
@@ -178,14 +178,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
         };*/
 
 
-     etEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-         @Override
-         public void onFocusChange(View v, boolean hasFocus) {
-             if(!hasFocus){
-                 viewModel.validateLoginEmailField(etEmail);
-             }
-         }
-     });
+        etEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    viewModel.validateLoginEmailField(etEmail);
+                }
+            }
+        });
 
         etEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -397,10 +397,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
                 try {
-                    if(object!=null){
+                    if (object != null) {
                         String first_name = object.getString("first_name");
                         String last_name = object.getString("last_name");
-                        String email = object.getString("email");
+                        String email = object.has("email") ? object.getString("email") : "";
                         String oauthId = object.getString("id");
                         String image_url = "https://graph.facebook.com/" + oauthId + "/picture?type=normal";
                         String name = object.getString("name");
@@ -495,7 +495,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
                     manager.setProfileId(profileId);
                     manager.setUserName(userName);
                     Intent intent = new Intent(Login.this, Home.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(Login.this, Signup.class);
@@ -518,7 +518,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
             public void onResponse(Call<LoginUser> call, Response<LoginUser> response) {
                 LoginUser loginUser = response.body();
                 boolean status = loginUser.isStatus();
-                 if (status) {
+                if (status) {
                     String mToken = loginUser.getToken();
                     UserInfo userInfo = loginUser.getUserInfo();
                     Gson gson = new Gson();
@@ -536,7 +536,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
                     manager.setProfileId(profileId);
                     manager.setUserName(userName);
                     Intent intent = new Intent(Login.this, Home.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(Login.this, Signup.class);
@@ -615,7 +615,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener,Res
             @Override
             public void onFailure(Call<LoginUser> call, Throwable t) {
                 Log.d("message", t.getMessage());
-                Toast.makeText(Login.this,  getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
+                Toast.makeText(Login.this, getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.GONE);
                 loginDisable(false);
             }
