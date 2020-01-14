@@ -704,6 +704,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
             public void idsAvailable(String deviceId, String registrationId) {
                 Log.d("debug", "User:" + deviceId);
                 manager.setDeviceId(deviceId);
+                mDeviceId = deviceId;
                 if (registrationId != null)
                     Log.d("debug", "registrationId:" + registrationId);
             }
@@ -931,7 +932,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
                 public void run() {
                     callOTPLogin();
                 }
-            }, 5 * 1000);
+            }, 2 * 1000);
         } else {
             requestForOTPLogin();
         }

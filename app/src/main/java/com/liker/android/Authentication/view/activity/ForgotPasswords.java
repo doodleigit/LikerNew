@@ -977,6 +977,8 @@ public class ForgotPasswords extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onFailure(Call<ForgotPassword> call, Throwable t) {
+                String message = getString(R.string.the_server_not_responding);
+                showStatus(message);
                 progressBar.setVisibility(View.GONE);
                 loginDisable(false,btnContinue);
             }

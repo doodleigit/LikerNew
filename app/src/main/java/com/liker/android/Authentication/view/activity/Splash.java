@@ -56,6 +56,7 @@ public class Splash extends AppCompatActivity {
 
         if (manager.getProfileId().isEmpty()) {
             startActivity(new Intent(Splash.this, Welcome.class));
+            finish();
         } else {
             if (Tools.isNetworkConnected(this)) {
                 checkToken();
