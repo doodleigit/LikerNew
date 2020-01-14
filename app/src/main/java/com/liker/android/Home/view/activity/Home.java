@@ -385,7 +385,7 @@ public class Home extends AppCompatActivity implements
                 setPostCount(0);
 //                viewPager.setCurrentItem(1); //working
 //                replacePostFragment(1);
-                breakingTabClickListener.onTabClick(); //working
+                breakingTabClickListener.onTabClick();
 
             }
         });
