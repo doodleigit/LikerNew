@@ -1,4 +1,4 @@
-package com.liker.android.Friend;
+package com.liker.android.Friend.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,7 +9,7 @@ import com.liker.android.Home.model.Headers;
 
 import java.io.Serializable;
 
-public class FriendRequestStatus implements Serializable, Parcelable
+public class FriendRequestSend implements Serializable, Parcelable
 {
 
     @SerializedName("headers")
@@ -18,37 +18,37 @@ public class FriendRequestStatus implements Serializable, Parcelable
     @SerializedName("user_id")
     @Expose
     private String userId;
-    @SerializedName("friend_user_id")
+    @SerializedName("to_user_id")
     @Expose
-    private String friendUserId;
+    private String toUserId;
 
 
-    public final static Creator<FriendRequestStatus> CREATOR = new Creator<FriendRequestStatus>() {
+    public final static Creator<FriendRequestSend> CREATOR = new Creator<FriendRequestSend>() {
 
 
         @SuppressWarnings({
                 "unchecked"
         })
-        public FriendRequestStatus createFromParcel(Parcel in) {
-            return new FriendRequestStatus(in);
+        public FriendRequestSend createFromParcel(Parcel in) {
+            return new FriendRequestSend(in);
         }
 
-        public FriendRequestStatus[] newArray(int size) {
-            return (new FriendRequestStatus[size]);
+        public FriendRequestSend[] newArray(int size) {
+            return (new FriendRequestSend[size]);
         }
 
     }
             ;
     private final static long serialVersionUID = -7563008524312210609L;
 
-    protected FriendRequestStatus(Parcel in) {
+    protected FriendRequestSend(Parcel in) {
         this.headers = ((Headers) in.readValue((Headers.class.getClassLoader())));
         this.userId = ((String) in.readValue((String.class.getClassLoader())));
-        this.friendUserId = ((String) in.readValue((String.class.getClassLoader())));
+        this.toUserId = ((String) in.readValue((String.class.getClassLoader())));
 
     }
 
-    public FriendRequestStatus() {
+    public FriendRequestSend() {
     }
 
     public Headers getHeaders() {
@@ -67,18 +67,18 @@ public class FriendRequestStatus implements Serializable, Parcelable
         this.userId = userId;
     }
 
-    public String getFriendUserId() {
-        return friendUserId;
+    public String getToUserId() {
+        return toUserId;
     }
 
-    public void setFriendUserId(String friendUserId) {
-        this.friendUserId = friendUserId;
+    public void setToUserId(String toUserId) {
+        this.toUserId = toUserId;
     }
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(headers);
         dest.writeValue(userId);
-        dest.writeValue(friendUserId);
+        dest.writeValue(toUserId);
 
     }
 

@@ -117,9 +117,9 @@ import com.liker.android.Comment.view.fragment.ReportLikerMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportPersonMessageSheet;
 import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Comment.view.fragment.ReportSendCategorySheet;
+import com.liker.android.Friend.view.NewFriendNotificationActivity;
 import com.liker.android.Group.model.GroupDataInfo;
 import com.liker.android.Group.view.GroupContentActivity;
-import com.liker.android.Group.view.GroupPageActivity;
 import com.liker.android.Home.adapter.CategoryTitleAdapter;
 import com.liker.android.Home.adapter.SubCategoryAdapter;
 import com.liker.android.Home.adapter.ViewPagerAdapter;
@@ -222,7 +222,7 @@ public class Home extends AppCompatActivity implements
     private ArrayList<CommonCategory> commonCategories;
     private CategoryTitleAdapter categoryTitleAdapter;
 
-    private ImageView navClose, imageNewPost, imageNotification, imageFriendRequest, imageStarContributor, spinnerDropDown;
+    private ImageView navClose, imageNewPost, imageNotification, imageFriendList, imageFriendRequest, imageStarContributor, spinnerDropDown;
     private TextView tvHome, navUserName, navLogout, newNotificationCount, newMessageNotificationCount, filterItem;
     private RecyclerView categoryRecyclerView;
 
@@ -363,6 +363,8 @@ public class Home extends AppCompatActivity implements
         imageNotification.setOnClickListener(this);
         imageFriendRequest = findViewById(R.id.imageFriendRequest);
         imageFriendRequest.setOnClickListener(this);
+        imageFriendList = findViewById(R.id.imageFriendList);
+        imageFriendList.setOnClickListener(this);
         imageStarContributor = findViewById(R.id.imageStarContributor);
         imageStarContributor.setOnClickListener(this);
         spinnerDropDown = findViewById(R.id.spinner_drop_down);
@@ -1514,6 +1516,13 @@ public class Home extends AppCompatActivity implements
                 manager.setPostCountClear();
                 setPostCount(0);
 
+                break;
+            case R.id.imageFriendList:
+                manager.setMessageNotificationCountClear();
+                setMessageNotificationCount(0);
+                startActivity(new Intent(this, NewFriendNotificationActivity.class));
+                manager.setPostCountClear();
+                setPostCount(0);
                 break;
 
             case R.id.imageStarContributor:

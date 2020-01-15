@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhite">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userImage"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/profile" />
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toStartOf="@+id/follow"
+        android:layout_toEndOf="@+id/userImage"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:maxLines="1"
+            android:text="Ar"
+            android:textColor="@color/colorBlack"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/likes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="serif"
+                android:text="5 likes"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/stars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:fontFamily="serif"
+                android:text="8 Stars"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnConfirmFriendRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@id/layout"
+        android:layout_marginEnd="10dp"
+        android:layout_toLeftOf="@id/btnDeleteFriendRequest"
+        android:background="@drawable/rectangle_corner_round_thirteen"
+        android:fontFamily="sans-serif"
+        android:padding="5dp"
+        android:text="@string/friend_request_confirm"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_delete"
+        style="?android:attr/progressBarStyleLargeInverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btnConfirmFriendRequest"
+        android:layout_alignLeft="@+id/btnConfirmFriendRequest"
+        android:layout_alignTop="@+id/btnConfirmFriendRequest"
+        android:layout_alignEnd="@+id/btnConfirmFriendRequest"
+        android:layout_alignRight="@+id/btnConfirmFriendRequest"
+        android:layout_alignBottom="@+id/btnConfirmFriendRequest"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:indeterminateTint="@android:color/holo_blue_bright"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnDeleteFriendRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@id/layout"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/drwble_comment"
+        android:fontFamily="sans-serif"
+        android:padding="5dp"
+        android:text="@string/friend_request_delete"
+        android:textAllCaps="false"
+        android:textColor="@color/colorBlack"
+        android:textSize="12sp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_invite"
+        style="?android:attr/progressBarStyleLargeInverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/btnDeleteFriendRequest"
+        android:layout_alignLeft="@+id/btnDeleteFriendRequest"
+        android:layout_alignTop="@+id/btnDeleteFriendRequest"
+        android:layout_alignEnd="@+id/btnDeleteFriendRequest"
+        android:layout_alignRight="@+id/btnDeleteFriendRequest"
+        android:layout_alignBottom="@+id/btnDeleteFriendRequest"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:indeterminateTint="@android:color/holo_blue_bright"
+        android:visibility="invisible" />
+
+
+
+</RelativeLayout>

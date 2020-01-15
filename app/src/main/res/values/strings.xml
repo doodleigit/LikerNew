@@ -589,4 +589,6 @@
     <string name="invite_member">Invite Members</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="friend_request_confirm">Confirm</string>
+    <string name="friend_request_delete">Delete</string>
 </resources>

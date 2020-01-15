@@ -1,5 +1,6 @@
 package com.liker.android.Friend.service;
 
+import com.liker.android.Friend.model.NewFriendNotificationItem;
 import com.liker.android.Tool.AppConstants;
 
 import java.util.Map;
@@ -22,15 +23,16 @@ public interface FriendWebService {
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build();
-
-    @POST("getFeaturedImages")
+/*http://192.168.0.6:8040/sites/likerapp/newFriendNotification*/
+    @POST(AppConstants.NEW_FRIEND_NOTIFICATION)
     @FormUrlEncoded
-    Call<String> isFriendStatus(
+    Call<NewFriendNotificationItem> newFriendNotification(
             @Header("Device-Id") String deviceId,
-            @Header("Security-Token") String token,
             @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
             @Field("user_id") String userIds,
-            @Field("profile_username") String profileUserName
+            @Field("limit") int limit,
+            @Field("offset") int offset
     );
 
 
