@@ -1409,7 +1409,7 @@ public class Signup extends AppCompatActivity implements View.OnClickListener, R
 
                     String first_name = object.getString("first_name");
                     String last_name = object.getString("last_name");
-                    String email = object.getString("email");
+                    String email = object.has("email") ? object.getString("email") : "";
                     String oauthId = object.getString("id");
                     String image_url = "https://graph.facebook.com/" + oauthId + "/picture?type=normal";
                     String name = object.getString("name");
