@@ -841,18 +841,15 @@ public class GroupNewPostActivity extends AppCompatActivity implements
                 } else if (/*myUrl.isEmpty() */isNullOrEmpty(myUrl) && !isNullOrEmpty(contentTitle) && contentTitle.length() > 0) {
                     isAddContentTitle = true;
                     tvSubmitPost.setVisibility(View.VISIBLE);
-                }/* else if (*//*myUrl.isEmpty() *//*myUrl.equalsIgnoreCase("https://w") && !isNullOrEmpty(contentTitle) && contentTitle.length() > 0) {
-                    isAddContentTitle = true;
-                    tvSubmitPost.setVisibility(View.VISIBLE);
                 }
-*/
-                if (s.length() == 1) {
+
+             /*   if (s.length() == 1) {
                     if (manager.getNewPostIntro().equals("0")) {
                         manager.setNewPostIntro("1");
                         hideKeyboard(GroupNewPostActivity.this);
                         showIntroTooltip();
                     }
-                }
+                }*/
 
             }
 

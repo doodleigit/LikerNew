@@ -48,7 +48,6 @@
                 android:id="@+id/likes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="serif"
                 android:text="5 likes"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="12sp" />
@@ -58,12 +57,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:fontFamily="serif"
                 android:text="8 Stars"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="12sp" />
 
         </LinearLayout>
+<TextView
+    android:id="@+id/tvFriendRequestStatus"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textColor="@android:color/darker_gray"
+    android:visibility="gone"
+    />
 
     </LinearLayout>
 
@@ -97,7 +102,7 @@
         android:layout_centerVertical="true"
         android:gravity="center"
         android:indeterminateTint="@android:color/holo_blue_bright"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btnDeleteFriendRequest"
@@ -129,7 +134,7 @@
         android:layout_centerVertical="true"
         android:gravity="center"
         android:indeterminateTint="@android:color/holo_blue_bright"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
 
 

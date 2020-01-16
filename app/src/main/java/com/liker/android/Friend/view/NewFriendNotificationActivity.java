@@ -126,20 +126,9 @@ public class NewFriendNotificationActivity extends AppCompatActivity implements 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setNestedScrollingEnabled(false);
-        FriendRequestListener friendRequestListener = new FriendRequestListener() {
-            @Override
-            public void onRequestConfirmListener(String fromId, String toId, int position, ProgressBar progressBarInvite) {
-                acceptFriendRequest(fromId, toId, position, progressBarInvite);
-                // TODO: 1/15/2020  You are now friends
-            }
 
-            @Override
-            public void onRequestDeleteListener(String fromId, String toId, int position, ProgressBar progressBarInvite) {
-// TODO: 1/15/2020  Request removed
-            }
-        };
 
-        adapter = new NewFriendNotificationAdapter(this, friends, friendRequestListener);
+        adapter = new NewFriendNotificationAdapter(this, friends);
         recyclerView.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -214,113 +203,5 @@ public class NewFriendNotificationActivity extends AppCompatActivity implements 
     }
 
 
-    private void acceptFriendRequest(String fromId, String toId, int position, ProgressBar progressBarInvite) {
 
-
-        /*accept friend request :
-----------------------------
-web Socket :
-==========
-emit : friend_request_accept
-parameter :
-user_id: ,
-to_user_id: ,
-headers:*/
-        Socket wSocket = new SocketIOManager().getWSocketInstance();
-        if (wSocket != null && wSocket.connected() && manager.getProfileId() != null && !manager.getProfileId().isEmpty()) {
-
-            FriendRequestSend friendRequestSend = new FriendRequestSend();
-            Headers headers = new Headers();
-            headers.setDeviceId(manager.getDeviceId());
-            headers.setIsApps(true);
-            headers.setSecurityToken(manager.getToken());
-            headers.setUserId(manager.getProfileId());
-            friendRequestSend.setUserId(toId);
-            friendRequestSend.setToUserId(fromId);
-            friendRequestSend.setHeaders(headers);
-            Gson gson = new Gson();
-            String json = gson.toJson(friendRequestSend);
-            wSocket.emit("friend_request_accept", json);
-            //You are now friends
-            //Request removed
-
-
-        }
-
-    }
-
-    private void getFriendRequestAcceptStatus() {
-//        mSocket = new SocketIOManager().getMSocketInstance();
-        Socket wSocket = new SocketIOManager().getWSocketInstance();
-        wSocket.on("friend_request_accept_status", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                try {
-                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
-
-                    /*{ status: 1,
-  message: 'Friend has accepted.',
-  user_id: 26445,
-  to_user_id: 26444 }*/
-                    int status = newPostResultJson.getInt("status");
-                    String message = newPostResultJson.getString("message");
-                    int toUserId = newPostResultJson.getInt("to_user_id");
-                    int userId = newPostResultJson.getInt("user_id");
-
-
-                    if (status == 1) {
-                        runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-//                                friendRequestLayout.setVisibility(View.VISIBLE);
-//                                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
-//                                tvAddFriendRequestStatus.setText("Unfriend");
-                            }
-                        });
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException ignored) {
-                }
-            }
-        });
-
-
-    }
-
-    private void getFriendRequestAcceptByUserStatus() {
-
-        //mSocket = new SocketIOManager().getMSocketInstance();
-        Socket wSocket = new SocketIOManager().getWSocketInstance();
-        wSocket.on("friend_request_accepted_byuser", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                try {
-                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
-                    int status = newPostResultJson.getInt("status");
-                    String message = newPostResultJson.getString("message");
-                    int toUserId = newPostResultJson.getInt("to_user_id");
-                    int userId = newPostResultJson.getInt("user_id");
-
-
-                    if (status == 1) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-//                                friendRequestLayout.setVisibility(View.VISIBLE);
-//                                acceptFriendStatusLayout.setVisibility(View.INVISIBLE);
-//                                tvAddFriendRequestStatus.setText("Unfriend");
-                            }
-                        });
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException ignored) {
-                }
-            }
-        });
-
-    }
 }

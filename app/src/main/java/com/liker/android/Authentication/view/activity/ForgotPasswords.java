@@ -963,11 +963,15 @@ public class ForgotPasswords extends AppCompatActivity implements View.OnClickLi
                     mViewFlipper.showNext();
                 } else if (forgotPassword.getError() != null) {
                     Error error = forgotPassword.getError();
-                    String message = error.getEmail();
-                    showStatus(message);
+                    String messages = error.getEmail();
+                    String message = getString(R.string.invalid_forgot_password_email_address);
+                    Tools.toast(ForgotPasswords.this,message, R.drawable.ic_info_outline_blue_24dp);
+                    //showStatus(message);
                 } else {
-                    String message = getString(R.string.invalid_email_address);
-                    showStatus(message);
+                    String message = getString(R.string.invalid_forgot_password_email_address);
+                   // showStatus(message);
+                    Tools.toast(ForgotPasswords.this,message, R.drawable.ic_info_outline_blue_24dp);
+
                 }
 
                 progressBar.setVisibility(View.GONE);

@@ -73,7 +73,7 @@ public class GroupContentActivity extends AppCompatActivity implements View.OnCl
             Message message = groupContent.getMessage();
             Success success = message.getSuccess();
             String successStatus = success.getMessage();
-            Toast.makeText(this, successStatus, Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(this, successStatus, Toast.LENGTH_SHORT).show();
             if (status) {
                 items.clear();
                 groupContentData = groupContent.getData();

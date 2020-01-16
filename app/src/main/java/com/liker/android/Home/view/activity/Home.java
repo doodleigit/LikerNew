@@ -223,7 +223,7 @@ public class Home extends AppCompatActivity implements
     private CategoryTitleAdapter categoryTitleAdapter;
 
     private ImageView navClose, imageNewPost, imageNotification, imageFriendList, imageFriendRequest, imageStarContributor, spinnerDropDown;
-    private TextView tvHome, navUserName, navLogout, newNotificationCount, newMessageNotificationCount, filterItem;
+    private TextView tvHome, navUserName, navLogout, newNotificationCount,newFriendNotificationCount, newMessageNotificationCount, filterItem;
     private RecyclerView categoryRecyclerView;
 
     public LoadCompleteListener loadCompleteListener;
@@ -336,6 +336,10 @@ public class Home extends AppCompatActivity implements
         filterNewPost.addAction(AppConstants.NEW_POST_BROADCAST_FROM_HOME);
         registerReceiver(broadcastNewPost, filterNewPost);
 
+        IntentFilter filterNewFriend = new IntentFilter();
+        filterNewFriend.addAction(AppConstants.NEW_FRIEND_BROADCAST_FROM_HOME);
+        registerReceiver(broadcastNewFriend, filterNewFriend);
+
         IntentFilter catFilter = new IntentFilter();
         catFilter.addAction(AppConstants.POST_FILTER_CAT_BROADCAST);
         registerReceiver(filterBroadcast, catFilter);
@@ -372,6 +376,7 @@ public class Home extends AppCompatActivity implements
         categorySpinner = findViewById(R.id.spinnerCategoryType);
         categorySpinner.setOnItemSelectedListener(this);
         newNotificationCount = findViewById(R.id.newNotificationCount);
+        newFriendNotificationCount = findViewById(R.id.newFriendNotificationCount);
         newMessageNotificationCount = findViewById(R.id.newMessageNotificationCount);
         filterItem = findViewById(R.id.filterItem);
         categoryRecyclerView = findViewById(R.id.categoryRecyclerView);
@@ -507,6 +512,7 @@ public class Home extends AppCompatActivity implements
         setNotificationCount(newNotificationCount);
         int newMessageCount = manager.getMessageNotificationCount();
         setMessageNotificationCount(newMessageCount);
+
 //        int newPostCount = manager.getPostCount();
 //        setPostCount(newPostCount);
         manager.setPostCountClear();
@@ -641,7 +647,7 @@ public class Home extends AppCompatActivity implements
 
         categorySpinner.setAdapter(dataAdapter);
 
-        categoryTitleAdapter = new CategoryTitleAdapter(this, commonCategories, categoryRemoveListener);
+        categoryTitleAdapter = new CategoryTitleAdapter( this, commonCategories, categoryRemoveListener);
         categoryRecyclerView.setAdapter(categoryTitleAdapter);
 
 //        showFilterDialog();
@@ -1092,6 +1098,8 @@ public class Home extends AppCompatActivity implements
         int newPostCount = manager.getPostCount();
         setPostCount(newPostCount);// code to update the UI in the fragment
 //        Tools.setPageTraffic(this, AppConstants.HOME_PAGE_NUMBER); //For page traffic analytics
+       //  int newFriendCount = manager.getFriendNotificationCount();
+//         setFriendNotificationCount(newFriendCount);
     }
 
     private void setupToolbar() {
@@ -1518,8 +1526,8 @@ public class Home extends AppCompatActivity implements
 
                 break;
             case R.id.imageFriendList:
-                manager.setMessageNotificationCountClear();
-                setMessageNotificationCount(0);
+                manager.setFriendNotificationCountClear();
+                setFriendNotificationCount(0);
                 startActivity(new Intent(this, NewFriendNotificationActivity.class));
                 manager.setPostCountClear();
                 setPostCount(0);
@@ -1533,7 +1541,7 @@ public class Home extends AppCompatActivity implements
         }
     }
 
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    BroadcastReceiver  broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra("type");
@@ -1602,6 +1610,80 @@ public class Home extends AppCompatActivity implements
         }
     };
 
+
+    BroadcastReceiver broadcastNewFriend = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            /* new Intent().putExtra("status", status)
+                                    .putExtra("userName", userName))
+                            .putExtra("fromId", fromId)
+                            .putExtra("toId", toId)
+                            .putExtra("firstName", firstName)
+                            .putExtra("lastName", lastName)*/
+
+            int status = intent.getIntExtra("status",0);
+            String userName = intent.getStringExtra("userName");
+            String fromId = intent.getStringExtra("fromId");
+            String toId = intent.getStringExtra("toId");
+            String firstName = intent.getStringExtra("firstName");
+            String lastName = intent.getStringExtra("lastName");
+
+            manager.setFriendNotificationCount();
+            int newCount = manager.getFriendNotificationCount();
+           // setMessageNotificationCount(newCount);
+            setFriendNotificationCount(newCount);
+            notificationSoundWhenUserActive();
+
+         /*   if (2 == permission) {
+                try {
+                    JSONArray array = new JSONArray(jsonArray);
+                    if (array.length() > 0) {
+                        for (int i = 0; i < array.length(); i++) {
+                            String id = String.valueOf(array.get(i));
+                            if (userId.equalsIgnoreCase(id)) {
+                                if (total > 0) {
+                                    manager.setPostCount();
+                                    int newCount = manager.getPostCount();
+                                    setPostCount(newCount);
+                                    //   notificationSoundWhenUserActive();
+                                }
+
+                                break;
+                            }
+
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else if (0 == permission) {
+                if (total > 0) {
+                    manager.setPostCount();
+                    int newCount = manager.getPostCount();
+                    setPostCount(newCount);
+                    //   notificationSoundWhenUserActive();
+                }
+
+            } else if (1 == permission) {
+                manager.setPostCountClear();
+                setPostCount(0);
+            }*/
+
+
+        }
+    };
+
+    private void setFriendNotificationCount(int count) {
+        if (count > 0) {
+            newFriendNotificationCount.setVisibility(View.VISIBLE);
+            newFriendNotificationCount.setText(String.valueOf(count));
+        } else {
+            newFriendNotificationCount.setVisibility(View.GONE);
+            newFriendNotificationCount.setText("");
+        }
+    }
+
     private void notificationSoundWhenUserActive() {
         try {
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -1640,6 +1722,7 @@ public class Home extends AppCompatActivity implements
         super.onDestroy();
         unregisterReceiver(broadcastReceiver);
         unregisterReceiver(broadcastNewPost);
+        unregisterReceiver(broadcastNewFriend);
         unregisterReceiver(filterBroadcast);
         unregisterReceiver(newPostBroadcastReceiver);
         stopService(new Intent(Home.this, DataFetchingService.class));

@@ -1415,21 +1415,21 @@ is_following: true
             case R.id.friendRequestLayout:
                 if (friendRequestStatus.equalsIgnoreCase("Add Friend")) {
                     sendFriendRequest(true);
-                    makeText(this, "Add Friend", LENGTH_SHORT).show();
+                 //   makeText(this, "Add Friend", LENGTH_SHORT).show();
                 } else if (friendRequestStatus.equalsIgnoreCase("Cancel Request")) {
                     cancelFriendRequest();
-                    makeText(this, "cancel Request", LENGTH_SHORT).show();
+                   // makeText(this, "cancel Request", LENGTH_SHORT).show();
                 } else if (friendRequestStatus.equalsIgnoreCase("Unfriend")) {
                     unFriendRequest();
-                    makeText(this, "Unfriend", LENGTH_SHORT).show();
+                  //  makeText(this, "Unfriend", LENGTH_SHORT).show();
                 } else if (friendRequestStatus.equalsIgnoreCase("Reject")) {
-                    makeText(this, "Reject", LENGTH_SHORT).show();
+                  //  makeText(this, "Reject", LENGTH_SHORT).show();
                     rejectFriendRequest();
                 }
                 break;
             case R.id.accept_friend_status_layout:
                 acceptFriendRequest();
-                makeText(this, "acceptFriend", LENGTH_SHORT).show();
+              //  makeText(this, "acceptFriend", LENGTH_SHORT).show();
                 break;
         }
     }

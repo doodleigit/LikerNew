@@ -50,6 +50,7 @@ public class PrefManager {
     private static final String NEW_NOTIFICATION = "new_notification";
     private static final String NEW_POST = "new_post";
     private static final String NEW_MESSAGE_NOTIFICATION = "new_message_notification";
+    private static final String NEW_FRIEND_NOTIFICATION = "new_friend_notification";
     private static final String USER_INFO = "user_info";
 
     private static final String POST_CATEGORY_INTRO = "post_category-intro";
@@ -119,8 +120,18 @@ public class PrefManager {
         editor.apply();
     }
 
+    public void setFriendNotificationCount() {
+        editor.putInt(NEW_FRIEND_NOTIFICATION, getFriendNotificationCount() + 1);
+        editor.apply();
+    }
+
     public void setMessageNotificationCountClear() {
         editor.putInt(NEW_MESSAGE_NOTIFICATION, 0);
+        editor.apply();
+    }
+
+    public void setFriendNotificationCountClear() {
+        editor.putInt(NEW_FRIEND_NOTIFICATION, 0);
         editor.apply();
     }
 
@@ -134,6 +145,10 @@ public class PrefManager {
 
     public int getMessageNotificationCount() {
         return pref.getInt(NEW_MESSAGE_NOTIFICATION, 0);
+    }
+
+    public int getFriendNotificationCount() {
+        return pref.getInt(NEW_FRIEND_NOTIFICATION, 0);
     }
 
 //    public boolean isFirstTimeLaunch() {

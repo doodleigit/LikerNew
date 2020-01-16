@@ -150,6 +150,7 @@ public class DataFetchingService extends Service {
         getNotificationData();
         getMessagesData();
         getNewPostData();
+        getNewFriendData();
     }
 
     private void setStatus() {
@@ -198,6 +199,56 @@ public class DataFetchingService extends Service {
 //                    newMessage.setSenderData(senderData);
 //                    sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("type", 0)).setAction(AppConstants.NEW_MESSAGE_BROADCAST_FROM_HOME));
 //                    sendBroadcast((new Intent().putExtra("new_message", (Parcelable) newMessage).putExtra("is_own", 0)).setAction(AppConstants.NEW_MESSAGE_BROADCAST));
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException ignored) {
+                }
+
+            }
+        });
+
+
+    }
+    private void getNewFriendData() {
+        mSocket.on("friend_request_send", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    JSONObject newPostResultJson = new JSONObject(args[0].toString());
+
+                    /*id: 14951
+from_id: 2
+to_id: 10
+fb_friends: 0
+time: 1578546608
+status: 0
+user_name: "omar2117"
+first_name: "Omar"
+last_name: "Rivero"
+total_likes: 2119
+gold_stars: 2
+sliver_stars: 0
+photo: "5db16e9d93733.jpg"
+is_following: true
+: Object*/
+                    String fromId = newPostResultJson.getString("from_id");
+                    String toId = newPostResultJson.getString("to_id");
+                    int status = newPostResultJson.getInt("status");
+                    String userName = newPostResultJson.getString("user_name");
+                    String firstName = newPostResultJson.getString("first_name");
+                    String lastName = newPostResultJson.getString("last_name");
+
+                    sendBroadcast((
+                            new Intent().putExtra("status", status)
+                                    .putExtra("userName", userName))
+                            .putExtra("fromId", fromId)
+                            .putExtra("toId", toId)
+                            .putExtra("firstName", firstName)
+                            .putExtra("lastName", lastName)
+                            .setAction(AppConstants.NEW_FRIEND_BROADCAST_FROM_HOME));
+
 
 
                 } catch (JSONException e) {

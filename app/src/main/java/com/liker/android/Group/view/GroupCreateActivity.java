@@ -152,7 +152,7 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
         tvEditGroup.setOnClickListener(this);
 
 
-        tvAudience.setText(manager.getPostAudience().isEmpty() ? getString(R.string.audience) : manager.getPostAudience());
+      //  tvAudience.setText(manager.getPostAudience().isEmpty() ? getString(R.string.audience) : manager.getPostAudience());
         etGroupName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -317,6 +317,7 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
                                 if (successObject.length() > 0) {
                                     String groupId = dataObject.getString("group_id");
                                     String successMessage = successObject.getString("message");
+                                 //   manager.setPostAudience("");
                                     Toast.makeText(GroupCreateActivity.this, successMessage, Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(GroupCreateActivity.this, GroupPageActivity.class).putExtra("group_id",groupId));
                                     finish();
@@ -373,15 +374,6 @@ public class GroupCreateActivity extends AppCompatActivity implements View.OnCli
             categoryId = subCategoryId;
         }
 
-//        if (mSubcatg != null && mCategory != null) {
-//            categoryId = mCategory.getCategoryId();
-//            subCategoryId = mSubcatg.getSubCategoryId();
-//            App.setCategoryId(mCategory.getCategoryId());
-//            categoryName = mCategory.getCategoryName();
-//            audience = mSubcatg.getSubCategoryName();
-//            manager.setPostAudience(audience);
-//            tvAudience.setText(audience);
-//        }
 
     }
 

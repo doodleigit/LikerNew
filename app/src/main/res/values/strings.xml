@@ -591,4 +591,5 @@
     <string name="yes">Yes</string>
     <string name="friend_request_confirm">Confirm</string>
     <string name="friend_request_delete">Delete</string>
+    <string name="invalid_forgot_password_email_address">Sorry the email is not associated with any Liker account.</string>
 </resources>
