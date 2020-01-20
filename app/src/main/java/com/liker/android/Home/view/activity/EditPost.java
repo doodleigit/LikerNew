@@ -126,10 +126,12 @@ import com.liker.android.Post.model.Subcatg;
 import com.liker.android.Post.service.DataProvider;
 import com.liker.android.Post.service.PostService;
 import com.liker.android.Post.view.activity.PostNew;
+import com.liker.android.Post.view.activity.WallPost;
 import com.liker.android.Post.view.fragment.AttachmentBottomSheet;
 import com.liker.android.Post.view.fragment.Audience;
 import com.liker.android.Post.view.fragment.ContributorStatus;
 import com.liker.android.Post.view.fragment.PostPermission;
+import com.liker.android.Profile.view.ProfileActivity;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.AppSingleton;
@@ -357,6 +359,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
     List<LinkScriptItem> scriptItemList;
     private boolean editLinkShare;
     private boolean isMimSelected;
+    private int mimId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -370,6 +373,8 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         if (editPostItem == null) {
             throw new AssertionError("Null data item received!");
         }
+
+       mimId = Integer.parseInt(editPostItem.getHasMeme());
 
         manager = new PrefManager(this);
         homeService = HomeService.mRetrofit.create(HomeService.class);
@@ -406,9 +411,9 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         tvPermission = findViewById(R.id.tvPermission);
 //        tvPermission.setText(manager.getPostPermission());
         imgPermission = findViewById(R.id.imgPermission);
-      //  String permissionData=manager.getPostPermission();
-     //   tvPermission.setText(permissionData);
-      //  setPermissionData(permissionData);
+        //  String permissionData=manager.getPostPermission();
+        //   tvPermission.setText(permissionData);
+        //  setPermissionData(permissionData);
         tvAudience = findViewById(R.id.tvAudience);
         tvAudience.setText(manager.getPostAudience());
         contentPostPermission = findViewById(R.id.contentPostPermission);
@@ -418,6 +423,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         messageContainer.setOnClickListener(this);
         findViewById(R.id.contentEveryPost).setOnClickListener(this);
         mediaAdapter = new MediaAdapter(mContext, postImages, postVideos, imageListener, videoListen);
+
         imageListener = new ImageViewHolder.ImageListener() {
             @Override
             public void deleteImage(PostImage postImage, int position) {
@@ -597,7 +603,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                 String imageUrl = AppConstants.MIM_IMAGE + mimColor;
                 Picasso.with(this).load(imageUrl).into(target);
                 messageContainer.setBackground(mDrawable);
-             //   editPostMessage.setHeight(200);
+                //   editPostMessage.setHeight(200);
                 editPostMessage.setTextSize(22f);
                 ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
                 params.height = (int) getResources().getDimension(R.dimen._200sdp);
@@ -630,8 +636,14 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         MimAdapter adapter = new MimAdapter(this, viewColors, listener);
         mimRecyclerView.setAdapter(adapter);
 
-        rvMimShow = true;
-        rvMimToggle();
+        if(mimId>0){
+            rvMimShow = true;
+            rvMimToggle();
+        }else {
+            rvMimShow = false;
+            rvMimToggle();
+        }
+
 
         profileId = manager.getProfileId();
         userIds = manager.getProfileId();
@@ -792,7 +804,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                     if (!isNullOrEmpty(contentTitle)) {
                         //  makeText(PostNew.this, "Button Enable-1!", LENGTH_SHORT).show();
                     }*/
-                    myUrl="";
+                    myUrl = "";
                 }
                 if (extractedUrls.size() > 0) {
                     rvMimShow = false;
@@ -844,7 +856,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                 } else if (myUrl.isEmpty() && !isNullOrEmpty(contentTitle) && contentTitle.length() > 0) {
                     isAddContentTitle = true;
                     tvSubmitPost.setVisibility(View.VISIBLE);
-                }else if (/*myUrl.isEmpty() */myUrl.equalsIgnoreCase("https://w") && !isNullOrEmpty(contentTitle) && contentTitle.length() > 0) {
+                } else if (/*myUrl.isEmpty() */myUrl.equalsIgnoreCase("https://w") && !isNullOrEmpty(contentTitle) && contentTitle.length() > 0) {
                     isAddContentTitle = true;
                     tvSubmitPost.setVisibility(View.VISIBLE);
                 }
@@ -868,11 +880,19 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
 
         //UPDATE POST DATA
 
-        String postMessage = editPostItem.getPostText();
-        editPostMessage.append(postMessage);
+        String isShared = editPostItem.getIsShared();
+        if ("0".equalsIgnoreCase(isShared)) {
+            String postMessage = editPostItem.getPostText();
+            editPostMessage.append(postMessage);
+        } else {
+            String postMessage = editPostItem.getSharedPostText();
+            editPostMessage.append(postMessage);
+        }
+        //  String postMessage = editPostItem.getPostText();
+//        editPostMessage.append(postMessage);
         tvAudience.setText(editPostItem.getCatName());
-        String permission=editPostItem.getPermission();
-        switch (permission){
+        String permission = editPostItem.getPermission();
+        switch (permission) {
             case "0":
                 manager.setPostPermission("Public");
                 postPermission = 0;
@@ -882,15 +902,15 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                 postPermission = 1;
                 break;
             case "2":
-                manager.setPostPermission("Followers Only");
+                manager.setPostPermission("Friends Only");
                 postPermission = 2;
                 break;
         }
 
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
-     //   tvPermission.setText(editPostItem.getPermission());
+        //   tvPermission.setText(editPostItem.getPermission());
         categoryId = editPostItem.getCatId();
         subCategoryId = editPostItem.getCatId();
         editPostId = editPostItem.getPostId();
@@ -931,7 +951,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                         messageContainer.setBackgroundColor(mColor);
                         if (mimColor.contentEquals("#C6FFD4")) {
                             editPostMessage.setTextColor(Color.parseColor("#000000"));
-                        }else {
+                        } else {
                             editPostMessage.setTextColor(Color.parseColor("#FFFFFF"));
                         }
                         ViewGroup.LayoutParams params = messageContainer.getLayoutParams();
@@ -1193,7 +1213,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                             } else {
                                 Call<LinkScrapItem> callLink = webService.linkScrapUrl(deviceId, profileId, token, url);
                                 sendLinkScrapRequest(callLink);
-                                editLinkShare=true;
+                                editLinkShare = true;
                             }
 
                         } catch (JSONException e) {
@@ -1647,7 +1667,13 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         if (mimRecyclerView.getVisibility() == View.VISIBLE) {
             rvMimShow = false;
         } else {
-            rvMimShow = true;
+            if(mimId>0){
+                rvMimShow = true;
+                rvMimToggle();
+            }else {
+                rvMimShow = false;
+                rvMimToggle();
+            }
         }
     }
 
@@ -1753,7 +1779,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
     protected void onRestart() {
         super.onRestart();
 //        tvPermission.setText(manager.getPostPermission());
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
 
@@ -1763,7 +1789,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
     protected void onPause() {
         super.onPause();
 //        tvPermission.setText(manager.getPostPermission());
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
@@ -1798,7 +1824,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
     protected void onResume() {
         super.onResume();
 //        tvPermission.setText(manager.getPostPermission());
-        String permissionData=manager.getPostPermission();
+        String permissionData = manager.getPostPermission();
         tvPermission.setText(permissionData);
         setPermissionData(permissionData);
         Category mCategory = App.getmCategory();
@@ -1847,48 +1873,42 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                 makeText(this, "click edit text:", LENGTH_SHORT).show();
                 break;
             case R.id.messageContainer:
-//                editPostMessage.setEnabled(true);
-//                if (postVideos.isEmpty() && postImages.isEmpty()) {
-//                    rvMimShow = true;
-//                    rvMimToggle();
-//                } else {
-//                    rvMimShow = false;
-//                    rvMimToggle();
-//                }
-//                if (postVideos.isEmpty()) {
-//                    rvMimShow = true;
-//                    rvMimToggle();
-//                } else {
-//                    rvMimShow = false;
-//                    rvMimToggle();
-//                }
-//                if (postImages.isEmpty()) {
-//                    rvMimShow = true;
-//                    rvMimToggle();
-//                } else {
-//                    rvMimShow = false;
-//                    rvMimToggle();
-//                }
+
                 break;
             case R.id.editPostMessage:
 
                 if (postVideos.isEmpty() && postImages.isEmpty()) {
-                    rvMimShow = true;
-                    rvMimToggle();
+                    if(mimId>0){
+                        rvMimShow = true;
+                        rvMimToggle();
+                    }else {
+                        rvMimShow = false;
+                        rvMimToggle();
+                    }
                 } else {
                     rvMimShow = false;
                     rvMimToggle();
                 }
                 if (postVideos.isEmpty()) {
-                    rvMimShow = true;
-                    rvMimToggle();
+                    if(mimId>0){
+                        rvMimShow = true;
+                        rvMimToggle();
+                    }else {
+                        rvMimShow = false;
+                        rvMimToggle();
+                    }
                 } else {
                     rvMimShow = false;
                     rvMimToggle();
                 }
                 if (postImages.isEmpty()) {
-                    rvMimShow = true;
-                    rvMimToggle();
+                    if(mimId>0){
+                        rvMimShow = true;
+                        rvMimToggle();
+                    }else {
+                        rvMimShow = false;
+                        rvMimToggle();
+                    }
                 } else {
                     rvMimShow = false;
                     rvMimToggle();
@@ -2012,12 +2032,51 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                     deleteMediaIds
             );
             sendNewPostRequest(call);
+
+
         } else {
             Tools.showNetworkDialog(getSupportFragmentManager());
             progressView.setVisibility(View.GONE);
             progressView.stopAnimation();
 
         }
+    }
+
+    private void sendEditSharePostRequest(Call<String> call) {
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                /*{"errors":[],"success":{"status":true},"notification_ids":[]}*/
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        try {
+                            JSONObject object = new JSONObject(response.body());
+                            JSONObject successObject = object.getJSONObject("success");
+                            if (successObject.length() > 0) {
+                                boolean status = successObject.getBoolean("status");
+                                if (status) {
+                                    startActivity(new Intent(EditPost.this, ProfileActivity.class).putExtra("user_id", manager.getProfileId()).putExtra("user_name", editPostItem.getPostUsername()));
+                                    finish();
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.i("onSuccess", response.body().toString());
+                    } else {
+                        Log.i("onEmptyResponse", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+                progressView.setVisibility(View.GONE);
+                progressView.stopAnimation();
+            }
+        });
     }
 
     private void checkContentType() {
@@ -2103,32 +2162,23 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
 
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-
                         try {
                             JSONObject object = new JSONObject(response.body());
                             JSONObject successObject = object.getJSONObject("success");
                             if (successObject.length() > 0) {
                                 boolean status = successObject.getBoolean("status");
-                                //  boolean topContributorStatus = successObject.getBoolean("top_contributor_status");
-                                //postId = successObject.getInt("post_id");
                                 if (status) {
-
                                     sendPostItemRequest(editPostId, position);
-
                                 } else {
                                     if (contentType == 5) {
-
                                         Call<String> mediaCall = videoServices.uploadVideo(deviceId, profileId, token, fileToUpload, postId, true);
                                         sendVideoRequest(mediaCall);
-
                                     } else {
                                         startActivity(new Intent(EditPost.this, Home.class));
                                         finish();
                                     }
-
                                 }
                             }
-
 
                             JSONObject errorObject = object.getJSONObject("errors");
                             if (errorObject.length() > 0) {
@@ -2144,7 +2194,6 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                         Log.i("onEmptyResponse", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
                     }
                 }
-
             }
 
             @Override
@@ -2169,7 +2218,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
             case "Only me":
                 postPermission = 1;
                 break;
-            case "Friends":
+            case "Friends Only":
                 postPermission = 2;
                 break;
 
@@ -2480,7 +2529,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
         if (cursor == null) {
             SimpleDateFormat m_sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
             String m_curentDateandTime = m_sdf.format(new Date());
-            return contentURI.getPath()+m_curentDateandTime;
+            return contentURI.getPath() + m_curentDateandTime;
         } else {
             cursor.moveToFirst();
             int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
@@ -3926,7 +3975,7 @@ public class EditPost extends AppCompatActivity implements View.OnClickListener,
                 imgPermission.setImageResource(R.drawable.ic_lock_outline_black_12dp);
                 postPermission = 1;
                 break;
-            case "Followers Only":
+            case "Friends Only":
                 imgPermission.setImageResource(R.drawable.ic_people_outline_black_12dp);
                 postPermission = 2;
                 break;

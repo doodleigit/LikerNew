@@ -1346,7 +1346,7 @@ public class CommentPost extends AppCompatActivity implements View.OnClickListen
         imageEditComment.setVisibility(View.VISIBLE);
         imageSendComment.setVisibility(View.GONE);
 //        etComment.setText(commentItem.getCommentText());
-      //  etComment.getText().clear();
+        etComment.getText().clear();
         etComment.append(commentItem.getCommentText());
         etComment.requestFocus();
         etComment.postDelayed(new Runnable() {

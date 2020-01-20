@@ -304,7 +304,7 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
                                     //  tvCommentCount.setText(item.getTotalComment());
                                     tvViewMoreComments.setVisibility(View.VISIBLE);
                                     int totalComments = Integer.parseInt(item.getTotalComment()) - 1;
-                                    tvViewMoreComments.setText("view more comments"+"("+totalComments+")");
+                                    tvViewMoreComments.setText("view more comments "+"("+totalComments+")");
                                 } else {
                                     tvCommentCount.setVisibility(View.GONE);
                                     tvViewMoreComments.setVisibility(View.GONE);
@@ -847,7 +847,7 @@ public class LinkScriptYoutubeHolder extends RecyclerView.ViewHolder implements
             tvViewMoreComments.setVisibility(View.VISIBLE);
             int totalComments = Integer.parseInt(item.getTotalComment()) - 1;
          //   tvViewMoreComments.setText("view more comments"+"("+item.getTotalComment()+")");
-            tvViewMoreComments.setText("view more comments"+"("+totalComments+")");
+            tvViewMoreComments.setText("view more comments "+"("+totalComments+")");
         } else {
             tvCommentCount.setVisibility(View.GONE);
             tvViewMoreComments.setVisibility(View.GONE);

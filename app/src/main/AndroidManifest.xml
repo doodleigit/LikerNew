@@ -27,6 +27,9 @@
         android:usesCleartextTraffic="true"
         android:vmSafeMode="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".Profile.view.PostShareEdit"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Friend.view.NewFriendNotificationActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName=".Post.view.activity.PostNew"

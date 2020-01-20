@@ -37,16 +37,6 @@ public interface PostService {
             .build();
 
 
-//    URL url = new URL("https://wikipedia.org");
-//    URLConnection urlConnection = url.openConnection();
-//    InputStream in = urlConnection.getInputStream();
-//    copyInputStreamToOutputStream(in);
-
-    //    Retrofit videoRetrofit = new Retrofit.Builder()
-//            .baseUrl(AppConstants.SOCKET_VIDEO)
-//            .addConverterFactory(ScalarsConverterFactory.create())
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .build();
     Retrofit videoRetrofit = new Retrofit.Builder()
             .baseUrl(AppConstants.SOCKET_VIDEO)
             .client(getUnsafeOkHttpClient().build())
@@ -54,11 +44,6 @@ public interface PostService {
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
-    Retrofit postRetrofit = new Retrofit.Builder()
-            .baseUrl(AppConstants.BASE_URL)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
 
     @POST(AppConstants.GET_CATEGORIES)
         // @FormUrlEncoded
@@ -133,17 +118,6 @@ public interface PostService {
             @Field("delete_post_media_ids") String deleteMediaIds
 
     );
-
-/*
-
-
-content_new_scrap	0
-post_id	13656
-
-
-
-* */
-
 
     @Multipart
     @POST(AppConstants.ADD_PHOTO)
@@ -223,19 +197,6 @@ post_id	13656
             @Header("Security-Token") String token,
             @Field("content") String content
     );
-
-
-
- /*   @POST(AppConstants.UPLOAD_VIDEO)
-    @FormUrlEncoded
-    Call<String> uploadVideo(
-            @Header("Device-Id") String deviceId,
-            @Header("User-Id") String userId,
-            @Header("Security-Token") String token,
-            @Field("file_content") String fileContent,
-            @Field("post_id") int postId,
-            @Field("extension") String extension
-    );*/
 
 
 }

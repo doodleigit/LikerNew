@@ -10,11 +10,13 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:id="@+id/tab"
+        android:textStyle="bold"
         android:textColor="@color/colorPrimaryText"
         android:textSize="@dimen/tab_label"
         android:fontFamily="@string/font_fontFamily_medium"/>
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/tab_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -50,7 +50,6 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_search_black_24dp"
                 android:drawableTint="@color/colorIconText"
-                android:fontFamily="serif"
                 android:drawablePadding="@dimen/_5sdp"
                 android:backgroundTint="@color/colorWhite"
                 android:hint="@string/search_followers" />

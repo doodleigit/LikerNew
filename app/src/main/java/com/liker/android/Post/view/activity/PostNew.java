@@ -973,7 +973,7 @@ public class PostNew extends AppCompatActivity implements
                 imgPermission.setImageResource(R.drawable.ic_lock_outline_black_12dp);
                 postPermission = 1;
                 break;
-            case "Followers Only":
+            case "Friends Only":
                 imgPermission.setImageResource(R.drawable.ic_people_outline_black_12dp);
                 postPermission = 2;
                 break;
@@ -1789,7 +1789,7 @@ public class PostNew extends AppCompatActivity implements
             case "Only me":
                 postPermission = 1;
                 break;
-            case "Followers Only":
+            case "Friends Only":
                 postPermission = 2;
                 break;
 

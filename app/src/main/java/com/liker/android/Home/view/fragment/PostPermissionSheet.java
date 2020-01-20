@@ -51,6 +51,7 @@ import com.liker.android.Comment.view.fragment.ReportReasonSheet;
 import com.liker.android.Home.model.PostItem;
 import com.liker.android.Home.service.HomeService;
 import com.liker.android.Home.view.activity.EditPost;
+import com.liker.android.Profile.view.PostShareEdit;
 import com.liker.android.R;
 import com.liker.android.Tool.AppConstants;
 import com.liker.android.Tool.NetworkHelper;
@@ -273,13 +274,24 @@ public class PostPermissionSheet extends BottomSheetDialogFragment implements Vi
                 dismiss();
                 break;
             case R.id.editContainer:
-                Intent intent = new Intent(getActivity(), EditPost.class);
-                App.setPosition(position);
-                intent.putExtra(ITEM_KEY, (Parcelable) mPostItem);
-                intent.putExtra("position", position);
-                getContext().startActivity(intent);
-                ((Activity) getContext()).overridePendingTransition(R.anim.bottom_up, R.anim.nothing);
-                dismiss();
+                if("1".equalsIgnoreCase(mPostItem.getIsShared())){
+                    Intent intent = new Intent(getActivity(), PostShareEdit.class);
+                    App.setPosition(position);
+                    intent.putExtra(ITEM_KEY, (Parcelable) mPostItem);
+                    intent.putExtra("position", position);
+                    getContext().startActivity(intent);
+                    ((Activity) getContext()).overridePendingTransition(R.anim.bottom_up, R.anim.nothing);
+                    dismiss();
+                }else {
+                    Intent intent = new Intent(getActivity(), EditPost.class);
+                    App.setPosition(position);
+                    intent.putExtra(ITEM_KEY, (Parcelable) mPostItem);
+                    intent.putExtra("position", position);
+                    getContext().startActivity(intent);
+                    ((Activity) getContext()).overridePendingTransition(R.anim.bottom_up, R.anim.nothing);
+                    dismiss();
+                }
+
                 break;
 
             case R.id.deleteContainer:

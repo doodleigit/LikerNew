@@ -7,6 +7,4 @@
         android:icon="@drawable/ic_account_group_outline"
         app:iconTint="@color/colorIconText"
         android:title="@string/delete_group" />
-
-
 </menu>

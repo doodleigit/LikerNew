@@ -313,7 +313,7 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
                                   //  tvCommentCount.setText(item.getTotalComment());
                                     tvViewMoreComments.setVisibility(View.VISIBLE);
                                     int totalComments = Integer.parseInt(item.getTotalComment()) - 1;
-                                    tvViewMoreComments.setText("view more comments"+"("+totalComments+")");
+                                    tvViewMoreComments.setText("view more comments "+"("+totalComments+")");
                                 } else {
                                     tvCommentCount.setVisibility(View.GONE);
                                     tvViewMoreComments.setVisibility(View.GONE);
@@ -826,7 +826,7 @@ public class TextMimHolder extends RecyclerView.ViewHolder implements
             //  tvCommentCount.setText(item.getTotalComment());
             tvViewMoreComments.setVisibility(View.VISIBLE);
             int totalComments = Integer.parseInt(item.getTotalComment()) - 1;
-            tvViewMoreComments.setText("view more comments"+"("+totalComments+")");
+            tvViewMoreComments.setText("view more comments "+"("+totalComments+")");
         } else {
             tvCommentCount.setVisibility(View.GONE);
             tvViewMoreComments.setVisibility(View.GONE);

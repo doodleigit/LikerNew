@@ -92,6 +92,7 @@ public class AppConstants {
     public static final String GET_CATEGORIES = "get_categories";
     public static final String POST_ADDED = "postAdded";
     public static final String POST_EDITED = "postEdited";
+    public static final String EDIT_SHARED_POST = "editSharedpost";
     public static final String ADD_PHOTO = "addPhoto";
     public static final String ADD_FEATURED_PHOTO = "addFeaturedImage";
     public static final String DELETE_FEATURED_PHOTO = "deleteFeaturedImage";

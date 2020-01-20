@@ -1462,6 +1462,7 @@ public class ReplyPost extends AppCompatActivity implements View.OnClickListener
         imageEditComment.setVisibility(View.VISIBLE);
         imageSendComment.setVisibility(View.GONE);
         // etComment.setText(reply.getCommentText());
+        etComment.getText().clear();
         etComment.append(reply.getCommentText());
         etComment.requestFocus();
         etComment.postDelayed(new Runnable() {

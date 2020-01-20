@@ -312,7 +312,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
                                     //  tvCommentCount.setText(item.getTotalComment());
                                     int totalComments = Integer.parseInt(item.getTotalComment()) - 1;
                                     tvViewMoreComments.setVisibility(View.VISIBLE);
-                                    tvViewMoreComments.setText("view more comments"+"("+totalComments+")");
+                                    tvViewMoreComments.setText("view more comments "+"("+totalComments+")");
                                 } else {
                                     tvCommentCount.setVisibility(View.GONE);
                                     tvViewMoreComments.setVisibility(View.GONE);
@@ -895,7 +895,7 @@ public class ImageHolder extends RecyclerView.ViewHolder implements
             tvViewMoreComments.setVisibility(View.VISIBLE);
             int totalComments = Integer.parseInt(item.getTotalComment()) - 1;
 
-            tvViewMoreComments.setText("view more comments"+"("+totalComments+")");
+            tvViewMoreComments.setText("view more comments "+"("+totalComments+")");
         } else {
             tvCommentCount.setVisibility(View.GONE);
             tvViewMoreComments.setVisibility(View.GONE);

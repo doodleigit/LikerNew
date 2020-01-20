@@ -143,6 +143,7 @@ import com.liker.android.Home.service.SocketIOManager;
 import com.liker.android.Home.service.TabClickListener;
 import com.liker.android.Home.view.fragment.BreakingPost;
 import com.liker.android.Home.view.fragment.FollowingPost;
+import com.liker.android.Home.view.fragment.FriendsPost;
 import com.liker.android.Home.view.fragment.PostPermissionSheet;
 import com.liker.android.Home.view.fragment.RateusStatus;
 import com.liker.android.Home.view.fragment.TrendingPost;
@@ -223,11 +224,11 @@ public class Home extends AppCompatActivity implements
     private CategoryTitleAdapter categoryTitleAdapter;
 
     private ImageView navClose, imageNewPost, imageNotification, imageFriendList, imageFriendRequest, imageStarContributor, spinnerDropDown;
-    private TextView tvHome, navUserName, navLogout, newNotificationCount,newFriendNotificationCount, newMessageNotificationCount, filterItem;
+    private TextView tvHome, navUserName, navLogout, newNotificationCount, newFriendNotificationCount, newMessageNotificationCount, filterItem;
     private RecyclerView categoryRecyclerView;
 
     public LoadCompleteListener loadCompleteListener;
-    public TabClickListener trendingTabClickListener, breakingTabClickListener, followingTabClickListener;
+    public TabClickListener trendingTabClickListener, breakingTabClickListener, followingTabClickListener,friendTabClickListener;
     public UserInfo userInfo;
     private boolean isFriend;
     private CommentService commentService;
@@ -647,7 +648,7 @@ public class Home extends AppCompatActivity implements
 
         categorySpinner.setAdapter(dataAdapter);
 
-        categoryTitleAdapter = new CategoryTitleAdapter( this, commonCategories, categoryRemoveListener);
+        categoryTitleAdapter = new CategoryTitleAdapter(this, commonCategories, categoryRemoveListener);
         categoryRecyclerView.setAdapter(categoryTitleAdapter);
 
 //        showFilterDialog();
@@ -1098,7 +1099,7 @@ public class Home extends AppCompatActivity implements
         int newPostCount = manager.getPostCount();
         setPostCount(newPostCount);// code to update the UI in the fragment
 //        Tools.setPageTraffic(this, AppConstants.HOME_PAGE_NUMBER); //For page traffic analytics
-       //  int newFriendCount = manager.getFriendNotificationCount();
+        //  int newFriendCount = manager.getFriendNotificationCount();
 //         setFriendNotificationCount(newFriendCount);
     }
 
@@ -1141,17 +1142,20 @@ public class Home extends AppCompatActivity implements
     /**
      * Adding custom view to tab
      */
-    LinearLayout tabOne, tabTwo, tabThree;
-    TextView tabOneText, tabTwoText, tabThreeText;
-    ImageView tabOneInfo, tabTwoInfo, tabThreeInfo;
-    ViewTooltip.TooltipView viewTooltipOne, viewTooltipTwo, viewTooltipThree;
+    LinearLayout tabOne, tabTwo, tabThree, tabFour;
+    TextView tabOneText, tabTwoText, tabThreeText, tabFourText;
+    ImageView tabOneInfo, tabTwoInfo, tabThreeInfo, tabFourInfo;
+    ViewTooltip.TooltipView viewTooltipOne, viewTooltipTwo, viewTooltipThree,viewTooltipFour;
 
-    private void tooltipClose(ViewTooltip.TooltipView one, ViewTooltip.TooltipView two) {
+    private void tooltipClose(ViewTooltip.TooltipView one, ViewTooltip.TooltipView two, ViewTooltip.TooltipView viewTooltipThree) {
         if (one != null) {
             one.close();
         }
         if (two != null) {
             two.close();
+        }
+        if(viewTooltipThree!=null){
+            viewTooltipThree.close();
         }
     }
 
@@ -1182,12 +1186,19 @@ public class Home extends AppCompatActivity implements
             tabThreeInfo = tabThree.findViewById(R.id.tab_info);
             tabThreeText.setText("Following");
 
+
+            tabFour = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+            tabFourText = tabFour.findViewById(R.id.tab);
+            tabFourInfo = tabFour.findViewById(R.id.tab_info);
+            tabFourText.setText("Friends");
+
 //        tabLayout.getTabAt(2).setCustomView(tabThree); //working
 
 
             tabLayout.addTab(tabLayout.newTab().setCustomView(tabOne));
             tabLayout.addTab(tabLayout.newTab().setCustomView(tabTwo));
             tabLayout.addTab(tabLayout.newTab().setCustomView(tabThree));
+            tabLayout.addTab(tabLayout.newTab().setCustomView(tabFour));
         }
 
         tabOneText.setTextColor(viewBackgroundActive(0, position) ? Color.parseColor("#1483C9") : Color.parseColor("#AAAAAA"));
@@ -1196,6 +1207,8 @@ public class Home extends AppCompatActivity implements
         tabTwoInfo.setImageResource(viewBackgroundActive(1, position) ? R.drawable.ic_info_outline_blue_24dp : R.drawable.ic_info_outline_black_24dp);
         tabThreeText.setTextColor(viewBackgroundActive(2, position) ? Color.parseColor("#1483C9") : Color.parseColor("#AAAAAA"));
         tabThreeInfo.setImageResource(viewBackgroundActive(2, position) ? R.drawable.ic_info_outline_blue_24dp : R.drawable.ic_info_outline_black_24dp);
+        tabFourText.setTextColor(viewBackgroundActive(3, position) ? Color.parseColor("#1483C9") : Color.parseColor("#AAAAAA"));
+        tabFourInfo.setImageResource(viewBackgroundActive(3, position) ? R.drawable.ic_info_outline_blue_24dp : R.drawable.ic_info_outline_black_24dp);
 
         tabOneInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1214,7 +1227,7 @@ public class Home extends AppCompatActivity implements
                             .text(getString(R.string.the_trending_feed_includes_the_hottest_posts))
                             .show();
                 }
-                tooltipClose(viewTooltipTwo, viewTooltipThree);
+                tooltipClose(viewTooltipTwo, viewTooltipThree, viewTooltipFour);
             }
         });
 
@@ -1242,7 +1255,7 @@ public class Home extends AppCompatActivity implements
                             .text(getString(R.string.the_breaking_feed_includes_the_newest_posts))
                             .show();
                 }
-                tooltipClose(viewTooltipOne, viewTooltipThree);
+                tooltipClose(viewTooltipOne, viewTooltipThree, viewTooltipFour);
 
             }
         });
@@ -1271,7 +1284,27 @@ public class Home extends AppCompatActivity implements
                             .text(getString(R.string.the_following_feed_includes_the_most_recent_posts))
                             .show();
                 }
-                tooltipClose(viewTooltipOne, viewTooltipTwo);
+                tooltipClose(viewTooltipOne, viewTooltipTwo, viewTooltipFour);
+            }
+        });
+        tabFourInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (viewTooltipFour != null) {
+                    viewTooltipFour.close();
+                    viewTooltipFour = null;
+                } else {
+                    viewTooltipFour = ViewTooltip
+                            .on(Home.this, tabFour)
+                            .autoHide(true, 3000)
+                            .color(Color.WHITE)
+                            .textColor(Color.parseColor("#1483c9"))
+                            .corner(30)
+                            .position(ViewTooltip.Position.LEFT)
+                            .text(getString(R.string.friends_tool_tip))
+                            .show();
+                }
+                tooltipClose(viewTooltipOne, viewTooltipTwo,viewTooltipThree);
             }
         });
 
@@ -1336,6 +1369,18 @@ public class Home extends AppCompatActivity implements
                     manager.setPostCountClear();
                     setPostCount(0);
                     replacePostFragment(1); //working
+                } else if (tab.getPosition() == 2) {
+                    //                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+//                    tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
+//
+//                    tabTwoInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
+//                    tabTwoText.setTextColor(Color.parseColor("#AAAAAA"));
+//
+//                    tabThreeInfo.setImageResource(R.drawable.ic_info_outline_blue_24dp);
+//                    tabThreeText.setTextColor(Color.parseColor("#1483C9"));
+                    manager.setPostCountClear();
+                    setPostCount(0);
+                    replacePostFragment(2); //working
                 } else {
 //                    tabOneInfo.setImageResource(R.drawable.ic_info_outline_black_24dp);
 //                    tabOneText.setTextColor(Color.parseColor("#AAAAAA"));
@@ -1347,7 +1392,7 @@ public class Home extends AppCompatActivity implements
 //                    tabThreeText.setTextColor(Color.parseColor("#1483C9"));
                     manager.setPostCountClear();
                     setPostCount(0);
-                    replacePostFragment(2); //working
+                    replacePostFragment(3); //working
                 }
 
             }
@@ -1376,6 +1421,10 @@ public class Home extends AppCompatActivity implements
                     followingTabClickListener.onTabClick();
                     manager.setPostCountClear();
                     setPostCount(0);
+                } else if (tab.getPosition() == 3) {
+                    friendTabClickListener.onTabClick();
+                    manager.setPostCountClear();
+                    setPostCount(0);
                 }
                 appBarLayout.setExpanded(true);
             }
@@ -1396,6 +1445,9 @@ public class Home extends AppCompatActivity implements
                 break;
             case 2:
                 adapter.addFrag(new FollowingPost(), "Tab 3");
+                break;
+            case 3:
+                adapter.addFrag(new FriendsPost(), "Tab 4");
                 break;
         }
     }
@@ -1541,7 +1593,7 @@ public class Home extends AppCompatActivity implements
         }
     }
 
-    BroadcastReceiver  broadcastReceiver = new BroadcastReceiver() {
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra("type");
@@ -1622,7 +1674,7 @@ public class Home extends AppCompatActivity implements
                             .putExtra("firstName", firstName)
                             .putExtra("lastName", lastName)*/
 
-            int status = intent.getIntExtra("status",0);
+            int status = intent.getIntExtra("status", 0);
             String userName = intent.getStringExtra("userName");
             String fromId = intent.getStringExtra("fromId");
             String toId = intent.getStringExtra("toId");
@@ -1631,7 +1683,7 @@ public class Home extends AppCompatActivity implements
 
             manager.setFriendNotificationCount();
             int newCount = manager.getFriendNotificationCount();
-           // setMessageNotificationCount(newCount);
+            // setMessageNotificationCount(newCount);
             setFriendNotificationCount(newCount);
             notificationSoundWhenUserActive();
 

@@ -94,7 +94,7 @@ public class PostPermission extends BottomSheetDialogFragment implements View.On
                 imgPublic.setColorFilter(ContextCompat.getColor(getActivity(), R.color.colorThemeBlue), android.graphics.PorterDuff.Mode.SRC_IN);
                 imgPublicCheck.setVisibility(View.VISIBLE);
                 break;
-            case "Followers Only":
+            case "Friends Only":
                 tvFriends.setTextColor(Color.parseColor("#1483C9"));
                 imgFriends.setColorFilter(ContextCompat.getColor(getActivity(), R.color.colorThemeBlue), android.graphics.PorterDuff.Mode.SRC_IN);
                 imgFriendsCheck.setVisibility(View.VISIBLE);
@@ -131,8 +131,8 @@ public class PostPermission extends BottomSheetDialogFragment implements View.On
 
                 break;
             case R.id.friendsContainer:
-                mListener.onButtonClicked(R.drawable.ic_people_outline_black_12dp, "Followers Only");
-                manager.setPostPermission("Followers Only");
+                mListener.onButtonClicked(R.drawable.ic_people_outline_black_12dp, "Friends Only");
+                manager.setPostPermission("Friends Only");
                 tvFriends.setTextColor(Color.parseColor("#1483C9"));
                 imgFriends.setColorFilter(ContextCompat.getColor(getActivity(), R.color.colorThemeBlue), android.graphics.PorterDuff.Mode.SRC_IN);
                 imgFriendsCheck.setVisibility(View.VISIBLE);

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +27,8 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -257,6 +260,13 @@ public class GroupPageActivity extends AppCompatActivity implements ReportReason
 
                 popup = new android.support.v7.widget.PopupMenu(GroupPageActivity.this, view);
                 popup.getMenuInflater().inflate(R.menu.group_delete_menu, popup.getMenu());
+//                popup.getMenu().getItem()
+//
+                int positionOfMenuItem = 0;
+                MenuItem item = popup.getMenu().getItem(positionOfMenuItem);
+                SpannableString s = new SpannableString(getString(R.string.delete_group));
+                s.setSpan(new ForegroundColorSpan(Color.parseColor("#8F9192")), 0, s.length(), 0);
+                        item.setTitle(s);
 
                 if (userId.equalsIgnoreCase(groupDataInfo.getGroupInfo().getCreatorId())) {
                     popup.show();

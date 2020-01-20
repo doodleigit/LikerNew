@@ -87,7 +87,8 @@ public class LikeUserAdapter extends RecyclerView.Adapter<LikeUserAdapter.ViewHo
                 if (arrayList.get(i).getIsFollowed()) {
                     likeUserClickListener.onUnFollowClick(arrayList.get(i).getId(), i);
                 } else {
-                    likeUserClickListener.onFollowClick(arrayList.get(i).getUsername(), i);
+                    likeUserClickListener.onFollowClick(arrayList.get(i).getId(), i);
+                   // likeUserClickListener.onFollowClick(arrayList.get(i).getUsername(), i);
                 }
             }
         });

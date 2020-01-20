@@ -93,9 +93,9 @@
                 android:id="@+id/tvFriends"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_25sdp"
+                android:layout_marginLeft="@dimen/_17sdp"
                 android:layout_weight="1"
-                android:text="Followers Only"
+                android:text="Friends Only"
                 android:textColor="#8F9192" />
 
             <ImageView
@@ -131,7 +131,7 @@
                 android:id="@+id/tvPrivate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_25sdp"
+                android:layout_marginLeft="@dimen/_18sdp"
                 android:layout_weight="1"
                 android:text="Only me"
                 android:textColor="#8F9192" />

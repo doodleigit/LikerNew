@@ -765,4 +765,35 @@ public interface ProfileService {
             @Field("user_id") String userIds
     );
 
+    @POST(AppConstants.EDIT_SHARED_POST)
+    @FormUrlEncoded
+    Call<String> editSharedPost(
+            @Header("Device-Id") String deviceId,
+            @Header("User-Id") String userId,
+            @Header("Security-Token") String token,
+            @Field("post_id") String postId,
+            @Field("user_id") int userIds,
+            @Field("post_content") String postContent,
+            @Field("post_permission") int postPermission,
+            @Field("category_id") String categoryId,
+            @Field("sub_category_id") String subCategoryId,
+            @Field("post_type") int postType,
+            @Field("user_name") String userName,
+            @Field("friends") String friends
+
+    );
+
+/*
+post_id: 57847
+user_id: 26445
+post_content: Edit post share
+post_permission: 1
+category_id: 418
+sub_category_id: 418
+post_type: 1
+user_name: richard605
+friends:
+
+* */
+
 }

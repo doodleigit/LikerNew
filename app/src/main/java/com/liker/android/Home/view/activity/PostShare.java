@@ -1,6 +1,4 @@
 package com.liker.android.Home.view.activity;
-
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -22,38 +20,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.borjabravo.readmoretextview.ReadMoreTextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.danikula.videocache.HttpProxyCacheServer;
-//import com.doodle.App;
-//import com.doodle.Home.adapter.PostAdapter;
-//import com.doodle.Home.holder.ImageHolder;
-//import com.doodle.Home.holder.LinkScriptHolder;
-//import com.doodle.Home.holder.LinkScriptYoutubeHolder;
-//import com.doodle.Home.holder.TextMimHolder;
-//import com.doodle.Home.holder.VideoHolder;
-//import com.doodle.Home.model.Headers;
-//import com.doodle.Home.model.PostItem;
-//import com.doodle.Home.model.postshare.PostShareItem;
-//import com.doodle.Home.model.postshare.PostShares;
 import com.liker.android.Home.model.postshare.PostTextIndex;
-//import com.doodle.Home.service.HomeService;
-//import com.doodle.Home.service.SocketIOManager;
-//import com.doodle.Home.holder.TextHolder;
-//import com.doodle.Post.adapter.ChatAdapter;
-//import com.doodle.Post.model.Mim;
-//import com.doodle.Post.service.DataProvider;
-//import com.doodle.Post.view.fragment.PostPermission;
-//import com.doodle.R;
-//import com.doodle.Tool.AppConstants;
-//import com.doodle.Tool.NetworkHelper;
-//import com.doodle.Tool.Operation;
-//import com.doodle.Tool.PageTransformer;
-//import com.doodle.Tool.PrefManager;
-//import com.doodle.Tool.SingleLineTextView;
-//import com.doodle.Tool.Tools;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.google.gson.Gson;
 import com.liker.android.App;
@@ -90,8 +61,6 @@ import com.vanniktech.emoji.EmojiTextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,15 +72,6 @@ import io.socket.client.Socket;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-//import static com.doodle.App.getProxy;
-//import static com.doodle.Tool.Tools.containsIllegalCharacters;
-//import static com.doodle.Tool.Tools.extractMentionText;
-//import static com.doodle.Tool.Tools.extractMentionUser;
-//import static com.doodle.Tool.Tools.extractUrls;
-//import static com.doodle.Tool.Tools.getDomainName;
-//import static com.doodle.Tool.Tools.getSpannableStringBuilder;
-//import static com.doodle.Tool.Tools.isNullOrEmpty;
 import static com.liker.android.App.getProxy;
 import static com.liker.android.Tool.Tools.containsIllegalCharacters;
 import static com.liker.android.Tool.Tools.extractMentionText;
@@ -199,7 +159,7 @@ public class PostShare extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.post_share);
+        setContentView(R.layout.post_share_edit);
         PostItem item = getIntent().getExtras().getParcelable(TextHolder.ITEM_KEY);
         if (item == null) {
             throw new AssertionError("Null data item received!");
@@ -1049,7 +1009,7 @@ public class PostShare extends AppCompatActivity implements
             case "Only me":
                 postPermission = 1;
                 break;
-            case "Friends":
+            case "Friends Only":
                 postPermission = 2;
                 break;
 

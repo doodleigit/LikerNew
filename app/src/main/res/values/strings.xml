@@ -166,11 +166,11 @@
     <string name="people">people</string>
     <string name="person">person</string>
     <string name="all_categories">All Categories</string>
-    <string name="sites_and_social_links">Sites &amp; Social Links</string>
-    <string name="certifications">Certifications</string>
-    <string name="honors_and_awards">Honors &amp; Awards</string>
-    <string name="experience">Experience</string>
-    <string name="education">Education</string>
+    <string name="sites_and_social_links">Edit Sites &amp; Social Links</string>
+    <string name="certifications">Edit Certifications</string>
+    <string name="honors_and_awards">Edit Honors &amp; Awards</string>
+    <string name="experience">Edit Experience</string>
+    <string name="education">Edit Education</string>
     <string name="email_notifications">Email Notifications</string>
     <string name="push_notifications">Push Notifications</string>
     <string name="the_trending_feed_includes_the_hottest_posts">The Trending Feed includes the hottest posts in all of Liker, starting with the ones with the most likes in the past 24 hours.</string>
@@ -592,4 +592,5 @@
     <string name="friend_request_confirm">Confirm</string>
     <string name="friend_request_delete">Delete</string>
     <string name="invalid_forgot_password_email_address">Sorry the email is not associated with any Liker account.</string>
+    <string name="friends_tool_tip">The friends feed includes the most recent posts by your friends.</string>
 </resources>
